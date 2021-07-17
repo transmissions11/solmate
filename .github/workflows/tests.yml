@@ -1,0 +1,21 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+      - uses: cachix/install-nix-action@v13
+      - uses: cachix/cachix-action@v10
+        with:
+          name: dapp
+
+      - name: Install dependencies
+        run: nix-shell --run 'make'
+
+      - name: Run tests
+        run: nix-shell --run 'dapp test'

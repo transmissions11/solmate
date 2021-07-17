@@ -1,0 +1,16 @@
+{
+  "name": "@rari-capital/dappsys",
+  "version": "1.0.0",
+  "description": "Rari Capital's modern fork of some key Dappsys contracts.",
+  "files": [
+    "src/**/*.sol"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rari-Capital/dappsys.git"
+  },
+  "devDependencies": {
+    "prettier": "^2.3.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.13"
+  }
+}
