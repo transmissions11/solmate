@@ -1,6 +1,6 @@
 {
   "name": "@rari-capital/dappsys",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Rari Capital's modern fork of some key Dappsys contracts.",
   "files": [
     "src/**/*.sol"
