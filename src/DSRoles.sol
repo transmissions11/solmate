@@ -56,7 +56,7 @@ contract DSRoles is DSAuth, DSAuthority {
         address caller,
         address code,
         bytes4 sig
-    ) public view override returns (bool) {
+    ) public view virtual override returns (bool) {
         if (isCapabilityPublic(code, sig) || isUserRoot(caller)) {
             return true;
         } else {
