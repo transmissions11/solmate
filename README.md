@@ -17,11 +17,12 @@ Yes. Although OpenZeppelin contracts are wonderful and cover a lot of Solidity d
 - Bloated
 - Gas Inefficient 
 - Too Unopinionated 
+- **Not DappTools friendly**
 
 Dappsys improves on those fronts, but also suffers from issues of its own:
 
 - Dated Solidity practices
 - Not comprehensive enough 
 
-### Solmate seeks to solve these issues by introducing a catalogue of well-tested, modern, Dappsys-inspired contracts and _gas efficent_ contracts for you to use in your next Solidity project.
+### Solmate seeks to solve these issues by introducing a catalogue of well-tested, modern, _gas efficent_ and DappTools-centric contracts for you to use in your next Solidity project.
 
