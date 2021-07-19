@@ -1,6 +1,6 @@
 # solmate
 
-Building blocks and mixins for modern smart contract development.
+Modern building blocks and mixins for smart contract development.
 
 ## Acknowledgments 
 
@@ -17,12 +17,12 @@ Yes. Although OpenZeppelin contracts are wonderful and cover a lot of Solidity d
 - Bloated
 - Gas Inefficient 
 - Too Unopinionated 
-- **Not DappTools friendly**
+- **Not [DappTools](https://github.com/dapphub/dapptools) friendly**
 
 Dappsys improves on those fronts, but also suffers from issues of its own:
 
 - Dated Solidity practices
 - Not comprehensive enough 
 
-### Solmate seeks to solve these issues by introducing a catalogue of well-tested, modern, _gas efficent_ and DappTools-centric contracts for you to use in your next Solidity project.
+### Solmate seeks to solve these issues by introducing a catalogue of modern, well-tested, _gas efficient_ and [DappTools](https://github.com/dapphub/dapptools)-centric contracts that will fit perfectly into your next project.
 
