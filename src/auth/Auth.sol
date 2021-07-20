@@ -2,7 +2,7 @@
 pragma solidity >=0.7.0;
 
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
-/// @author DappHub and TransmissionsDev
+/// @author Modified from DappHub (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 abstract contract Auth {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS

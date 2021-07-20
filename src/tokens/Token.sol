@@ -3,6 +3,8 @@ pragma solidity >=0.8.0;
 
 import "./ERC20.sol";
 
+/// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
+/// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)
 contract Token is ERC20 {
     /*///////////////////////////////////////////////////////////////
                              METADATA STORAGE
@@ -25,15 +27,15 @@ contract Token is ERC20 {
     mapping(address => mapping(address => uint256)) public override allowance;
 
     /*///////////////////////////////////////////////////////////////
-                            PERMIT/EIP-712 STORAGE
+                         PERMIT/EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    bytes32 public constant PERMIT_TYPEHASH =
+    bytes32 public constant override PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-    bytes32 public immutable DOMAIN_SEPARATOR;
+    bytes32 public immutable override DOMAIN_SEPARATOR;
 
-    mapping(address => uint256) public nonces;
+    mapping(address => uint256) public override nonces;
 
     constructor(
         string memory _name,
@@ -98,7 +100,7 @@ contract Token is ERC20 {
     }
 
     /*///////////////////////////////////////////////////////////////
-                          PERMIT/EIP-712 LOGIC
+                          PERMIT/EIP-2612 LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function permit(
@@ -109,7 +111,7 @@ contract Token is ERC20 {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external {
+    ) external override {
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
         bytes32 digest = keccak256(
@@ -129,7 +131,7 @@ contract Token is ERC20 {
     }
 
     /*///////////////////////////////////////////////////////////////
-                        INTERNAL UTILS
+                          INTERNAL UTILS
     //////////////////////////////////////////////////////////////*/
 
     function _mint(address to, uint256 value) internal {

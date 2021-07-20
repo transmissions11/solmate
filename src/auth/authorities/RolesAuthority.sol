@@ -4,7 +4,7 @@ pragma solidity >=0.7.0;
 import "../Auth.sol";
 
 /// @notice An Authority for up to 256 roles.
-/// @author DappHub and TransmissionsDev
+/// @author Modified from DappHub (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)
 contract RolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS

@@ -2,6 +2,7 @@
 pragma solidity >=0.7.0;
 
 /// @notice Abstract ERC20 interface with metadata.
+/// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/interfaces/IUniswapV2ERC20.sol)
 interface ERC20 {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
@@ -32,6 +33,16 @@ interface ERC20 {
     function allowance(address owner, address spender) external view returns (uint256);
 
     /*///////////////////////////////////////////////////////////////
+                         PERMIT/EIP-2612 STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    function DOMAIN_SEPARATOR() external view returns (bytes32);
+
+    function PERMIT_TYPEHASH() external pure returns (bytes32);
+
+    function nonces(address owner) external view returns (uint256);
+
+    /*///////////////////////////////////////////////////////////////
                                ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
@@ -44,4 +55,18 @@ interface ERC20 {
         address from,
         uint256 value
     ) external returns (bool);
+
+    /*///////////////////////////////////////////////////////////////
+                         PERMIT/EIP-2612 LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external;
 }
