@@ -29,32 +29,32 @@ contract RolesAuthorityTest is DSTest {
     }
 
     function testBasics() public {
-        uint8 root_role = 0;
-        uint8 admin_role = 1;
-        uint8 mod_role = 2;
-        uint8 user_role = 3;
+        uint8 rootRole = 0;
+        uint8 adminRole = 1;
+        uint8 modRole = 2;
+        uint8 userRole = 3;
 
-        roles.setUserRole(self, root_role, true);
-        roles.setUserRole(self, admin_role, true);
+        roles.setUserRole(self, rootRole, true);
+        roles.setUserRole(self, adminRole, true);
 
         assertEq32(
             bytes32(hex"0000000000000000000000000000000000000000000000000000000000000003"),
             roles.getUserRoles(self)
         );
 
-        roles.setRoleCapability(admin_role, requiresAuth, bytes4(keccak256("updateFlag1()")), true);
+        roles.setRoleCapability(adminRole, requiresAuth, bytes4(keccak256("updateFlag1()")), true);
 
         assertTrue(roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
         RequiresAuth(requiresAuth).updateFlag1();
         assertTrue(RequiresAuth(requiresAuth).flag1());
 
-        roles.setRoleCapability(admin_role, requiresAuth, bytes4(keccak256("updateFlag1()")), false);
+        roles.setRoleCapability(adminRole, requiresAuth, bytes4(keccak256("updateFlag1()")), false);
         assertTrue(!roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
 
-        assertTrue(roles.doesUserHaveRole(self, root_role));
-        assertTrue(roles.doesUserHaveRole(self, admin_role));
-        assertTrue(!roles.doesUserHaveRole(self, mod_role));
-        assertTrue(!roles.doesUserHaveRole(self, user_role));
+        assertTrue(roles.doesUserHaveRole(self, rootRole));
+        assertTrue(roles.doesUserHaveRole(self, adminRole));
+        assertTrue(!roles.doesUserHaveRole(self, modRole));
+        assertTrue(!roles.doesUserHaveRole(self, userRole));
     }
 
     function testRoot() public {

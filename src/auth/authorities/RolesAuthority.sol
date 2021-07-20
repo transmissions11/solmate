@@ -60,13 +60,13 @@ contract RolesAuthority is Auth, Authority {
         address caller,
         address code,
         bytes4 sig
-    ) external view virtual override returns (bool) {
+    ) public view virtual override returns (bool) {
         if (isCapabilityPublic(code, sig) || isUserRoot(caller)) {
             return true;
         } else {
-            bytes32 has_roles = getUserRoles(caller);
-            bytes32 needs_one_of = getRoleCapabilities(code, sig);
-            return bytes32(0) != has_roles & needs_one_of;
+            bytes32 hasRoles = getUserRoles(caller);
+            bytes32 needsOneOf = getRoleCapabilities(code, sig);
+            return bytes32(0) != hasRoles & needsOneOf;
         }
     }
 
@@ -85,12 +85,12 @@ contract RolesAuthority is Auth, Authority {
         uint8 role,
         bool enabled
     ) public auth {
-        bytes32 last_roles = userRoles[who];
+        bytes32 lastRoles = userRoles[who];
         bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
         if (enabled) {
-            userRoles[who] = last_roles | shifted;
+            userRoles[who] = lastRoles | shifted;
         } else {
-            userRoles[who] = last_roles & BITNOT(shifted);
+            userRoles[who] = lastRoles & BITNOT(shifted);
         }
 
         emit UserRoleUpdated(who, role, enabled);
@@ -112,12 +112,12 @@ contract RolesAuthority is Auth, Authority {
         bytes4 sig,
         bool enabled
     ) public auth {
-        bytes32 last_roles = roleCapabilities[code][sig];
+        bytes32 lastRoles = roleCapabilities[code][sig];
         bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
         if (enabled) {
-            roleCapabilities[code][sig] = last_roles | shifted;
+            roleCapabilities[code][sig] = lastRoles | shifted;
         } else {
-            roleCapabilities[code][sig] = last_roles & BITNOT(shifted);
+            roleCapabilities[code][sig] = lastRoles & BITNOT(shifted);
         }
 
         emit RoleCapabilityUpdated(role, code, sig, enabled);
