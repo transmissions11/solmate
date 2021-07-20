@@ -5,7 +5,7 @@ import "./ERC20.sol";
 
 /// @notice Safe ERC20 and ETH transfer library that safely handles missing return values.
 /// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v3-core/blob/main/contracts/libraries/TransferHelper.sol)
-library SafeTransferLib {
+library SafeERC20 {
     function safeTransferFrom(
         ERC20 token,
         address from,

@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.6;
 
-import "../../tokens/Token.sol";
+import "../../erc20/ERC20.sol";
 
-contract MockToken is Token {
+contract MockERC20 is ERC20 {
     constructor(
         string memory _name,
         string memory _symbol,
         uint8 _decimals
-    ) Token(_name, _symbol, _decimals) {}
+    ) ERC20(_name, _symbol, _decimals) {}
 
     function mint(address to, uint256 value) external {
         _mint(to, value);

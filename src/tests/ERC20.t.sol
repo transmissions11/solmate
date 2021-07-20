@@ -2,14 +2,14 @@
 pragma solidity 0.8.6;
 
 import "ds-test/test.sol";
-import "./utils/MockToken.sol";
-import "./utils/TokenUser.sol";
+import "./utils/MockERC20.sol";
+import "./utils/ERC20User.sol";
 
-contract TokenTest is DSTest {
-    MockToken token;
+contract ERC20Test is DSTest {
+    MockERC20 token;
 
     function setUp() public {
-        token = new MockToken("Token", "TKN", 18);
+        token = new MockERC20("Token", "TKN", 18);
     }
 
     function testMetaData(
@@ -17,7 +17,7 @@ contract TokenTest is DSTest {
         string memory symbol,
         uint8 decimals
     ) public {
-        MockToken tkn = new MockToken(name, symbol, decimals);
+        MockERC20 tkn = new MockERC20(name, symbol, decimals);
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
         assertEq(tkn.decimals(), decimals);
@@ -74,7 +74,7 @@ contract TokenTest is DSTest {
     ) public {
         if (amt > approval) return; // src must approve this for more than amt
 
-        TokenUser src = new TokenUser(token);
+        ERC20User src = new ERC20User(token);
 
         token.mint(address(src), amt);
         src.approve(address(this), approval);
@@ -102,7 +102,7 @@ contract TokenTest is DSTest {
     ) public {
         require(approval < amt);
 
-        TokenUser src = new TokenUser(token);
+        ERC20User src = new ERC20User(token);
 
         token.mint(address(src), amt);
         src.approve(address(this), approval);
@@ -116,7 +116,7 @@ contract TokenTest is DSTest {
     ) public {
         require(mintAmt < sendAmt);
 
-        TokenUser src = new TokenUser(token);
+        ERC20User src = new ERC20User(token);
 
         token.mint(address(src), mintAmt);
         src.approve(address(this), sendAmt);
@@ -143,7 +143,7 @@ contract TestInvariants is DSTest {
 }
 
 contract BalanceSum {
-    MockToken public token = new MockToken("Token", "TKN", 18);
+    MockERC20 public token = new MockERC20("Token", "TKN", 18);
     uint256 public sum;
 
     function mint(address usr, uint256 amt) external {

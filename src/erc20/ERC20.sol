@@ -5,37 +5,45 @@ import "./ERC20.sol";
 
 /// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
 /// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)
-contract Token is ERC20 {
+contract ERC20 {
     /*///////////////////////////////////////////////////////////////
-                             METADATA STORAGE
+                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    string public override name;
+    event Transfer(address indexed from, address indexed to, uint256 value);
 
-    string public override symbol;
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
-    uint8 public immutable override decimals;
+    /*///////////////////////////////////////////////////////////////
+                             METADATA STORAGE`
+    //////////////////////////////////////////////////////////////*/
+
+    string public name;
+
+    string public symbol;
+
+    uint8 public immutable decimals;
 
     /*///////////////////////////////////////////////////////////////
                              ERC20 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    uint256 public override totalSupply;
+    uint256 public totalSupply;
 
-    mapping(address => uint256) public override balanceOf;
+    mapping(address => uint256) public balanceOf;
 
-    mapping(address => mapping(address => uint256)) public override allowance;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     /*///////////////////////////////////////////////////////////////
                          PERMIT/EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    bytes32 public constant override PERMIT_TYPEHASH =
+    bytes32 public constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-    bytes32 public immutable override DOMAIN_SEPARATOR;
+    bytes32 public immutable DOMAIN_SEPARATOR;
 
-    mapping(address => uint256) public override nonces;
+    mapping(address => uint256) public nonces;
 
     constructor(
         string memory _name,
@@ -65,7 +73,7 @@ contract Token is ERC20 {
     /*///////////////////////////////////////////////////////////////
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
-    function approve(address spender, uint256 value) external override returns (bool) {
+    function approve(address spender, uint256 value) external returns (bool) {
         allowance[msg.sender][spender] = value;
 
         emit Approval(spender, spender, value);
@@ -73,7 +81,7 @@ contract Token is ERC20 {
         return true;
     }
 
-    function transfer(address to, uint256 value) external override returns (bool) {
+    function transfer(address to, uint256 value) external returns (bool) {
         balanceOf[msg.sender] -= value;
         balanceOf[to] += value;
 
@@ -86,7 +94,7 @@ contract Token is ERC20 {
         address from,
         address to,
         uint256 value
-    ) external override returns (bool) {
+    ) external returns (bool) {
         if (allowance[from][msg.sender] != type(uint256).max) {
             allowance[from][msg.sender] -= value;
         }
@@ -111,7 +119,7 @@ contract Token is ERC20 {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external override {
+    ) external {
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
         bytes32 digest = keccak256(
