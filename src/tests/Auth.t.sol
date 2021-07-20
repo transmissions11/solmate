@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.4.23;
+pragma solidity 0.8.6;
 
 import "ds-test/test.sol";
-import "../DSAuth.sol";
+import "../auth/Auth.sol";
 
-contract FakeVault is DSAuth {
+contract FakeVault is Auth {
     function access() public view auth {}
 }
 
-contract BooleanAuthority {
+contract BooleanAuthority is Authority {
     bool yes;
 
     constructor(bool _yes) {
@@ -19,12 +19,12 @@ contract BooleanAuthority {
         address,
         address,
         bytes4
-    ) public view returns (bool) {
+    ) public view override returns (bool) {
         return yes;
     }
 }
 
-contract DSAuthTest is DSTest {
+contract AuthTest is DSTest {
     FakeVault vault;
 
     function setUp() public {
@@ -42,19 +42,19 @@ contract DSAuthTest is DSTest {
     }
 
     function test_accepting_authority() public {
-        vault.setAuthority(DSAuthority(address(new BooleanAuthority(true))));
+        vault.setAuthority(Authority(address(new BooleanAuthority(true))));
         vault.setOwner(address(0));
         vault.access();
     }
 
     function testFail_rejecting_authority_1() public {
-        vault.setAuthority(DSAuthority(address(new BooleanAuthority(false))));
+        vault.setAuthority(Authority(address(new BooleanAuthority(false))));
         vault.setOwner(address(0));
         vault.access();
     }
 
     function testFail_rejecting_authority_2() public {
-        vault.setAuthority(DSAuthority(address(new BooleanAuthority(false))));
+        vault.setAuthority(Authority(address(new BooleanAuthority(false))));
         vault.setOwner(address(0));
         vault.setOwner(address(0));
     }

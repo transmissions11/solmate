@@ -8,7 +8,7 @@ let
 in
   pkgs.mkShell {
     src = null;
-    name = "rari-capital-dappsys";
+    name = "rari-capital-solmate";
     buildInputs = with pkgs; [
       pkgs.dapp
     ];

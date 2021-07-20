@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.4.23;
+pragma solidity >=0.7.0;
 
-import "./DSAuth.sol";
+import "../Auth.sol";
 
-/// @notice A DSAuthority for up to 256 roles.
-contract DSRoles is DSAuth, DSAuthority {
+/// @notice An Authority for up to 256 roles.
+/// @author DappHub and TransmissionsDev
+contract RolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -22,8 +23,11 @@ contract DSRoles is DSAuth, DSAuthority {
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bool) internal rootUsers;
+
     mapping(address => bytes32) internal userRoles;
+
     mapping(address => mapping(bytes4 => bytes32)) internal roleCapabilities;
+
     mapping(address => mapping(bytes4 => bool)) internal publicCapabilities;
 
     /*///////////////////////////////////////////////////////////////
@@ -56,7 +60,7 @@ contract DSRoles is DSAuth, DSAuthority {
         address caller,
         address code,
         bytes4 sig
-    ) public view virtual override returns (bool) {
+    ) external view virtual override returns (bool) {
         if (isCapabilityPublic(code, sig) || isUserRoot(caller)) {
             return true;
         } else {
@@ -67,7 +71,7 @@ contract DSRoles is DSAuth, DSAuthority {
     }
 
     /*///////////////////////////////////////////////////////////////
-                      USER/ROLE MODIFIER FUNCTIONS
+                       USER/ROLE SETTER FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
     function setRootUser(address who, bool enabled) external auth {
@@ -124,6 +128,6 @@ contract DSRoles is DSAuth, DSAuthority {
     //////////////////////////////////////////////////////////////*/
 
     function BITNOT(bytes32 input) internal pure returns (bytes32 output) {
-        return (input ^ bytes32(uint256(int256(-1))));
+        return (input ^ bytes32(type(uint256).max));
     }
 }

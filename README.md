@@ -4,7 +4,7 @@ Modern building blocks and mixins for smart contract development.
 
 ## Acknowledgments 
 
-These contracts were heavily inspired by and/or modified from many sources, primarly:
+These contracts were heavily inspired by and/or modified from many sources, primarily:
 
 - [Dappsys](https://github.com/dapphub/dappsys)
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)

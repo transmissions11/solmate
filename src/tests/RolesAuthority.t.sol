@@ -1,30 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.4.23;
+pragma solidity 0.8.6;
 
 import "ds-test/test.sol";
-import "../DSRoles.sol";
+import "../auth/authorities/RolesAuthority.sol";
 
-contract RequiresAuth is DSAuth {
+contract RequiresAuth is Auth {
     bool public flag1;
     bool public flag2;
 
-    function updateFlag1() public auth {
+    function updateFlag1() external auth {
         flag1 = true;
     }
 
-    function updateFlag2() public auth {
+    function updateFlag2() external auth {
         flag2 = true;
     }
 }
 
-contract DSRolesTest is DSTest {
+contract RolesAuthorityTest is DSTest {
     address self = address(this);
 
-    DSRoles roles;
+    RolesAuthority roles;
     address requiresAuth;
 
     function setUp() public {
-        roles = new DSRoles();
+        roles = new RolesAuthority();
         requiresAuth = address(new RequiresAuth());
     }
 
