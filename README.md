@@ -16,7 +16,7 @@ Yes. Although OpenZeppelin contracts are wonderful and cover a lot of Solidity d
 
 - Bloated
 - Gas Inefficient 
-- Too Unopinionated 
+- Not Opinionated Enough 
 - **Not [DappTools](https://github.com/dapphub/dapptools) friendly**
 
 Dappsys improves on those fronts, but also suffers from issues of its own:
