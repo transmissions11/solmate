@@ -73,6 +73,7 @@ contract ERC20 {
     /*///////////////////////////////////////////////////////////////
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
+
     function approve(address spender, uint256 value) external returns (bool) {
         allowance[msg.sender][spender] = value;
 
