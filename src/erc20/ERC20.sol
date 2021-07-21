@@ -87,12 +87,11 @@ contract ERC20 {
     function transfer(address to, uint256 value) external returns (bool) {
         balanceOf[msg.sender] -= value;
 
-        // This is safe, as sum of all user balances will never exceed
+        // TODO: We can use unchecked when we drop support for 0.7.0.
+        // It's safe, as sum of all user balances will never exceed
         // type(uint256).max, since totalSupply would overflow in _mint
         // and Solidity's default checked math would force _mint to revert.
-        unchecked {
-            balanceOf[to] += value;
-        }
+        balanceOf[to] += value;
 
         emit Transfer(msg.sender, to, value);
 
@@ -110,12 +109,11 @@ contract ERC20 {
 
         balanceOf[from] -= value;
 
-        // This is safe, as sum of all user balances will never exceed
+        // TODO: We can use unchecked when we drop support for 0.7.0.
+        // It's safe, as sum of all user balances will never exceed
         // type(uint256).max, since totalSupply would overflow in _mint
         // and Solidity's default checked math would force _mint to revert.
-        unchecked {
-            balanceOf[to] += value;
-        }
+        balanceOf[to] += value;
 
         emit Transfer(from, to, value);
 
