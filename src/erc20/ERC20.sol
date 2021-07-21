@@ -73,6 +73,7 @@ contract ERC20 {
     /*///////////////////////////////////////////////////////////////
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
+    
     function approve(address spender, uint256 value) external returns (bool) {
         allowance[msg.sender][spender] = value;
 
@@ -83,7 +84,7 @@ contract ERC20 {
 
     function transfer(address to, uint256 value) external returns (bool) {
         balanceOf[msg.sender] -= value;
-        balanceOf[to] += value;
+        unchecked { balanceOf[to] += value; }
 
         emit Transfer(msg.sender, to, value);
 
@@ -100,7 +101,7 @@ contract ERC20 {
         }
 
         balanceOf[from] -= value;
-        balanceOf[to] += value;
+        unchecked { balanceOf[to] += value; }
 
         emit Transfer(from, to, value);
 
