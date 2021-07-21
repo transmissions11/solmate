@@ -90,7 +90,7 @@ contract ERC20 {
         // TODO: We can use unchecked when we drop support for 0.7.0.
         // It's safe, as sum of all user balances will never exceed
         // type(uint256).max, since totalSupply would overflow in _mint
-        // and Solidity's default checked math would force _mint to revert.
+        // and Solidity's default checked math would force it to revert.
         balanceOf[to] += value;
 
         emit Transfer(msg.sender, to, value);
@@ -112,7 +112,7 @@ contract ERC20 {
         // TODO: We can use unchecked when we drop support for 0.7.0.
         // It's safe, as sum of all user balances will never exceed
         // type(uint256).max, since totalSupply would overflow in _mint
-        // and Solidity's default checked math would force _mint to revert.
+        // and Solidity's default checked math would force it to revert.
         balanceOf[to] += value;
 
         emit Transfer(from, to, value);
