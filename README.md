@@ -1,6 +1,6 @@
 # solmate
 
-Modern building blocks and mixins for smart contract development.
+Modern and opinionated building blocks for smart contract development.
 
 ## Acknowledgments 
 
@@ -24,5 +24,5 @@ Dappsys improves on those fronts, but also suffers from issues of its own:
 - Dated Solidity practices
 - Not comprehensive enough 
 
-### Solmate seeks to solve these issues by introducing a catalogue of modern, well-tested, _gas efficient_ and [DappTools](https://github.com/dapphub/dapptools)-centric contracts that will fit perfectly into your next project.
+### Solmate seeks to solve these issues by introducing a catalogue of modern, opinionated, _gas efficient_ and [DappTools](https://github.com/dapphub/dapptools)-centric contracts that will fit perfectly into your next project.
 
