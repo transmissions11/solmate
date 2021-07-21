@@ -74,7 +74,7 @@ contract RolesAuthority is Auth, Authority {
                        USER/ROLE SETTER FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function setRootUser(address who, bool enabled) external auth {
+    function setRootUser(address who, bool enabled) external requiresAuth {
         rootUsers[who] = enabled;
 
         emit UserRootUpdated(who, enabled);
@@ -84,7 +84,7 @@ contract RolesAuthority is Auth, Authority {
         address who,
         uint8 role,
         bool enabled
-    ) public auth {
+    ) public requiresAuth {
         bytes32 lastRoles = userRoles[who];
         bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
         if (enabled) {
@@ -100,7 +100,7 @@ contract RolesAuthority is Auth, Authority {
         address code,
         bytes4 sig,
         bool enabled
-    ) public auth {
+    ) public requiresAuth {
         publicCapabilities[code][sig] = enabled;
 
         emit PublicCapabilityUpdated(code, sig, enabled);
@@ -111,7 +111,7 @@ contract RolesAuthority is Auth, Authority {
         address code,
         bytes4 sig,
         bool enabled
-    ) public auth {
+    ) public requiresAuth {
         bytes32 lastRoles = roleCapabilities[code][sig];
         bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
         if (enabled) {

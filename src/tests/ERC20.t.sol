@@ -109,7 +109,7 @@ contract ERC20Test is DSTest {
         token.transferFrom(address(src), dst, amt);
     }
 
-    function testFailTransferFromIsufficientBalance(
+    function testFailTransferFromInsufficientBalance(
         address dst,
         uint256 mintAmt,
         uint256 sendAmt

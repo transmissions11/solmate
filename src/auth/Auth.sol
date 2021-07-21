@@ -8,9 +8,9 @@ abstract contract Auth {
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event LogSetAuthority(Authority indexed authority);
+    event AuthorityUpdated(Authority indexed authority);
 
-    event LogSetOwner(address indexed owner);
+    event OwnerUpdated(address indexed owner);
 
     /*///////////////////////////////////////////////////////////////
                        OWNER AND AUTHORITY STORAGE
@@ -22,27 +22,27 @@ abstract contract Auth {
 
     constructor() {
         owner = msg.sender;
-        emit LogSetOwner(msg.sender);
+        emit OwnerUpdated(msg.sender);
     }
 
     /*///////////////////////////////////////////////////////////////
                   OWNER AND AUTHORITY SETTER FUNCTIONS
     //////////////////////////////////////////////////////////////*/
-    function setOwner(address owner_) external auth {
+    function setOwner(address owner_) external requiresAuth {
         owner = owner_;
-        emit LogSetOwner(owner);
+        emit OwnerUpdated(owner);
     }
 
-    function setAuthority(Authority authority_) external auth {
+    function setAuthority(Authority authority_) external requiresAuth {
         authority = authority_;
-        emit LogSetAuthority(authority);
+        emit AuthorityUpdated(authority);
     }
 
     /*///////////////////////////////////////////////////////////////
                         AUTHORIZATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    modifier auth() {
+    modifier requiresAuth() {
         require(isAuthorized(msg.sender, msg.sig), "UNAUTHORIZED");
         _;
     }

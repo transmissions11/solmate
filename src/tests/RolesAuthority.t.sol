@@ -8,24 +8,24 @@ contract RequiresAuth is Auth {
     bool public flag1;
     bool public flag2;
 
-    function updateFlag1() external auth {
+    function updateFlag1() external requiresAuth {
         flag1 = true;
     }
 
-    function updateFlag2() external auth {
+    function updateFlag2() external requiresAuth {
         flag2 = true;
     }
 }
 
 contract RolesAuthorityTest is DSTest {
-    address self = address(this);
+    address immutable self = address(this);
 
     RolesAuthority roles;
-    address requiresAuth;
+    RequiresAuth requiresAuth;
 
     function setUp() public {
         roles = new RolesAuthority();
-        requiresAuth = address(new RequiresAuth());
+        requiresAuth = new RequiresAuth();
     }
 
     function testBasics() public {
@@ -42,14 +42,14 @@ contract RolesAuthorityTest is DSTest {
             roles.getUserRoles(self)
         );
 
-        roles.setRoleCapability(adminRole, requiresAuth, bytes4(keccak256("updateFlag1()")), true);
+        roles.setRoleCapability(adminRole, address(requiresAuth), bytes4(keccak256("updateFlag1()")), true);
 
-        assertTrue(roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
-        RequiresAuth(requiresAuth).updateFlag1();
-        assertTrue(RequiresAuth(requiresAuth).flag1());
+        assertTrue(roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        requiresAuth.updateFlag1();
+        assertTrue(requiresAuth.flag1());
 
-        roles.setRoleCapability(adminRole, requiresAuth, bytes4(keccak256("updateFlag1()")), false);
-        assertTrue(!roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        roles.setRoleCapability(adminRole, address(requiresAuth), bytes4(keccak256("updateFlag1()")), false);
+        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
 
         assertTrue(roles.doesUserHaveRole(self, rootRole));
         assertTrue(roles.doesUserHaveRole(self, adminRole));
@@ -59,27 +59,27 @@ contract RolesAuthorityTest is DSTest {
 
     function testRoot() public {
         assertTrue(!roles.isUserRoot(self));
-        assertTrue(!roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
 
         roles.setRootUser(self, true);
         assertTrue(roles.isUserRoot(self));
-        assertTrue(roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        assertTrue(roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
 
         roles.setRootUser(self, false);
         assertTrue(!roles.isUserRoot(self));
-        assertTrue(!roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
     }
 
     function testPublicCapabilities() public {
-        assertTrue(!roles.isCapabilityPublic(requiresAuth, bytes4(keccak256("updateFlag1()"))));
-        assertTrue(!roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
 
-        roles.setPublicCapability(requiresAuth, bytes4(keccak256("updateFlag1()")), true);
-        assertTrue(roles.isCapabilityPublic(requiresAuth, bytes4(keccak256("updateFlag1()"))));
-        assertTrue(roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        roles.setPublicCapability(address(requiresAuth), bytes4(keccak256("updateFlag1()")), true);
+        assertTrue(roles.isCapabilityPublic(address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
 
-        roles.setPublicCapability(requiresAuth, bytes4(keccak256("updateFlag1()")), false);
-        assertTrue(!roles.isCapabilityPublic(requiresAuth, bytes4(keccak256("updateFlag1()"))));
-        assertTrue(!roles.canCall(self, requiresAuth, bytes4(keccak256("updateFlag1()"))));
+        roles.setPublicCapability(address(requiresAuth), bytes4(keccak256("updateFlag1()")), false);
+        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
     }
 }
