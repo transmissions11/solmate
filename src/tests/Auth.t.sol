@@ -5,7 +5,7 @@ import "ds-test/test.sol";
 import "../auth/Auth.sol";
 
 contract FakeVault is Auth {
-    function access() public view auth {}
+    function access() public view requiresAuth {}
 }
 
 contract BooleanAuthority is Authority {
@@ -31,29 +31,29 @@ contract AuthTest is DSTest {
         vault = new FakeVault();
     }
 
-    function testFail_non_owner_1() public {
+    function testFailNonOwner1() public {
         vault.setOwner(address(0));
         vault.access();
     }
 
-    function testFail_non_owner_2() public {
+    function testFailNonOwner2() public {
         vault.setOwner(address(0));
         vault.setOwner(address(0));
     }
 
-    function test_accepting_authority() public {
+    function testAcceptingOwner() public {
         vault.setAuthority(Authority(address(new BooleanAuthority(true))));
         vault.setOwner(address(0));
         vault.access();
     }
 
-    function testFail_rejecting_authority_1() public {
+    function testFailRejectingAuthority1() public {
         vault.setAuthority(Authority(address(new BooleanAuthority(false))));
         vault.setOwner(address(0));
         vault.access();
     }
 
-    function testFail_rejecting_authority_2() public {
+    function testFailRejectingAuthority2() public {
         vault.setAuthority(Authority(address(new BooleanAuthority(false))));
         vault.setOwner(address(0));
         vault.setOwner(address(0));

@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity >=0.7.0;
 
 import "./ERC20.sol";
 
 /// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
+/// @dev DO NOT USE WITH SOLIDITY VERSIONS BELOW 0.8.0. This contract DOES NOT USE SAFEMATH. 0.7.0 is only allowed so
+/// this contract can be used as an interface in contracts that do not wish to actually deploy this ERC20 implementation.
 /// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)
 contract ERC20 {
     /*///////////////////////////////////////////////////////////////
