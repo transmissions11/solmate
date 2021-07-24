@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0;
+pragma solidity ^0.8.0;
 
-import "../../erc20/ERC20.sol";
+import {ERC20} from "../../erc20/ERC20.sol";
 
 contract MockERC20 is ERC20 {
     constructor(

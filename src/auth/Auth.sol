@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
 /// @author Modified from DappHub (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)

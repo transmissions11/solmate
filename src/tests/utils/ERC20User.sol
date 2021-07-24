@@ -1,16 +1,28 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
-import "./MockERC20.sol";
+import {ERC20} from "../../erc20/ERC20.sol";
 
 contract ERC20User {
-    MockERC20 token;
+    ERC20 token;
 
-    constructor(MockERC20 _token) {
+    constructor(ERC20 _token) {
         token = _token;
     }
 
     function approve(address dst, uint256 amt) external {
         token.approve(dst, amt);
+    }
+
+    function transfer(address dst, uint256 amt) external {
+        token.transfer(dst, amt);
+    }
+
+    function transferFrom(
+        address src,
+        address dst,
+        uint256 amt
+    ) external {
+        token.transferFrom(src, dst, amt);
     }
 }

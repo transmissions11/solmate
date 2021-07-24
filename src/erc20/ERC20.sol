@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
-
-import "./ERC20.sol";
+pragma solidity >=0.8.0;
 
 /// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
-/// @dev DO NOT USE WITH SOLIDITY VERSIONS BELOW 0.8.0. This contract DOES NOT USE SAFEMATH. 0.7.0 is only allowed so
-/// this contract can be used as an interface in contracts that do not wish to actually deploy this ERC20 implementation.
 /// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)
 contract ERC20 {
     /*///////////////////////////////////////////////////////////////
@@ -17,7 +13,7 @@ contract ERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 
     /*///////////////////////////////////////////////////////////////
-                             METADATA STORAGE`
+                             METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
 
     string public name;
@@ -87,11 +83,12 @@ contract ERC20 {
     function transfer(address to, uint256 value) external returns (bool) {
         balanceOf[msg.sender] -= value;
 
-        // TODO: We can use unchecked when we drop support for 0.7.0.
-        // It's safe, as sum of all user balances will never exceed
-        // type(uint256).max, since totalSupply would overflow in _mint
+        // This is safe, as the sum of all user balances can't exceed
+        // type(uint256).max, since totalSupply would overflow in_mint
         // and Solidity's default checked math would force it to revert.
-        balanceOf[to] += value;
+        unchecked {
+            balanceOf[to] += value;
+        }
 
         emit Transfer(msg.sender, to, value);
 
@@ -109,11 +106,12 @@ contract ERC20 {
 
         balanceOf[from] -= value;
 
-        // TODO: We can use unchecked when we drop support for 0.7.0.
-        // It's safe, as sum of all user balances will never exceed
+        // This is safe, as the sum of all user balances can't exceed
         // type(uint256).max, since totalSupply would overflow in _mint
         // and Solidity's default checked math would force it to revert.
-        balanceOf[to] += value;
+        unchecked {
+            balanceOf[to] += value;
+        }
 
         emit Transfer(from, to, value);
 

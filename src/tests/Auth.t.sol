@@ -2,7 +2,8 @@
 pragma solidity 0.8.6;
 
 import "ds-test/test.sol";
-import "../auth/Auth.sol";
+
+import {Auth, Authority} from "../auth/Auth.sol";
 
 contract FakeVault is Auth {
     function access() public view requiresAuth {}

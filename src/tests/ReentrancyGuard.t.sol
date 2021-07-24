@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.6;
 
-import "ds-test/test.sol";
-import "../utils/ReentrancyGuard.sol";
+import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {ReentrancyGuard} from "../utils/ReentrancyGuard.sol";
 
 contract ReentrancyAttacker {
     function thisWillReenterProtectedCall() external {
@@ -38,7 +38,7 @@ contract RiskyContract is ReentrancyGuard {
     }
 }
 
-contract ReentrancyGuardTest is DSTest {
+contract ReentrancyGuardTest is DSTestPlus {
     RiskyContract riskyContract;
     ReentrancyAttacker reentrancyAttacker;
 
@@ -55,8 +55,7 @@ contract ReentrancyGuardTest is DSTest {
 
     function testProtectedCall() public {
         try riskyContract.protectedCall(reentrancyAttacker) {
-            emit log("Reentrancy Guard Failed To Stop Attacker");
-            fail();
+            fail("Reentrancy Guard Failed To Stop Attacker");
         } catch {}
     }
 }

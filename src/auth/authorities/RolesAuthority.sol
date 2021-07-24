@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
-import "../Auth.sol";
+import {Auth, Authority} from "../Auth.sol";
 
 /// @notice An Authority for up to 256 roles.
 /// @author Modified from DappHub (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)

@@ -2,8 +2,8 @@
 pragma solidity 0.8.6;
 
 import {DSTest} from "ds-test/test.sol";
-import {Hevm} from "./utils/Hevm.sol";
 
+import {Hevm} from "./utils/Hevm.sol";
 import {Trust} from "../auth/Trust.sol";
 
 contract TrustTest is DSTest {

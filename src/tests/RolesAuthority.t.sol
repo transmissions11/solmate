@@ -2,7 +2,8 @@
 pragma solidity 0.8.6;
 
 import "ds-test/test.sol";
-import "../auth/authorities/RolesAuthority.sol";
+
+import {RolesAuthority, Auth} from "../auth/authorities/RolesAuthority.sol";
 
 contract RequiresAuth is Auth {
     bool public flag1;
