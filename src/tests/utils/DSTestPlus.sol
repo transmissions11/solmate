@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import "ds-test/test.sol";
 
-import {Hevm} from "./hevm.sol";
+import {Hevm} from "./Hevm.sol";
 import {ERC20} from "../../erc20/ERC20.sol";
 
 contract DSTestPlus is DSTest {
