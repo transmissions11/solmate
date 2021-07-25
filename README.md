@@ -24,6 +24,6 @@ utils
 These contracts were inspired by or directly modified from many sources, primarily:
 
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
-- [Dappsys V2](https://github.com/dapp-org/dappsys-v2)
-- [Dappsys](https://github.com/dapphub/dappsys)
+- **[Dappsys V2](https://github.com/dapp-org/dappsys-v2)**
+- **[Dappsys](https://github.com/dapphub/dappsys)**
 - [Uniswap](https://github.com/Uniswap/uniswap-lib)

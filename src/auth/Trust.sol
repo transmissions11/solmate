@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity >=0.7.0;
 
 /// @notice Ultra minimal authorization logic for smart contracts.
-/// @author Inspired by DappHub (https://github.com/dapp-org/dappsys-v2/blob/main/src/auth.sol)
+/// @author Inspired by Dappsys V2 (https://github.com/dapp-org/dappsys-v2/blob/main/src/auth.sol)
 contract Trust {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS

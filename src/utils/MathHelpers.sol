@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity >=0.7.0;
 
 /// @notice Safe arithmetic library with operations for fixed-point numbers.
-/// @author Modified from DappHub (https://github.com/dapphub/ds-math/blob/master/src/math.sol)
+/// @author Modified from Dappsys V2 (https://github.com/dapphub/ds-math/blob/master/src/math.sol)
 library MathHelpers {
     /*///////////////////////////////////////////////////////////////
                             UNIT DEFINITIONS
