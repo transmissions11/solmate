@@ -7,7 +7,7 @@ A catalogue of modern, opinionated, _gas efficient_ and [DappTools](https://gith
 ```ml
 auth
 ├─ Auth — "Flexible and updatable auth pattern"
-├─ Trust — "Ultra-minimal authorization logic"
+├─ Trust — "Ultra minimal authorization logic"
 ├─ authorities
 │  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
@@ -21,7 +21,7 @@ utils
 
 ## Acknowledgements
 
-These contracts were inspired by or directly modified from many sources, primarly:
+These contracts were inspired by or directly modified from many sources, primarily:
 
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
 - [Dappsys V2](https://github.com/dapp-org/dappsys-v2)
