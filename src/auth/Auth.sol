@@ -61,13 +61,13 @@ abstract contract Auth {
             return true;
         }
 
-        Authority cachedAuthority = authority;
+        Authority _authority = authority;
 
-        if (cachedAuthority == Authority(address(0))) {
+        if (_authority == Authority(address(0))) {
             return false;
         }
 
-        return cachedAuthority.canCall(src, address(this), sig);
+        return _authority.canCall(src, address(this), sig);
     }
 }
 
