@@ -55,13 +55,19 @@ abstract contract Auth {
     function isAuthorized(address src, bytes4 sig) internal view returns (bool) {
         if (src == address(this)) {
             return true;
-        } else if (src == owner) {
-            return true;
-        } else if (authority == Authority(address(0))) {
-            return false;
-        } else {
-            return authority.canCall(src, address(this), sig);
         }
+
+        if (src == owner) {
+            return true;
+        }
+
+        Authority cachedAuthority = authority;
+
+        if (cachedAuthority == Authority(address(0))) {
+            return false;
+        }
+
+        return cachedAuthority.canCall(src, address(this), sig);
     }
 }
 
