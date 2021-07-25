@@ -1,7 +1,7 @@
 {
   "name": "@rari-capital/solmate",
   "license": "AGPL-3.0-only",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Modern building blocks and mixins for smart contract development.",
   "files": [
     "src/**/*.sol"
