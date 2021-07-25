@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import {Authority} from "../Auth.sol";
 import {Trust} from "../Trust.sol";
 
-/// @notice Simple authority that allows a Trust to be used as an Authority.
+/// @notice Simple Authority that allows a Trust to be used as an Authority.
 /// @author Original work by TransmissionsDev
 contract TrustAuthority is Authority, Trust {
     function canCall(
