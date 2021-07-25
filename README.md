@@ -1,28 +1,28 @@
 # solmate
 
-Modern and opinionated building blocks for smart contract development.
+A catalogue of modern, opinionated, _gas efficient_ and [DappTools](https://github.com/dapphub/dapptools)-centric contracts that will fit perfectly into your next project.
 
-## Acknowledgments 
+## Contracts
 
-These contracts were heavily inspired by and/or modified from many sources, primarily:
+```ml
+auth
+├─ Auth — "Flexible and updatable auth pattern"
+├─ Trust — "Ultra-minimal authorization logic"
+├─ authorities
+│  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
+│  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
+erc20
+├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
+├─ SafeERC20 — "Safe ERC20/ETH transfer lib that handles missing return values"
+utils
+├─ ReentrancyGuard — "Gas optimized reentrancy protection for smart contracts"
+```
 
-- [Dappsys](https://github.com/dapphub/dappsys)
+## Acknowledgements 
+
+These contracts were inspired by or directly modified from many sources, primarly:
+
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
+- [Dappsys V2](https://github.com/dapp-org/dappsys-v2)
+- [Dappsys](https://github.com/dapphub/dappsys)
 - [Uniswap](https://github.com/Uniswap/uniswap-lib)
-
-## Another contract library?
-
-Yes. Although OpenZeppelin contracts are wonderful and cover a lot of Solidity developer's needs, they are lacking in 3 key areas:
-
-- Bloated
-- Gas Inefficient 
-- Not Opinionated Enough 
-- **Not [DappTools](https://github.com/dapphub/dapptools) friendly**
-
-Dappsys improves on those fronts, but also suffers from issues of its own:
-
-- Dated Solidity practices
-- Not comprehensive enough 
-
-### Solmate seeks to solve these issues by introducing a catalogue of modern, opinionated, _gas efficient_ and [DappTools](https://github.com/dapphub/dapptools)-centric contracts that will fit perfectly into your next project.
-
