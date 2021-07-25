@@ -7,9 +7,12 @@ import {Hevm} from "./hevm.sol";
 import {ERC20} from "../../erc20/ERC20.sol";
 
 contract DSTestPlus is DSTest {
-    Hevm constant hevm = Hevm(HEVM_ADDRESS);
+    Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
 
-    address immutable self = address(this);
+    address internal immutable self = address(this);
+
+    uint256 checkpointGasLeft;
+    string checkpointLabel;
 
     function fail(string memory err) internal {
         emit log_named_string("Error", err);
@@ -18,5 +21,22 @@ contract DSTestPlus is DSTest {
 
     function assertERC20Eq(ERC20 erc1, ERC20 erc2) internal {
         assertEq(address(erc1), address(erc2));
+    }
+
+    function assertFalse(bool data) internal {
+        assertTrue(!data);
+    }
+
+    function startMeasuringGas(string memory label) internal {
+        checkpointLabel = label;
+        checkpointGasLeft = gasleft();
+    }
+
+    function stopMeasuringGas() internal {
+        uint256 checkpointGasLeft2 = gasleft();
+
+        string memory label = checkpointLabel;
+
+        emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
     }
 }

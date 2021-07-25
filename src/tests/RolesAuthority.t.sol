@@ -1,32 +1,32 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.6;
 
-import "ds-test/test.sol";
+import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {RequiresAuth} from "./utils/RequiresAuth.sol";
 
-import {RolesAuthority, Auth} from "../auth/authorities/RolesAuthority.sol";
+import {Auth} from "../auth/Auth.sol";
+import {RolesAuthority} from "../auth/authorities/RolesAuthority.sol";
 
-contract RequiresAuth is Auth {
-    bool public flag1;
-    bool public flag2;
-
-    function updateFlag1() external requiresAuth {
-        flag1 = true;
-    }
-
-    function updateFlag2() external requiresAuth {
-        flag2 = true;
-    }
-}
-
-contract RolesAuthorityTest is DSTest {
-    address immutable self = address(this);
-
+contract RolesAuthorityTest is DSTestPlus {
     RolesAuthority roles;
     RequiresAuth requiresAuth;
 
     function setUp() public {
         roles = new RolesAuthority();
         requiresAuth = new RequiresAuth();
+
+        requiresAuth.setAuthority(roles);
+        requiresAuth.setOwner(address(0));
+    }
+
+    function testSanityChecks() public {
+        assertEq(roles.getUserRoles(self), bytes32(0));
+        assertFalse(roles.isUserRoot(self));
+        assertFalse(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+
+        try requiresAuth.updateFlag() {
+            fail("Trust Authority Allowed Attacker To Update Flag");
+        } catch {}
     }
 
     function testBasics() public {
@@ -38,19 +38,15 @@ contract RolesAuthorityTest is DSTest {
         roles.setUserRole(self, rootRole, true);
         roles.setUserRole(self, adminRole, true);
 
-        assertEq32(
-            bytes32(hex"0000000000000000000000000000000000000000000000000000000000000003"),
-            roles.getUserRoles(self)
-        );
+        assertEq32(0x0000000000000000000000000000000000000000000000000000000000000003, roles.getUserRoles(self));
 
-        roles.setRoleCapability(adminRole, address(requiresAuth), bytes4(keccak256("updateFlag1()")), true);
+        roles.setRoleCapability(adminRole, address(requiresAuth), RequiresAuth.updateFlag.selector, true);
 
-        assertTrue(roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
-        requiresAuth.updateFlag1();
-        assertTrue(requiresAuth.flag1());
+        assertTrue(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        requiresAuth.updateFlag();
 
-        roles.setRoleCapability(adminRole, address(requiresAuth), bytes4(keccak256("updateFlag1()")), false);
-        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        roles.setRoleCapability(adminRole, address(requiresAuth), RequiresAuth.updateFlag.selector, false);
+        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 
         assertTrue(roles.doesUserHaveRole(self, rootRole));
         assertTrue(roles.doesUserHaveRole(self, adminRole));
@@ -60,27 +56,27 @@ contract RolesAuthorityTest is DSTest {
 
     function testRoot() public {
         assertTrue(!roles.isUserRoot(self));
-        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 
         roles.setRootUser(self, true);
         assertTrue(roles.isUserRoot(self));
-        assertTrue(roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 
         roles.setRootUser(self, false);
         assertTrue(!roles.isUserRoot(self));
-        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
     }
 
     function testPublicCapabilities() public {
-        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
-        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 
-        roles.setPublicCapability(address(requiresAuth), bytes4(keccak256("updateFlag1()")), true);
-        assertTrue(roles.isCapabilityPublic(address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
-        assertTrue(roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        roles.setPublicCapability(address(requiresAuth), RequiresAuth.updateFlag.selector, true);
+        assertTrue(roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 
-        roles.setPublicCapability(address(requiresAuth), bytes4(keccak256("updateFlag1()")), false);
-        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
-        assertTrue(!roles.canCall(self, address(requiresAuth), bytes4(keccak256("updateFlag1()"))));
+        roles.setPublicCapability(address(requiresAuth), RequiresAuth.updateFlag.selector, false);
+        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
     }
 }

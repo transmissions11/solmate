@@ -1,16 +1,14 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 /// @notice Ultra minimal authorization for smart contracts.
-/// @author Modified from DappHub (https://github.com/dapp-org/dappsys-v2/blob/main/src/auth.sol)
+/// @author Inspired by DappHub (https://github.com/dapp-org/dappsys-v2/blob/main/src/auth.sol)
 contract Trust {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event UserTrusted(address indexed usr);
-
-    event UserDistrusted(address indexed usr);
+    event UserTrustUpdated(address indexed user, bool trusted);
 
     /*///////////////////////////////////////////////////////////////
                               TRUST STORAGE
@@ -18,20 +16,20 @@ contract Trust {
 
     mapping(address => bool) public isTrusted;
 
+    constructor() {
+        isTrusted[msg.sender] = true;
+
+        emit UserTrustUpdated(msg.sender, true);
+    }
+
     /*///////////////////////////////////////////////////////////////
                          TRUST MODIFIER FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function trust(address user) public requiresTrust {
-        isTrusted[user] = true;
+    function setIsTrusted(address user, bool trusted) public requiresTrust {
+        isTrusted[user] = trusted;
 
-        emit UserTrusted(user);
-    }
-
-    function distrust(address user) public requiresTrust {
-        isTrusted[user] = false;
-
-        emit UserDistrusted(user);
+        emit UserTrustUpdated(user, trusted);
     }
 
     /*///////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0-only
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity >=0.8.0;
 
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
@@ -22,19 +22,23 @@ abstract contract Auth {
 
     constructor() {
         owner = msg.sender;
+
         emit OwnerUpdated(msg.sender);
     }
 
     /*///////////////////////////////////////////////////////////////
                   OWNER AND AUTHORITY SETTER FUNCTIONS
     //////////////////////////////////////////////////////////////*/
+
     function setOwner(address owner_) external requiresAuth {
         owner = owner_;
+
         emit OwnerUpdated(owner);
     }
 
     function setAuthority(Authority authority_) external requiresAuth {
         authority = authority_;
+
         emit AuthorityUpdated(authority);
     }
 
@@ -44,6 +48,7 @@ abstract contract Auth {
 
     modifier requiresAuth() {
         require(isAuthorized(msg.sender, msg.sig), "UNAUTHORIZED");
+
         _;
     }
 

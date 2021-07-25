@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.0;
+
+import {Authority} from "../Auth.sol";
+import {Trust} from "../Trust.sol";
+
+/// @notice Simple authority that allows a Trust to be used as an Authority.
+contract TrustAuthority is Authority, Trust {
+    function canCall(
+        address caller,
+        address,
+        bytes4
+    ) public view virtual override returns (bool) {
+        return isTrusted[caller];
+    }
+}
