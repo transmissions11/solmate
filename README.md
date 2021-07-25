@@ -1,6 +1,6 @@
 # solmate
 
-A catalogue of modern, opinionated, _gas efficient_ and [DappTools](https://github.com/dapphub/dapptools)-centric contracts that will fit perfectly into your next project.
+**Modern**, **opinionated** and **gas optimized** building blocks for **smart contract** development.
 
 ## Contracts
 
