@@ -36,6 +36,8 @@ contract RiskyContract is ReentrancyGuard {
 
         attacker.thisWillReenterProtectedCall();
     }
+
+    function overprotectedCall() public nonReentrant {}
 }
 
 contract ReentrancyGuardTest is DSTestPlus {
@@ -53,9 +55,13 @@ contract ReentrancyGuardTest is DSTestPlus {
         assertEq(riskyContract.enterTimes(), 1);
     }
 
-    function testProtectedCall() public {
+    function testProtectedCall() public logs_gas {
         try riskyContract.protectedCall(reentrancyAttacker) {
             fail("Reentrancy Guard Failed To Stop Attacker");
         } catch {}
+    }
+
+    function testNoReentrancy() public logs_gas {
+        riskyContract.overprotectedCall();
     }
 }

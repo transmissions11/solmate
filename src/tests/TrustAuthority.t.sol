@@ -20,7 +20,7 @@ contract TrustAuthorityTest is DSTestPlus {
         trust.setIsTrusted(self, false);
     }
 
-    function testSanityChecks() public {
+    function testSanityChecks() public logs_gas {
         assertFalse(trust.isTrusted(self));
         assertFalse(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
         try requiresAuth.updateFlag() {
@@ -28,7 +28,7 @@ contract TrustAuthorityTest is DSTestPlus {
         } catch {}
     }
 
-    function testUpdateTrust() public {
+    function testUpdateTrust() public logs_gas {
         forceTrust(self);
         assertTrue(trust.isTrusted(self));
         assertTrue(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));

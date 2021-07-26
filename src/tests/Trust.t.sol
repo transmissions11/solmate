@@ -24,7 +24,7 @@ contract TrustTest is DSTestPlus {
         trust.setIsTrusted(usr, false);
     }
 
-    function testTrust(address usr) public {
+    function testTrust(address usr) public logs_gas {
         if (usr == self) return;
         forceTrust(self);
 
@@ -33,7 +33,7 @@ contract TrustTest is DSTestPlus {
         assertTrue(trust.isTrusted(usr));
     }
 
-    function testDistrust(address usr) public {
+    function testDistrust(address usr) public logs_gas {
         if (usr == self) return;
         forceTrust(self);
         forceTrust(usr);

@@ -42,12 +42,6 @@ contract AuthTest is DSTest {
         vault.setOwner(address(0));
     }
 
-    function testAcceptingOwner() public {
-        vault.setAuthority(Authority(address(new BooleanAuthority(true))));
-        vault.setOwner(address(0));
-        vault.access();
-    }
-
     function testFailRejectingAuthority1() public {
         vault.setAuthority(Authority(address(new BooleanAuthority(false))));
         vault.setOwner(address(0));
@@ -58,5 +52,11 @@ contract AuthTest is DSTest {
         vault.setAuthority(Authority(address(new BooleanAuthority(false))));
         vault.setOwner(address(0));
         vault.setOwner(address(0));
+    }
+
+    function testAcceptingOwner() public logs_gas {
+        vault.setAuthority(Authority(address(new BooleanAuthority(true))));
+        vault.setOwner(address(0));
+        vault.access();
     }
 }
