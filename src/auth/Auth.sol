@@ -30,14 +30,14 @@ abstract contract Auth {
                   OWNER AND AUTHORITY SETTER FUNCTIONS
     //////////////////////////////////////////////////////////////*/
 
-    function setOwner(address owner_) external requiresAuth {
-        owner = owner_;
+    function setOwner(address newOwner) external requiresAuth {
+        owner = newOwner;
 
         emit OwnerUpdated(owner);
     }
 
-    function setAuthority(Authority authority_) external requiresAuth {
-        authority = authority_;
+    function setAuthority(Authority newAuthority) external requiresAuth {
+        authority = newAuthority;
 
         emit AuthorityUpdated(authority);
     }
