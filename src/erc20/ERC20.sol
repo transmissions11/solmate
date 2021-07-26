@@ -52,17 +52,12 @@ contract ERC20 {
         symbol = _symbol;
         decimals = _decimals;
 
-        uint256 chainId;
-        assembly {
-            chainId := chainid()
-        }
-
         DOMAIN_SEPARATOR = keccak256(
             abi.encode(
                 keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                 keccak256(bytes(name)),
                 keccak256(bytes("1")),
-                chainId,
+                block.chainid,
                 address(this)
             )
         );
@@ -84,7 +79,7 @@ contract ERC20 {
         balanceOf[msg.sender] -= value;
 
         // This is safe, as the sum of all user balances can't exceed
-        // type(uint256).max, since totalSupply would overflow in_mint
+        // type(uint256).max, since totalSupply would overflow in _mint
         // and Solidity's default checked math would force it to revert.
         unchecked {
             balanceOf[to] += value;
