@@ -32,11 +32,13 @@ library SafeERC20 {
     }
 
     function safeApprove(
-        address token,
+        ERC20 token,
         address to,
         uint256 value
     ) internal {
-        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(ERC20.approve.selector, to, value));
+        (bool success, bytes memory data) = address(token).call(
+            abi.encodeWithSelector(ERC20.approve.selector, to, value)
+        );
 
         require(success && (data.length == 0 || abi.decode(data, (bool))), "APPROVE_FAILED");
     }
