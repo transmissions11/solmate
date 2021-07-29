@@ -78,9 +78,7 @@ contract ERC20 {
     function transfer(address to, uint256 value) external returns (bool) {
         balanceOf[msg.sender] -= value;
 
-        // This is safe, as the sum of all user balances can't exceed
-        // type(uint256).max, since totalSupply would overflow in _mint
-        // and Solidity's default checked math would force it to revert.
+        // The sum of all user balances won't exceed type(uint256).max!
         unchecked {
             balanceOf[to] += value;
         }
@@ -101,9 +99,7 @@ contract ERC20 {
 
         balanceOf[from] -= value;
 
-        // This is safe, as the sum of all user balances can't exceed
-        // type(uint256).max, since totalSupply would overflow in _mint
-        // and Solidity's default checked math would force it to revert.
+        // The sum of all user balances won't exceed type(uint256).max!
         unchecked {
             balanceOf[to] += value;
         }
@@ -150,14 +146,22 @@ contract ERC20 {
 
     function _mint(address to, uint256 value) internal {
         totalSupply += value;
-        balanceOf[to] += value;
+
+        // The sum of all user balances won't exceed type(uint256).max!
+        unchecked {
+            balanceOf[to] += value;
+        }
 
         emit Transfer(address(0), to, value);
     }
 
     function _burn(address from, uint256 value) internal {
         balanceOf[from] -= value;
-        totalSupply -= value;
+
+        // Not possible for a user to have a balance larger than totalSupply!
+        unchecked {
+            totalSupply -= value;
+        }
 
         emit Transfer(from, address(0), value);
     }
