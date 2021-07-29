@@ -168,4 +168,8 @@ contract BalanceSum {
     ) external returns (bool) {
         return token.transferFrom(src, dst, amt);
     }
+
+    function transfer(address dst, uint256 amt) external returns (bool) {
+        return token.transfer(dst, amt);
+    }
 }
