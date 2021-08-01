@@ -50,7 +50,7 @@ contract MathHelpersTest is DSTest {
         assertTrue(root * root <= x && next * next > x);
     }
 
-    function tesPpow(uint8 _x, uint8 _n) public {
+    function tesPow(uint8 _x, uint8 _n) public {
         // Avoid overflows.
         uint256 x = _x % 50;
         uint256 n = _n % 50;
