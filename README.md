@@ -19,6 +19,20 @@ utils
 ├─ FixedPointMath — "Arithmetic library with operations for fixed-point numbers"
 ```
 
+## Installation
+
+To install with **Hardhat** or **Truffle**:
+
+```sh
+npm install @rari-capital/solmate
+```
+
+To install with **DappTools**:
+
+```sh
+dapp install rari-capital/solmate
+```
+
 ## Acknowledgements
 
 These contracts were inspired by or directly modified from many sources, primarily:
