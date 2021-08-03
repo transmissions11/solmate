@@ -78,7 +78,8 @@ contract ERC20 {
     function transfer(address to, uint256 value) external returns (bool) {
         balanceOf[msg.sender] -= value;
 
-        // The sum of all user balances won't exceed type(uint256).max!
+        // This is safe because the sum of all user
+        // balances can't exceed type(uint256).max!
         unchecked {
             balanceOf[to] += value;
         }
@@ -99,7 +100,8 @@ contract ERC20 {
 
         balanceOf[from] -= value;
 
-        // The sum of all user balances won't exceed type(uint256).max!
+        // This is safe because the sum of all user
+        // balances can't exceed type(uint256).max!
         unchecked {
             balanceOf[to] += value;
         }
@@ -147,7 +149,8 @@ contract ERC20 {
     function _mint(address to, uint256 value) internal {
         totalSupply += value;
 
-        // The sum of all user balances won't exceed type(uint256).max!
+        // This is safe because the sum of all user
+        // balances can't exceed type(uint256).max!
         unchecked {
             balanceOf[to] += value;
         }
@@ -158,7 +161,8 @@ contract ERC20 {
     function _burn(address from, uint256 value) internal {
         balanceOf[from] -= value;
 
-        // Not possible for a user to have a balance larger than totalSupply!
+        // This is safe because a user won't ever
+        // have a balance larger than totalSupply!
         unchecked {
             totalSupply -= value;
         }

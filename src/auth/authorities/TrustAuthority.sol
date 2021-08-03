@@ -5,7 +5,7 @@ import {Authority} from "../Auth.sol";
 import {Trust} from "../Trust.sol";
 
 /// @notice Simple Authority that allows a Trust to be used as an Authority.
-/// @author Original work by TransmissionsDev
+/// @author Original work by TransmissionsDev (https://github.com/transmissionsdev)
 contract TrustAuthority is Authority, Trust {
     function canCall(
         address caller,

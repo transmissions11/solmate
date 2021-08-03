@@ -9,8 +9,8 @@ auth
 ├─ Auth — "Flexible and updatable auth pattern"
 ├─ Trust — "Ultra minimal authorization logic"
 ├─ authorities
-│  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
+│  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
 erc20
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
 ├─ SafeERC20 — "Safe ERC20/ETH transfer lib that handles missing return values"
