@@ -19,14 +19,6 @@ contract DSTestPlus is DSTest {
         fail();
     }
 
-    function assertERC20Eq(ERC20 erc1, ERC20 erc2) internal {
-        assertEq(address(erc1), address(erc2));
-    }
-
-    function assertFalse(bool data) internal {
-        assertTrue(!data);
-    }
-
     function startMeasuringGas(string memory label) internal {
         checkpointLabel = label;
         checkpointGasLeft = gasleft();
@@ -38,5 +30,25 @@ contract DSTestPlus is DSTest {
         string memory label = checkpointLabel;
 
         emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
+    }
+
+    function assertFalse(bool data) internal {
+        assertTrue(!data);
+    }
+
+    function assertERC20Eq(ERC20 erc1, ERC20 erc2) internal {
+        assertEq(address(erc1), address(erc2));
+    }
+
+    function assertEq(uint128 num1, uint128 num2) internal {
+        assertEq(uint256(num1), uint256(num2));
+    }
+
+    function assertEq(uint64 num1, uint64 num2) internal {
+        assertEq(uint256(num1), uint256(num2));
+    }
+
+    function assertEq(uint32 num1, uint32 num2) internal {
+        assertEq(uint256(num1), uint256(num2));
     }
 }
