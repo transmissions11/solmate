@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity >=0.7.0;
 
 import "ds-test/test.sol";
 
 import {Hevm} from "./Hevm.sol";
-import {ERC20} from "../../erc20/ERC20.sol";
 
 contract DSTestPlus is DSTest {
     Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
@@ -34,10 +33,6 @@ contract DSTestPlus is DSTest {
 
     function assertFalse(bool data) internal {
         assertTrue(!data);
-    }
-
-    function assertERC20Eq(ERC20 erc1, ERC20 erc2) internal {
-        assertEq(address(erc1), address(erc2));
     }
 
     function assertEq(uint128 num1, uint128 num2) internal {
