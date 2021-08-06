@@ -1,3 +1,6 @@
 [submodule "lib/ds-test"]
 	path = lib/ds-test
 	url = https://github.com/dapphub/ds-test
+[submodule "lib/weird-erc20"]
+	path = lib/weird-erc20
+	url = https://github.com/d-xo/weird-erc20

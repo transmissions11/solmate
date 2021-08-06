@@ -13,6 +13,8 @@ interface Hevm {
         bytes32
     ) external;
 
+    function load(address, bytes32) external returns (bytes32);
+
     function sign(uint256, bytes32)
         external
         returns (

@@ -1,16 +1,22 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.6;
 
-import "ds-test/test.sol";
-
+import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {InvariantTest} from "./utils/InvariantTest.sol";
 import {MockERC20} from "./utils/MockERC20.sol";
 import {ERC20User} from "./utils/ERC20User.sol";
 
-contract ERC20Test is DSTest {
+contract ERC20Test is DSTestPlus {
     MockERC20 token;
 
     function setUp() public {
         token = new MockERC20("Token", "TKN", 18);
+    }
+
+    function invariantMetadata() public {
+        assertEq(token.name(), "Token");
+        assertEq(token.symbol(), "TKN");
+        assertEq(token.decimals(), 18);
     }
 
     function testMetaData(
@@ -24,14 +30,14 @@ contract ERC20Test is DSTest {
         assertEq(tkn.decimals(), decimals);
     }
 
-    function testMint(address usr, uint256 amt) public {
+    function proveMint(address usr, uint256 amt) public {
         token.mint(usr, amt);
 
         assertEq(token.totalSupply(), amt);
         assertEq(token.balanceOf(usr), amt);
     }
 
-    function testBurn(
+    function proveBurn(
         address usr,
         uint256 amt0,
         uint256 amt1
@@ -45,30 +51,27 @@ contract ERC20Test is DSTest {
         assertEq(token.balanceOf(usr), amt0 - amt1);
     }
 
-    function testApprove(address usr, uint256 amt) public {
-        bool ret = token.approve(usr, amt);
+    function proveApprove(address usr, uint256 amt) public {
+        assertTrue(token.approve(usr, amt));
 
-        assertTrue(ret);
-        assertEq(token.allowance(address(this), usr), amt);
+        assertEq(token.allowance(self, usr), amt);
     }
 
-    function testTransfer(address usr, uint256 amt) public {
-        token.mint(address(this), amt);
+    function proveTransfer(address usr, uint256 amt) public {
+        token.mint(self, amt);
 
-        bool ret = token.transfer(usr, amt);
-
-        assertTrue(ret);
+        assertTrue(token.transfer(usr, amt));
         assertEq(token.totalSupply(), amt);
 
-        if (address(this) == usr) {
-            assertEq(token.balanceOf(address(this)), amt);
+        if (self == usr) {
+            assertEq(token.balanceOf(self), amt);
         } else {
-            assertEq(token.balanceOf(address(this)), 0);
+            assertEq(token.balanceOf(self), 0);
             assertEq(token.balanceOf(usr), amt);
         }
     }
 
-    function testTransferFrom(
+    function proveTransferFrom(
         address dst,
         uint256 approval,
         uint256 amt
@@ -78,15 +81,14 @@ contract ERC20Test is DSTest {
         ERC20User src = new ERC20User(token);
 
         token.mint(address(src), amt);
-        src.approve(address(this), approval);
 
-        bool ret = token.transferFrom(address(src), dst, amt);
+        src.approve(self, approval);
 
-        assertTrue(ret);
+        assertTrue(token.transferFrom(address(src), dst, amt));
         assertEq(token.totalSupply(), amt);
 
-        uint256 app = address(src) == address(this) || approval == type(uint256).max ? approval : approval - amt;
-        assertEq(token.allowance(address(src), address(this)), app);
+        uint256 app = address(src) == self || approval == type(uint256).max ? approval : approval - amt;
+        assertEq(token.allowance(address(src), self), app);
 
         if (address(src) == dst) {
             assertEq(token.balanceOf(address(src)), amt);
@@ -96,7 +98,7 @@ contract ERC20Test is DSTest {
         }
     }
 
-    function testFailTransferFromInsufficientAllowance(
+    function proveFailTransferFromInsufficientAllowance(
         address dst,
         uint256 approval,
         uint256 amt
@@ -106,11 +108,11 @@ contract ERC20Test is DSTest {
         ERC20User src = new ERC20User(token);
 
         token.mint(address(src), amt);
-        src.approve(address(this), approval);
+        src.approve(self, approval);
         token.transferFrom(address(src), dst, amt);
     }
 
-    function testFailTransferFromInsufficientBalance(
+    function proveFailTransferFromInsufficientBalance(
         address dst,
         uint256 mintAmt,
         uint256 sendAmt
@@ -120,22 +122,17 @@ contract ERC20Test is DSTest {
         ERC20User src = new ERC20User(token);
 
         token.mint(address(src), mintAmt);
-        src.approve(address(this), sendAmt);
+        src.approve(self, sendAmt);
         token.transferFrom(address(src), dst, sendAmt);
     }
 }
 
-contract TestInvariants is DSTest {
+contract ERC20Invariants is DSTestPlus, InvariantTest {
     BalanceSum balanceSum;
-    address[] targetContracts_;
-
-    function targetContracts() public view returns (address[] memory) {
-        return targetContracts_;
-    }
 
     function setUp() public {
         balanceSum = new BalanceSum();
-        targetContracts_.push(address(balanceSum));
+        addTargetContract(address(balanceSum));
     }
 
     function invariantBalanceSum() public {
@@ -157,19 +154,19 @@ contract BalanceSum {
         sum -= amt;
     }
 
-    function approve(address dst, uint256 amt) external returns (bool) {
-        return token.approve(dst, amt);
+    function approve(address dst, uint256 amt) external {
+        token.approve(dst, amt);
     }
 
     function transferFrom(
         address src,
         address dst,
         uint256 amt
-    ) external returns (bool) {
-        return token.transferFrom(src, dst, amt);
+    ) external {
+        token.transferFrom(src, dst, amt);
     }
 
-    function transfer(address dst, uint256 amt) external returns (bool) {
-        return token.transfer(dst, amt);
+    function transfer(address dst, uint256 amt) external {
+        token.transfer(dst, amt);
     }
 }

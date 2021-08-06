@@ -4,37 +4,19 @@ pragma solidity 0.8.6;
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {ReentrancyGuard} from "../utils/ReentrancyGuard.sol";
 
-contract ReentrancyAttacker {
-    function thisWillReenterProtectedCall() external {
-        RiskyContract(msg.sender).protectedCall(ReentrancyAttacker(address(this)));
-    }
-
-    function thisCallWillReenterUnprotectedCall() external {
-        RiskyContract(msg.sender).unprotectedCall(ReentrancyAttacker(address(this)));
-    }
-}
-
 contract RiskyContract is ReentrancyGuard {
     uint256 public enterTimes;
 
-    function unprotectedCall(ReentrancyAttacker attacker) public {
+    function unprotectedCall() public {
         enterTimes++;
-
-        if (enterTimes > 1) {
-            return;
-        }
-
-        attacker.thisCallWillReenterUnprotectedCall();
+        if (enterTimes > 1) return;
+        protectedCall();
     }
 
-    function protectedCall(ReentrancyAttacker attacker) public nonReentrant {
+    function protectedCall() public nonReentrant {
         enterTimes++;
-
-        if (enterTimes > 1) {
-            return;
-        }
-
-        attacker.thisWillReenterProtectedCall();
+        if (enterTimes > 1) return;
+        protectedCall();
     }
 
     function overprotectedCall() public nonReentrant {}
@@ -42,26 +24,28 @@ contract RiskyContract is ReentrancyGuard {
 
 contract ReentrancyGuardTest is DSTestPlus {
     RiskyContract riskyContract;
-    ReentrancyAttacker reentrancyAttacker;
 
     function setUp() public {
         riskyContract = new RiskyContract();
-        reentrancyAttacker = new ReentrancyAttacker();
+    }
+
+    function invariantReentrancyStatusAlways1() public {
+        assertEq(uint256(hevm.load(address(riskyContract), 0)), 1);
     }
 
     function testFailUnprotectedCall() public {
-        riskyContract.unprotectedCall(reentrancyAttacker);
+        riskyContract.unprotectedCall();
 
         assertEq(riskyContract.enterTimes(), 1);
     }
 
-    function testProtectedCall() public logs_gas {
-        try riskyContract.protectedCall(reentrancyAttacker) {
+    function testProtectedCall() public {
+        try riskyContract.protectedCall() {
             fail("Reentrancy Guard Failed To Stop Attacker");
         } catch {}
     }
 
-    function testNoReentrancy() public logs_gas {
+    function testNoReentrancy() public {
         riskyContract.overprotectedCall();
     }
 }

@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.6;
 
-import {DSTest} from "ds-test/test.sol";
-
+import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {FixedPointMath} from "../utils/FixedPointMath.sol";
 
-contract FixedPointMathTest is DSTest {
+contract FixedPointMathTest is DSTestPlus {
     function testFMul() public {
         assertEq(FixedPointMath.fmul(FixedPointMath.RAY, 2.5e27, 0.5e27), 1.25e27);
         assertEq(FixedPointMath.fmul(FixedPointMath.WAD, 2.5e18, 0.5e18), 1.25e18);
@@ -36,7 +35,7 @@ contract FixedPointMathTest is DSTest {
         assertTrue(root * root <= x && next * next > x);
     }
 
-    function testMin(uint256 x, uint256 y) public {
+    function proveMin(uint256 x, uint256 y) public {
         if (x <= y) {
             assertEq(FixedPointMath.min(x, y), x);
         } else {
@@ -44,7 +43,7 @@ contract FixedPointMathTest is DSTest {
         }
     }
 
-    function testMax(uint256 x, uint256 y) public {
+    function proveMax(uint256 x, uint256 y) public {
         if (x >= y) {
             assertEq(FixedPointMath.max(x, y), x);
         } else {
@@ -52,7 +51,7 @@ contract FixedPointMathTest is DSTest {
         }
     }
 
-    function testIMin(int256 x, int256 y) public {
+    function proveIMin(int256 x, int256 y) public {
         if (x <= y) {
             assertEq(FixedPointMath.imin(x, y), x);
         } else {
@@ -60,7 +59,7 @@ contract FixedPointMathTest is DSTest {
         }
     }
 
-    function testIMax(int256 x, int256 y) public {
+    function proveIMax(int256 x, int256 y) public {
         if (x >= y) {
             assertEq(FixedPointMath.imax(x, y), x);
         } else {

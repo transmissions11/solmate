@@ -16,10 +16,20 @@ contract RolesAuthorityTest is DSTestPlus {
         requiresAuth = new RequiresAuth();
 
         requiresAuth.setAuthority(roles);
-        requiresAuth.setOwner(address(0));
+        requiresAuth.setOwner(DEAD_ADDRESS);
     }
 
-    function testSanityChecks() public logs_gas {
+    function invariantOwner() public {
+        assertEq(roles.owner(), self);
+        assertEq(requiresAuth.owner(), DEAD_ADDRESS);
+    }
+
+    function invariantAuthority() public {
+        assertEq(address(roles.authority()), address(0));
+        assertEq(address(requiresAuth.authority()), address(roles));
+    }
+
+    function testSanityChecks() public {
         assertEq(roles.getUserRoles(self), bytes32(0));
         assertFalse(roles.isUserRoot(self));
         assertFalse(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
@@ -29,7 +39,7 @@ contract RolesAuthorityTest is DSTestPlus {
         } catch {}
     }
 
-    function testBasics() public logs_gas {
+    function testBasics() public {
         uint8 rootRole = 0;
         uint8 adminRole = 1;
         uint8 modRole = 2;
@@ -54,7 +64,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertTrue(!roles.doesUserHaveRole(self, userRole));
     }
 
-    function testRoot() public logs_gas {
+    function testRoot() public {
         assertTrue(!roles.isUserRoot(self));
         assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 
@@ -67,7 +77,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
     }
 
-    function testPublicCapabilities() public logs_gas {
+    function testPublicCapabilities() public {
         assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
         assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
 

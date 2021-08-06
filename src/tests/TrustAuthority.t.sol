@@ -15,12 +15,20 @@ contract TrustAuthorityTest is DSTestPlus {
         requiresAuth = new RequiresAuth();
 
         requiresAuth.setAuthority(trust);
+        requiresAuth.setOwner(DEAD_ADDRESS);
 
-        requiresAuth.setOwner(address(0));
         trust.setIsTrusted(self, false);
     }
 
-    function testSanityChecks() public logs_gas {
+    function invariantOwner() public {
+        assertEq(requiresAuth.owner(), DEAD_ADDRESS);
+    }
+
+    function invariantAuthority() public {
+        assertEq(address(requiresAuth.authority()), address(trust));
+    }
+
+    function testSanityChecks() public {
         assertFalse(trust.isTrusted(self));
         assertFalse(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
         try requiresAuth.updateFlag() {
@@ -28,7 +36,7 @@ contract TrustAuthorityTest is DSTestPlus {
         } catch {}
     }
 
-    function testUpdateTrust() public logs_gas {
+    function testUpdateTrust() public {
         forceTrust(self);
         assertTrue(trust.isTrusted(self));
         assertTrue(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
