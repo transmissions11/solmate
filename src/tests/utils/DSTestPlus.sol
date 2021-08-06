@@ -10,8 +10,6 @@ contract DSTestPlus is DSTest {
 
     address internal immutable self = address(this);
 
-    // TODO: We can remove this and just use address(0) once we figure out
-    // why HEVM calls contracts in invariant tests with address(0) as msg.sender.
     address constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
     uint256 private checkpointGasLeft;
