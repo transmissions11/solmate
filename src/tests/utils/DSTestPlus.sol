@@ -35,15 +35,15 @@ contract DSTestPlus is DSTest {
         assertTrue(!data);
     }
 
-    function assertEq(uint128 num1, uint128 num2) internal {
+    function assertUint128Eq(uint128 num1, uint128 num2) internal {
         assertEq(uint256(num1), uint256(num2));
     }
 
-    function assertEq(uint64 num1, uint64 num2) internal {
+    function assertUint64Eq(uint64 num1, uint64 num2) internal {
         assertEq(uint256(num1), uint256(num2));
     }
 
-    function assertEq(uint32 num1, uint32 num2) internal {
+    function assertUint32Eq(uint32 num1, uint32 num2) internal {
         assertEq(uint256(num1), uint256(num2));
     }
 }
