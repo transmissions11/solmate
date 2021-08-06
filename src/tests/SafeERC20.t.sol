@@ -5,7 +5,6 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
 import {SafeERC20, ERC20 as SolmateERC20} from "../erc20/SafeERC20.sol";
 
-// TODO: Upgrade weird-erc20 once they upgrade ds-test.
 import {ERC20} from "weird-erc20/ERC20.sol";
 import {ReturnsFalseToken} from "weird-erc20/ReturnsFalse.sol";
 import {MissingReturnToken} from "weird-erc20/MissingReturns.sol";
