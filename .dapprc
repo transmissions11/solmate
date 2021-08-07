@@ -8,7 +8,7 @@ export DAPP_TEST_SMTTIMEOUT=500000
 
 if [ "$DEEP_FUZZ" == "true" ]
 then 
-  export DAPP_TEST_FUZZ_RUNS=1000 # Fuzz for a long time if DEEP_FUZZ is set to true.
+  export DAPP_TEST_FUZZ_RUNS=2000 # Fuzz for a long time if DEEP_FUZZ is set to true.
 else
   export DAPP_TEST_FUZZ_RUNS=200 # Only fuzz briefly if DEEP_FUZZ is not set to true.
 fi
