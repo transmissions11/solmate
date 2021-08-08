@@ -70,7 +70,7 @@ contract ERC20 {
     function approve(address spender, uint256 value) external returns (bool) {
         allowance[msg.sender][spender] = value;
 
-        emit Approval(spender, spender, value);
+        emit Approval(msg.sender, spender, value);
 
         return true;
     }
@@ -139,7 +139,7 @@ contract ERC20 {
 
         allowance[recoveredAddress][spender] = value;
 
-        emit Approval(spender, spender, value);
+        emit Approval(owner, spender, value);
     }
 
     /*///////////////////////////////////////////////////////////////
