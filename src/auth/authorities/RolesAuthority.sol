@@ -90,7 +90,7 @@ contract RolesAuthority is Auth, Authority {
         if (enabled) {
             userRoles[who] = lastRoles | shifted;
         } else {
-            userRoles[who] = lastRoles & BITNOT(shifted);
+            userRoles[who] = lastRoles & ~shifted;
         }
 
         emit UserRoleUpdated(who, role, enabled);
@@ -117,17 +117,9 @@ contract RolesAuthority is Auth, Authority {
         if (enabled) {
             roleCapabilities[code][sig] = lastRoles | shifted;
         } else {
-            roleCapabilities[code][sig] = lastRoles & BITNOT(shifted);
+            roleCapabilities[code][sig] = lastRoles & ~shifted;
         }
 
         emit RoleCapabilityUpdated(role, code, sig, enabled);
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                            INTERNAL UTILS
-    //////////////////////////////////////////////////////////////*/
-
-    function BITNOT(bytes32 input) internal pure returns (bytes32 output) {
-        return (input ^ bytes32(type(uint256).max));
     }
 }
