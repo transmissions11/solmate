@@ -6,21 +6,21 @@ import {FixedPointMath} from "../utils/FixedPointMath.sol";
 
 contract FixedPointMathTest is DSTestPlus {
     function testFMul() public {
-        assertEq(FixedPointMath.fmul(FixedPointMath.RAY, 2.5e27, 0.5e27), 1.25e27);
-        assertEq(FixedPointMath.fmul(FixedPointMath.WAD, 2.5e18, 0.5e18), 1.25e18);
-        assertEq(FixedPointMath.fmul(FixedPointMath.YAD, 2.5e8, 0.5e8), 1.25e8);
+        assertEq(FixedPointMath.fmul(2.5e27, 0.5e27, FixedPointMath.RAY), 1.25e27);
+        assertEq(FixedPointMath.fmul(2.5e18, 0.5e18, FixedPointMath.WAD), 1.25e18);
+        assertEq(FixedPointMath.fmul(2.5e8, 0.5e8, FixedPointMath.YAD), 1.25e8);
     }
 
     function testFDiv() public {
-        assertEq(FixedPointMath.fdiv(FixedPointMath.RAY, 1e27, 2e27), 0.5e27);
-        assertEq(FixedPointMath.fdiv(FixedPointMath.WAD, 1e18, 2e18), 0.5e18);
-        assertEq(FixedPointMath.fdiv(FixedPointMath.YAD, 1e8, 2e8), 0.5e8);
+        assertEq(FixedPointMath.fdiv(1e27, 2e27, FixedPointMath.RAY), 0.5e27);
+        assertEq(FixedPointMath.fdiv(1e18, 2e18, FixedPointMath.WAD), 0.5e18);
+        assertEq(FixedPointMath.fdiv(1e8, 2e8, FixedPointMath.YAD), 0.5e8);
     }
 
     function testFPow() public {
-        assertEq(FixedPointMath.fpow(FixedPointMath.RAY, 2e27, 2), 4e27);
-        assertEq(FixedPointMath.fpow(FixedPointMath.WAD, 2e18, 2), 4e18);
-        assertEq(FixedPointMath.fpow(FixedPointMath.YAD, 2e8, 2), 4e8);
+        assertEq(FixedPointMath.fpow(2e27, 2, FixedPointMath.RAY), 4e27);
+        assertEq(FixedPointMath.fpow(2e18, 2, FixedPointMath.WAD), 4e18);
+        assertEq(FixedPointMath.fpow(2e8, 2, FixedPointMath.YAD), 4e8);
     }
 
     function testSqrt(uint256 x) public {

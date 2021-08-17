@@ -18,25 +18,25 @@ library FixedPointMath {
     //////////////////////////////////////////////////////////////*/
 
     function fmul(
-        uint256 decimals,
         uint256 x,
-        uint256 y
+        uint256 y,
+        uint256 decimals
     ) internal pure returns (uint256 z) {
         z = (x * y) / 10**decimals;
     }
 
     function fdiv(
-        uint256 decimals,
         uint256 x,
-        uint256 y
+        uint256 y,
+        uint256 decimals
     ) internal pure returns (uint256 z) {
         z = (x * 10**decimals) / y;
     }
 
     function fpow(
-        uint256 decimals,
         uint256 x,
-        uint256 n
+        uint256 n,
+        uint256 decimals
     ) internal pure returns (uint256 z) {
         uint256 b = 10**decimals;
 
