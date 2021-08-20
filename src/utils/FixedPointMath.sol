@@ -40,50 +40,52 @@ library FixedPointMath {
     ) internal pure returns (uint256 z) {
         uint256 b = 10**decimals;
 
-        assembly {
-            switch x
-            case 0 {
-                switch n
+        unchecked {
+            assembly {
+                switch x
                 case 0 {
-                    z := b
+                    switch n
+                    case 0 {
+                        z := b
+                    }
+                    default {
+                        z := 0
+                    }
                 }
                 default {
-                    z := 0
-                }
-            }
-            default {
-                switch mod(n, 2)
-                case 0 {
-                    z := b
-                }
-                default {
-                    z := x
-                }
-                let half := div(b, 2)
-                for {
-                    n := div(n, 2)
-                } n {
-                    n := div(n, 2)
-                } {
-                    let xx := mul(x, x)
-                    if iszero(eq(div(xx, x), x)) {
-                        revert(0, 0)
+                    switch mod(n, 2)
+                    case 0 {
+                        z := b
                     }
-                    let xxRound := add(xx, half)
-                    if lt(xxRound, xx) {
-                        revert(0, 0)
+                    default {
+                        z := x
                     }
-                    x := div(xxRound, b)
-                    if mod(n, 2) {
-                        let zx := mul(z, x)
-                        if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
+                    let half := div(b, 2)
+                    for {
+                        n := div(n, 2)
+                    } n {
+                        n := div(n, 2)
+                    } {
+                        let xx := mul(x, x)
+                        if iszero(eq(div(xx, x), x)) {
                             revert(0, 0)
                         }
-                        let zxRound := add(zx, half)
-                        if lt(zxRound, zx) {
+                        let xxRound := add(xx, half)
+                        if lt(xxRound, xx) {
                             revert(0, 0)
                         }
-                        z := div(zxRound, b)
+                        x := div(xxRound, b)
+                        if mod(n, 2) {
+                            let zx := mul(z, x)
+                            if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
+                                revert(0, 0)
+                            }
+                            let zxRound := add(zx, half)
+                            if lt(zxRound, zx) {
+                                revert(0, 0)
+                            }
+                            z := div(zxRound, b)
+                        }
                     }
                 }
             }
