@@ -35,7 +35,7 @@ contract FixedPointMathTest is DSTestPlus {
         assertTrue(root * root <= x && next * next > x);
     }
 
-    function proveMin(uint256 x, uint256 y) public {
+    function testMin(uint256 x, uint256 y) public {
         if (x <= y) {
             assertEq(FixedPointMath.min(x, y), x);
         } else {
@@ -43,27 +43,11 @@ contract FixedPointMathTest is DSTestPlus {
         }
     }
 
-    function proveMax(uint256 x, uint256 y) public {
+    function testMax(uint256 x, uint256 y) public {
         if (x >= y) {
             assertEq(FixedPointMath.max(x, y), x);
         } else {
             assertEq(FixedPointMath.max(x, y), y);
-        }
-    }
-
-    function proveIMin(int256 x, int256 y) public {
-        if (x <= y) {
-            assertEq(FixedPointMath.imin(x, y), x);
-        } else {
-            assertEq(FixedPointMath.imin(x, y), y);
-        }
-    }
-
-    function proveIMax(int256 x, int256 y) public {
-        if (x >= y) {
-            assertEq(FixedPointMath.imax(x, y), x);
-        } else {
-            assertEq(FixedPointMath.imax(x, y), y);
         }
     }
 }

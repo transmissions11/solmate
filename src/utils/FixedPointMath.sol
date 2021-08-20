@@ -160,12 +160,4 @@ library FixedPointMath {
     function max(uint256 x, uint256 y) internal pure returns (uint256 z) {
         return x >= y ? x : y;
     }
-
-    function imin(int256 x, int256 y) internal pure returns (int256 z) {
-        return x <= y ? x : y;
-    }
-
-    function imax(int256 x, int256 y) internal pure returns (int256 z) {
-        return x >= y ? x : y;
-    }
 }
