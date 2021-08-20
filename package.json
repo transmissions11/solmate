@@ -11,7 +11,7 @@
     "url": "git+https://github.com/Rari-Capital/solmate.git"
   },
   "scripts": {
-    "lint": "./node_modules/.bin/prettier --write src/**/*.sol"
+    "lint": "prettier --write src/**/*.sol"
   },
   "devDependencies": {
     "prettier": "^2.3.1",
