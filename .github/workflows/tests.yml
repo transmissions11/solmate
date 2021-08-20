@@ -19,6 +19,3 @@ jobs:
 
       - name: Run tests
         run: nix-shell --run 'dapp test'
-        env:
-          # Only fuzz deeply if we're pushing to main or this is a PR to main:
-          DEEP_FUZZ: ${{ github.ref == 'refs/heads/main' || github.base_ref == 'main' }}
