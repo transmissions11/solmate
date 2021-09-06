@@ -10,7 +10,7 @@ contract DSTestPlus is DSTest {
 
     address internal immutable self = address(this);
 
-    address constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
+    address internal constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
     uint256 private checkpointGasLeft;
     string private checkpointLabel;
