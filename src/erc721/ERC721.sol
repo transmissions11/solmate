@@ -7,7 +7,7 @@ contract ERC721 {
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
     
-    event Transfer(address indexed owner, address indexed to, uint256 indexed tokenId);
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     
     event Approval(address indexed owner, address indexed spender, uint256 indexed tokenId);
     
@@ -70,7 +70,7 @@ contract ERC721 {
                               ERC-20-LIKE LOGIC
     //////////////////////////////////////////////////////////////*/
     
-    function transfer(address to, uint256 tokenId) external payable {
+    function transfer(address to, uint256 tokenId) external {
         require(msg.sender == ownerOf[tokenId], "NOT_OWNER");
         
         // This is safe because ownership is checked
@@ -97,7 +97,7 @@ contract ERC721 {
         supported = interfaceId == 0x80ac58cd || interfaceId == 0x5b5e139f;
     }
     
-    function approve(address spender, uint256 tokenId) external payable {
+    function approve(address spender, uint256 tokenId) external {
         address owner = ownerOf[tokenId];
         
         require(msg.sender == owner || isApprovedForAll[owner][msg.sender], "NOT_APPROVED");
@@ -113,7 +113,7 @@ contract ERC721 {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function transferFrom(address, address to, uint256 tokenId) public payable {
+    function transferFrom(address, address to, uint256 tokenId) public {
         address owner = ownerOf[tokenId];
         
         require(
@@ -139,11 +139,11 @@ contract ERC721 {
         emit Transfer(owner, to, tokenId); 
     }
     
-    function safetransferFrom(address, address to, uint256 tokenId) external payable {
+    function safetransferFrom(address, address to, uint256 tokenId) external {
         safetransferFrom(address(0), to, tokenId, "");
     }
     
-    function safetransferFrom(address, address to, uint256 tokenId, bytes memory data) public payable {
+    function safetransferFrom(address, address to, uint256 tokenId, bytes memory data) public {
         transferFrom(address(0), to, tokenId); 
         
         if (to.code.length != 0) {
