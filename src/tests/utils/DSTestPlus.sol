@@ -12,8 +12,8 @@ contract DSTestPlus is DSTest {
 
     address internal constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
-    uint256 private checkpointGasLeft;
     string private checkpointLabel;
+    uint256 private checkpointGasLeft;
 
     function fail(string memory err) internal {
         emit log_named_string("Error", err);
@@ -42,6 +42,10 @@ contract DSTestPlus is DSTest {
     }
 
     function assertUint64Eq(uint64 num1, uint64 num2) internal {
+        assertEq(uint256(num1), uint256(num2));
+    }
+
+    function assertUint96Eq(uint96 num1, uint96 num2) internal {
         assertEq(uint256(num1), uint256(num2));
     }
 
