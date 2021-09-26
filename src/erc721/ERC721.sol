@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-/// @notice Modern and gas efficient ERC-721 + ERC-20/EIP-2612-like implementation.
+/// @notice Modern and gas efficient ERC-721 + ERC-20/EIP-2612-like implementation,
+/// including the MetaData, and partially, Enumerable extensions.
 contract ERC721 {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
@@ -46,7 +47,7 @@ contract ERC721 {
         
     bytes32 public immutable DOMAIN_SEPARATOR;
 
-    mapping(address => uint256) public nonces;
+    mapping(uint256 => uint256) public nonces;
     
     constructor(
         string memory _name,
@@ -139,11 +140,11 @@ contract ERC721 {
         emit Transfer(owner, to, tokenId); 
     }
     
-    function safetransferFrom(address, address to, uint256 tokenId) external {
-        safetransferFrom(address(0), to, tokenId, "");
+    function safeTransferFrom(address, address to, uint256 tokenId) external {
+        safeTransferFrom(address(0), to, tokenId, "");
     }
     
-    function safetransferFrom(address, address to, uint256 tokenId, bytes memory data) public {
+    function safeTransferFrom(address, address to, uint256 tokenId, bytes memory data) public {
         transferFrom(address(0), to, tokenId); 
         
         if (to.code.length != 0) {
@@ -177,7 +178,7 @@ contract ERC721 {
             abi.encodePacked(
                 "\x19\x01",
                 DOMAIN_SEPARATOR,
-                keccak256(abi.encode(PERMIT_TYPEHASH, spender, tokenId, nonces[owner]++, deadline))
+                keccak256(abi.encode(PERMIT_TYPEHASH, spender, tokenId, nonces[tokenId]++, deadline))
             )
         );
 
