@@ -24,9 +24,7 @@ library SafeERC20 {
         address to,
         uint256 value
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transfer.selector, to, value)
-        );
+        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(ERC20.transfer.selector, to, value));
 
         require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FAILED");
     }
@@ -36,9 +34,7 @@ library SafeERC20 {
         address to,
         uint256 value
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.approve.selector, to, value)
-        );
+        (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(ERC20.approve.selector, to, value));
 
         require(success && (data.length == 0 || abi.decode(data, (bool))), "APPROVE_FAILED");
     }

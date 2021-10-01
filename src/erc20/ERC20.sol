@@ -33,15 +33,15 @@ contract ERC20 {
     mapping(address => mapping(address => uint256)) public allowance;
 
     /*///////////////////////////////////////////////////////////////
-                         PERMIT/EIP-2612 STORAGE
+                           EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
     bytes32 public constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-    bytes32 internal immutable _DOMAIN_SEPARATOR;
+    uint256 internal immutable DEFAULT_CHAIN_ID;
 
-    uint256 internal immutable DOMAIN_SEPARATOR_CHAIN_ID;
+    bytes32 internal immutable DEFAULT_DOMAIN_SEPARATOR;
 
     mapping(address => uint256) public nonces;
 
@@ -54,24 +54,8 @@ contract ERC20 {
         symbol = _symbol;
         decimals = _decimals;
 
-        _DOMAIN_SEPARATOR = _calculateDomainSeparator();
-        DOMAIN_SEPARATOR_CHAIN_ID = block.chainid;
-    }
-
-    function DOMAIN_SEPARATOR() public view virtual returns (bytes32 domainSeperator) {
-        domainSeperator = block.chainid == DOMAIN_SEPARATOR_CHAIN_ID ? _DOMAIN_SEPARATOR : _calculateDomainSeparator();
-    }
-
-    function _calculateDomainSeparator() internal view returns (bytes32 domainSeperator) {
-        domainSeperator = keccak256(
-            abi.encode(
-                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                keccak256(bytes(name)),
-                keccak256(bytes("1")),
-                block.chainid,
-                address(this)
-            )
-        );
+        DEFAULT_CHAIN_ID = block.chainid;
+        DEFAULT_DOMAIN_SEPARATOR = computeDomainSeparator();
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -123,7 +107,7 @@ contract ERC20 {
     }
 
     /*///////////////////////////////////////////////////////////////
-                          PERMIT/EIP-2612 LOGIC
+                              EIP-2612 LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function permit(
@@ -153,11 +137,28 @@ contract ERC20 {
         emit Approval(owner, spender, value);
     }
 
+    function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
+        return block.chainid == DEFAULT_CHAIN_ID ? DEFAULT_DOMAIN_SEPARATOR : computeDomainSeparator();
+    }
+
+    function computeDomainSeparator() internal view virtual returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                    keccak256(bytes(name)),
+                    keccak256(bytes("1")),
+                    block.chainid,
+                    address(this)
+                )
+            );
+    }
+
     /*///////////////////////////////////////////////////////////////
-                          INTERNAL UTILS
+                       INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function _mint(address to, uint256 value) internal {
+    function mint(address to, uint256 value) internal virtual {
         totalSupply += value;
 
         // This is safe because the sum of all user
@@ -169,7 +170,7 @@ contract ERC20 {
         emit Transfer(address(0), to, value);
     }
 
-    function _burn(address from, uint256 value) internal {
+    function burn(address from, uint256 value) internal virtual {
         balanceOf[from] -= value;
 
         // This is safe because a user won't ever
