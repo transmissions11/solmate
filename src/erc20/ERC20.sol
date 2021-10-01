@@ -40,7 +40,7 @@ contract ERC20 {
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
     bytes32 internal immutable _DOMAIN_SEPARATOR;
-    
+
     uint256 internal immutable DOMAIN_SEPARATOR_CHAIN_ID;
 
     mapping(address => uint256) public nonces;
@@ -57,11 +57,11 @@ contract ERC20 {
         _DOMAIN_SEPARATOR = _calculateDomainSeparator();
         DOMAIN_SEPARATOR_CHAIN_ID = block.chainid;
     }
-    
-    function DOMAIN_SEPARATOR() public virtual view returns (bytes32 domainSeperator) {
+
+    function DOMAIN_SEPARATOR() public view virtual returns (bytes32 domainSeperator) {
         domainSeperator = block.chainid == DOMAIN_SEPARATOR_CHAIN_ID ? _DOMAIN_SEPARATOR : _calculateDomainSeparator();
     }
-    
+
     function _calculateDomainSeparator() internal view returns (bytes32 domainSeperator) {
         domainSeperator = keccak256(
             abi.encode(
@@ -73,7 +73,7 @@ contract ERC20 {
             )
         );
     }
-    
+
     /*///////////////////////////////////////////////////////////////
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
