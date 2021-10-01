@@ -67,7 +67,7 @@ contract ERC20 {
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(address spender, uint256 value) external returns (bool) {
+    function approve(address spender, uint256 value) public virtual returns (bool) {
         allowance[msg.sender][spender] = value;
 
         emit Approval(msg.sender, spender, value);
@@ -75,7 +75,7 @@ contract ERC20 {
         return true;
     }
 
-    function transfer(address to, uint256 value) external returns (bool) {
+    function transfer(address to, uint256 value) public virtual returns (bool) {
         balanceOf[msg.sender] -= value;
 
         // This is safe because the sum of all user
@@ -93,7 +93,7 @@ contract ERC20 {
         address from,
         address to,
         uint256 value
-    ) external returns (bool) {
+    ) public virtual returns (bool) {
         if (allowance[from][msg.sender] != type(uint256).max) {
             allowance[from][msg.sender] -= value;
         }
@@ -123,7 +123,7 @@ contract ERC20 {
         uint8 v,
         bytes32 r,
         bytes32 s
-    ) external {
+    ) public virtual {
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
         bytes32 digest = keccak256(
