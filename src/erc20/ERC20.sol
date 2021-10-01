@@ -39,9 +39,9 @@ contract ERC20 {
     bytes32 public constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-    uint256 internal immutable DEFAULT_CHAIN_ID;
+    uint256 internal immutable INITIAL_CHAIN_ID;
 
-    bytes32 internal immutable DEFAULT_DOMAIN_SEPARATOR;
+    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
 
     mapping(address => uint256) public nonces;
 
@@ -54,8 +54,8 @@ contract ERC20 {
         symbol = _symbol;
         decimals = _decimals;
 
-        DEFAULT_CHAIN_ID = block.chainid;
-        DEFAULT_DOMAIN_SEPARATOR = computeDomainSeparator();
+        INITIAL_CHAIN_ID = block.chainid;
+        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -138,7 +138,7 @@ contract ERC20 {
     }
 
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return block.chainid == DEFAULT_CHAIN_ID ? DEFAULT_DOMAIN_SEPARATOR : computeDomainSeparator();
+        return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
     }
 
     function computeDomainSeparator() internal view virtual returns (bytes32) {
