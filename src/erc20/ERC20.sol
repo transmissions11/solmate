@@ -158,7 +158,7 @@ contract ERC20 {
                        INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function mint(address to, uint256 value) internal virtual {
+    function _mint(address to, uint256 value) internal virtual {
         totalSupply += value;
 
         // This is safe because the sum of all user
@@ -170,7 +170,7 @@ contract ERC20 {
         emit Transfer(address(0), to, value);
     }
 
-    function burn(address from, uint256 value) internal virtual {
+    function _burn(address from, uint256 value) internal virtual {
         balanceOf[from] -= value;
 
         // This is safe because a user won't ever
