@@ -4,15 +4,15 @@ pragma solidity >=0.8.0;
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Modified from Dappsys V2 (https://github.com/dapp-org/dappsys-v2/blob/main/src/math.sol)
 /// and ABDK (https://github.com/abdk-consulting/abdk-libraries-solidity/blob/master/ABDKMath64x64.sol)
-library FixedPointMath {
+library FixedPointMathLib {
     /*///////////////////////////////////////////////////////////////
-                        COMMON DECIMAL DEFINITIONS
+                              COMMON SCALES
     //////////////////////////////////////////////////////////////*/
 
-    uint256 internal constant YAD = 8;
-    uint256 internal constant WAD = 18;
-    uint256 internal constant RAY = 27;
-    uint256 internal constant RAD = 45;
+    uint256 internal constant YAD = 1e8;
+    uint256 internal constant WAD = 1e18;
+    uint256 internal constant RAY = 1e27;
+    uint256 internal constant RAD = 1e45;
 
     /*///////////////////////////////////////////////////////////////
                          FIXED POINT OPERATIONS
@@ -21,33 +21,31 @@ library FixedPointMath {
     function fmul(
         uint256 x,
         uint256 y,
-        uint256 decimals
+        uint256 scale
     ) internal pure returns (uint256 z) {
-        z = (x * y) / 10**decimals;
+        z = (x * y) / scale;
     }
 
     function fdiv(
         uint256 x,
         uint256 y,
-        uint256 decimals
+        uint256 scale
     ) internal pure returns (uint256 z) {
-        z = (x * 10**decimals) / y;
+        z = (x * scale) / y;
     }
 
     function fpow(
         uint256 x,
         uint256 n,
-        uint256 decimals
+        uint256 scale
     ) internal pure returns (uint256 z) {
-        uint256 b = 10**decimals;
-
         unchecked {
             assembly {
                 switch x
                 case 0 {
                     switch n
                     case 0 {
-                        z := b
+                        z := scale
                     }
                     default {
                         z := 0
@@ -56,12 +54,12 @@ library FixedPointMath {
                 default {
                     switch mod(n, 2)
                     case 0 {
-                        z := b
+                        z := scale
                     }
                     default {
                         z := x
                     }
-                    let half := div(b, 2)
+                    let half := div(scale, 2)
                     for {
                         n := div(n, 2)
                     } n {
@@ -75,7 +73,7 @@ library FixedPointMath {
                         if lt(xxRound, xx) {
                             revert(0, 0)
                         }
-                        x := div(xxRound, b)
+                        x := div(xxRound, scale)
                         if mod(n, 2) {
                             let zx := mul(z, x)
                             if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
@@ -85,7 +83,7 @@ library FixedPointMath {
                             if lt(zxRound, zx) {
                                 revert(0, 0)
                             }
-                            z := div(zxRound, b)
+                            z := div(zxRound, scale)
                         }
                     }
                 }

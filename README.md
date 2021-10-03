@@ -16,7 +16,7 @@ erc20
 ├─ SafeERC20 — "Safe ERC20/ETH transfer lib that handles missing return values"
 utils
 ├─ ReentrancyGuard — "Gas optimized reentrancy protection for smart contracts"
-├─ FixedPointMath — "Arithmetic library with operations for fixed-point numbers"
+├─ FixedPointMathLib — "Arithmetic library with operations for fixed-point numbers"
 ```
 
 ## Installation
