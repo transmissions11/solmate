@@ -17,6 +17,7 @@ erc20
 utils
 ├─ ReentrancyGuard — "Gas optimized reentrancy protection for smart contracts"
 ├─ FixedPointMathLib — "Arithmetic library with operations for fixed-point numbers"
+├─ Bytes32AddressLib — "Library for converting between addresses and bytes32 values"
 ```
 
 ## Installation
