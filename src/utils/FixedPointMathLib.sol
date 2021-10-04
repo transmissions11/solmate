@@ -6,7 +6,7 @@ pragma solidity >=0.8.0;
 /// and ABDK (https://github.com/abdk-consulting/abdk-libraries-solidity/blob/master/ABDKMath64x64.sol)
 library FixedPointMathLib {
     /*///////////////////////////////////////////////////////////////
-                              COMMON SCALES
+                            COMMON BASE UNITS
     //////////////////////////////////////////////////////////////*/
 
     uint256 internal constant YAD = 1e8;
@@ -21,23 +21,23 @@ library FixedPointMathLib {
     function fmul(
         uint256 x,
         uint256 y,
-        uint256 scale
+        uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = (x * y) / scale;
+        z = (x * y) / baseUnit;
     }
 
     function fdiv(
         uint256 x,
         uint256 y,
-        uint256 scale
+        uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = (x * scale) / y;
+        z = (x * baseUnit) / y;
     }
 
     function fpow(
         uint256 x,
         uint256 n,
-        uint256 scale
+        uint256 baseUnit
     ) internal pure returns (uint256 z) {
         unchecked {
             assembly {
@@ -45,7 +45,7 @@ library FixedPointMathLib {
                 case 0 {
                     switch n
                     case 0 {
-                        z := scale
+                        z := baseUnit
                     }
                     default {
                         z := 0
@@ -54,12 +54,12 @@ library FixedPointMathLib {
                 default {
                     switch mod(n, 2)
                     case 0 {
-                        z := scale
+                        z := baseUnit
                     }
                     default {
                         z := x
                     }
-                    let half := div(scale, 2)
+                    let half := div(baseUnit, 2)
                     for {
                         n := div(n, 2)
                     } n {
@@ -73,7 +73,7 @@ library FixedPointMathLib {
                         if lt(xxRound, xx) {
                             revert(0, 0)
                         }
-                        x := div(xxRound, scale)
+                        x := div(xxRound, baseUnit)
                         if mod(n, 2) {
                             let zx := mul(z, x)
                             if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
@@ -83,7 +83,7 @@ library FixedPointMathLib {
                             if lt(zxRound, zx) {
                                 revert(0, 0)
                             }
-                            z := div(zxRound, scale)
+                            z := div(zxRound, baseUnit)
                         }
                     }
                 }
