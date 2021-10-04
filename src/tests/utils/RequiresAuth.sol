@@ -3,7 +3,7 @@ pragma solidity >=0.7.0;
 
 import {Auth} from "../../auth/Auth.sol";
 
-contract RequiresAuth is Auth {
+contract RequiresAuth is Auth(msg.sender) {
     bool public flag;
 
     function updateFlag() external requiresAuth {

@@ -16,10 +16,10 @@ contract Trust {
 
     mapping(address => bool) public isTrusted;
 
-    constructor() {
-        isTrusted[msg.sender] = true;
+    constructor(address user) {
+        isTrusted[user] = true;
 
-        emit UserTrustUpdated(msg.sender, true);
+        emit UserTrustUpdated(user, true);
     }
 
     /*///////////////////////////////////////////////////////////////

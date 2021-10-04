@@ -20,10 +20,10 @@ abstract contract Auth {
 
     address public owner;
 
-    constructor() {
-        owner = msg.sender;
+    constructor(address newOwner) {
+        owner = newOwner;
 
-        emit OwnerUpdated(msg.sender);
+        emit OwnerUpdated(newOwner);
     }
 
     /*///////////////////////////////////////////////////////////////

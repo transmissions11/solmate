@@ -9,7 +9,7 @@ contract TrustTest is DSTestPlus {
     Trust trust;
 
     function setUp() public {
-        trust = new Trust();
+        trust = new Trust(address(this));
 
         trust.setIsTrusted(self, false);
     }

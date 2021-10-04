@@ -5,7 +5,7 @@ import {Auth, Authority} from "../Auth.sol";
 
 /// @notice Role based Authority that supports up to 256 roles.
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)
-contract RolesAuthority is Auth, Authority {
+contract RolesAuthority is Auth(msg.sender), Authority {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
