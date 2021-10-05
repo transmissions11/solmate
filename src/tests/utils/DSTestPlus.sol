@@ -8,8 +8,6 @@ import {Hevm} from "./Hevm.sol";
 contract DSTestPlus is DSTest {
     Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
 
-    address internal immutable self = address(this);
-
     address internal constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
     string private checkpointLabel;

@@ -54,19 +54,19 @@ contract ERC20Test is DSTestPlus {
     function proveApprove(address usr, uint256 amt) public {
         assertTrue(token.approve(usr, amt));
 
-        assertEq(token.allowance(self, usr), amt);
+        assertEq(token.allowance(address(this), usr), amt);
     }
 
     function proveTransfer(address usr, uint256 amt) public {
-        token.mint(self, amt);
+        token.mint(address(this), amt);
 
         assertTrue(token.transfer(usr, amt));
         assertEq(token.totalSupply(), amt);
 
-        if (self == usr) {
-            assertEq(token.balanceOf(self), amt);
+        if (address(this) == usr) {
+            assertEq(token.balanceOf(address(this)), amt);
         } else {
-            assertEq(token.balanceOf(self), 0);
+            assertEq(token.balanceOf(address(this)), 0);
             assertEq(token.balanceOf(usr), amt);
         }
     }
@@ -82,13 +82,13 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(address(src), amt);
 
-        src.approve(self, approval);
+        src.approve(address(this), approval);
 
         assertTrue(token.transferFrom(address(src), dst, amt));
         assertEq(token.totalSupply(), amt);
 
-        uint256 app = address(src) == self || approval == type(uint256).max ? approval : approval - amt;
-        assertEq(token.allowance(address(src), self), app);
+        uint256 app = address(src) == address(this) || approval == type(uint256).max ? approval : approval - amt;
+        assertEq(token.allowance(address(src), address(this)), app);
 
         if (address(src) == dst) {
             assertEq(token.balanceOf(address(src)), amt);
@@ -108,7 +108,7 @@ contract ERC20Test is DSTestPlus {
         ERC20User src = new ERC20User(token);
 
         token.mint(address(src), amt);
-        src.approve(self, approval);
+        src.approve(address(this), approval);
         token.transferFrom(address(src), dst, amt);
     }
 
@@ -122,7 +122,7 @@ contract ERC20Test is DSTestPlus {
         ERC20User src = new ERC20User(token);
 
         token.mint(address(src), mintAmt);
-        src.approve(self, sendAmt);
+        src.approve(address(this), sendAmt);
         token.transferFrom(address(src), dst, sendAmt);
     }
 }

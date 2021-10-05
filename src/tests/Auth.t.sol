@@ -30,7 +30,7 @@ contract AuthTest is DSTestPlus {
     }
 
     function invariantOwner() public {
-        assertEq(requiresAuth.owner(), self);
+        assertEq(requiresAuth.owner(), address(this));
     }
 
     function invariantAuthority() public {

@@ -20,7 +20,7 @@ contract RolesAuthorityTest is DSTestPlus {
     }
 
     function invariantOwner() public {
-        assertEq(roles.owner(), self);
+        assertEq(roles.owner(), address(this));
         assertEq(requiresAuth.owner(), DEAD_ADDRESS);
     }
 
@@ -30,9 +30,9 @@ contract RolesAuthorityTest is DSTestPlus {
     }
 
     function testSanityChecks() public {
-        assertEq(roles.getUserRoles(self), bytes32(0));
-        assertFalse(roles.isUserRoot(self));
-        assertFalse(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertEq(roles.getUserRoles(address(this)), bytes32(0));
+        assertFalse(roles.isUserRoot(address(this)));
+        assertFalse(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
 
         try requiresAuth.updateFlag() {
             fail("Trust Authority Allowed Attacker To Update Flag");
@@ -45,48 +45,51 @@ contract RolesAuthorityTest is DSTestPlus {
         uint8 modRole = 2;
         uint8 userRole = 3;
 
-        roles.setUserRole(self, rootRole, true);
-        roles.setUserRole(self, adminRole, true);
+        roles.setUserRole(address(this), rootRole, true);
+        roles.setUserRole(address(this), adminRole, true);
 
-        assertEq32(0x0000000000000000000000000000000000000000000000000000000000000003, roles.getUserRoles(self));
+        assertEq32(
+            0x0000000000000000000000000000000000000000000000000000000000000003,
+            roles.getUserRoles(address(this))
+        );
 
         roles.setRoleCapability(adminRole, address(requiresAuth), RequiresAuth.updateFlag.selector, true);
 
-        assertTrue(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
         requiresAuth.updateFlag();
 
         roles.setRoleCapability(adminRole, address(requiresAuth), RequiresAuth.updateFlag.selector, false);
-        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
 
-        assertTrue(roles.doesUserHaveRole(self, rootRole));
-        assertTrue(roles.doesUserHaveRole(self, adminRole));
-        assertTrue(!roles.doesUserHaveRole(self, modRole));
-        assertTrue(!roles.doesUserHaveRole(self, userRole));
+        assertTrue(roles.doesUserHaveRole(address(this), rootRole));
+        assertTrue(roles.doesUserHaveRole(address(this), adminRole));
+        assertTrue(!roles.doesUserHaveRole(address(this), modRole));
+        assertTrue(!roles.doesUserHaveRole(address(this), userRole));
     }
 
     function testRoot() public {
-        assertTrue(!roles.isUserRoot(self));
-        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.isUserRoot(address(this)));
+        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
 
-        roles.setRootUser(self, true);
-        assertTrue(roles.isUserRoot(self));
-        assertTrue(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        roles.setRootUser(address(this), true);
+        assertTrue(roles.isUserRoot(address(this)));
+        assertTrue(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
 
-        roles.setRootUser(self, false);
-        assertTrue(!roles.isUserRoot(self));
-        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        roles.setRootUser(address(this), false);
+        assertTrue(!roles.isUserRoot(address(this)));
+        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
     }
 
     function testPublicCapabilities() public {
         assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
-        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
 
         roles.setPublicCapability(address(requiresAuth), RequiresAuth.updateFlag.selector, true);
         assertTrue(roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
-        assertTrue(roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
 
         roles.setPublicCapability(address(requiresAuth), RequiresAuth.updateFlag.selector, false);
         assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
-        assertTrue(!roles.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
     }
 }

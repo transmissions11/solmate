@@ -17,7 +17,7 @@ contract TrustAuthorityTest is DSTestPlus {
         requiresAuth.setAuthority(trust);
         requiresAuth.setOwner(DEAD_ADDRESS);
 
-        trust.setIsTrusted(self, false);
+        trust.setIsTrusted(address(this), false);
     }
 
     function invariantOwner() public {
@@ -29,22 +29,22 @@ contract TrustAuthorityTest is DSTestPlus {
     }
 
     function testSanityChecks() public {
-        assertFalse(trust.isTrusted(self));
-        assertFalse(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertFalse(trust.isTrusted(address(this)));
+        assertFalse(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
         try requiresAuth.updateFlag() {
             fail("Trust Authority Allowed Attacker To Update Flag");
         } catch {}
     }
 
     function testUpdateTrust() public {
-        forceTrust(self);
-        assertTrue(trust.isTrusted(self));
-        assertTrue(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        forceTrust(address(this));
+        assertTrue(trust.isTrusted(address(this)));
+        assertTrue(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
         requiresAuth.updateFlag();
 
-        trust.setIsTrusted(self, false);
-        assertFalse(trust.isTrusted(self));
-        assertFalse(trust.canCall(self, address(requiresAuth), RequiresAuth.updateFlag.selector));
+        trust.setIsTrusted(address(this), false);
+        assertFalse(trust.isTrusted(address(this)));
+        assertFalse(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
         try requiresAuth.updateFlag() {
             fail("Trust Authority Allowed Attacker To Update Flag");
         } catch {}
