@@ -23,7 +23,7 @@ abstract contract ERC20 {
     uint8 public immutable decimals;
 
     /*///////////////////////////////////////////////////////////////
-                             ERC20 STORAGE
+                              ERC20 STORAGE
     //////////////////////////////////////////////////////////////*/
 
     uint256 public totalSupply;
