@@ -32,7 +32,7 @@ contract TrustAuthorityTest is DSTestPlus {
         assertFalse(trust.isTrusted(address(this)));
         assertFalse(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
         try requiresAuth.updateFlag() {
-            fail("Trust Authority Allowed Attacker To Update Flag");
+            fail("Trust Authority Let Attacker Update Flag");
         } catch {}
     }
 
