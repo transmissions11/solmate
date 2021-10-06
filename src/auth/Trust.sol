@@ -3,7 +3,7 @@ pragma solidity >=0.7.0;
 
 /// @notice Ultra minimal authorization logic for smart contracts.
 /// @author Inspired by Dappsys V2 (https://github.com/dapp-org/dappsys-v2/blob/main/src/auth.sol)
-contract Trust {
+abstract contract Trust {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
