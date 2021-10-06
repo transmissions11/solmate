@@ -2,33 +2,32 @@
 pragma solidity 0.8.6;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-
-import {Trust} from "../auth/Trust.sol";
+import {RequiresTrust} from "./utils/RequiresTrust.sol";
 
 contract TrustTest is DSTestPlus {
-    Trust trust;
+    RequiresTrust requiresTrust;
 
     function setUp() public {
-        trust = new Trust(address(this));
+        requiresTrust = new RequiresTrust();
 
-        trust.setIsTrusted(address(this), false);
+        requiresTrust.setIsTrusted(address(this), false);
     }
 
     function proveFailTrustNotTrusted(address usr) public {
-        trust.setIsTrusted(usr, true);
+        requiresTrust.setIsTrusted(usr, true);
     }
 
     function proveFailDistrustNotTrusted(address usr) public {
-        trust.setIsTrusted(usr, false);
+        requiresTrust.setIsTrusted(usr, false);
     }
 
     function proveTrust(address usr) public {
         if (usr == address(this)) return;
         forceTrust(address(this));
 
-        assertTrue(!trust.isTrusted(usr));
-        trust.setIsTrusted(usr, true);
-        assertTrue(trust.isTrusted(usr));
+        assertTrue(!requiresTrust.isTrusted(usr));
+        requiresTrust.setIsTrusted(usr, true);
+        assertTrue(requiresTrust.isTrusted(usr));
     }
 
     function proveDistrust(address usr) public {
@@ -36,12 +35,12 @@ contract TrustTest is DSTestPlus {
         forceTrust(address(this));
         forceTrust(usr);
 
-        assertTrue(trust.isTrusted(usr));
-        trust.setIsTrusted(usr, false);
-        assertTrue(!trust.isTrusted(usr));
+        assertTrue(requiresTrust.isTrusted(usr));
+        requiresTrust.setIsTrusted(usr, false);
+        assertTrue(!requiresTrust.isTrusted(usr));
     }
 
     function forceTrust(address usr) internal {
-        hevm.store(address(trust), keccak256(abi.encode(usr, uint256(0))), bytes32(uint256(1)));
+        hevm.store(address(requiresTrust), keccak256(abi.encode(usr, uint256(0))), bytes32(uint256(1)));
     }
 }
