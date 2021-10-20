@@ -31,14 +31,14 @@ contract ERC20Test is DSTestPlus {
         assertEq(tkn.decimals(), decimals);
     }
 
-    function proveMint(address usr, uint256 amt) public {
+    function testMint(address usr, uint256 amt) public {
         token.mint(usr, amt);
 
         assertEq(token.totalSupply(), amt);
         assertEq(token.balanceOf(usr), amt);
     }
 
-    function proveBurn(
+    function testBurn(
         address usr,
         uint256 amt0,
         uint256 amt1
@@ -52,13 +52,13 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(usr), amt0 - amt1);
     }
 
-    function proveApprove(address usr, uint256 amt) public {
+    function testApprove(address usr, uint256 amt) public {
         assertTrue(token.approve(usr, amt));
 
         assertEq(token.allowance(address(this), usr), amt);
     }
 
-    function proveTransfer(address usr, uint256 amt) public {
+    function testTransfer(address usr, uint256 amt) public {
         token.mint(address(this), amt);
 
         assertTrue(token.transfer(usr, amt));
@@ -72,7 +72,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function proveTransferFrom(
+    function testTransferFrom(
         address dst,
         uint256 approval,
         uint256 amt
@@ -99,7 +99,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function proveFailTransferFromInsufficientAllowance(
+    function testFailTransferFromInsufficientAllowance(
         address dst,
         uint256 approval,
         uint256 amt
@@ -113,7 +113,7 @@ contract ERC20Test is DSTestPlus {
         token.transferFrom(address(src), dst, amt);
     }
 
-    function proveFailTransferFromInsufficientBalance(
+    function testFailTransferFromInsufficientBalance(
         address dst,
         uint256 mintAmt,
         uint256 sendAmt
