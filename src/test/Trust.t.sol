@@ -1,33 +1,33 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.6;
+pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {RequiresTrust} from "./utils/RequiresTrust.sol";
+import {MockTrustChild} from "./utils/mocks/MockTrustChild.sol";
 
 contract TrustTest is DSTestPlus {
-    RequiresTrust requiresTrust;
+    MockTrustChild mockTrustChild;
 
     function setUp() public {
-        requiresTrust = new RequiresTrust();
+        mockTrustChild = new MockTrustChild();
 
-        requiresTrust.setIsTrusted(address(this), false);
+        mockTrustChild.setIsTrusted(address(this), false);
     }
 
     function proveFailTrustNotTrusted(address usr) public {
-        requiresTrust.setIsTrusted(usr, true);
+        mockTrustChild.setIsTrusted(usr, true);
     }
 
     function proveFailDistrustNotTrusted(address usr) public {
-        requiresTrust.setIsTrusted(usr, false);
+        mockTrustChild.setIsTrusted(usr, false);
     }
 
     function proveTrust(address usr) public {
         if (usr == address(this)) return;
         forceTrust(address(this));
 
-        assertTrue(!requiresTrust.isTrusted(usr));
-        requiresTrust.setIsTrusted(usr, true);
-        assertTrue(requiresTrust.isTrusted(usr));
+        assertTrue(!mockTrustChild.isTrusted(usr));
+        mockTrustChild.setIsTrusted(usr, true);
+        assertTrue(mockTrustChild.isTrusted(usr));
     }
 
     function proveDistrust(address usr) public {
@@ -35,12 +35,12 @@ contract TrustTest is DSTestPlus {
         forceTrust(address(this));
         forceTrust(usr);
 
-        assertTrue(requiresTrust.isTrusted(usr));
-        requiresTrust.setIsTrusted(usr, false);
-        assertTrue(!requiresTrust.isTrusted(usr));
+        assertTrue(mockTrustChild.isTrusted(usr));
+        mockTrustChild.setIsTrusted(usr, false);
+        assertTrue(!mockTrustChild.isTrusted(usr));
     }
 
     function forceTrust(address usr) internal {
-        hevm.store(address(requiresTrust), keccak256(abi.encode(usr, uint256(0))), bytes32(uint256(1)));
+        hevm.store(address(mockTrustChild), keccak256(abi.encode(usr, uint256(0))), bytes32(uint256(1)));
     }
 }

@@ -4,37 +4,21 @@ pragma solidity >=0.7.0;
 /// @notice Ultra minimal authorization logic for smart contracts.
 /// @author Inspired by Dappsys V2 (https://github.com/dapp-org/dappsys-v2/blob/main/src/auth.sol)
 abstract contract Trust {
-    /*///////////////////////////////////////////////////////////////
-                                  EVENTS
-    //////////////////////////////////////////////////////////////*/
-
     event UserTrustUpdated(address indexed user, bool trusted);
-
-    /*///////////////////////////////////////////////////////////////
-                              TRUST STORAGE
-    //////////////////////////////////////////////////////////////*/
 
     mapping(address => bool) public isTrusted;
 
-    constructor(address user) {
-        isTrusted[user] = true;
+    constructor(address initialUser) {
+        isTrusted[initialUser] = true;
 
-        emit UserTrustUpdated(user, true);
+        emit UserTrustUpdated(initialUser, true);
     }
 
-    /*///////////////////////////////////////////////////////////////
-                         TRUST MODIFIER FUNCTIONS
-    //////////////////////////////////////////////////////////////*/
-
-    function setIsTrusted(address user, bool trusted) public requiresTrust {
+    function setIsTrusted(address user, bool trusted) public virtual requiresTrust {
         isTrusted[user] = trusted;
 
         emit UserTrustUpdated(user, trusted);
     }
-
-    /*///////////////////////////////////////////////////////////////
-                              TRUST LOGIC
-    //////////////////////////////////////////////////////////////*/
 
     modifier requiresTrust() {
         require(isTrusted[msg.sender], "UNTRUSTED");

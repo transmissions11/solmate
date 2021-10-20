@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.6;
+pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {RequiresAuth} from "./utils/RequiresAuth.sol";
+import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 
 import {Auth, Authority} from "../auth/Auth.sol";
 
@@ -23,45 +23,45 @@ contract BooleanAuthority is Authority {
 }
 
 contract AuthTest is DSTestPlus {
-    RequiresAuth requiresAuth;
+    MockAuthChild mockAuthChild;
 
     function setUp() public {
-        requiresAuth = new RequiresAuth();
+        mockAuthChild = new MockAuthChild();
     }
 
     function invariantOwner() public {
-        assertEq(requiresAuth.owner(), address(this));
+        assertEq(mockAuthChild.owner(), address(this));
     }
 
     function invariantAuthority() public {
-        assertEq(address(requiresAuth.authority()), address(0));
+        assertEq(address(mockAuthChild.authority()), address(0));
     }
 
     function testFailNonOwner1() public {
-        requiresAuth.setOwner(address(0));
-        requiresAuth.updateFlag();
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.updateFlag();
     }
 
     function testFailNonOwner2() public {
-        requiresAuth.setOwner(address(0));
-        requiresAuth.setOwner(address(0));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setOwner(address(0));
     }
 
     function testFailRejectingAuthority1() public {
-        requiresAuth.setAuthority(Authority(address(new BooleanAuthority(false))));
-        requiresAuth.setOwner(address(0));
-        requiresAuth.updateFlag();
+        mockAuthChild.setAuthority(Authority(address(new BooleanAuthority(false))));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.updateFlag();
     }
 
     function testFailRejectingAuthority2() public {
-        requiresAuth.setAuthority(Authority(address(new BooleanAuthority(false))));
-        requiresAuth.setOwner(address(0));
-        requiresAuth.setOwner(address(0));
+        mockAuthChild.setAuthority(Authority(address(new BooleanAuthority(false))));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setOwner(address(0));
     }
 
     function testAcceptingOwner() public {
-        requiresAuth.setAuthority(Authority(address(new BooleanAuthority(true))));
-        requiresAuth.setOwner(address(0));
-        requiresAuth.updateFlag();
+        mockAuthChild.setAuthority(Authority(address(new BooleanAuthority(true))));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.updateFlag();
     }
 }

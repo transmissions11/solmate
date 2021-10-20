@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.7.0;
 
-import {Auth} from "../../auth/Auth.sol";
+import {Auth, Authority} from "../../../auth/Auth.sol";
 
-contract RequiresAuth is Auth(msg.sender) {
+contract MockAuthChild is Auth(msg.sender, Authority(address(0))) {
     bool public flag;
 
     function updateFlag() external requiresAuth {

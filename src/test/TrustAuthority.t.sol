@@ -1,37 +1,35 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.6;
+pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {RequiresAuth} from "./utils/RequiresAuth.sol";
+import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 
 import {TrustAuthority} from "../auth/authorities/TrustAuthority.sol";
 
 contract TrustAuthorityTest is DSTestPlus {
     TrustAuthority trust;
-    RequiresAuth requiresAuth;
+    MockAuthChild mockAuthChild;
 
     function setUp() public {
-        trust = new TrustAuthority();
-        requiresAuth = new RequiresAuth();
+        trust = new TrustAuthority(address(0));
+        mockAuthChild = new MockAuthChild();
 
-        requiresAuth.setAuthority(trust);
-        requiresAuth.setOwner(DEAD_ADDRESS);
-
-        trust.setIsTrusted(address(this), false);
+        mockAuthChild.setAuthority(trust);
+        mockAuthChild.setOwner(DEAD_ADDRESS);
     }
 
     function invariantOwner() public {
-        assertEq(requiresAuth.owner(), DEAD_ADDRESS);
+        assertEq(mockAuthChild.owner(), DEAD_ADDRESS);
     }
 
     function invariantAuthority() public {
-        assertEq(address(requiresAuth.authority()), address(trust));
+        assertEq(address(mockAuthChild.authority()), address(trust));
     }
 
     function testSanityChecks() public {
         assertFalse(trust.isTrusted(address(this)));
-        assertFalse(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
-        try requiresAuth.updateFlag() {
+        assertFalse(trust.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        try mockAuthChild.updateFlag() {
             fail("Trust Authority Let Attacker Update Flag");
         } catch {}
     }
@@ -39,13 +37,13 @@ contract TrustAuthorityTest is DSTestPlus {
     function testUpdateTrust() public {
         forceTrust(address(this));
         assertTrue(trust.isTrusted(address(this)));
-        assertTrue(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
-        requiresAuth.updateFlag();
+        assertTrue(trust.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        mockAuthChild.updateFlag();
 
         trust.setIsTrusted(address(this), false);
         assertFalse(trust.isTrusted(address(this)));
-        assertFalse(trust.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
-        try requiresAuth.updateFlag() {
+        assertFalse(trust.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        try mockAuthChild.updateFlag() {
             fail("Trust Authority Allowed Attacker To Update Flag");
         } catch {}
     }

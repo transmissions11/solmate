@@ -1,40 +1,40 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.6;
+pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {RequiresAuth} from "./utils/RequiresAuth.sol";
+import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 
-import {Auth} from "../auth/Auth.sol";
+import {Auth, Authority} from "../auth/Auth.sol";
 import {RolesAuthority} from "../auth/authorities/RolesAuthority.sol";
 
 contract RolesAuthorityTest is DSTestPlus {
     RolesAuthority roles;
-    RequiresAuth requiresAuth;
+    MockAuthChild mockAuthChild;
 
     function setUp() public {
-        roles = new RolesAuthority();
-        requiresAuth = new RequiresAuth();
+        roles = new RolesAuthority(address(this), Authority(address(0)));
+        mockAuthChild = new MockAuthChild();
 
-        requiresAuth.setAuthority(roles);
-        requiresAuth.setOwner(DEAD_ADDRESS);
+        mockAuthChild.setAuthority(roles);
+        mockAuthChild.setOwner(DEAD_ADDRESS);
     }
 
     function invariantOwner() public {
         assertEq(roles.owner(), address(this));
-        assertEq(requiresAuth.owner(), DEAD_ADDRESS);
+        assertEq(mockAuthChild.owner(), DEAD_ADDRESS);
     }
 
     function invariantAuthority() public {
         assertEq(address(roles.authority()), address(0));
-        assertEq(address(requiresAuth.authority()), address(roles));
+        assertEq(address(mockAuthChild.authority()), address(roles));
     }
 
     function testSanityChecks() public {
         assertEq(roles.getUserRoles(address(this)), bytes32(0));
         assertFalse(roles.isUserRoot(address(this)));
-        assertFalse(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
-        try requiresAuth.updateFlag() {
+        try mockAuthChild.updateFlag() {
             fail("Trust Authority Allowed Attacker To Update Flag");
         } catch {}
     }
@@ -53,13 +53,13 @@ contract RolesAuthorityTest is DSTestPlus {
             roles.getUserRoles(address(this))
         );
 
-        roles.setRoleCapability(adminRole, address(requiresAuth), RequiresAuth.updateFlag.selector, true);
+        roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, true);
 
-        assertTrue(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
-        requiresAuth.updateFlag();
+        assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        mockAuthChild.updateFlag();
 
-        roles.setRoleCapability(adminRole, address(requiresAuth), RequiresAuth.updateFlag.selector, false);
-        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, false);
+        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         assertTrue(roles.doesUserHaveRole(address(this), rootRole));
         assertTrue(roles.doesUserHaveRole(address(this), adminRole));
@@ -69,27 +69,27 @@ contract RolesAuthorityTest is DSTestPlus {
 
     function testRoot() public {
         assertTrue(!roles.isUserRoot(address(this)));
-        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         roles.setRootUser(address(this), true);
         assertTrue(roles.isUserRoot(address(this)));
-        assertTrue(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         roles.setRootUser(address(this), false);
         assertTrue(!roles.isUserRoot(address(this)));
-        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
     }
 
     function testPublicCapabilities() public {
-        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
-        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        assertTrue(!roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
-        roles.setPublicCapability(address(requiresAuth), RequiresAuth.updateFlag.selector, true);
-        assertTrue(roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
-        assertTrue(roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        roles.setPublicCapability(address(mockAuthChild), MockAuthChild.updateFlag.selector, true);
+        assertTrue(roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
-        roles.setPublicCapability(address(requiresAuth), RequiresAuth.updateFlag.selector, false);
-        assertTrue(!roles.isCapabilityPublic(address(requiresAuth), RequiresAuth.updateFlag.selector));
-        assertTrue(!roles.canCall(address(this), address(requiresAuth), RequiresAuth.updateFlag.selector));
+        roles.setPublicCapability(address(mockAuthChild), MockAuthChild.updateFlag.selector, false);
+        assertTrue(!roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
     }
 }

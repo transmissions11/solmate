@@ -13,11 +13,6 @@ contract DSTestPlus is DSTest {
     string private checkpointLabel;
     uint256 private checkpointGasLeft;
 
-    function fail(string memory err) internal {
-        emit log_named_string("Error", err);
-        fail();
-    }
-
     function startMeasuringGas(string memory label) internal {
         checkpointLabel = label;
         checkpointGasLeft = gasleft();
@@ -29,6 +24,11 @@ contract DSTestPlus is DSTest {
         string memory label = checkpointLabel;
 
         emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
+    }
+
+    function fail(string memory err) internal {
+        emit log_named_string("Error", err);
+        fail();
     }
 
     function assertFalse(bool data) internal {

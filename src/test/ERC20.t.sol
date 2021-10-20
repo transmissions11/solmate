@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.6;
+pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {InvariantTest} from "./utils/InvariantTest.sol";
-import {MockERC20} from "./utils/MockERC20.sol";
-import {ERC20User} from "./utils/ERC20User.sol";
+import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
+
+import {MockERC20} from "./utils/mocks/MockERC20.sol";
+import {ERC20User} from "./utils/users/ERC20User.sol";
 
 contract ERC20Test is DSTestPlus {
     MockERC20 token;
@@ -127,7 +128,7 @@ contract ERC20Test is DSTestPlus {
     }
 }
 
-contract ERC20Invariants is DSTestPlus, InvariantTest {
+contract ERC20Invariants is DSTestPlus, DSInvariantTest {
     BalanceSum balanceSum;
 
     function setUp() public {

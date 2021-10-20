@@ -5,52 +5,57 @@ import {Auth, Authority} from "../Auth.sol";
 
 /// @notice Role based Authority that supports up to 256 roles.
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)
-contract RolesAuthority is Auth(msg.sender), Authority {
+contract RolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event UserRootUpdated(address indexed who, bool enabled);
+    event UserRootUpdated(address indexed user, bool enabled);
 
-    event UserRoleUpdated(address indexed who, uint8 indexed role, bool enabled);
+    event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
 
-    event PublicCapabilityUpdated(address indexed code, bytes4 indexed sig, bool enabled);
+    event PublicCapabilityUpdated(address indexed target, bytes4 indexed functionSig, bool enabled);
 
-    event RoleCapabilityUpdated(uint8 indexed role, address indexed code, bytes4 indexed sig, bool enabled);
+    event RoleCapabilityUpdated(uint8 indexed role, address indexed target, bytes4 indexed functionSig, bool enabled);
 
     /*///////////////////////////////////////////////////////////////
-                                  ROLES
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+    constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
+
+    /*///////////////////////////////////////////////////////////////
+                             USER ROLE STORAGE
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bool) internal rootUsers;
 
     mapping(address => bytes32) internal userRoles;
 
+    function isUserRoot(address who) public view virtual returns (bool) {
+        return rootUsers[who];
+    }
+
+    function getUserRoles(address who) public view virtual returns (bytes32) {
+        return userRoles[who];
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                        ROLE CAPABILITY STORAGE
+    //////////////////////////////////////////////////////////////*/
+
     mapping(address => mapping(bytes4 => bytes32)) internal roleCapabilities;
 
     mapping(address => mapping(bytes4 => bool)) internal publicCapabilities;
 
-    /*///////////////////////////////////////////////////////////////
-                        USER ROLE GETTER FUNCTIONS
-    //////////////////////////////////////////////////////////////*/
-
-    function isUserRoot(address who) public view returns (bool) {
-        return rootUsers[who];
+    function getRoleCapabilities(address target, bytes4 functionSig) public view virtual returns (bytes32) {
+        return roleCapabilities[target][functionSig];
     }
 
-    function getUserRoles(address who) public view returns (bytes32) {
-        return userRoles[who];
+    function isCapabilityPublic(address target, bytes4 functionSig) public view virtual returns (bool) {
+        return publicCapabilities[target][functionSig];
     }
 
-    function getRoleCapabilities(address code, bytes4 sig) public view returns (bytes32) {
-        return roleCapabilities[code][sig];
-    }
-
-    function isCapabilityPublic(address code, bytes4 sig) public view returns (bool) {
-        return publicCapabilities[code][sig];
-    }
-
-    function doesUserHaveRole(address who, uint8 role) external view returns (bool) {
+    function doesUserHaveRole(address who, uint8 role) public view virtual returns (bool) {
         bytes32 roles = getUserRoles(who);
         bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
         return bytes32(0) != roles & shifted;
@@ -58,68 +63,73 @@ contract RolesAuthority is Auth(msg.sender), Authority {
 
     function canCall(
         address caller,
-        address code,
-        bytes4 sig
+        address target,
+        bytes4 functionSig
     ) public view virtual override returns (bool) {
-        if (isCapabilityPublic(code, sig) || isUserRoot(caller)) {
+        if (isCapabilityPublic(target, functionSig) || isUserRoot(caller)) {
             return true;
         } else {
             bytes32 hasRoles = getUserRoles(caller);
-            bytes32 needsOneOf = getRoleCapabilities(code, sig);
+            bytes32 needsOneOf = getRoleCapabilities(target, functionSig);
+
             return bytes32(0) != hasRoles & needsOneOf;
         }
     }
 
     /*///////////////////////////////////////////////////////////////
-                       USER/ROLE SETTER FUNCTIONS
+                  ROLE CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setRootUser(address who, bool enabled) external requiresAuth {
-        rootUsers[who] = enabled;
+    function setPublicCapability(
+        address target,
+        bytes4 functionSig,
+        bool enabled
+    ) public virtual requiresAuth {
+        publicCapabilities[target][functionSig] = enabled;
 
-        emit UserRootUpdated(who, enabled);
+        emit PublicCapabilityUpdated(target, functionSig, enabled);
     }
+
+    function setRoleCapability(
+        uint8 role,
+        address target,
+        bytes4 functionSig,
+        bool enabled
+    ) public requiresAuth {
+        bytes32 lastRoles = roleCapabilities[target][functionSig];
+
+        unchecked {
+            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+
+            roleCapabilities[target][functionSig] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+        }
+
+        emit RoleCapabilityUpdated(role, target, functionSig, enabled);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                      USER ROLE ASSIGNMENT LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     function setUserRole(
         address who,
         uint8 role,
         bool enabled
-    ) public requiresAuth {
+    ) public virtual requiresAuth {
         bytes32 lastRoles = userRoles[who];
-        bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-        if (enabled) {
-            userRoles[who] = lastRoles | shifted;
-        } else {
-            userRoles[who] = lastRoles & ~shifted;
+
+        unchecked {
+            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+
+            userRoles[who] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
         }
 
         emit UserRoleUpdated(who, role, enabled);
     }
 
-    function setPublicCapability(
-        address code,
-        bytes4 sig,
-        bool enabled
-    ) public requiresAuth {
-        publicCapabilities[code][sig] = enabled;
+    function setRootUser(address who, bool enabled) public virtual requiresAuth {
+        rootUsers[who] = enabled;
 
-        emit PublicCapabilityUpdated(code, sig, enabled);
-    }
-
-    function setRoleCapability(
-        uint8 role,
-        address code,
-        bytes4 sig,
-        bool enabled
-    ) public requiresAuth {
-        bytes32 lastRoles = roleCapabilities[code][sig];
-        bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-        if (enabled) {
-            roleCapabilities[code][sig] = lastRoles | shifted;
-        } else {
-            roleCapabilities[code][sig] = lastRoles & ~shifted;
-        }
-
-        emit RoleCapabilityUpdated(role, code, sig, enabled);
+        emit UserRootUpdated(who, enabled);
     }
 }

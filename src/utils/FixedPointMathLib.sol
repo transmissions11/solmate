@@ -23,7 +23,10 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = (x * y) / baseUnit;
+        z = x * y;
+        unchecked {
+            z /= baseUnit;
+        }
     }
 
     function fdiv(
@@ -31,7 +34,10 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = (x * baseUnit) / y;
+        z = x * baseUnit;
+        unchecked {
+            z /= y;
+        }
     }
 
     function fpow(
