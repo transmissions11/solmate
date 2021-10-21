@@ -95,6 +95,19 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.fmul(x, y, baseUnit), baseUnit == 0 ? 0 : (x * y) / baseUnit);
     }
 
+    function testFailFuzzFMulOverflow(
+        uint256 x,
+        uint256 y,
+        uint256 baseUnit
+    ) public pure {
+        // Ignore cases where x * y does not overflow.
+        unchecked {
+            if ((x * y) / x == y) revert();
+        }
+
+        FixedPointMathLib.fmul(x, y, baseUnit);
+    }
+
     function testFuzzFDiv(
         uint256 x,
         uint256 y,
@@ -111,6 +124,19 @@ contract FixedPointMathLibTest is DSTestPlus {
         }
 
         assertEq(FixedPointMathLib.fdiv(x, y, baseUnit), (x * baseUnit) / y);
+    }
+
+    function testFailFuzzFDivOverflow(
+        uint256 x,
+        uint256 y,
+        uint256 baseUnit
+    ) public pure {
+        // Ignore cases where x * baseUnit does not overflow.
+        unchecked {
+            if ((x * baseUnit) / x == baseUnit) revert();
+        }
+
+        FixedPointMathLib.fdiv(x, y, baseUnit);
     }
 
     function testFailFuzzFDivYZero(uint256 x, uint256 baseUnit) public pure {
