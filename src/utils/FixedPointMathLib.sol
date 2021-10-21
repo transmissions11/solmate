@@ -24,16 +24,12 @@ library FixedPointMathLib {
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
         assembly {
-            // If x is not 0, continue, otherwise we'll just leave z as 0.
-            if iszero(iszero(x)) {
-                // Revert if x * y overflows.
-                if iszero(eq(div(mul(x, y), x), y)) {
-                    revert(0, 0)
-                }
-
-                // Return (x * y) / baseUnit.
-                z := div(mul(x, y), baseUnit)
+            if iszero(or(iszero(x), eq(div(mul(x, y), x), y))) {
+                revert(0, 0)
             }
+
+            // Return (x * y) / baseUnit.
+            z := div(mul(x, y), baseUnit)
         }
     }
 
@@ -48,16 +44,12 @@ library FixedPointMathLib {
                 revert(0, 0)
             }
 
-            // If x is not 0, continue, otherwise we'll just leave z as 0.
-            if iszero(iszero(x)) {
-                // Revert if x * baseUnit overflows.
-                if iszero(eq(div(mul(x, baseUnit), x), baseUnit)) {
-                    revert(0, 0)
-                }
-
-                // Return (x * baseUnit) / y.
-                z := div(mul(x, baseUnit), y)
+            if iszero(or(iszero(x), eq(div(mul(x, baseUnit), x), baseUnit))) {
+                revert(0, 0)
             }
+
+            // Return (x * baseUnit) / y.
+            z := div(mul(x, baseUnit), y)
         }
     }
 
