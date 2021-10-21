@@ -23,20 +23,18 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = x * y;
-        unchecked {
-            z /= baseUnit;
+        assembly {
+            // If x is not 0, continue, otherwise we'll just leave z as 0.
+            if iszero(iszero(x)) {
+                // Revert if x * y overflows.
+                if iszero(eq(div(mul(x, y), x), y)) {
+                    revert(0, 0)
+                }
+
+                // Return (x * y) / baseUnit.
+                z := div(mul(x, y), baseUnit)
+            }
         }
-
-        // assembly {
-        //     // Revert if x * y overflows.
-        //     if iszero(eq(div(mul(x, y), x), y)) {
-        //         revert(0, 0)
-        //     }
-
-        //     // Return (x * y) / baseUnit.
-        //     z := div(mul(x, y), baseUnit)
-        // }
     }
 
     function fdiv(
@@ -44,25 +42,23 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = x * baseUnit;
-        unchecked {
-            z /= y;
+        assembly {
+            // Yul doesn't normally revert on division by zero.
+            if iszero(y) {
+                revert(0, 0)
+            }
+
+            // If x is not 0, continue, otherwise we'll just leave z as 0.
+            if iszero(iszero(x)) {
+                // Revert if x * baseUnit overflows.
+                if iszero(eq(div(mul(x, baseUnit), x), baseUnit)) {
+                    revert(0, 0)
+                }
+
+                // Return (x * baseUnit) / y.
+                z := div(mul(x, baseUnit), y)
+            }
         }
-
-        // assembly {
-        //     // Revert if x * baseUnit overflows.
-        //     if iszero(eq(div(mul(x, baseUnit), x), baseUnit)) {
-        //         revert(0, 0)
-        //     }
-
-        //     // Yul doesn't normally revert on division by zero.
-        //     if iszero(y) {
-        //         revert(0, 0)
-        //     }
-
-        //     // Return (x * baseUnit) / y.
-        //     z := div(mul(x, baseUnit), y)
-        // }
     }
 
     function fpow(

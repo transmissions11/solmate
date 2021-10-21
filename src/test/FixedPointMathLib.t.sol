@@ -10,6 +10,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.fmul(2.5e18, 0.5e18, FixedPointMathLib.WAD), 1.25e18);
         assertEq(FixedPointMathLib.fmul(2.5e8, 0.5e8, FixedPointMathLib.YAD), 1.25e8);
 
+        assertEq(FixedPointMathLib.fmul(1e18, 1e18, 0), 0);
         assertEq(FixedPointMathLib.fmul(0, 1e18, FixedPointMathLib.WAD), 0);
         assertEq(FixedPointMathLib.fmul(1e18, 0, FixedPointMathLib.WAD), 0);
         assertEq(FixedPointMathLib.fmul(0, 0, FixedPointMathLib.WAD), 0);
