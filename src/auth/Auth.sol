@@ -24,11 +24,9 @@ abstract contract Auth {
 
     constructor(address _owner, Authority _authority) {
         owner = _owner;
-
         authority = _authority;
 
         emit OwnerUpdated(_owner);
-
         emit AuthorityUpdated(_authority);
     }
 

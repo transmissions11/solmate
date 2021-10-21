@@ -11,11 +11,13 @@ contract TrustAuthorityTest is DSTestPlus {
     MockAuthChild mockAuthChild;
 
     function setUp() public {
-        trust = new TrustAuthority(address(0));
+        trust = new TrustAuthority(address(this));
         mockAuthChild = new MockAuthChild();
 
         mockAuthChild.setAuthority(trust);
         mockAuthChild.setOwner(DEAD_ADDRESS);
+
+        trust.setIsTrusted(address(this), false);
     }
 
     function invariantOwner() public {

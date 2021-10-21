@@ -45,6 +45,10 @@ abstract contract ERC20 {
 
     mapping(address => uint256) public nonces;
 
+    /*///////////////////////////////////////////////////////////////
+                               CONSTRUCTOR
+    //////////////////////////////////////////////////////////////*/
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -55,7 +59,6 @@ abstract contract ERC20 {
         decimals = _decimals;
 
         INITIAL_CHAIN_ID = block.chainid;
-
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
     }
 
