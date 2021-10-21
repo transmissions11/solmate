@@ -59,7 +59,6 @@ abstract contract ERC20 {
         decimals = _decimals;
 
         INITIAL_CHAIN_ID = block.chainid;
-
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
     }
 
