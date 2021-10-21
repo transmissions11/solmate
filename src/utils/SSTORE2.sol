@@ -3,6 +3,8 @@ pragma solidity >=0.7.0;
 
 import {FixedPointMathLib} from "./FixedPointMathLib.sol";
 
+/// @notice Read and write to persistent storage at a fraction of the cost.
+/// @author Modified from 0xSequence (https://github.com/0xsequence/create3/blob/master/contracts/Create3.sol)
 library SSTORE2 {
     uint256 constant DATA_OFFSET = 1;
 
@@ -20,7 +22,7 @@ library SSTORE2 {
             pointer := create(0, add(creationCode, 32), mload(creationCode))
         }
 
-        require(pointer != address(0), "WRITE_ERROR");
+        require(pointer != address(0), "DEPLOYMENT_ERROR");
     }
 
     function read(address pointer) internal view returns (bytes memory code) {

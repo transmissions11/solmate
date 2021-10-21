@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.7.0;
 
-import {FixedPointMathLib} from "./FixedPointMathLib.sol";
 import {Bytes32AddressLib} from "./Bytes32AddressLib.sol";
 
+/// @notice Deploy to deterministic addresses without an initcode factor.
+/// @author Modified from 0xSequence (https://github.com/0xsequence/create3/blob/master/contracts/Create3.sol)
 library CREATE3 {
     using Bytes32AddressLib for bytes32;
 
