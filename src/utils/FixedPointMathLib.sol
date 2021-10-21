@@ -165,7 +165,7 @@ library FixedPointMathLib {
 
             uint256 roundedDownResult = x / result;
 
-            if (result >= roundedDownResult) result = roundedDownResult;
+            if (result > roundedDownResult) result = roundedDownResult;
         }
     }
 
