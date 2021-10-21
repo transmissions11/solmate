@@ -80,6 +80,43 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.max(1e18, 0.1e18), 1e18);
     }
 
+    // TODO: can these all be symbolic?
+
+    function testFuzzFMul(
+        uint256 x,
+        uint256 y,
+        uint256 baseUnit
+    ) public {
+        // Ignore cases where x * y overflows.
+        unchecked {
+            if (x != 0 && (x * y) / x != y) return;
+        }
+
+        assertEq(FixedPointMathLib.fmul(x, y, baseUnit), baseUnit == 0 ? 0 : (x * y) / baseUnit);
+    }
+
+    function testFuzzFDiv(
+        uint256 x,
+        uint256 y,
+        uint256 baseUnit
+    ) public {
+        // Ignore cases where x * baseUnit overflows.
+        unchecked {
+            if (x != 0 && (x * baseUnit) / x != baseUnit) return;
+        }
+
+        // Ignore cases where y is zero because it will cause a revert.
+        if (y == 0) {
+            return;
+        }
+
+        assertEq(FixedPointMathLib.fdiv(x, y, baseUnit), (x * baseUnit) / y);
+    }
+
+    function testFailFuzzFDivYZero(uint256 x, uint256 baseUnit) public pure {
+        FixedPointMathLib.fdiv(x, 0, baseUnit);
+    }
+
     function testFuzzSqrt(uint256 x) public {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
@@ -93,15 +130,15 @@ contract FixedPointMathLibTest is DSTestPlus {
     }
 
     function testFuzzMin(uint256 x, uint256 y) public {
-        if (x <= y) {
+        if (x < y) {
             assertEq(FixedPointMathLib.min(x, y), x);
         } else {
             assertEq(FixedPointMathLib.min(x, y), y);
         }
     }
 
-    function testfuzzMax(uint256 x, uint256 y) public {
-        if (x >= y) {
+    function testFuzzMax(uint256 x, uint256 y) public {
+        if (x > y) {
             assertEq(FixedPointMathLib.max(x, y), x);
         } else {
             assertEq(FixedPointMathLib.max(x, y), y);
