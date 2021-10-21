@@ -23,15 +23,20 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        assembly {
-            // Revert if x * y overflows.
-            if iszero(eq(div(mul(x, y), x), y)) {
-                revert(0, 0)
-            }
-
-            // Return (x * y) / baseUnit.
-            z := div(mul(x, y), baseUnit)
+        z = x * y;
+        unchecked {
+            z /= baseUnit;
         }
+
+        // assembly {
+        //     // Revert if x * y overflows.
+        //     if iszero(eq(div(mul(x, y), x), y)) {
+        //         revert(0, 0)
+        //     }
+
+        //     // Return (x * y) / baseUnit.
+        //     z := div(mul(x, y), baseUnit)
+        // }
     }
 
     function fdiv(
@@ -39,20 +44,25 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        assembly {
-            // Revert if x * baseUnit overflows.
-            if iszero(eq(div(mul(x, baseUnit), x), baseUnit)) {
-                revert(0, 0)
-            }
-
-            // Yul doesn't normally revert on division by zero.
-            if iszero(y) {
-                revert(0, 0)
-            }
-
-            // Return (x * baseUnit) / y.
-            z := div(mul(x, baseUnit), y)
+        z = x * baseUnit;
+        unchecked {
+            z /= y;
         }
+
+        // assembly {
+        //     // Revert if x * baseUnit overflows.
+        //     if iszero(eq(div(mul(x, baseUnit), x), baseUnit)) {
+        //         revert(0, 0)
+        //     }
+
+        //     // Yul doesn't normally revert on division by zero.
+        //     if iszero(y) {
+        //         revert(0, 0)
+        //     }
+
+        //     // Return (x * baseUnit) / y.
+        //     z := div(mul(x, baseUnit), y)
+        // }
     }
 
     function fpow(
