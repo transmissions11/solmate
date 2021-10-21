@@ -31,12 +31,14 @@ contract FixedPointMathLibTest is DSTestPlus {
 
     function testMin() public {
         assertEq(FixedPointMathLib.min(4, 100), 4);
+        assertEq(FixedPointMathLib.min(500, 400), 400);
         assertEq(FixedPointMathLib.min(10000, 10001), 10000);
         assertEq(FixedPointMathLib.min(1e18, 0.1e18), 0.1e18);
     }
 
     function testMax() public {
         assertEq(FixedPointMathLib.max(4, 100), 100);
+        assertEq(FixedPointMathLib.max(500, 400), 500);
         assertEq(FixedPointMathLib.max(10000, 10001), 10001);
         assertEq(FixedPointMathLib.max(1e18, 0.1e18), 1e18);
     }
