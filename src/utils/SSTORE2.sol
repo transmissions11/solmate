@@ -6,7 +6,7 @@ import {FixedPointMathLib} from "./FixedPointMathLib.sol";
 /// @notice Read and write to persistent storage at a fraction of the cost.
 /// @author Modified from 0xSequence (https://github.com/0xsequence/sstore2/blob/master/contracts/SSTORE2.sol)
 library SSTORE2 {
-    uint256 constant DATA_OFFSET = 1;
+    uint256 internal constant DATA_OFFSET = 1;
 
     function write(bytes memory data) internal returns (address pointer) {
         bytes memory runtimeCode = abi.encodePacked(hex"00", data);
@@ -25,39 +25,30 @@ library SSTORE2 {
         require(pointer != address(0), "DEPLOYMENT_ERROR");
     }
 
-    function read(address pointer) internal view returns (bytes memory code) {
-        uint256 codeSize = pointer.code.length;
+    function read(address pointer) internal view returns (bytes memory data) {
+        // This will revert if DATA_OFFSET > code.length.
+        uint256 size = pointer.code.length - DATA_OFFSET;
 
-        if (DATA_OFFSET > codeSize) return new bytes(0);
-
-        unchecked {
-            uint256 size = codeSize - DATA_OFFSET;
-
-            assembly {
-                code := mload(0x40)
-                mstore(0x40, add(code, and(add(add(size, add(DATA_OFFSET, 0x20)), 0x1f), not(0x1f))))
-                mstore(code, size)
-                extcodecopy(pointer, add(code, 0x20), DATA_OFFSET, size)
-            }
+        assembly {
+            data := mload(0x40)
+            mstore(0x40, add(data, and(add(add(size, add(DATA_OFFSET, 0x20)), 0x1f), not(0x1f))))
+            mstore(data, size)
+            extcodecopy(pointer, add(data, 0x20), DATA_OFFSET, size)
         }
     }
 
-    function read(address pointer, uint256 start) internal view returns (bytes memory code) {
+    function read(address pointer, uint256 start) internal view returns (bytes memory data) {
+        // Properly offset input.
         start += DATA_OFFSET;
 
-        uint256 codeSize = pointer.code.length;
+        // This will revert if start > code.length.
+        uint256 size = pointer.code.length - start;
 
-        if (start > codeSize) return new bytes(0);
-
-        unchecked {
-            uint256 size = codeSize - start;
-
-            assembly {
-                code := mload(0x40)
-                mstore(0x40, add(code, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
-                mstore(code, size)
-                extcodecopy(pointer, add(code, 0x20), start, size)
-            }
+        assembly {
+            data := mload(0x40)
+            mstore(0x40, add(data, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
+            mstore(data, size)
+            extcodecopy(pointer, add(data, 0x20), start, size)
         }
     }
 
@@ -65,28 +56,21 @@ library SSTORE2 {
         address pointer,
         uint256 start,
         uint256 end
-    ) internal view returns (bytes memory code) {
+    ) internal view returns (bytes memory data) {
+        // Properly offset inputs.
         start += DATA_OFFSET;
         end += DATA_OFFSET;
 
-        uint256 codeSize = pointer.code.length;
+        // This will revert if start > end.
+        uint256 size = end - start;
 
-        if (start > codeSize) return new bytes(0);
+        require(pointer.code.length >= end, "INVALID_RANGE");
 
-        require(end > start, "INVALID_RANGE");
-
-        unchecked {
-            uint256 reqSize = end - start;
-            uint256 maxSize = codeSize - start;
-
-            uint256 size = FixedPointMathLib.min(maxSize, reqSize);
-
-            assembly {
-                code := mload(0x40)
-                mstore(0x40, add(code, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
-                mstore(code, size)
-                extcodecopy(pointer, add(code, 0x20), start, size)
-            }
+        assembly {
+            data := mload(0x40)
+            mstore(0x40, add(data, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
+            mstore(data, size)
+            extcodecopy(pointer, add(data, 0x20), start, size)
         }
     }
 }
