@@ -25,11 +25,11 @@ contract SafeERC20Test is DSTestPlus {
         erc20 = new ERC20(type(uint256).max);
     }
 
-    function testWithMissingReturn(address dst, uint256 amt) public {
+    function proveWithMissingReturn(address dst, uint256 amt) public {
         verifySafeTransfer(address(missingReturn), dst, amt);
     }
 
-    function testWithMissingReturn(
+    function proveWithMissingReturn(
         address src,
         address dst,
         uint256 amt
@@ -37,11 +37,11 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(missingReturn), src, dst, amt);
     }
 
-    function testWithTransferFromSelf(address dst, uint256 amt) public {
+    function proveWithTransferFromSelf(address dst, uint256 amt) public {
         verifySafeTransfer(address(transferFromSelf), dst, amt);
     }
 
-    function testWithTransferFromSelf(
+    function proveWithTransferFromSelf(
         address src,
         address dst,
         uint256 amt
@@ -49,11 +49,11 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(transferFromSelf), src, dst, amt);
     }
 
-    function testWithStandardERC20(address dst, uint256 amt) public {
+    function proveWithStandardERC20(address dst, uint256 amt) public {
         verifySafeTransfer(address(erc20), dst, amt);
     }
 
-    function testWithStandardERC20(
+    function proveWithStandardERC20(
         address src,
         address dst,
         uint256 amt
@@ -61,11 +61,11 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(erc20), src, dst, amt);
     }
 
-    function testFailWithReturnsFalse(address dst, uint256 amt) public {
+    function proveFailWithReturnsFalse(address dst, uint256 amt) public {
         verifySafeTransfer(address(returnsFalse), dst, amt);
     }
 
-    function testFailWithReturnsFalse(
+    function proveFailWithReturnsFalse(
         address src,
         address dst,
         uint256 amt

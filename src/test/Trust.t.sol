@@ -13,15 +13,15 @@ contract TrustTest is DSTestPlus {
         mockTrustChild.setIsTrusted(address(this), false);
     }
 
-    function testFailTrustNotTrusted(address usr) public {
+    function proveFailTrustNotTrusted(address usr) public {
         mockTrustChild.setIsTrusted(usr, true);
     }
 
-    function testFailDistrustNotTrusted(address usr) public {
+    function proveFailDistrustNotTrusted(address usr) public {
         mockTrustChild.setIsTrusted(usr, false);
     }
 
-    function testTrust(address usr) public {
+    function proveTrust(address usr) public {
         if (usr == address(this)) return;
         forceTrust(address(this));
 
@@ -30,7 +30,7 @@ contract TrustTest is DSTestPlus {
         assertTrue(mockTrustChild.isTrusted(usr));
     }
 
-    function testDistrust(address usr) public {
+    function proveDistrust(address usr) public {
         if (usr == address(this)) return;
         forceTrust(address(this));
         forceTrust(usr);
