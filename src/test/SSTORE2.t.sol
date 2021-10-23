@@ -90,15 +90,15 @@ contract SSTORE2Test is DSTestPlus {
         );
     }
 
-    function testFailWriteReadInvalidPointer(address pointer) public view {
+    function testFailReadInvalidPointer(address pointer) public view {
         SSTORE2.read(pointer);
     }
 
-    function testFailWriteReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public view {
+    function testFailReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public view {
         SSTORE2.read(pointer, startIndex);
     }
 
-    function testFailWriteReadInvalidPointerCustomStartBound(
+    function testFailReadInvalidPointerCustomBounds(
         address pointer,
         uint256 startIndex,
         uint256 endIndex
