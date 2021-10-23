@@ -13,12 +13,12 @@ contract DSTestPlus is DSTest {
     string private checkpointLabel;
     uint256 private checkpointGasLeft;
 
-    function startMeasuringGas(string memory label) internal {
+    function startMeasuringGas(string memory label) internal virtual {
         checkpointLabel = label;
         checkpointGasLeft = gasleft();
     }
 
-    function stopMeasuringGas() internal {
+    function stopMeasuringGas() internal virtual {
         uint256 checkpointGasLeft2 = gasleft();
 
         string memory label = checkpointLabel;
@@ -26,32 +26,32 @@ contract DSTestPlus is DSTest {
         emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
     }
 
-    function fail(string memory err) internal {
+    function fail(string memory err) internal virtual {
         emit log_named_string("Error", err);
         fail();
     }
 
-    function assertFalse(bool data) internal {
+    function assertFalse(bool data) internal virtual {
         assertTrue(!data);
     }
 
-    function assertUint128Eq(uint128 num1, uint128 num2) internal {
+    function assertUint128Eq(uint128 num1, uint128 num2) internal virtual {
         assertEq(uint256(num1), uint256(num2));
     }
 
-    function assertUint64Eq(uint64 num1, uint64 num2) internal {
+    function assertUint64Eq(uint64 num1, uint64 num2) internal virtual {
         assertEq(uint256(num1), uint256(num2));
     }
 
-    function assertUint96Eq(uint96 num1, uint96 num2) internal {
+    function assertUint96Eq(uint96 num1, uint96 num2) internal virtual {
         assertEq(uint256(num1), uint256(num2));
     }
 
-    function assertUint32Eq(uint32 num1, uint32 num2) internal {
+    function assertUint32Eq(uint32 num1, uint32 num2) internal virtual {
         assertEq(uint256(num1), uint256(num2));
     }
 
-    function assertBytesEq(bytes memory b1, bytes memory b2) internal {
+    function assertBytesEq(bytes memory b1, bytes memory b2) internal virtual {
         assertEq(keccak256(b1), keccak256(b2));
     }
 }

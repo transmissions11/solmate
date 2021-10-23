@@ -6,7 +6,7 @@ import {Auth, Authority} from "../../../auth/Auth.sol";
 contract MockAuthChild is Auth(msg.sender, Authority(address(0))) {
     bool public flag;
 
-    function updateFlag() external requiresAuth {
+    function updateFlag() public virtual requiresAuth {
         flag = true;
     }
 }

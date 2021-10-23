@@ -10,10 +10,10 @@ library SafeERC20 {
         ERC20 token,
         address from,
         address to,
-        uint256 value
+        uint256 amount
     ) internal {
         (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transferFrom.selector, from, to, value)
+            abi.encodeWithSelector(ERC20.transferFrom.selector, from, to, amount)
         );
 
         require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FROM_FAILED");
@@ -22,10 +22,10 @@ library SafeERC20 {
     function safeTransfer(
         ERC20 token,
         address to,
-        uint256 value
+        uint256 amount
     ) internal {
         (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transfer.selector, to, value)
+            abi.encodeWithSelector(ERC20.transfer.selector, to, amount)
         );
 
         require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FAILED");
@@ -34,17 +34,17 @@ library SafeERC20 {
     function safeApprove(
         ERC20 token,
         address to,
-        uint256 value
+        uint256 amount
     ) internal {
         (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.approve.selector, to, value)
+            abi.encodeWithSelector(ERC20.approve.selector, to, amount)
         );
 
         require(success && (data.length == 0 || abi.decode(data, (bool))), "APPROVE_FAILED");
     }
 
-    function safeTransferETH(address to, uint256 value) internal {
-        (bool success, ) = to.call{value: value}(new bytes(0));
+    function safeTransferETH(address to, uint256 amount) internal {
+        (bool success, ) = to.call{value: amount}(new bytes(0));
 
         require(success, "ETH_TRANSFER_FAILED");
     }

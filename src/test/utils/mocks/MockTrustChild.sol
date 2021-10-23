@@ -6,7 +6,7 @@ import {Trust} from "../../../auth/Trust.sol";
 contract MockTrustChild is Trust(msg.sender) {
     bool public flag;
 
-    function updateFlag() external requiresTrust {
+    function updateFlag() public virtual requiresTrust {
         flag = true;
     }
 }

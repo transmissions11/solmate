@@ -5,9 +5,9 @@ pragma solidity >=0.7.0;
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 interface Authority {
     function canCall(
-        address src,
-        address dst,
-        bytes4 sig
+        address user,
+        address target,
+        bytes4 functionSig
     ) external view returns (bool);
 }
 
@@ -42,12 +42,12 @@ abstract contract Auth {
         emit AuthorityUpdated(authority);
     }
 
-    function isAuthorized(address src, bytes4 sig) internal view virtual returns (bool) {
-        if (src == address(this) || src == owner) return true;
+    function isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
+        if (user == address(this) || user == owner) return true;
 
         Authority cachedAuthority = authority;
 
-        return address(cachedAuthority) != address(0) && cachedAuthority.canCall(src, address(this), sig);
+        return address(cachedAuthority) != address(0) && cachedAuthority.canCall(user, address(this), functionSig);
     }
 
     modifier requiresAuth() {

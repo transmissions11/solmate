@@ -25,98 +25,102 @@ contract SafeERC20Test is DSTestPlus {
         erc20 = new ERC20(type(uint256).max);
     }
 
-    function proveWithMissingReturn(address dst, uint256 amt) public {
-        verifySafeTransfer(address(missingReturn), dst, amt);
+    function proveWithMissingReturn(address to, uint256 amount) public {
+        verifySafeTransfer(address(missingReturn), to, amount);
     }
 
     function proveWithMissingReturn(
-        address src,
-        address dst,
-        uint256 amt
+        address from,
+        address to,
+        uint256 amount
     ) public {
-        verifySafeTransferFrom(address(missingReturn), src, dst, amt);
+        verifySafeTransferFrom(address(missingReturn), from, to, amount);
     }
 
-    function proveWithTransferFromSelf(address dst, uint256 amt) public {
-        verifySafeTransfer(address(transferFromSelf), dst, amt);
+    function proveWithTransferFromSelf(address to, uint256 amount) public {
+        verifySafeTransfer(address(transferFromSelf), to, amount);
     }
 
     function proveWithTransferFromSelf(
-        address src,
-        address dst,
-        uint256 amt
+        address from,
+        address to,
+        uint256 amount
     ) public {
-        verifySafeTransferFrom(address(transferFromSelf), src, dst, amt);
+        verifySafeTransferFrom(address(transferFromSelf), from, to, amount);
     }
 
-    function proveWithStandardERC20(address dst, uint256 amt) public {
-        verifySafeTransfer(address(erc20), dst, amt);
+    function proveWithStandardERC20(address to, uint256 amount) public {
+        verifySafeTransfer(address(erc20), to, amount);
     }
 
     function proveWithStandardERC20(
-        address src,
-        address dst,
-        uint256 amt
+        address from,
+        address to,
+        uint256 amount
     ) public {
-        verifySafeTransferFrom(address(erc20), src, dst, amt);
+        verifySafeTransferFrom(address(erc20), from, to, amount);
     }
 
-    function proveFailWithReturnsFalse(address dst, uint256 amt) public {
-        verifySafeTransfer(address(returnsFalse), dst, amt);
+    function proveFailWithReturnsFalse(address to, uint256 amount) public {
+        verifySafeTransfer(address(returnsFalse), to, amount);
     }
 
     function proveFailWithReturnsFalse(
-        address src,
-        address dst,
-        uint256 amt
+        address from,
+        address to,
+        uint256 amount
     ) public {
-        verifySafeTransferFrom(address(returnsFalse), src, dst, amt);
+        verifySafeTransferFrom(address(returnsFalse), from, to, amount);
     }
 
     function verifySafeTransfer(
         address token,
-        address dst,
-        uint256 amt
+        address to,
+        uint256 amount
     ) internal {
-        uint256 preBal = ERC20(token).balanceOf(dst);
-        SafeERC20.safeTransfer(SolmateERC20(address(token)), dst, amt);
-        uint256 postBal = ERC20(token).balanceOf(dst);
+        uint256 preBal = ERC20(token).balanceOf(to);
+        SafeERC20.safeTransfer(SolmateERC20(address(token)), to, amount);
+        uint256 postBal = ERC20(token).balanceOf(to);
 
-        if (dst == address(this)) {
+        if (to == address(this)) {
             assertEq(preBal, postBal);
         } else {
-            assertEq(postBal - preBal, amt);
+            assertEq(postBal - preBal, amount);
         }
     }
 
     function verifySafeTransferFrom(
         address token,
-        address src,
-        address dst,
-        uint256 amt
+        address from,
+        address to,
+        uint256 amount
     ) internal {
-        forceApprove(token, src, address(this), amt);
-        SafeERC20.safeTransfer(SolmateERC20(token), src, amt);
+        forceApprove(token, from, address(this), amount);
+        SafeERC20.safeTransfer(SolmateERC20(token), from, amount);
 
-        uint256 preBal = ERC20(token).balanceOf(dst);
-        SafeERC20.safeTransferFrom(SolmateERC20(token), src, dst, amt);
-        uint256 postBal = ERC20(token).balanceOf(dst);
+        uint256 preBal = ERC20(token).balanceOf(to);
+        SafeERC20.safeTransferFrom(SolmateERC20(token), from, to, amount);
+        uint256 postBal = ERC20(token).balanceOf(to);
 
-        if (src == dst) {
+        if (from == to) {
             assertEq(preBal, postBal);
         } else {
-            assertEq(postBal - preBal, amt);
+            assertEq(postBal - preBal, amount);
         }
     }
 
     function forceApprove(
         address token,
-        address src,
-        address dst,
-        uint256 amt
+        address from,
+        address to,
+        uint256 amount
     ) internal {
         uint256 slot = token == address(erc20) ? 3 : 2;
-        hevm.store(token, keccak256(abi.encode(dst, keccak256(abi.encode(src, uint256(slot))))), bytes32(uint256(amt)));
-        assertEq(ERC20(token).allowance(src, dst), amt, "wrong allowance");
+        hevm.store(
+            token,
+            keccak256(abi.encode(to, keccak256(abi.encode(from, uint256(slot))))),
+            bytes32(uint256(amount))
+        );
+        assertEq(ERC20(token).allowance(from, to), amount, "wrong allowance");
     }
 }

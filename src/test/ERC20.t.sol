@@ -31,100 +31,100 @@ contract ERC20Test is DSTestPlus {
         assertEq(tkn.decimals(), decimals);
     }
 
-    function proveMint(address usr, uint256 amt) public {
-        token.mint(usr, amt);
+    function proveMint(address from, uint256 amount) public {
+        token.mint(from, amount);
 
-        assertEq(token.totalSupply(), amt);
-        assertEq(token.balanceOf(usr), amt);
+        assertEq(token.totalSupply(), amount);
+        assertEq(token.balanceOf(from), amount);
     }
 
     function proveBurn(
-        address usr,
-        uint256 amt0,
-        uint256 amt1
+        address from,
+        uint256 mintAmount,
+        uint256 burnAmount
     ) public {
-        if (amt1 > amt0) return; // mint amount must exceed burn amount
+        if (burnAmount > mintAmount) return;
 
-        token.mint(usr, amt0);
-        token.burn(usr, amt1);
+        token.mint(from, mintAmount);
+        token.burn(from, burnAmount);
 
-        assertEq(token.totalSupply(), amt0 - amt1);
-        assertEq(token.balanceOf(usr), amt0 - amt1);
+        assertEq(token.totalSupply(), mintAmount - burnAmount);
+        assertEq(token.balanceOf(from), mintAmount - burnAmount);
     }
 
-    function proveApprove(address usr, uint256 amt) public {
-        assertTrue(token.approve(usr, amt));
+    function proveApprove(address from, uint256 amount) public {
+        assertTrue(token.approve(from, amount));
 
-        assertEq(token.allowance(address(this), usr), amt);
+        assertEq(token.allowance(address(this), from), amount);
     }
 
-    function proveTransfer(address usr, uint256 amt) public {
-        token.mint(address(this), amt);
+    function proveTransfer(address from, uint256 amount) public {
+        token.mint(address(this), amount);
 
-        assertTrue(token.transfer(usr, amt));
-        assertEq(token.totalSupply(), amt);
+        assertTrue(token.transfer(from, amount));
+        assertEq(token.totalSupply(), amount);
 
-        if (address(this) == usr) {
-            assertEq(token.balanceOf(address(this)), amt);
+        if (address(this) == from) {
+            assertEq(token.balanceOf(address(this)), amount);
         } else {
             assertEq(token.balanceOf(address(this)), 0);
-            assertEq(token.balanceOf(usr), amt);
+            assertEq(token.balanceOf(from), amount);
         }
     }
 
     function proveTransferFrom(
-        address dst,
+        address to,
         uint256 approval,
-        uint256 amt
+        uint256 amount
     ) public {
-        if (amt > approval) return; // src must approve this for more than amt
+        if (amount > approval) return;
 
-        ERC20User src = new ERC20User(token);
+        ERC20User from = new ERC20User(token);
 
-        token.mint(address(src), amt);
+        token.mint(address(from), amount);
 
-        src.approve(address(this), approval);
+        from.approve(address(this), approval);
 
-        assertTrue(token.transferFrom(address(src), dst, amt));
-        assertEq(token.totalSupply(), amt);
+        assertTrue(token.transferFrom(address(from), to, amount));
+        assertEq(token.totalSupply(), amount);
 
-        uint256 app = address(src) == address(this) || approval == type(uint256).max ? approval : approval - amt;
-        assertEq(token.allowance(address(src), address(this)), app);
+        uint256 app = address(from) == address(this) || approval == type(uint256).max ? approval : approval - amount;
+        assertEq(token.allowance(address(from), address(this)), app);
 
-        if (address(src) == dst) {
-            assertEq(token.balanceOf(address(src)), amt);
+        if (address(from) == to) {
+            assertEq(token.balanceOf(address(from)), amount);
         } else {
-            assertEq(token.balanceOf(address(src)), 0);
-            assertEq(token.balanceOf(dst), amt);
+            assertEq(token.balanceOf(address(from)), 0);
+            assertEq(token.balanceOf(to), amount);
         }
     }
 
     function proveFailTransferFromInsufficientAllowance(
-        address dst,
+        address to,
         uint256 approval,
-        uint256 amt
+        uint256 amount
     ) public {
-        require(approval < amt);
+        require(approval < amount);
 
-        ERC20User src = new ERC20User(token);
+        ERC20User from = new ERC20User(token);
 
-        token.mint(address(src), amt);
-        src.approve(address(this), approval);
-        token.transferFrom(address(src), dst, amt);
+        token.mint(address(from), amount);
+        from.approve(address(this), approval);
+        token.transferFrom(address(from), to, amount);
     }
 
     function proveFailTransferFromInsufficientBalance(
-        address dst,
-        uint256 mintAmt,
-        uint256 sendAmt
+        address to,
+        uint256 mintAmount,
+        uint256 sendAmount
     ) public {
-        require(mintAmt < sendAmt);
+        require(mintAmount < sendAmount);
 
-        ERC20User src = new ERC20User(token);
+        ERC20User from = new ERC20User(token);
 
-        token.mint(address(src), mintAmt);
-        src.approve(address(this), sendAmt);
-        token.transferFrom(address(src), dst, sendAmt);
+        token.mint(address(from), mintAmount);
+        from.approve(address(this), sendAmount);
+        token.transferFrom(address(from), to, sendAmount);
     }
 }
 
@@ -145,29 +145,29 @@ contract BalanceSum {
     MockERC20 public token = new MockERC20("Token", "TKN", 18);
     uint256 public sum;
 
-    function mint(address usr, uint256 amt) external {
-        token.mint(usr, amt);
-        sum += amt;
+    function mint(address from, uint256 amount) public {
+        token.mint(from, amount);
+        sum += amount;
     }
 
-    function burn(address usr, uint256 amt) external {
-        token.burn(usr, amt);
-        sum -= amt;
+    function burn(address from, uint256 amount) public {
+        token.burn(from, amount);
+        sum -= amount;
     }
 
-    function approve(address dst, uint256 amt) external {
-        token.approve(dst, amt);
+    function approve(address to, uint256 amount) public {
+        token.approve(to, amount);
     }
 
     function transferFrom(
-        address src,
-        address dst,
-        uint256 amt
-    ) external {
-        token.transferFrom(src, dst, amt);
+        address from,
+        address to,
+        uint256 amount
+    ) public {
+        token.transferFrom(from, to, amount);
     }
 
-    function transfer(address dst, uint256 amt) external {
-        token.transfer(dst, amt);
+    function transfer(address to, uint256 amount) public {
+        token.transfer(to, amount);
     }
 }

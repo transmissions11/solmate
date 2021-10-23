@@ -8,9 +8,9 @@ abstract contract ERC20 {
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Transfer(address indexed from, address indexed to, uint256 amount);
 
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 amount);
 
     /*///////////////////////////////////////////////////////////////
                              METADATA STORAGE
@@ -66,24 +66,24 @@ abstract contract ERC20 {
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(address spender, uint256 value) public virtual returns (bool) {
-        allowance[msg.sender][spender] = value;
+    function approve(address spender, uint256 amount) public virtual returns (bool) {
+        allowance[msg.sender][spender] = amount;
 
-        emit Approval(msg.sender, spender, value);
+        emit Approval(msg.sender, spender, amount);
 
         return true;
     }
 
-    function transfer(address to, uint256 value) public virtual returns (bool) {
-        balanceOf[msg.sender] -= value;
+    function transfer(address to, uint256 amount) public virtual returns (bool) {
+        balanceOf[msg.sender] -= amount;
 
         // This is safe because the sum of all user
         // balances can't exceed type(uint256).max!
         unchecked {
-            balanceOf[to] += value;
+            balanceOf[to] += amount;
         }
 
-        emit Transfer(msg.sender, to, value);
+        emit Transfer(msg.sender, to, amount);
 
         return true;
     }
@@ -91,21 +91,21 @@ abstract contract ERC20 {
     function transferFrom(
         address from,
         address to,
-        uint256 value
+        uint256 amount
     ) public virtual returns (bool) {
         if (allowance[from][msg.sender] != type(uint256).max) {
-            allowance[from][msg.sender] -= value;
+            allowance[from][msg.sender] -= amount;
         }
 
-        balanceOf[from] -= value;
+        balanceOf[from] -= amount;
 
         // This is safe because the sum of all user
         // balances can't exceed type(uint256).max!
         unchecked {
-            balanceOf[to] += value;
+            balanceOf[to] += amount;
         }
 
-        emit Transfer(from, to, value);
+        emit Transfer(from, to, amount);
 
         return true;
     }
@@ -166,27 +166,27 @@ abstract contract ERC20 {
                        INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function _mint(address to, uint256 value) internal virtual {
-        totalSupply += value;
+    function _mint(address to, uint256 amount) internal virtual {
+        totalSupply += amount;
 
         // This is safe because the sum of all user
         // balances can't exceed type(uint256).max!
         unchecked {
-            balanceOf[to] += value;
+            balanceOf[to] += amount;
         }
 
-        emit Transfer(address(0), to, value);
+        emit Transfer(address(0), to, amount);
     }
 
-    function _burn(address from, uint256 value) internal virtual {
-        balanceOf[from] -= value;
+    function _burn(address from, uint256 amount) internal virtual {
+        balanceOf[from] -= amount;
 
         // This is safe because a user won't ever
         // have a balance larger than totalSupply!
         unchecked {
-            totalSupply -= value;
+            totalSupply -= amount;
         }
 
-        emit Transfer(from, address(0), value);
+        emit Transfer(from, address(0), amount);
     }
 }

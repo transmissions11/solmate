@@ -10,19 +10,31 @@ contract ERC20User {
         token = _token;
     }
 
-    function approve(address dst, uint256 amt) external {
-        token.approve(dst, amt);
+    function approve(address spender, uint256 amount) public virtual returns (bool) {
+        return token.approve(spender, amount);
     }
 
-    function transfer(address dst, uint256 amt) external {
-        token.transfer(dst, amt);
+    function transfer(address to, uint256 amount) public virtual returns (bool) {
+        return token.transfer(to, amount);
     }
 
     function transferFrom(
-        address src,
-        address dst,
-        uint256 amt
-    ) external {
-        token.transferFrom(src, dst, amt);
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual returns (bool) {
+        return token.transferFrom(from, to, amount);
+    }
+
+    function permit(
+        address owner,
+        address spender,
+        uint256 value,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public virtual {
+        return token.permit(owner, spender, value, deadline, v, r, s);
     }
 }
