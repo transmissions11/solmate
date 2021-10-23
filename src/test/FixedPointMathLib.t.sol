@@ -67,7 +67,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.max(1e18, 0.1e18), 1e18);
     }
 
-    function testFuzzFMul(
+    function testFMul(
         uint256 x,
         uint256 y,
         uint256 baseUnit
@@ -80,7 +80,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.fmul(x, y, baseUnit), baseUnit == 0 ? 0 : (x * y) / baseUnit);
     }
 
-    function testFailFuzzFMulOverflow(
+    function testFailFMulOverflow(
         uint256 x,
         uint256 y,
         uint256 baseUnit
@@ -93,7 +93,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.fmul(x, y, baseUnit);
     }
 
-    function testFuzzFDiv(
+    function testFDiv(
         uint256 x,
         uint256 y,
         uint256 baseUnit
@@ -111,7 +111,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.fdiv(x, y, baseUnit), (x * baseUnit) / y);
     }
 
-    function testFailFuzzFDivOverflow(
+    function testFailFDivOverflow(
         uint256 x,
         uint256 y,
         uint256 baseUnit
@@ -124,11 +124,11 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.fdiv(x, y, baseUnit);
     }
 
-    function testFailFuzzFDivYZero(uint256 x, uint256 baseUnit) public pure {
+    function testFailFDivYZero(uint256 x, uint256 baseUnit) public pure {
         FixedPointMathLib.fdiv(x, 0, baseUnit);
     }
 
-    function proveSqrt(uint256 x) public {
+    function testSqrt(uint256 x) public {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
 
