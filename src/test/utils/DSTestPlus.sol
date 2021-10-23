@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.7.0;
 
-import "ds-test/test.sol";
+import {DSTest} from "ds-test/test.sol";
 
 import {Hevm} from "./Hevm.sol";
 
@@ -49,5 +49,9 @@ contract DSTestPlus is DSTest {
 
     function assertUint32Eq(uint32 num1, uint32 num2) internal {
         assertEq(uint256(num1), uint256(num2));
+    }
+
+    function assertBytesEq(bytes memory b1, bytes memory b2) internal {
+        assertEq(keccak256(b1), keccak256(b2));
     }
 }

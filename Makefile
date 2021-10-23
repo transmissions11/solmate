@@ -7,4 +7,4 @@ install:; npm install
 update:; dapp update
 
 # Save a snapshot of gas usage.
-snapshot:; DAPP_TEST_FUZZ_RUNS=1 dapp --snapshot
+snapshot:; DAPP_TEST_FUZZ_RUNS=0 dapp --snapshot

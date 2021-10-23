@@ -21,8 +21,8 @@ contract ERC20Test is DSTestPlus {
     }
 
     function testMetaData(
-        string memory name,
-        string memory symbol,
+        string calldata name,
+        string calldata symbol,
         uint8 decimals
     ) public {
         MockERC20 tkn = new MockERC20(name, symbol, decimals);
