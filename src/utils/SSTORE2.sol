@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.7.0;
 
-import {FixedPointMathLib} from "./FixedPointMathLib.sol";
-
 /// @notice Read and write to persistent storage at a fraction of the cost.
 /// @author Modified from 0xSequence (https://github.com/0xsequence/sstore2/blob/master/contracts/SSTORE2.sol)
 library SSTORE2 {
