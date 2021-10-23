@@ -24,16 +24,16 @@ utils
 
 ## Installation
 
-To install with **Hardhat** or **Truffle**:
-
-```sh
-npm install @rari-capital/solmate
-```
-
 To install with **DappTools**:
 
 ```sh
 dapp install rari-capital/solmate
+```
+
+To install with **Hardhat** or **Truffle**:
+
+```sh
+npm install @rari-capital/solmate
 ```
 
 ## Acknowledgements
