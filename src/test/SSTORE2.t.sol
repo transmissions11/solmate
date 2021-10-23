@@ -60,7 +60,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(SSTORE2.write(hex"11223344"), 41000, 42000);
     }
 
-    function testWriteRead(bytes memory testBytes) public {
+    function testWriteRead(bytes calldata testBytes) public {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes)), testBytes);
     }
 
