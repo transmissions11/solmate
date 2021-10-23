@@ -12,24 +12,11 @@ contract FixedPointMathLibTest is DSTestPlus {
     }
 
     function testFMulEdgeCases() public {
-        // TODO: I'm okay with fmul reverting when baseUnit == 0 if it leads to a cheaper fmul.
-        // Will remove this line and uncomment the tests below if that's what we go with.
-        assertEq(FixedPointMathLib.fmul(1e18, 1e18, 0), 0);
-
         assertEq(FixedPointMathLib.fmul(0, 1e18, FixedPointMathLib.WAD), 0);
         assertEq(FixedPointMathLib.fmul(1e18, 0, FixedPointMathLib.WAD), 0);
         assertEq(FixedPointMathLib.fmul(0, 0, FixedPointMathLib.WAD), 0);
+        assertEq(FixedPointMathLib.fmul(1e18, 1e18, 0), 0);
     }
-
-    // TODO: Add these back as self-documentation if we decide to go with an implementation that reverts when baseUnit == 0.
-
-    // function testFailFMulZeroB() public pure {
-    //     FixedPointMathLib.fmul(1e18, 1e18, 0);
-    // }
-
-    // function testFailFMulZeroXYB() public pure {
-    //     FixedPointMathLib.fmul(0, 0, 0);
-    // }
 
     function testFDiv() public {
         assertEq(FixedPointMathLib.fdiv(1e27, 2e27, FixedPointMathLib.RAY), 0.5e27);
@@ -79,8 +66,6 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.max(10000, 10001), 10001);
         assertEq(FixedPointMathLib.max(1e18, 0.1e18), 1e18);
     }
-
-    // TODO: can these all be symbolic?
 
     function testFuzzFMul(
         uint256 x,
@@ -143,7 +128,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.fdiv(x, 0, baseUnit);
     }
 
-    function testFuzzSqrt(uint256 x) public {
+    function testSqrt(uint256 x) public {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
 
@@ -155,7 +140,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertTrue(root * root <= x && next * next > x);
     }
 
-    function testFuzzMin(uint256 x, uint256 y) public {
+    function proveMin(uint256 x, uint256 y) public {
         if (x < y) {
             assertEq(FixedPointMathLib.min(x, y), x);
         } else {
@@ -163,7 +148,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         }
     }
 
-    function testFuzzMax(uint256 x, uint256 y) public {
+    function proveMax(uint256 x, uint256 y) public {
         if (x > y) {
             assertEq(FixedPointMathLib.max(x, y), x);
         } else {
