@@ -23,9 +23,15 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = x * y;
-        unchecked {
-            z /= baseUnit;
+        assembly {
+            // Equivalent to require(x == 0 || (x * y) / x == y)
+            if iszero(or(iszero(x), eq(div(mul(x, y), x), y))) {
+                revert(0, 0)
+            }
+
+            // Recomputing x * y is more efficient than using a variable.
+            // If baseUnit is zero this will return zero instead of reverting.
+            z := div(mul(x, y), baseUnit)
         }
     }
 
@@ -34,9 +40,19 @@ library FixedPointMathLib {
         uint256 y,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        z = x * baseUnit;
-        unchecked {
-            z /= y;
+        assembly {
+            if or(
+                // Revert if y is zero to ensure we don't divide by zero below.
+                iszero(y),
+                // Equivalent to require(x == 0 || (x * baseUnit) / x == baseUnit)
+                iszero(or(iszero(x), eq(div(mul(x, baseUnit), x), baseUnit)))
+            ) {
+                revert(0, 0)
+            }
+
+            // Recomputing x * baseUnit is more efficient than using a variable.
+            // We ensure y is not zero above, so there is never division by zero here.
+            z := div(mul(x, baseUnit), y)
         }
     }
 
@@ -45,52 +61,50 @@ library FixedPointMathLib {
         uint256 n,
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
-        unchecked {
-            assembly {
-                switch x
+        assembly {
+            switch x
+            case 0 {
+                switch n
                 case 0 {
-                    switch n
-                    case 0 {
-                        z := baseUnit
-                    }
-                    default {
-                        z := 0
-                    }
+                    z := baseUnit
                 }
                 default {
-                    switch mod(n, 2)
-                    case 0 {
-                        z := baseUnit
+                    z := 0
+                }
+            }
+            default {
+                switch mod(n, 2)
+                case 0 {
+                    z := baseUnit
+                }
+                default {
+                    z := x
+                }
+                let half := div(baseUnit, 2)
+                for {
+                    n := div(n, 2)
+                } n {
+                    n := div(n, 2)
+                } {
+                    let xx := mul(x, x)
+                    if iszero(eq(div(xx, x), x)) {
+                        revert(0, 0)
                     }
-                    default {
-                        z := x
+                    let xxRound := add(xx, half)
+                    if lt(xxRound, xx) {
+                        revert(0, 0)
                     }
-                    let half := div(baseUnit, 2)
-                    for {
-                        n := div(n, 2)
-                    } n {
-                        n := div(n, 2)
-                    } {
-                        let xx := mul(x, x)
-                        if iszero(eq(div(xx, x), x)) {
+                    x := div(xxRound, baseUnit)
+                    if mod(n, 2) {
+                        let zx := mul(z, x)
+                        if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
                             revert(0, 0)
                         }
-                        let xxRound := add(xx, half)
-                        if lt(xxRound, xx) {
+                        let zxRound := add(zx, half)
+                        if lt(zxRound, zx) {
                             revert(0, 0)
                         }
-                        x := div(xxRound, baseUnit)
-                        if mod(n, 2) {
-                            let zx := mul(z, x)
-                            if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
-                                revert(0, 0)
-                            }
-                            let zxRound := add(zx, half)
-                            if lt(zxRound, zx) {
-                                revert(0, 0)
-                            }
-                            z := div(zxRound, baseUnit)
-                        }
+                        z := div(zxRound, baseUnit)
                     }
                 }
             }
@@ -98,69 +112,68 @@ library FixedPointMathLib {
     }
 
     /*///////////////////////////////////////////////////////////////
-                          GENERAL NUMBER UTILS
+                        GENERAL NUMBER UTILITIES
     //////////////////////////////////////////////////////////////*/
 
-    function sqrt(uint256 x) internal pure returns (uint256 z) {
+    function sqrt(uint256 x) internal pure returns (uint256 result) {
+        if (x == 0) return 0;
+
+        result = 1;
+
+        uint256 xAux = x;
+
+        if (xAux >= 0x100000000000000000000000000000000) {
+            xAux >>= 128;
+            result <<= 64;
+        }
+
+        if (xAux >= 0x10000000000000000) {
+            xAux >>= 64;
+            result <<= 32;
+        }
+
+        if (xAux >= 0x100000000) {
+            xAux >>= 32;
+            result <<= 16;
+        }
+
+        if (xAux >= 0x10000) {
+            xAux >>= 16;
+            result <<= 8;
+        }
+
+        if (xAux >= 0x100) {
+            xAux >>= 8;
+            result <<= 4;
+        }
+
+        if (xAux >= 0x10) {
+            xAux >>= 4;
+            result <<= 2;
+        }
+
+        if (xAux >= 0x8) result <<= 1;
+
         unchecked {
-            if (x == 0) return 0;
-            else {
-                uint256 xx = x;
-                uint256 r = 1;
+            result = (result + x / result) >> 1;
+            result = (result + x / result) >> 1;
+            result = (result + x / result) >> 1;
+            result = (result + x / result) >> 1;
+            result = (result + x / result) >> 1;
+            result = (result + x / result) >> 1;
+            result = (result + x / result) >> 1;
 
-                if (xx >= 0x100000000000000000000000000000000) {
-                    xx >>= 128;
-                    r <<= 64;
-                }
+            uint256 roundedDownResult = x / result;
 
-                if (xx >= 0x10000000000000000) {
-                    xx >>= 64;
-                    r <<= 32;
-                }
-
-                if (xx >= 0x100000000) {
-                    xx >>= 32;
-                    r <<= 16;
-                }
-
-                if (xx >= 0x10000) {
-                    xx >>= 16;
-                    r <<= 8;
-                }
-
-                if (xx >= 0x100) {
-                    xx >>= 8;
-                    r <<= 4;
-                }
-
-                if (xx >= 0x10) {
-                    xx >>= 4;
-                    r <<= 2;
-                }
-
-                if (xx >= 0x8) {
-                    r <<= 1;
-                }
-
-                r = (r + x / r) >> 1;
-                r = (r + x / r) >> 1;
-                r = (r + x / r) >> 1;
-                r = (r + x / r) >> 1;
-                r = (r + x / r) >> 1;
-                r = (r + x / r) >> 1;
-                r = (r + x / r) >> 1;
-
-                uint256 r1 = x / r;
-                return (r < r1 ? r : r1);
-            }
+            if (result > roundedDownResult) result = roundedDownResult;
         }
     }
 
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        return x <= y ? x : y;
+        return x < y ? x : y;
     }
 
     function max(uint256 x, uint256 y) internal pure returns (uint256 z) {
-        return x >= y ? x : y;
+        return x > y ? x : y;
     }
 }
