@@ -128,7 +128,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.fdiv(x, 0, baseUnit);
     }
 
-    function testSqrt(uint256 x) public {
+    function proveSqrt(uint256 x) public {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
 
