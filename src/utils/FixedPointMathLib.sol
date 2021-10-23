@@ -24,14 +24,16 @@ library FixedPointMathLib {
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
         assembly {
+            // Store x * y in z for now.
+            z := mul(x, y)
+
             // Equivalent to require(x == 0 || (x * y) / x == y)
-            if iszero(or(iszero(x), eq(div(mul(x, y), x), y))) {
+            if iszero(or(iszero(x), eq(div(z, x), y))) {
                 revert(0, 0)
             }
 
-            // Recomputing x * y is more efficient than using a variable.
             // If baseUnit is zero this will return zero instead of reverting.
-            z := div(mul(x, y), baseUnit)
+            z := div(z, baseUnit)
         }
     }
 
@@ -41,18 +43,20 @@ library FixedPointMathLib {
         uint256 baseUnit
     ) internal pure returns (uint256 z) {
         assembly {
+            // Store x * baseUnit in z for now.
+            z := mul(x, baseUnit)
+
             if or(
                 // Revert if y is zero to ensure we don't divide by zero below.
                 iszero(y),
                 // Equivalent to require(x == 0 || (x * baseUnit) / x == baseUnit)
-                iszero(or(iszero(x), eq(div(mul(x, baseUnit), x), baseUnit)))
+                iszero(or(iszero(x), eq(div(z, x), baseUnit)))
             ) {
                 revert(0, 0)
             }
 
-            // Recomputing x * baseUnit is more efficient than using a variable.
             // We ensure y is not zero above, so there is never division by zero here.
-            z := div(mul(x, baseUnit), y)
+            z := div(z, y)
         }
     }
 
