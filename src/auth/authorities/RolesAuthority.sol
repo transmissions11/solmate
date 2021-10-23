@@ -95,7 +95,7 @@ contract RolesAuthority is Auth, Authority {
         address target,
         bytes4 functionSig,
         bool enabled
-    ) public requiresAuth {
+    ) public virtual requiresAuth {
         bytes32 lastRoles = roleCapabilities[target][functionSig];
 
         unchecked {
