@@ -12,24 +12,34 @@ library CREATE3 {
 
     bytes32 internal constant PROXY_BYTECODE_HASH = keccak256(PROXY_BYTECODE);
 
-    function deploy(bytes32 salt, bytes memory creationCode) internal returns (address addr) {
+    function deploy(bytes32 salt, bytes memory creationCode) internal returns (address deployed) {
         bytes memory proxyChildBytecode = PROXY_BYTECODE;
 
-        addr = getAddressFrom(salt);
+        deployed = getDeployed(salt);
 
         address proxy;
         assembly {
             proxy := create2(0, add(proxyChildBytecode, 32), mload(proxyChildBytecode), salt)
         }
-        require(proxy != address(0), "DEPLOYMENT_ERROR");
+        require(proxy != address(0), "DEPLOYMENT_FAILED");
 
         (bool success, ) = proxy.call(creationCode);
-        require(success && addr.code.length != 0, "INITIALIZATION_ERROR");
+        require(success && deployed.code.length != 0, "INITIALIZATION_FAILED");
     }
 
-    function getAddressFrom(bytes32 salt) internal view returns (address) {
-        address proxy = keccak256(abi.encodePacked(bytes1(0xFF), address(this), salt, PROXY_BYTECODE_HASH))
-            .fromLast20Bytes();
+    function getDeployed(bytes32 salt) internal view returns (address) {
+        address proxy = keccak256(
+            abi.encodePacked(
+                // Prefix:
+                bytes1(0xFF),
+                // Creator:
+                address(this),
+                // Salt:
+                salt,
+                // Bytecode hash:
+                PROXY_BYTECODE_HASH
+            )
+        ).fromLast20Bytes();
 
         return keccak256(abi.encodePacked(hex"d6_94", proxy, hex"01")).fromLast20Bytes();
     }
