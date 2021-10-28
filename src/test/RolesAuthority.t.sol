@@ -59,37 +59,37 @@ contract RolesAuthorityTest is DSTestPlus {
         mockAuthChild.updateFlag();
 
         roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, false);
-        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         assertTrue(roles.doesUserHaveRole(address(this), rootRole));
         assertTrue(roles.doesUserHaveRole(address(this), adminRole));
-        assertTrue(!roles.doesUserHaveRole(address(this), modRole));
-        assertTrue(!roles.doesUserHaveRole(address(this), userRole));
+        assertFalse(roles.doesUserHaveRole(address(this), modRole));
+        assertFalse(roles.doesUserHaveRole(address(this), userRole));
     }
 
     function testRoot() public {
-        assertTrue(!roles.isUserRoot(address(this)));
-        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.isUserRoot(address(this)));
+        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         roles.setRootUser(address(this), true);
         assertTrue(roles.isUserRoot(address(this)));
         assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         roles.setRootUser(address(this), false);
-        assertTrue(!roles.isUserRoot(address(this)));
-        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.isUserRoot(address(this)));
+        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
     }
 
     function testPublicCapabilities() public {
-        assertTrue(!roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
-        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         roles.setPublicCapability(address(mockAuthChild), MockAuthChild.updateFlag.selector, true);
         assertTrue(roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
         assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         roles.setPublicCapability(address(mockAuthChild), MockAuthChild.updateFlag.selector, false);
-        assertTrue(!roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
-        assertTrue(!roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.isCapabilityPublic(address(mockAuthChild), MockAuthChild.updateFlag.selector));
+        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
     }
 }
