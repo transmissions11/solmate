@@ -9,11 +9,13 @@ import {ERC20} from "weird-erc20/ERC20.sol";
 import {ReturnsFalseToken} from "weird-erc20/ReturnsFalse.sol";
 import {MissingReturnToken} from "weird-erc20/MissingReturns.sol";
 import {TransferFromSelfToken} from "weird-erc20/TransferFromSelf.sol";
+import {PausableToken} from "weird-erc20/Pausable.sol";
 
 contract SafeERC20Test is DSTestPlus {
     ReturnsFalseToken returnsFalse;
     MissingReturnToken missingReturn;
     TransferFromSelfToken transferFromSelf;
+    PausableToken pausable;
 
     ERC20 erc20;
 
@@ -21,6 +23,9 @@ contract SafeERC20Test is DSTestPlus {
         returnsFalse = new ReturnsFalseToken(type(uint256).max);
         missingReturn = new MissingReturnToken(type(uint256).max);
         transferFromSelf = new TransferFromSelfToken(type(uint256).max);
+
+        pausable = new PausableToken(type(uint256).max);
+        pausable.stop();
 
         erc20 = new ERC20(type(uint256).max);
     }
@@ -55,6 +60,14 @@ contract SafeERC20Test is DSTestPlus {
 
     function testFailTransferFromWithReturnsFalse() public {
         verifySafeTransferFrom(address(returnsFalse), address(0xFEED), address(0xBEEF), 1e18);
+    }
+
+    function testFailTransferWithPausable() public {
+        verifySafeTransfer(address(pausable), address(0xBEEF), 1e18);
+    }
+
+    function testFailTransferFromWithPausable() public {
+        verifySafeTransferFrom(address(pausable), address(0xFEED), address(0xBEEF), 1e18);
     }
 
     function proveTransferWithMissingReturn(address to, uint256 amount) public {
@@ -105,6 +118,18 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(returnsFalse), from, to, amount);
     }
 
+    function proveFailTransferWithPausable(address to, uint256 amount) public {
+        verifySafeTransfer(address(pausable), to, amount);
+    }
+
+    function proveFailTransferFromWithPausable(
+        address from,
+        address to,
+        uint256 amount
+    ) public {
+        verifySafeTransferFrom(address(pausable), from, to, amount);
+    }
+
     function verifySafeTransfer(
         address token,
         address to,
@@ -147,7 +172,7 @@ contract SafeERC20Test is DSTestPlus {
         address to,
         uint256 amount
     ) internal {
-        uint256 slot = token == address(erc20) ? 3 : 2;
+        uint256 slot = token == address(erc20) || token == address(pausable) ? 3 : 2;
         hevm.store(
             token,
             keccak256(abi.encode(to, keccak256(abi.encode(from, uint256(slot))))),
