@@ -12,22 +12,18 @@ library SafeERC20 {
         address to,
         uint256 amount
     ) internal {
-        bytes4 selector_ = token.transferFrom.selector;
-
         assembly {
-            // Allocate memory for the call.
-            let transferCalldata := mload(0x40)
+            // Allocate memory for calldata.
+            let callData := mload(0x40)
 
-            // We'll use this mask on our address arguments when assembling calldata.
-            let addressMask := 0xffffffffffffffffffffffffffffffffffffffff
+            // Write the abi-encoded calldata to the slot in memory piece by piece:
+            mstore(callData, 0x23b872dd00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
+            mstore(add(callData, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "from" argument.
+            mstore(add(callData, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
+            mstore(add(callData, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
-            mstore(transferCalldata, selector_) // Begin by writing the transferFrom 4byte selector.
-            mstore(add(transferCalldata, 4), and(from, addressMask)) // Add the "from" argument.
-            mstore(add(transferCalldata, 36), and(to, addressMask)) // Add the "to" argument.
-            mstore(add(transferCalldata, 68), amount) // Now append the "amount" argument.
-
-            // Call transferFrom and store if it reverted or not.
-            let callStatus := call(gas(), token, 0, transferCalldata, 100, 0, 0)
+            // Call the token and store if it reverted or not.
+            let callStatus := call(gas(), token, 0, callData, 100, 0, 0)
 
             // Get how many bytes the call returned.
             let returnDataSize := returndatasize()
@@ -67,31 +63,46 @@ library SafeERC20 {
         address to,
         uint256 amount
     ) internal {
-        bytes4 selector_ = token.transfer.selector;
-
         assembly {
-            let freeMemoryPointer := mload(0x40)
-            mstore(freeMemoryPointer, selector_)
-            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff))
-            mstore(add(freeMemoryPointer, 36), amount)
+            // Allocate memory for calldata.
+            let callData := mload(0x40)
 
-            if iszero(call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)) {
-                returndatacopy(0, 0, returndatasize())
-                revert(0, returndatasize())
+            // Write the abi-encoded calldata to the slot in memory piece by piece:
+            mstore(callData, 0xa9059cbb00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
+            mstore(add(callData, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
+            mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
+
+            // Call the token and store if it reverted or not.
+            let callStatus := call(gas(), token, 0, callData, 100, 0, 0)
+
+            // Get how many bytes the call returned.
+            let returnDataSize := returndatasize()
+
+            // If the call reverted:
+            if iszero(callStatus) {
+                // Copy the return data into memory.
+                returndatacopy(0, 0, returnDataSize)
+
+                // Revert with the call's return data.
+                revert(0, returnDataSize)
             }
 
-            switch returndatasize()
-            case 0 {
-
-            }
+            switch returnDataSize
             case 32 {
-                returndatacopy(0, 0, returndatasize())
+                // Copy the return data into memory.
+                returndatacopy(0, 0, returnDataSize)
 
+                // If it returned false:
                 if iszero(mload(0)) {
+                    // Revert with no reason.
                     revert(0, 0)
                 }
             }
+            case 0 {
+                // If there was no return data, we don't need to do anything.
+            }
             default {
+                // If the call returned anything else, revert with no reason.
                 revert(0, 0)
             }
         }
