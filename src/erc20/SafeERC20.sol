@@ -113,11 +113,49 @@ library SafeERC20 {
         address to,
         uint256 amount
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.approve.selector, to, amount)
-        );
+        assembly {
+            // Allocate memory for calldata.
+            let callData := mload(0x40)
 
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "APPROVE_FAILED");
+            // Write the abi-encoded calldata to the slot in memory piece by piece:
+            mstore(callData, 0x095ea7b300000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
+            mstore(add(callData, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
+            mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
+
+            // Call the token and store if it reverted or not.
+            let callStatus := call(gas(), token, 0, callData, 100, 0, 0)
+
+            // Get how many bytes the call returned.
+            let returnDataSize := returndatasize()
+
+            // If the call reverted:
+            if iszero(callStatus) {
+                // Copy the return data into memory.
+                returndatacopy(0, 0, returnDataSize)
+
+                // Revert with the call's return data.
+                revert(0, returnDataSize)
+            }
+
+            switch returnDataSize
+            case 32 {
+                // Copy the return data into memory.
+                returndatacopy(0, 0, returnDataSize)
+
+                // If it returned false:
+                if iszero(mload(0)) {
+                    // Revert with no reason.
+                    revert(0, 0)
+                }
+            }
+            case 0 {
+                // If there was no return data, we don't need to do anything.
+            }
+            default {
+                // If the call returned anything else, revert with no reason.
+                revert(0, 0)
+            }
+        }
     }
 
     function safeTransferETH(address to, uint256 amount) internal {
