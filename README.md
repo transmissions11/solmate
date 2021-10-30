@@ -40,8 +40,9 @@ npm install @rari-capital/solmate
 
 These contracts were inspired by or directly modified from many sources, primarily:
 
-- [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
-- **[Dappsys V2](https://github.com/dapp-org/dappsys-v2)**
-- **[Dappsys](https://github.com/dapphub/dappsys)**
-- [Uniswap](https://github.com/Uniswap/uniswap-lib)
 - [Gnosis](https://github.com/gnosis/gp-v2-contracts)
+- [Uniswap](https://github.com/Uniswap/uniswap-lib)
+- [Dappsys](https://github.com/dapphub/dappsys)
+- [0xSequence](https://github.com/0xSequence)
+- [Dappsys V2](https://github.com/dapp-org/dappsys-v2)
+- [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
