@@ -99,6 +99,10 @@ library SafeTransferLib {
         require(didLastOptionalReturnCallSucceed(callStatus), "APPROVE_FAILED");
     }
 
+    /*///////////////////////////////////////////////////////////////
+                         INTERNAL HELPER LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {
         assembly {
             // Get how many bytes the call returned.
