@@ -7,6 +7,21 @@ import {ERC20} from "../erc20/ERC20.sol";
 /// @author Modified from Gnosis (https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/libraries/GPv2SafeERC20.sol)
 library SafeTransferLib {
     /*///////////////////////////////////////////////////////////////
+                            ETH OPERATIONS
+    //////////////////////////////////////////////////////////////*/
+
+    function safeTransferETH(address to, uint256 amount) internal {
+        bool callStatus;
+
+        assembly {
+            // Transfer the ETH and store if it succeeded or not.
+            callStatus := call(gas(), to, amount, 0, 0, 0, 0)
+        }
+
+        require(callStatus, "ETH_TRANSFER_FAILED");
+    }
+
+    /*///////////////////////////////////////////////////////////////
                            ERC20 OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
@@ -115,20 +130,5 @@ library SafeTransferLib {
                 success := 0
             }
         }
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                            ETH OPERATIONS
-    //////////////////////////////////////////////////////////////*/
-
-    function safeTransferETH(address to, uint256 amount) internal {
-        bool callStatus;
-
-        assembly {
-            // Transfer the ETH and store if it succeeded or not.
-            callStatus := call(gas(), to, amount, 0, 0, 0, 0)
-        }
-
-        require(callStatus, "ETH_TRANSFER_FAILED");
     }
 }
