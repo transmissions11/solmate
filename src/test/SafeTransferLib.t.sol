@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {SafeERC20, ERC20 as SolmateERC20} from "../erc20/SafeERC20.sol";
+import {SafeTransferLib, ERC20 as SolmateERC20} from "../utils/SafeTransferLib.sol";
 
 import {ERC20} from "weird-erc20/ERC20.sol";
 import {ReturnsFalseToken} from "weird-erc20/ReturnsFalse.sol";
@@ -11,7 +11,7 @@ import {MissingReturnToken} from "weird-erc20/MissingReturns.sol";
 import {TransferFromSelfToken} from "weird-erc20/TransferFromSelf.sol";
 import {PausableToken} from "weird-erc20/Pausable.sol";
 
-contract SafeERC20Test is DSTestPlus {
+contract SafeTransferLibTest is DSTestPlus {
     ReturnsFalseToken returnsFalse;
     MissingReturnToken missingReturn;
     TransferFromSelfToken transferFromSelf;
@@ -43,7 +43,7 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testTransferWithNonContract() public {
-        SafeERC20.safeTransfer(SolmateERC20(address(0xBADBEEF)), address(0xBEEF), 1e18);
+        SafeTransferLib.safeTransfer(SolmateERC20(address(0xBADBEEF)), address(0xBEEF), 1e18);
     }
 
     function testTransferFromWithMissingReturn() public {
@@ -59,7 +59,7 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testTransferFromWithNonContract() public {
-        SafeERC20.safeTransferFrom(SolmateERC20(address(0xBADBEEF)), address(0xFEED), address(0xBEEF), 1e18);
+        SafeTransferLib.safeTransferFrom(SolmateERC20(address(0xBADBEEF)), address(0xFEED), address(0xBEEF), 1e18);
     }
 
     function testApproveWithMissingReturn() public {
@@ -75,11 +75,11 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testApproveWithNonContract() public {
-        SafeERC20.safeApprove(SolmateERC20(address(0xBADBEEF)), address(0xBEEF), 1e18);
+        SafeTransferLib.safeApprove(SolmateERC20(address(0xBADBEEF)), address(0xBEEF), 1e18);
     }
 
     function testTransferETH() public {
-        SafeERC20.safeTransferETH(address(0xBEEF), 1e18);
+        SafeTransferLib.safeTransferETH(address(0xBEEF), 1e18);
     }
 
     function testFailTransferWithReturnsFalse() public {
@@ -119,7 +119,7 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testFailTransferETHToContractWithoutFallback() public {
-        SafeERC20.safeTransferETH(address(this), 1e18);
+        SafeTransferLib.safeTransferETH(address(this), 1e18);
     }
 
     function testTransferWithNonContract(
@@ -131,7 +131,7 @@ contract SafeERC20Test is DSTestPlus {
 
         if (uint256(uint160(nonContract)) <= 18) return; // Some precompiles cause reverts.
 
-        SafeERC20.safeTransfer(SolmateERC20(nonContract), to, amount);
+        SafeTransferLib.safeTransfer(SolmateERC20(nonContract), to, amount);
     }
 
     function testTransferFromWithMissingReturn(
@@ -168,7 +168,7 @@ contract SafeERC20Test is DSTestPlus {
 
         if (uint256(uint160(nonContract)) <= 18) return; // Some precompiles cause reverts.
 
-        SafeERC20.safeTransferFrom(SolmateERC20(nonContract), from, to, amount);
+        SafeTransferLib.safeTransferFrom(SolmateERC20(nonContract), from, to, amount);
     }
 
     function testApproveWithMissingReturn(address to, uint256 amount) public {
@@ -192,7 +192,7 @@ contract SafeERC20Test is DSTestPlus {
 
         if (uint256(uint160(nonContract)) <= 18) return; // Some precompiles cause reverts.
 
-        SafeERC20.safeApprove(SolmateERC20(nonContract), to, amount);
+        SafeTransferLib.safeApprove(SolmateERC20(nonContract), to, amount);
     }
 
     function testTransferETH(address recipient, uint256 amount) public {
@@ -200,7 +200,7 @@ contract SafeERC20Test is DSTestPlus {
 
         amount %= address(this).balance;
 
-        SafeERC20.safeTransferETH(recipient, amount);
+        SafeTransferLib.safeTransferETH(recipient, amount);
     }
 
     function testFailTransferWithReturnsFalse(address to, uint256 amount) public {
@@ -236,7 +236,7 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testFailTransferETHToContractWithoutFallback(uint256 amount) public {
-        SafeERC20.safeTransferETH(address(this), amount);
+        SafeTransferLib.safeTransferETH(address(this), amount);
     }
 
     function verifySafeTransfer(
@@ -245,7 +245,7 @@ contract SafeERC20Test is DSTestPlus {
         uint256 amount
     ) internal {
         uint256 preBal = ERC20(token).balanceOf(to);
-        SafeERC20.safeTransfer(SolmateERC20(address(token)), to, amount);
+        SafeTransferLib.safeTransfer(SolmateERC20(address(token)), to, amount);
         uint256 postBal = ERC20(token).balanceOf(to);
 
         if (to == address(this)) {
@@ -262,10 +262,10 @@ contract SafeERC20Test is DSTestPlus {
         uint256 amount
     ) internal {
         forceApprove(token, from, address(this), amount);
-        SafeERC20.safeTransfer(SolmateERC20(token), from, amount);
+        SafeTransferLib.safeTransfer(SolmateERC20(token), from, amount);
 
         uint256 preBal = ERC20(token).balanceOf(to);
-        SafeERC20.safeTransferFrom(SolmateERC20(token), from, to, amount);
+        SafeTransferLib.safeTransferFrom(SolmateERC20(token), from, to, amount);
         uint256 postBal = ERC20(token).balanceOf(to);
 
         if (from == to) {
@@ -280,7 +280,7 @@ contract SafeERC20Test is DSTestPlus {
         address to,
         uint256 amount
     ) internal {
-        SafeERC20.safeApprove(SolmateERC20(address(token)), to, amount);
+        SafeTransferLib.safeApprove(SolmateERC20(address(token)), to, amount);
 
         assertEq(ERC20(token).allowance(address(this), to), amount);
     }
