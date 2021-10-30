@@ -35,10 +35,10 @@ library SafeTransferLib {
 
             // If the call reverted:
             if iszero(callStatus) {
-                // Copy the return data into memory.
+                // Copy the revert message into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // Revert with the call's return data.
+                // Revert with the same message.
                 revert(0, returnDataSize)
             }
 
@@ -86,10 +86,10 @@ library SafeTransferLib {
 
             // If the call reverted:
             if iszero(callStatus) {
-                // Copy the return data into memory.
+                // Copy the revert message into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // Revert with the call's return data.
+                // Revert with the same message.
                 revert(0, returnDataSize)
             }
 
@@ -137,10 +137,10 @@ library SafeTransferLib {
 
             // If the call reverted:
             if iszero(callStatus) {
-                // Copy the return data into memory.
+                // Copy the revert message into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // Revert with the call's return data.
+                // Revert with the same message.
                 revert(0, returnDataSize)
             }
 
