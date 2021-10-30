@@ -118,7 +118,7 @@ library SafeTransferLib {
                 // Copy the return data into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // Set success if it decodes to true:
+                // Set success to whether it returned true.
                 success := mload(0)
             }
             case 0 {
