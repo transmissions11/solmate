@@ -196,6 +196,8 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testTransferETH(address recipient, uint256 amount) public {
+        if (uint256(uint160(recipient)) <= 18) return; // Some precompiles cause reverts.
+
         amount %= address(this).balance;
 
         SafeERC20.safeTransferETH(recipient, amount);
