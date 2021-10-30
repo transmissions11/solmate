@@ -1,2 +1,3 @@
 *.sol linguist-language=Solidity
 .dapprc linguist-language=Shell
+.gas-snapshot linguist-language=Julia
