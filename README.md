@@ -13,7 +13,7 @@ auth
 │  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
 erc20
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
-├─ SafeERC20 — "Safe ERC20/ETH transfer lib that handles missing return values"
+├─ SafeERC20 — "Safe ERC20/ETH transfer lib that gracefully handles missing return values."
 utils
 ├─ SSTORE2 - "Library for cheaper reads and writes to persistent storage."
 ├─ CREATE3 — "Deploy to deterministic addresses without an initcode factor."

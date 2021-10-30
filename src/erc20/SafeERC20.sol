@@ -3,8 +3,8 @@ pragma solidity >=0.8.0;
 
 import {ERC20} from "./ERC20.sol";
 
-/// @notice Safe ERC20 and ETH transfer library that safely handles missing return values.
-/// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/libraries/TransferHelper.sol)
+/// @notice Safe ERC20 and ETH transfer library that gracefully handles missing return values.
+/// @author Modified from Gnosis (https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/libraries/GPv2SafeERC20.sol)
 library SafeERC20 {
     /*///////////////////////////////////////////////////////////////
                            ERC20 OPERATIONS
@@ -68,9 +68,13 @@ library SafeERC20 {
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
-        (bool success, ) = to.call{value: amount}(new bytes(0));
-
-        require(success, "ETH_TRANSFER_FAILED");
+        assembly {
+            // If the call with ETH attached does not succeed:
+            if iszero(call(gas(), to, amount, 0, 0, 0, 0)) {
+                // Revert with no reason.
+                revert(0, 0)
+            }
+        }
     }
 
     /*///////////////////////////////////////////////////////////////
