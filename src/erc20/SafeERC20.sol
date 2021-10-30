@@ -47,9 +47,9 @@ library SafeERC20 {
                 // Copy the return data into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // If it returned false:
+                // If it decodes to false:
                 if iszero(mload(0)) {
-                    // Revert with no reason.
+                    // Revert with no message.
                     revert(0, 0)
                 }
             }
@@ -57,7 +57,7 @@ library SafeERC20 {
                 // If there was no return data, we don't need to do anything.
             }
             default {
-                // If the call returned anything else, revert with no reason.
+                // If the call returned anything else, revert with no message.
                 revert(0, 0)
             }
         }
@@ -78,7 +78,7 @@ library SafeERC20 {
             mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
             // Call the token and store if it reverted or not.
-            // We use 100 because the calldata length is 4 + 32 * 2.
+            // We use 68 because the calldata length is 4 + 32 * 2.
             let callStatus := call(gas(), token, 0, callData, 68, 0, 0)
 
             // Get how many bytes the call returned.
@@ -98,9 +98,9 @@ library SafeERC20 {
                 // Copy the return data into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // If it returned false:
+                // If it decodes to false:
                 if iszero(mload(0)) {
-                    // Revert with no reason.
+                    // Revert with no message.
                     revert(0, 0)
                 }
             }
@@ -108,7 +108,7 @@ library SafeERC20 {
                 // If there was no return data, we don't need to do anything.
             }
             default {
-                // If the call returned anything else, revert with no reason.
+                // If the call returned anything else, revert with no message.
                 revert(0, 0)
             }
         }
@@ -129,7 +129,7 @@ library SafeERC20 {
             mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
             // Call the token and store if it reverted or not.
-            // We use 64 because the calldata length is 4 + 32 * 2.
+            // We use 68 because the calldata length is 4 + 32 * 2.
             let callStatus := call(gas(), token, 0, callData, 68, 0, 0)
 
             // Get how many bytes the call returned.
@@ -149,9 +149,9 @@ library SafeERC20 {
                 // Copy the return data into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // If it returned false:
+                // If it decodes to false:
                 if iszero(mload(0)) {
-                    // Revert with no reason.
+                    // Revert with no message.
                     revert(0, 0)
                 }
             }
@@ -159,7 +159,7 @@ library SafeERC20 {
                 // If there was no return data, we don't need to do anything.
             }
             default {
-                // If the call returned anything else, revert with no reason.
+                // If the call returned anything else, revert with no message.
                 revert(0, 0)
             }
         }
@@ -173,7 +173,7 @@ library SafeERC20 {
         assembly {
             // If the call with ETH attached does not succeed:
             if iszero(call(gas(), to, amount, 0, 0, 0, 0)) {
-                // Revert with no reason.
+                // Revert with no message.
                 revert(0, 0)
             }
         }
