@@ -112,6 +112,7 @@ contract WETHInvariants is DSTestPlus, DSInvariantTest {
     WETH weth;
 
     function setUp() public {
+        weth = new WETH();
         wethTester = new WETHTester{value: address(this).balance}(weth);
 
         addTargetContract(address(wethTester));
