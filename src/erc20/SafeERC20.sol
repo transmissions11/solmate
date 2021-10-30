@@ -10,25 +10,71 @@ library SafeERC20 {
         ERC20 token,
         address from,
         address to,
-        uint256 amount
+        uint256 value
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transferFrom.selector, from, to, amount)
-        );
+        bytes4 selector_ = token.transferFrom.selector;
 
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FROM_FAILED");
+        assembly {
+            let freeMemoryPointer := mload(0x40)
+            mstore(freeMemoryPointer, selector_)
+            mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(add(freeMemoryPointer, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(add(freeMemoryPointer, 68), value)
+
+            if iszero(call(gas(), token, 0, freeMemoryPointer, 100, 0, 0)) {
+                returndatacopy(0, 0, returndatasize())
+                revert(0, returndatasize())
+            }
+        }
+
+        require(getLastTransferResult(), "TRANSFER_FROM_FAILED");
     }
 
     function safeTransfer(
         ERC20 token,
         address to,
-        uint256 amount
+        uint256 value
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transfer.selector, to, amount)
-        );
+        bytes4 selector_ = token.transfer.selector;
 
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FAILED");
+        assembly {
+            let freeMemoryPointer := mload(0x40)
+            mstore(freeMemoryPointer, selector_)
+            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff))
+            mstore(add(freeMemoryPointer, 36), value)
+
+            if iszero(call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)) {
+                returndatacopy(0, 0, returndatasize())
+                revert(0, returndatasize())
+            }
+        }
+
+        require(getLastTransferResult(), "TRANSFER_FAILED");
+    }
+
+    function getLastTransferResult() private pure returns (bool success) {
+        assembly {
+            function revertWithMessage(length, message) {
+                mstore(0x00, "\x08\xc3\x79\xa0")
+                mstore(0x04, 0x20)
+                mstore(0x24, length)
+                mstore(0x44, message)
+                revert(0x00, 0x64)
+            }
+
+            switch returndatasize()
+            case 0 {
+                success := 1
+            }
+            case 32 {
+                returndatacopy(0, 0, returndatasize())
+
+                success := iszero(iszero(mload(0)))
+            }
+            default {
+                revertWithMessage(31, "BAD_RETURN_DATA")
+            }
+        }
     }
 
     function safeApprove(
