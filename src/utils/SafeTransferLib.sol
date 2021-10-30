@@ -16,6 +16,8 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
+        bool callStatus;
+
         assembly {
             // Allocate memory for calldata.
             let callData := mload(0x40)
@@ -26,41 +28,12 @@ library SafeTransferLib {
             mstore(add(callData, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(callData, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
-            // Call the token and store if it reverted or not.
+            // Call the token and store if it succeeded or not.
             // We use 100 because the calldata length is 4 + 32 * 3.
-            let callStatus := call(gas(), token, 0, callData, 100, 0, 0)
-
-            // Get how many bytes the call returned.
-            let returnDataSize := returndatasize()
-
-            // If the call reverted:
-            if iszero(callStatus) {
-                // Copy the revert message into memory.
-                returndatacopy(0, 0, returnDataSize)
-
-                // Revert with the same message.
-                revert(0, returnDataSize)
-            }
-
-            switch returnDataSize
-            case 32 {
-                // Copy the return data into memory.
-                returndatacopy(0, 0, returnDataSize)
-
-                // If it decodes to false:
-                if iszero(mload(0)) {
-                    // Revert with no message.
-                    revert(0, 0)
-                }
-            }
-            case 0 {
-                // If there was no return data, we don't need to do anything.
-            }
-            default {
-                // If the call returned anything else, revert with no message.
-                revert(0, 0)
-            }
+            callStatus := call(gas(), token, 0, callData, 100, 0, 0)
         }
+
+        require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FROM_FAILED");
     }
 
     function safeTransfer(
@@ -68,6 +41,8 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
+        bool callStatus;
+
         assembly {
             // Allocate memory for calldata.
             let callData := mload(0x40)
@@ -77,41 +52,12 @@ library SafeTransferLib {
             mstore(add(callData, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
-            // Call the token and store if it reverted or not.
+            // Call the token and store if it succeeded or not.
             // We use 68 because the calldata length is 4 + 32 * 2.
-            let callStatus := call(gas(), token, 0, callData, 68, 0, 0)
-
-            // Get how many bytes the call returned.
-            let returnDataSize := returndatasize()
-
-            // If the call reverted:
-            if iszero(callStatus) {
-                // Copy the revert message into memory.
-                returndatacopy(0, 0, returnDataSize)
-
-                // Revert with the same message.
-                revert(0, returnDataSize)
-            }
-
-            switch returnDataSize
-            case 32 {
-                // Copy the return data into memory.
-                returndatacopy(0, 0, returnDataSize)
-
-                // If it decodes to false:
-                if iszero(mload(0)) {
-                    // Revert with no message.
-                    revert(0, 0)
-                }
-            }
-            case 0 {
-                // If there was no return data, we don't need to do anything.
-            }
-            default {
-                // If the call returned anything else, revert with no message.
-                revert(0, 0)
-            }
+            callStatus := call(gas(), token, 0, callData, 68, 0, 0)
         }
+
+        require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FAILED");
     }
 
     function safeApprove(
@@ -119,6 +65,8 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
+        bool callStatus;
+
         assembly {
             // Allocate memory for calldata.
             let callData := mload(0x40)
@@ -128,10 +76,16 @@ library SafeTransferLib {
             mstore(add(callData, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
-            // Call the token and store if it reverted or not.
+            // Call the token and store if it succeeded or not.
             // We use 68 because the calldata length is 4 + 32 * 2.
-            let callStatus := call(gas(), token, 0, callData, 68, 0, 0)
+            callStatus := call(gas(), token, 0, callData, 68, 0, 0)
+        }
 
+        require(didLastOptionalReturnCallSucceed(callStatus), "APPROVE_FAILED");
+    }
+
+    function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {
+        assembly {
             // Get how many bytes the call returned.
             let returnDataSize := returndatasize()
 
@@ -149,18 +103,16 @@ library SafeTransferLib {
                 // Copy the return data into memory.
                 returndatacopy(0, 0, returnDataSize)
 
-                // If it decodes to false:
-                if iszero(mload(0)) {
-                    // Revert with no message.
-                    revert(0, 0)
-                }
+                // Set success if it decodes to true:
+                success := mload(0)
             }
             case 0 {
-                // If there was no return data, we don't need to do anything.
+                // There was no return data.
+                success := 1
             }
             default {
-                // If the call returned anything else, revert with no message.
-                revert(0, 0)
+                // It returned some malformed input.
+                success := 0
             }
         }
     }
@@ -170,12 +122,13 @@ library SafeTransferLib {
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
+        bool callStatus;
+
         assembly {
-            // If the call with ETH attached does not succeed:
-            if iszero(call(gas(), to, amount, 0, 0, 0, 0)) {
-                // Revert with no message.
-                revert(0, 0)
-            }
+            // Transfer the ETH and store if it succeeded or not.
+            callStatus := call(gas(), to, amount, 0, 0, 0, 0)
         }
+
+        require(callStatus, "ETH_TRANSFER_FAILED");
     }
 }
