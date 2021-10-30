@@ -130,20 +130,27 @@ contract ERC20Test is DSTestPlus {
 
 contract ERC20Invariants is DSTestPlus, DSInvariantTest {
     BalanceSum balanceSum;
+    MockERC20 token;
 
     function setUp() public {
-        balanceSum = new BalanceSum();
+        token = new MockERC20("Token", "TKN", 18);
+        balanceSum = new BalanceSum(token);
+
         addTargetContract(address(balanceSum));
     }
 
     function invariantBalanceSum() public {
-        assertEq(balanceSum.token().totalSupply(), balanceSum.sum());
+        assertEq(token.totalSupply(), balanceSum.sum());
     }
 }
 
 contract BalanceSum {
-    MockERC20 public token = new MockERC20("Token", "TKN", 18);
+    MockERC20 token;
     uint256 public sum;
+
+    constructor(MockERC20 _token) {
+        token = _token;
+    }
 
     function mint(address from, uint256 amount) public {
         token.mint(from, amount);

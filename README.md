@@ -11,7 +11,7 @@ auth
 ├─ authorities
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
 │  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
-erc20
+tokens
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
 utils
 ├─ SSTORE2 - "Library for cheaper reads and writes to persistent storage."
