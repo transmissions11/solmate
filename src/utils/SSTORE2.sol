@@ -23,34 +23,43 @@ library SSTORE2 {
         require(pointer != address(0), "DEPLOYMENT_FAILED");
     }
 
-    function read(address pointer) internal view returns (bytes memory) {
-        return readBytecode(pointer, DATA_OFFSET, pointer.code.length - DATA_OFFSET);
+    function read(address pointer) internal view returns (bytes memory data) {
+        uint256 start = DATA_OFFSET;
+        uint256 size = pointer.code.length - start;
+
+        assembly {
+            data := mload(0x40)
+            mstore(0x40, add(data, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
+            mstore(data, size)
+            extcodecopy(pointer, add(data, 0x20), start, size)
+        }
     }
 
-    function read(address pointer, uint256 start) internal view returns (bytes memory) {
+    function read(address pointer, uint256 start) internal view returns (bytes memory data) {
         start += DATA_OFFSET;
 
-        return readBytecode(pointer, start, pointer.code.length - start);
+        uint256 size = pointer.code.length - start;
+
+        assembly {
+            data := mload(0x40)
+            mstore(0x40, add(data, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
+            mstore(data, size)
+            extcodecopy(pointer, add(data, 0x20), start, size)
+        }
     }
 
     function read(
         address pointer,
         uint256 start,
         uint256 end
-    ) internal view returns (bytes memory) {
+    ) internal view returns (bytes memory data) {
         start += DATA_OFFSET;
         end += DATA_OFFSET;
 
         require(pointer.code.length >= end, "OUT_OF_BOUNDS");
 
-        return readBytecode(pointer, start, end - start);
-    }
+        uint256 size = end - start;
 
-    function readBytecode(
-        address pointer,
-        uint256 start,
-        uint256 size
-    ) private view returns (bytes memory data) {
         assembly {
             data := mload(0x40)
             mstore(0x40, add(data, and(add(add(size, add(start, 0x20)), 0x1f), not(0x1f))))
