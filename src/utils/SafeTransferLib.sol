@@ -123,7 +123,7 @@ library SafeTransferLib {
                 returndatacopy(0, 0, returnDataSize)
 
                 // Set success to whether it returned true.
-                success := mload(0)
+                success := iszero(iszero(mload(0)))
             }
             case 0 {
                 // There was no return data.
