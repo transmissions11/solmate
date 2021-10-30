@@ -78,6 +78,10 @@ contract SafeERC20Test is DSTestPlus {
         SafeERC20.safeApprove(SolmateERC20(address(0xBADBEEF)), address(0xBEEF), 1e18);
     }
 
+    function testTransferETH() public {
+        SafeERC20.safeTransferETH(address(0xBEEF), 1e18);
+    }
+
     function testFailTransferWithReturnsFalse() public {
         verifySafeTransfer(address(returnsFalse), address(0xBEEF), 1e18);
     }
@@ -112,6 +116,10 @@ contract SafeERC20Test is DSTestPlus {
 
     function testTransferWithStandardERC20(address to, uint256 amount) public {
         verifySafeTransfer(address(erc20), to, amount);
+    }
+
+    function testFailTransferETHToContractWithoutFallback() public {
+        SafeERC20.safeTransferETH(address(this), 1e18);
     }
 
     function testTransferWithNonContract(
@@ -187,6 +195,12 @@ contract SafeERC20Test is DSTestPlus {
         SafeERC20.safeApprove(SolmateERC20(nonContract), to, amount);
     }
 
+    function testTransferETH(address recipient, uint256 amount) public {
+        amount %= address(this).balance;
+
+        SafeERC20.safeTransferETH(recipient, amount);
+    }
+
     function testFailTransferWithReturnsFalse(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsFalse), to, amount);
     }
@@ -217,6 +231,10 @@ contract SafeERC20Test is DSTestPlus {
 
     function testFailApproveWithPausable(address to, uint256 amount) public {
         verifySafeApprove(address(pausable), to, amount);
+    }
+
+    function testFailTransferETHToContractWithoutFallback(uint256 amount) public {
+        SafeERC20.safeTransferETH(address(this), amount);
     }
 
     function verifySafeTransfer(
