@@ -26,7 +26,7 @@ library SafeERC20 {
             mstore(add(callData, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
         }
 
-        callOptionalReturn(token, callData);
+        optionalReturnCall(token, callData);
     }
 
     function safeTransfer(
@@ -43,7 +43,7 @@ library SafeERC20 {
             mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
         }
 
-        callOptionalReturn(token, callData);
+        optionalReturnCall(token, callData);
     }
 
     function safeApprove(
@@ -60,7 +60,7 @@ library SafeERC20 {
             mstore(add(callData, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
         }
 
-        callOptionalReturn(token, callData);
+        optionalReturnCall(token, callData);
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ library SafeERC20 {
                           INTERNAL UTILITIES
     //////////////////////////////////////////////////////////////*/
 
-    function callOptionalReturn(ERC20 token, bytes memory callData) private {
+    function optionalReturnCall(ERC20 token, bytes memory callData) private {
         assembly {
             // Call the token and store if it reverted or not.
             let callStatus := call(gas(), token, 0, callData, 100, 0, 0)
