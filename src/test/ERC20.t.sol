@@ -31,14 +31,14 @@ contract ERC20Test is DSTestPlus {
         assertEq(tkn.decimals(), decimals);
     }
 
-    function proveMint(address from, uint256 amount) public {
+    function testMint(address from, uint256 amount) public {
         token.mint(from, amount);
 
         assertEq(token.totalSupply(), amount);
         assertEq(token.balanceOf(from), amount);
     }
 
-    function proveBurn(
+    function testBurn(
         address from,
         uint256 mintAmount,
         uint256 burnAmount
@@ -52,13 +52,13 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(from), mintAmount - burnAmount);
     }
 
-    function proveApprove(address from, uint256 amount) public {
+    function testApprove(address from, uint256 amount) public {
         assertTrue(token.approve(from, amount));
 
         assertEq(token.allowance(address(this), from), amount);
     }
 
-    function proveTransfer(address from, uint256 amount) public {
+    function testTransfer(address from, uint256 amount) public {
         token.mint(address(this), amount);
 
         assertTrue(token.transfer(from, amount));
@@ -72,7 +72,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function proveTransferFrom(
+    function testTransferFrom(
         address to,
         uint256 approval,
         uint256 amount
@@ -99,7 +99,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function proveFailTransferFromInsufficientAllowance(
+    function testFailTransferFromInsufficientAllowance(
         address to,
         uint256 approval,
         uint256 amount
@@ -113,7 +113,7 @@ contract ERC20Test is DSTestPlus {
         token.transferFrom(address(from), to, amount);
     }
 
-    function proveFailTransferFromInsufficientBalance(
+    function testFailTransferFromInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 sendAmount

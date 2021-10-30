@@ -95,26 +95,26 @@ contract SafeERC20Test is DSTestPlus {
     }
 
     function testFailApproveWithReturnsFalse() public {
-        verifySafeApprove(address(transferFromSelf), address(0xBEEF), 1e18);
+        verifySafeApprove(address(returnsFalse), address(0xBEEF), 1e18);
     }
 
     function testFailApproveWithPausable() public {
-        verifySafeApprove(address(transferFromSelf), address(0xBEEF), 1e18);
+        verifySafeApprove(address(pausable), address(0xBEEF), 1e18);
     }
 
-    function proveTransferWithMissingReturn(address to, uint256 amount) public {
+    function testTransferWithMissingReturn(address to, uint256 amount) public {
         verifySafeTransfer(address(missingReturn), to, amount);
     }
 
-    function proveTransferWithTransferFromSelf(address to, uint256 amount) public {
+    function testTransferWithTransferFromSelf(address to, uint256 amount) public {
         verifySafeTransfer(address(transferFromSelf), to, amount);
     }
 
-    function proveTransferWithStandardERC20(address to, uint256 amount) public {
+    function testTransferWithStandardERC20(address to, uint256 amount) public {
         verifySafeTransfer(address(erc20), to, amount);
     }
 
-    function proveTransferFromWithMissingReturn(
+    function testTransferFromWithMissingReturn(
         address from,
         address to,
         uint256 amount
@@ -122,7 +122,7 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(missingReturn), from, to, amount);
     }
 
-    function proveTransferFromWithTransferFromSelf(
+    function testTransferFromWithTransferFromSelf(
         address from,
         address to,
         uint256 amount
@@ -130,7 +130,7 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(transferFromSelf), from, to, amount);
     }
 
-    function proveTransferFromWithStandardERC20(
+    function testTransferFromWithStandardERC20(
         address from,
         address to,
         uint256 amount
@@ -138,7 +138,7 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(erc20), from, to, amount);
     }
 
-    function proveFailTransferWithNonContract(
+    function testFailTransferWithNonContract(
         address nonContract,
         address to,
         uint256 amount
@@ -148,15 +148,15 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransfer(nonContract, to, amount);
     }
 
-    function proveFailTransferWithReturnsFalse(address to, uint256 amount) public {
+    function testFailTransferWithReturnsFalse(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsFalse), to, amount);
     }
 
-    function proveFailTransferWithPausable(address to, uint256 amount) public {
+    function testFailTransferWithPausable(address to, uint256 amount) public {
         verifySafeTransfer(address(pausable), to, amount);
     }
 
-    function proveFailTransferFromWithNonContract(
+    function testFailTransferFromWithNonContract(
         address nonContract,
         address from,
         address to,
@@ -167,7 +167,7 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(nonContract, from, to, amount);
     }
 
-    function proveFailTransferFromWithReturnsFalse(
+    function testFailTransferFromWithReturnsFalse(
         address from,
         address to,
         uint256 amount
@@ -175,7 +175,7 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(returnsFalse), from, to, amount);
     }
 
-    function proveFailTransferFromWithPausable(
+    function testFailTransferFromWithPausable(
         address from,
         address to,
         uint256 amount
@@ -183,7 +183,7 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeTransferFrom(address(pausable), from, to, amount);
     }
 
-    function proveFailApproveWithNonContract(
+    function testFailApproveWithNonContract(
         address nonContract,
         address to,
         uint256 amount
@@ -193,12 +193,12 @@ contract SafeERC20Test is DSTestPlus {
         verifySafeApprove(nonContract, to, amount);
     }
 
-    function proveFailApproveWithReturnsFalse(address to, uint256 amount) public {
-        verifySafeApprove(address(transferFromSelf), to, amount);
+    function testFailApproveWithReturnsFalse(address to, uint256 amount) public {
+        verifySafeApprove(address(returnsFalse), to, amount);
     }
 
-    function proveFailApproveWithPausable(address to, uint256 amount) public {
-        verifySafeApprove(address(transferFromSelf), to, amount);
+    function testFailApproveWithPausable(address to, uint256 amount) public {
+        verifySafeApprove(address(pausable), to, amount);
     }
 
     function verifySafeTransfer(
@@ -242,7 +242,7 @@ contract SafeERC20Test is DSTestPlus {
         address to,
         uint256 amount
     ) internal {
-        SafeERC20.safeTransfer(SolmateERC20(address(token)), to, amount);
+        SafeERC20.safeApprove(SolmateERC20(address(token)), to, amount);
 
         assertEq(ERC20(token).allowance(address(this), to), amount);
     }

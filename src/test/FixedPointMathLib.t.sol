@@ -140,7 +140,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertTrue(root * root <= x && next * next > x);
     }
 
-    function proveMin(uint256 x, uint256 y) public {
+    function testMin(uint256 x, uint256 y) public {
         if (x < y) {
             assertEq(FixedPointMathLib.min(x, y), x);
         } else {
@@ -148,7 +148,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         }
     }
 
-    function proveMax(uint256 x, uint256 y) public {
+    function testMax(uint256 x, uint256 y) public {
         if (x > y) {
             assertEq(FixedPointMathLib.max(x, y), x);
         } else {
