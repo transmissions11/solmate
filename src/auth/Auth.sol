@@ -60,7 +60,10 @@ abstract contract Auth {
                 mstore(freeMemoryPointer, shl(224, 0xb7009613)) // Properly shift and append the function selector for canCall(address,address,bytes4)
                 mstore(add(freeMemoryPointer, 4), and(user, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "user" argument.
                 mstore(add(freeMemoryPointer, 36), and(address(), 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append our address.
-                mstore(add(freeMemoryPointer, 68), and(functionSig, 0xffffffff)) // Finally mask and append the "functionSig" argument.
+                mstore(
+                    add(freeMemoryPointer, 68),
+                    and(functionSig, 0xffffffff00000000000000000000000000000000000000000000000000000000)
+                ) // Finally mask and append the "functionSig" argument.
 
                 // Call the authority and store if it succeeded or not.
                 let callStatus := staticcall(gas(), cachedAuthority, freeMemoryPointer, callDataLength, 0, 0)
