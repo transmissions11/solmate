@@ -46,18 +46,18 @@ abstract contract Auth {
         assembly {
             let cachedAuthority := sload(authority.slot)
 
-            if iszero(eq(cachedAuthority, 0x0000000000000000000000000000000000000000000000000000000000000000)) {
+            if iszero(eq(cachedAuthority, 0)) {
                 // Get a pointer to some free memory.
                 let freeMemoryPointer := mload(0x40)
 
-                // Write the abi-encoded calldata to the slot in memory piece by piece:
-                mstore(freeMemoryPointer, shl(224, 0xb7009613)) // Begin with the function selector.
+                // Write the abi-encoded calldata to memory piece by piece:
+                mstore(
+                    freeMemoryPointer,
+                    0xb700961300000000000000000000000000000000000000000000000000000000 // Function selector for canCall(address,address,bytes4)
+                )
                 mstore(add(freeMemoryPointer, 4), and(user, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "user" argument.
                 mstore(add(freeMemoryPointer, 36), and(address(), 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append our address.
-                mstore(
-                    add(freeMemoryPointer, 68),
-                    and(functionSig, 0xffffffff00000000000000000000000000000000000000000000000000000000)
-                ) // Finally append the "functionSig" argument. Must be masked as a bytes4 value.
+                mstore(add(freeMemoryPointer, 68), and(functionSig, 0xffffffff)) // Finally mask and append the "functionSig" argument.
 
                 // Call the authority and store if it succeeded or not.
                 // We use 100 because the calldata length is 4 + 32 * 3.
@@ -71,7 +71,7 @@ abstract contract Auth {
 
                 // If the call reverted:
                 if iszero(callStatus) {
-                    // Revert with the same message .
+                    // Revert with the same message.
                     revert(0, returnDataSize)
                 }
 
@@ -79,8 +79,10 @@ abstract contract Auth {
                 authorized := iszero(iszero(mload(0)))
             }
 
+            // If there was no authority or canCall returned false:
             if iszero(authorized) {
-                authorized := eq(sload(owner.slot), and(user, 0xffffffffffffffffffffffffffffffffffffffff))
+                // Set authorized to whether the user is the owner.
+                authorized := eq(sload(owner.slot), user)
             }
         }
     }
