@@ -47,21 +47,21 @@ abstract contract Auth {
             let cachedAuthority := sload(authority.slot)
 
             if iszero(eq(cachedAuthority, 0x0000000000000000000000000000000000000000000000000000000000000000)) {
-                // Get a pointer to some memory.
-                let callData := mload(0x40)
+                // Get a pointer to some free memory.
+                let freeMemoryPointer := mload(0x40)
 
                 // Write the abi-encoded calldata to the slot in memory piece by piece:
-                mstore(callData, shl(224, 0xb7009613)) // Begin with the function selector.
-                mstore(add(callData, 4), and(user, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "user" argument.
-                mstore(add(callData, 36), and(address(), 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append our address.
+                mstore(freeMemoryPointer, shl(224, 0xb7009613)) // Begin with the function selector.
+                mstore(add(freeMemoryPointer, 4), and(user, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "user" argument.
+                mstore(add(freeMemoryPointer, 36), and(address(), 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append our address.
                 mstore(
-                    add(callData, 68),
+                    add(freeMemoryPointer, 68),
                     and(functionSig, 0xffffffff00000000000000000000000000000000000000000000000000000000)
                 ) // Finally append the "functionSig" argument. Must be masked as a bytes4 value.
 
                 // Call the authority and store if it succeeded or not.
                 // We use 100 because the calldata length is 4 + 32 * 3.
-                let callStatus := staticcall(gas(), cachedAuthority, 0, 100, 0, 0)
+                let callStatus := staticcall(gas(), cachedAuthority, freeMemoryPointer, 100, 0, 0)
 
                 // Get how many bytes the call returned.
                 let returnDataSize := returndatasize()
