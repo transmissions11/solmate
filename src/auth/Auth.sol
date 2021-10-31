@@ -12,7 +12,7 @@ interface Authority {
 }
 
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
-/// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
+/// @author Inspired by Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 abstract contract Auth {
     event OwnerUpdated(address indexed owner);
 
