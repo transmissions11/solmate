@@ -51,10 +51,7 @@ abstract contract Auth {
                 let freeMemoryPointer := mload(0x40)
 
                 // Write the abi-encoded calldata to memory piece by piece:
-                mstore(
-                    freeMemoryPointer,
-                    0xb700961300000000000000000000000000000000000000000000000000000000 // Function selector for canCall(address,address,bytes4)
-                )
+                mstore(freeMemoryPointer, shl(224, 0xb7009613)) // Properly shift and append the function selector for canCall(address,address,bytes4)
                 mstore(add(freeMemoryPointer, 4), and(user, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "user" argument.
                 mstore(add(freeMemoryPointer, 36), and(address(), 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append our address.
                 mstore(add(freeMemoryPointer, 68), and(functionSig, 0xffffffff)) // Finally mask and append the "functionSig" argument.
