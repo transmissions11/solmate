@@ -4,16 +4,21 @@ pragma solidity >=0.8.0;
 import {ERC20} from "../tokens/ERC20.sol";
 
 /// @notice Safe ETH and ERC20 transfer library that gracefully handles missing return values.
-/// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v3-periphery/blob/main/contracts/libraries/TransferHelper.sol)
+/// @author Modified from Gnosis (https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/libraries/GPv2SafeERC20.sol)
 library SafeTransferLib {
     /*///////////////////////////////////////////////////////////////
                             ETH OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
-        (bool success, ) = to.call{value: amount}(new bytes(0));
+        bool callStatus;
 
-        require(success, "ETH_TRANSFER_FAILED");
+        assembly {
+            // Transfer the ETH and store if it succeeded or not.
+            callStatus := call(gas(), to, amount, 0, 0, 0, 0)
+        }
+
+        require(callStatus, "ETH_TRANSFER_FAILED");
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -26,11 +31,29 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transferFrom.selector, from, to, amount)
-        );
+        bool callStatus;
 
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FROM_FAILED");
+        assembly {
+            // We'll use 4 + 32 * 3 bytes.
+            let callDataLength := 100
+
+            // Get a pointer to some free memory.
+            let freeMemoryPointer := mload(0x40)
+
+            // Update the free memory pointer for safety.
+            mstore(0x40, add(freeMemoryPointer, callDataLength))
+
+            // Write the abi-encoded calldata to memory piece by piece:
+            mstore(freeMemoryPointer, shl(224, 0x23b872dd)) // Properly shift and append the function selector for transfer(address,uint256)
+            mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "from" argument.
+            mstore(add(freeMemoryPointer, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
+
+            // Call the token and store if it succeeded or not.
+            callStatus := call(gas(), token, 0, freeMemoryPointer, callDataLength, 0, 0)
+        }
+
+        require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FROM_FAILED");
     }
 
     function safeTransfer(
@@ -38,11 +61,28 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.transfer.selector, to, amount)
-        );
+        bool callStatus;
 
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "TRANSFER_FAILED");
+        assembly {
+            // We'll use 4 + 32 * 2 bytes.
+            let callDataLength := 68
+
+            // Get a pointer to some free memory.
+            let freeMemoryPointer := mload(0x40)
+
+            // Update the free memory pointer for safety.
+            mstore(0x40, add(freeMemoryPointer, callDataLength))
+
+            // Write the abi-encoded calldata to memory piece by piece:
+            mstore(freeMemoryPointer, shl(224, 0xa9059cbb)) // Properly shift and append the function selector for approve(address,uint256)
+            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
+
+            // Call the token and store if it succeeded or not.
+            callStatus := call(gas(), token, 0, freeMemoryPointer, callDataLength, 0, 0)
+        }
+
+        require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FAILED");
     }
 
     function safeApprove(
@@ -50,10 +90,64 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        (bool success, bytes memory data) = address(token).call(
-            abi.encodeWithSelector(ERC20.approve.selector, to, amount)
-        );
+        bool callStatus;
 
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "APPROVE_FAILED");
+        assembly {
+            // We'll use 4 + 32 * 2 bytes.
+            let callDataLength := 68
+
+            // Get a pointer to some free memory.
+            let freeMemoryPointer := mload(0x40)
+
+            // Update the free memory pointer for safety.
+            mstore(0x40, add(freeMemoryPointer, callDataLength))
+
+            // Write the abi-encoded calldata to memory piece by piece:
+            mstore(freeMemoryPointer, shl(224, 0x095ea7b3)) // Properly shift and append the function selector for approve(address,uint256)
+            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
+
+            // Call the token and store if it succeeded or not.
+            callStatus := call(gas(), token, 0, freeMemoryPointer, callDataLength, 0, 0)
+        }
+
+        require(didLastOptionalReturnCallSucceed(callStatus), "APPROVE_FAILED");
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                         INTERNAL HELPER LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {
+        assembly {
+            // Get how many bytes the call returned.
+            let returnDataSize := returndatasize()
+
+            // If the call reverted:
+            if iszero(callStatus) {
+                // Copy the revert message into memory.
+                returndatacopy(0, 0, returnDataSize)
+
+                // Revert with the same message.
+                revert(0, returnDataSize)
+            }
+
+            switch returnDataSize
+            case 32 {
+                // Copy the return data into memory.
+                returndatacopy(0, 0, returnDataSize)
+
+                // Set success to whether it returned true.
+                success := iszero(iszero(mload(0)))
+            }
+            case 0 {
+                // There was no return data.
+                success := 1
+            }
+            default {
+                // It returned some malformed input.
+                success := 0
+            }
+        }
     }
 }
