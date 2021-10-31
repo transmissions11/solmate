@@ -47,8 +47,14 @@ abstract contract Auth {
             let cachedAuthority := sload(authority.slot)
 
             if iszero(eq(cachedAuthority, 0)) {
+                // We'll use 4 + 32 * 3 bytes.
+                let callDataLength := 100
+
                 // Get a pointer to some free memory.
                 let freeMemoryPointer := mload(0x40)
+
+                // Update the free memory pointer for safety.
+                mstore(0x40, add(freeMemoryPointer, callDataLength))
 
                 // Write the abi-encoded calldata to memory piece by piece:
                 mstore(freeMemoryPointer, shl(224, 0xb7009613)) // Properly shift and append the function selector for canCall(address,address,bytes4)
@@ -57,20 +63,28 @@ abstract contract Auth {
                 mstore(add(freeMemoryPointer, 68), and(functionSig, 0xffffffff)) // Finally mask and append the "functionSig" argument.
 
                 // Call the authority and store if it succeeded or not.
-                // We use 100 because the calldata length is 4 + 32 * 3.
-                let callStatus := staticcall(gas(), cachedAuthority, freeMemoryPointer, 100, 0, 0)
+                let callStatus := staticcall(gas(), cachedAuthority, freeMemoryPointer, callDataLength, 0, 0)
 
                 // Get how many bytes the call returned.
                 let returnDataSize := returndatasize()
 
-                // Copy the return data into memory.
-                returndatacopy(0, 0, returnDataSize)
-
                 // If the call reverted:
                 if iszero(callStatus) {
+                    // Copy the revert message into memory.
+                    returndatacopy(0, 0, returnDataSize)
+
                     // Revert with the same message.
                     revert(0, returnDataSize)
                 }
+
+                // If it returned more than 32 bytes:
+                if iszero(eq(returnDataSize, 32)) {
+                    // Revert without a message.
+                    revert(0, 0)
+                }
+
+                // Copy the return data into memory.
+                returndatacopy(0, 0, returnDataSize)
 
                 // Set authorized to whether it returned true.
                 authorized := iszero(iszero(mload(0)))
