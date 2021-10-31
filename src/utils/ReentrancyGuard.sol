@@ -2,26 +2,20 @@
 pragma solidity >=0.7.0;
 
 /// @notice Gas optimized reentrancy protection for smart contracts.
-/// @author Original work by Transmissions11 (https://github.com/transmissions11)
+/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol)
 abstract contract ReentrancyGuard {
-    uint256 private reentrancyStatus = 1;
+    uint256 private constant NOT_ENTERED = 1;
+    uint256 private constant ENTERED = 2;
+
+    uint256 private reentrancyStatus = NOT_ENTERED;
 
     modifier nonReentrant() {
-        assembly {
-            // If reentrancyStatus is 2, revert.
-            if eq(sload(reentrancyStatus.slot), 2) {
-                revert(0, 0)
-            }
+        require(reentrancyStatus != ENTERED, "REENTRANCY");
 
-            // Set reentrancyStatus to 2.
-            sstore(reentrancyStatus.slot, 2)
-        }
+        reentrancyStatus = ENTERED;
 
-        _; // Execute the function body.
+        _;
 
-        assembly {
-            // Set reentrancyStatus to 1 again.
-            sstore(reentrancyStatus.slot, 1)
-        }
+        reentrancyStatus = NOT_ENTERED;
     }
 }
