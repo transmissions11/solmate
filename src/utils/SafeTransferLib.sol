@@ -38,7 +38,10 @@ library SafeTransferLib {
             let freeMemoryPointer := mload(0x40)
 
             // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
+            mstore(
+                freeMemoryPointer,
+                0x23b872dd00000000000000000000000000000000000000000000000000000000 // Function selector for transfer(address,uint256)
+            )
             mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "from" argument.
             mstore(add(freeMemoryPointer, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
@@ -63,7 +66,10 @@ library SafeTransferLib {
             let freeMemoryPointer := mload(0x40)
 
             // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
+            mstore(
+                freeMemoryPointer,
+                0xa9059cbb00000000000000000000000000000000000000000000000000000000 // Function selector for approve(address,uint256)
+            )
             mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
@@ -87,7 +93,10 @@ library SafeTransferLib {
             let freeMemoryPointer := mload(0x40)
 
             // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
+            mstore(
+                freeMemoryPointer,
+                0x095ea7b300000000000000000000000000000000000000000000000000000000 // Function selector for approve(address,uint256)
+            )
             mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
