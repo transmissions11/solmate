@@ -47,9 +47,9 @@ abstract contract Auth {
 
         if (address(cachedAuthority) != address(0) && cachedAuthority.canCall(user, address(this), functionSig)) {
             return true;
-        } else {
-            return user == owner;
         }
+
+        return user == owner;
     }
 
     modifier requiresAuth() {
