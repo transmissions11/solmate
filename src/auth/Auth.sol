@@ -43,11 +43,13 @@ abstract contract Auth {
     }
 
     function isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
-        if (user == address(this) || user == owner) return true;
-
         Authority cachedAuthority = authority;
 
-        return address(cachedAuthority) != address(0) && cachedAuthority.canCall(user, address(this), functionSig);
+        if (address(cachedAuthority) != address(0) && cachedAuthority.canCall(user, address(this), functionSig)) {
+            return true;
+        } else {
+            return user == owner;
+        }
     }
 
     modifier requiresAuth() {
