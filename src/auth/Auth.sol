@@ -68,29 +68,20 @@ abstract contract Auth {
                 // Call the authority and store if it succeeded or not.
                 let callStatus := staticcall(gas(), cachedAuthority, freeMemoryPointer, callDataLength, 0, 0)
 
-                // Get how many bytes the call returned.
-                let returnDataSize := returndatasize()
+                // If the call did not revert:
+                if iszero(iszero(callStatus)) {
+                    // Get how many bytes the call returned.
+                    let returnDataSize := returndatasize()
 
-                // If the call reverted:
-                if iszero(callStatus) {
-                    // Copy the revert message into memory.
-                    returndatacopy(0, 0, returnDataSize)
+                    // If it returned 32 bytes:
+                    if eq(returnDataSize, 32) {
+                        // Copy the return data into memory.
+                        returndatacopy(0, 0, returnDataSize)
 
-                    // Revert with the same message.
-                    revert(0, returnDataSize)
+                        // Set authorized to whether it returned true.
+                        authorized := iszero(iszero(mload(0)))
+                    }
                 }
-
-                // If it returned more than 32 bytes:
-                if iszero(eq(returnDataSize, 32)) {
-                    // Revert without a message.
-                    revert(0, 0)
-                }
-
-                // Copy the return data into memory.
-                returndatacopy(0, 0, returnDataSize)
-
-                // Set authorized to whether it returned true.
-                authorized := iszero(iszero(mload(0)))
             }
 
             // If there was no authority or canCall returned false:
