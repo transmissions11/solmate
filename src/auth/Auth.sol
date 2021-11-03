@@ -46,7 +46,9 @@ abstract contract Auth {
         Authority cachedAuthority = authority;
 
         if (address(cachedAuthority) != address(0)) {
-            if (cachedAuthority.canCall(user, address(this), functionSig)) return true;
+            try cachedAuthority.canCall(user, address(this), functionSig) returns (bool canCall) {
+                if (canCall) return true;
+            } catch {}
         }
 
         return user == owner;
