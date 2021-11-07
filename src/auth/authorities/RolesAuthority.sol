@@ -57,8 +57,12 @@ contract RolesAuthority is Auth, Authority {
 
     function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
         bytes32 roles = getUserRoles(user);
-        bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-        return bytes32(0) != roles & shifted;
+
+        unchecked {
+            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+
+            return bytes32(0) != roles & shifted;
+        }
     }
 
     function canCall(
