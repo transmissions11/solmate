@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.9;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
-
-import {SafeTransferLib, ERC20 as SolmateERC20} from "../utils/SafeTransferLib.sol";
-
 import {ERC20} from "weird-erc20/ERC20.sol";
 import {ReturnsFalseToken} from "weird-erc20/ReturnsFalse.sol";
 import {MissingReturnToken} from "weird-erc20/MissingReturns.sol";
 import {TransferFromSelfToken} from "weird-erc20/TransferFromSelf.sol";
 import {PausableToken} from "weird-erc20/Pausable.sol";
+
+import {DSTestPlus} from "./utils/DSTestPlus.sol";
+
+import {SafeTransferLib, ERC20 as SolmateERC20} from "../utils/SafeTransferLib.sol";
 
 contract SafeTransferLibTest is DSTestPlus {
     ReturnsFalseToken returnsFalse;

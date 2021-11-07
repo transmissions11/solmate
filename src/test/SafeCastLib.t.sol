@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
+
 import {SafeCastLib} from "../utils/SafeCastLib.sol";
 
 contract SafeCastLibTest is DSTestPlus {
@@ -31,8 +32,6 @@ contract SafeCastLibTest is DSTestPlus {
     function testFailSafeCastTo64() public {
         SafeCastLib.safeCastTo64(type(uint64).max + 1);
     }
-
-    //
 
     function testSafeCastTo224(uint256 x) public {
         x %= type(uint224).max;
