@@ -27,41 +27,23 @@ contract RolesAuthority is Auth, Authority {
                              USER ROLE STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => bool) internal rootUsers;
+    mapping(address => bool) public isUserRoot;
 
-    mapping(address => bytes32) internal userRoles;
-
-    function isUserRoot(address user) public view virtual returns (bool) {
-        return rootUsers[user];
-    }
-
-    function getUserRoles(address user) public view virtual returns (bytes32) {
-        return userRoles[user];
-    }
+    mapping(address => bytes32) public getUserRoles;
 
     /*///////////////////////////////////////////////////////////////
                         ROLE CAPABILITY STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => mapping(bytes4 => bytes32)) internal roleCapabilities;
+    mapping(address => mapping(bytes4 => bytes32)) public getRoleCapabilities;
 
-    mapping(address => mapping(bytes4 => bool)) internal publicCapabilities;
-
-    function getRoleCapabilities(address target, bytes4 functionSig) public view virtual returns (bytes32) {
-        return roleCapabilities[target][functionSig];
-    }
-
-    function isCapabilityPublic(address target, bytes4 functionSig) public view virtual returns (bool) {
-        return publicCapabilities[target][functionSig];
-    }
+    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
 
     function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
-        bytes32 roles = getUserRoles(user);
-
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            return bytes32(0) != roles & shifted;
+            return bytes32(0) != getUserRoles[user] & shifted;
         }
     }
 
@@ -70,12 +52,12 @@ contract RolesAuthority is Auth, Authority {
         address target,
         bytes4 functionSig
     ) public view virtual override returns (bool) {
-        if (isCapabilityPublic(target, functionSig)) return true;
+        if (isCapabilityPublic[target][functionSig]) return true;
 
-        bytes32 hasRoles = getUserRoles(user);
-        bytes32 needsOneOf = getRoleCapabilities(target, functionSig);
+        bytes32 userRoles = getUserRoles[user];
+        bytes32 rolesAuthorized = getRoleCapabilities[target][functionSig];
 
-        return bytes32(0) != hasRoles & needsOneOf || isUserRoot(user);
+        return bytes32(0) != userRoles & rolesAuthorized || isUserRoot[user];
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -87,7 +69,7 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        publicCapabilities[target][functionSig] = enabled;
+        isCapabilityPublic[target][functionSig] = enabled;
 
         emit PublicCapabilityUpdated(target, functionSig, enabled);
     }
@@ -98,12 +80,12 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = roleCapabilities[target][functionSig];
+        bytes32 lastRoles = getRoleCapabilities[target][functionSig];
 
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            roleCapabilities[target][functionSig] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+            getRoleCapabilities[target][functionSig] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
         }
 
         emit RoleCapabilityUpdated(role, target, functionSig, enabled);
@@ -118,19 +100,19 @@ contract RolesAuthority is Auth, Authority {
         uint8 role,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = userRoles[user];
+        bytes32 lastRoles = getUserRoles[user];
 
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            userRoles[user] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+            getUserRoles[user] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
         }
 
         emit UserRoleUpdated(user, role, enabled);
     }
 
     function setRootUser(address user, bool enabled) public virtual requiresAuth {
-        rootUsers[user] = enabled;
+        isUserRoot[user] = enabled;
 
         emit UserRootUpdated(user, enabled);
     }
