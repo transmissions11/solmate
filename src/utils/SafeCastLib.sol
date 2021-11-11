@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity >=0.7.0;
 
 /// @notice Safe unsigned integer casting library that reverts on overflow.
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeCast.sol)
