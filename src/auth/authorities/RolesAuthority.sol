@@ -31,14 +31,6 @@ contract RolesAuthority is Auth, Authority {
 
     mapping(address => bytes32) public getUserRoles;
 
-    /*///////////////////////////////////////////////////////////////
-                        ROLE CAPABILITY STORAGE
-    //////////////////////////////////////////////////////////////*/
-
-    mapping(address => mapping(bytes4 => bytes32)) public getRoleCapabilities;
-
-    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
-
     function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
@@ -46,6 +38,14 @@ contract RolesAuthority is Auth, Authority {
             return bytes32(0) != getUserRoles[user] & shifted;
         }
     }
+
+    /*///////////////////////////////////////////////////////////////
+                        ROLE CAPABILITY STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    mapping(address => mapping(bytes4 => bytes32)) public getRoleCapabilities;
+
+    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
 
     function canCall(
         address user,
