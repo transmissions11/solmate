@@ -54,15 +54,18 @@ contract RolesAuthorityTest is DSTestPlus {
         );
 
         roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, true);
-
+        assertTrue(roles.doesRoleHaveCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector));
         assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+
         mockAuthChild.updateFlag();
 
         roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, false);
+        assertFalse(roles.doesRoleHaveCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector));
         assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         assertTrue(roles.doesUserHaveRole(address(this), rootRole));
         assertTrue(roles.doesUserHaveRole(address(this), adminRole));
+
         assertFalse(roles.doesUserHaveRole(address(this), modRole));
         assertFalse(roles.doesUserHaveRole(address(this), userRole));
     }

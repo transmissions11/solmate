@@ -47,6 +47,22 @@ contract RolesAuthority is Auth, Authority {
 
     mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
 
+    function doesRoleHaveCapability(
+        uint8 role,
+        address target,
+        bytes4 functionSig
+    ) public view virtual returns (bool) {
+        unchecked {
+            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+
+            return bytes32(0) != getRoleCapabilities[target][functionSig] & shifted;
+        }
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                          AUTHORIZATION LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     function canCall(
         address user,
         address target,
