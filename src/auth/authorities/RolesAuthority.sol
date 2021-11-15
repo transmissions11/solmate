@@ -27,53 +27,50 @@ contract RolesAuthority is Auth, Authority {
                              USER ROLE STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => bool) internal rootUsers;
+    mapping(address => bool) public isUserRoot;
 
-    mapping(address => bytes32) internal userRoles;
+    mapping(address => bytes32) public getUserRoles;
 
-    function isUserRoot(address user) public view virtual returns (bool) {
-        return rootUsers[user];
-    }
+    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
+        unchecked {
+            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-    function getUserRoles(address user) public view virtual returns (bytes32) {
-        return userRoles[user];
+            return bytes32(0) != getUserRoles[user] & shifted;
+        }
     }
 
     /*///////////////////////////////////////////////////////////////
                         ROLE CAPABILITY STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => mapping(bytes4 => bytes32)) internal roleCapabilities;
+    mapping(address => mapping(bytes4 => bytes32)) public getRoleCapabilities;
 
-    mapping(address => mapping(bytes4 => bool)) internal publicCapabilities;
+    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
 
-    function getRoleCapabilities(address target, bytes4 functionSig) public view virtual returns (bytes32) {
-        return roleCapabilities[target][functionSig];
+    function doesRoleHaveCapability(
+        uint8 role,
+        address target,
+        bytes4 functionSig
+    ) public view virtual returns (bool) {
+        unchecked {
+            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+
+            return bytes32(0) != getRoleCapabilities[target][functionSig] & shifted;
+        }
     }
 
-    function isCapabilityPublic(address target, bytes4 functionSig) public view virtual returns (bool) {
-        return publicCapabilities[target][functionSig];
-    }
-
-    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
-        bytes32 roles = getUserRoles(user);
-        bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-        return bytes32(0) != roles & shifted;
-    }
+    /*///////////////////////////////////////////////////////////////
+                          AUTHORIZATION LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     function canCall(
         address user,
         address target,
         bytes4 functionSig
     ) public view virtual override returns (bool) {
-        if (isCapabilityPublic(target, functionSig) || isUserRoot(user)) {
-            return true;
-        } else {
-            bytes32 hasRoles = getUserRoles(user);
-            bytes32 needsOneOf = getRoleCapabilities(target, functionSig);
+        if (isCapabilityPublic[target][functionSig]) return true;
 
-            return bytes32(0) != hasRoles & needsOneOf;
-        }
+        return bytes32(0) != getUserRoles[user] & getRoleCapabilities[target][functionSig] || isUserRoot[user];
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -85,7 +82,7 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        publicCapabilities[target][functionSig] = enabled;
+        isCapabilityPublic[target][functionSig] = enabled;
 
         emit PublicCapabilityUpdated(target, functionSig, enabled);
     }
@@ -96,12 +93,12 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = roleCapabilities[target][functionSig];
+        bytes32 lastRoles = getRoleCapabilities[target][functionSig];
 
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            roleCapabilities[target][functionSig] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+            getRoleCapabilities[target][functionSig] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
         }
 
         emit RoleCapabilityUpdated(role, target, functionSig, enabled);
@@ -116,19 +113,19 @@ contract RolesAuthority is Auth, Authority {
         uint8 role,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = userRoles[user];
+        bytes32 lastRoles = getUserRoles[user];
 
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            userRoles[user] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+            getUserRoles[user] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
         }
 
         emit UserRoleUpdated(user, role, enabled);
     }
 
     function setRootUser(address user, bool enabled) public virtual requiresAuth {
-        rootUsers[user] = enabled;
+        isUserRoot[user] = enabled;
 
         emit UserRootUpdated(user, enabled);
     }
