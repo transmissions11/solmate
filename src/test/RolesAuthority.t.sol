@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.9;
+pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
@@ -54,15 +54,18 @@ contract RolesAuthorityTest is DSTestPlus {
         );
 
         roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, true);
-
+        assertTrue(roles.doesRoleHaveCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector));
         assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
+
         mockAuthChild.updateFlag();
 
         roles.setRoleCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector, false);
+        assertFalse(roles.doesRoleHaveCapability(adminRole, address(mockAuthChild), MockAuthChild.updateFlag.selector));
         assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         assertTrue(roles.doesUserHaveRole(address(this), rootRole));
         assertTrue(roles.doesUserHaveRole(address(this), adminRole));
+
         assertFalse(roles.doesUserHaveRole(address(this), modRole));
         assertFalse(roles.doesUserHaveRole(address(this), userRole));
     }

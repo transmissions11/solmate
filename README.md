@@ -17,6 +17,7 @@ tokens
 utils
 ├─ SSTORE2 - "Library for cheaper reads and writes to persistent storage"
 ├─ CREATE3 — "Deploy to deterministic addresses without an initcode factor"
+├─ SafeCastLib - "Safe unsigned integer casting lib that reverts on overflow"
 ├─ ReentrancyGuard — "Gas optimized reentrancy protection for smart contracts"
 ├─ FixedPointMathLib — "Arithmetic library with operations for fixed-point numbers"
 ├─ Bytes32AddressLib — "Library for converting between addresses and bytes32 values"

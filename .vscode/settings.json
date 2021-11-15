@@ -1,7 +1,7 @@
 {
   "solidity.packageDefaultDependenciesContractsDirectory": "src",
   "solidity.packageDefaultDependenciesDirectory": "lib",
-  "solidity.compileUsingRemoteVersion": "v0.8.9",
+  "solidity.compileUsingRemoteVersion": "v0.8.10",
   "search.exclude": { "lib": true },
   "files.associations": {
     ".dapprc": "shellscript"
