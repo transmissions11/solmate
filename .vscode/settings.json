@@ -4,6 +4,7 @@
   "solidity.compileUsingRemoteVersion": "v0.8.10",
   "search.exclude": { "lib": true },
   "files.associations": {
-    ".dapprc": "shellscript"
+    ".dapprc": "shellscript",
+    ".gas-snapshot": "julia"
   }
 }
