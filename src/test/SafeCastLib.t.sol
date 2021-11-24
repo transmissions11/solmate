@@ -6,9 +6,9 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {SafeCastLib} from "../utils/SafeCastLib.sol";
 
 contract SafeCastLibTest is DSTestPlus {
-    function testSafeCastTo224() public {
-        assertEq(SafeCastLib.safeCastTo224(2.5e45), 2.5e45);
-        assertEq(SafeCastLib.safeCastTo224(2.5e27), 2.5e27);
+    function testSafeCastTo248() public {
+        assertEq(SafeCastLib.safeCastTo248(2.5e45), 2.5e45);
+        assertEq(SafeCastLib.safeCastTo248(2.5e27), 2.5e27);
     }
 
     function testSafeCastTo128() public {
@@ -21,8 +21,8 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo64(2.5e17), 2.5e17);
     }
 
-    function testFailSafeCastTo224() public pure {
-        SafeCastLib.safeCastTo224(type(uint224).max + 1);
+    function testFailSafeCastTo248() public pure {
+        SafeCastLib.safeCastTo248(type(uint248).max + 1);
     }
 
     function testFailSafeCastTo128() public pure {
@@ -33,10 +33,10 @@ contract SafeCastLibTest is DSTestPlus {
         SafeCastLib.safeCastTo64(type(uint64).max + 1);
     }
 
-    function testSafeCastTo224(uint256 x) public {
-        x %= type(uint224).max;
+    function testSafeCastTo248(uint256 x) public {
+        x %= type(uint248).max;
 
-        assertEq(SafeCastLib.safeCastTo224(x), x);
+        assertEq(SafeCastLib.safeCastTo248(x), x);
     }
 
     function testSafeCastTo128(uint256 x) public {
@@ -51,10 +51,10 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo64(x), x);
     }
 
-    function testFailSafeCastTo224(uint256 x) public pure {
-        if (type(uint224).max > x) revert();
+    function testFailSafeCastTo248(uint256 x) public pure {
+        if (type(uint248).max > x) revert();
 
-        SafeCastLib.safeCastTo224(x);
+        SafeCastLib.safeCastTo248(x);
     }
 
     function testFailSafeCastTo128(uint256 x) public pure {

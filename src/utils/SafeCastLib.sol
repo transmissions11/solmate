@@ -4,10 +4,10 @@ pragma solidity >=0.7.0;
 /// @notice Safe unsigned integer casting library that reverts on overflow.
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeCast.sol)
 library SafeCastLib {
-    function safeCastTo224(uint256 x) internal pure returns (uint224 y) {
-        require(x <= type(uint224).max);
+    function safeCastTo248(uint256 x) internal pure returns (uint248 y) {
+        require(x <= type(uint248).max);
 
-        y = uint224(x);
+        y = uint248(x);
     }
 
     function safeCastTo128(uint256 x) internal pure returns (uint128 y) {
