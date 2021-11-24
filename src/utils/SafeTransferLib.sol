@@ -5,6 +5,7 @@ import {ERC20} from "../tokens/ERC20.sol";
 
 /// @notice Safe ETH and ERC20 transfer library that gracefully handles missing return values.
 /// @author Modified from Gnosis (https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/libraries/GPv2SafeERC20.sol)
+/// @dev Use with caution! Some functions in this library knowingly create dirty bits at the destination of the free memory pointer.
 library SafeTransferLib {
     /*///////////////////////////////////////////////////////////////
                             ETH OPERATIONS
