@@ -35,20 +35,18 @@ library SafeTransferLib {
         bool callStatus;
 
         assembly {
-            // We'll use 4 + 32 * 3 bytes.
-            let callDataLength := 100
-
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
             // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, shl(224, 0x23b872dd)) // Properly shift and append the function selector for transfer(address,uint256)
+            mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
             mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "from" argument.
             mstore(add(freeMemoryPointer, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
             // Call the token and store if it succeeded or not.
-            callStatus := call(gas(), token, 0, freeMemoryPointer, callDataLength, 0, 0)
+            // We use 100 because the calldata length is 4 + 32 * 3.
+            callStatus := call(gas(), token, 0, freeMemoryPointer, 100, 0, 0)
         }
 
         require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FROM_FAILED");
@@ -62,19 +60,17 @@ library SafeTransferLib {
         bool callStatus;
 
         assembly {
-            // We'll use 4 + 32 * 2 bytes.
-            let callDataLength := 68
-
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
             // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, shl(224, 0xa9059cbb)) // Properly shift and append the function selector for approve(address,uint256)
+            mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
             mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
             // Call the token and store if it succeeded or not.
-            callStatus := call(gas(), token, 0, freeMemoryPointer, callDataLength, 0, 0)
+            // We use 68 because the calldata length is 4 + 32 * 2.
+            callStatus := call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)
         }
 
         require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FAILED");
@@ -88,19 +84,17 @@ library SafeTransferLib {
         bool callStatus;
 
         assembly {
-            // We'll use 4 + 32 * 2 bytes.
-            let callDataLength := 68
-
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
             // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, shl(224, 0x095ea7b3)) // Properly shift and append the function selector for approve(address,uint256)
+            mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
             mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
 
             // Call the token and store if it succeeded or not.
-            callStatus := call(gas(), token, 0, freeMemoryPointer, callDataLength, 0, 0)
+            // We use 68 because the calldata length is 4 + 32 * 2.
+            callStatus := call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)
         }
 
         require(didLastOptionalReturnCallSucceed(callStatus), "APPROVE_FAILED");
