@@ -40,9 +40,6 @@ library SafeTransferLib {
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
-            // Update the free memory pointer for safety.
-            mstore(0x40, add(freeMemoryPointer, callDataLength))
-
             // Write the abi-encoded calldata to memory piece by piece:
             mstore(freeMemoryPointer, shl(224, 0x23b872dd)) // Properly shift and append the function selector for transfer(address,uint256)
             mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "from" argument.
@@ -70,9 +67,6 @@ library SafeTransferLib {
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
-            // Update the free memory pointer for safety.
-            mstore(0x40, add(freeMemoryPointer, callDataLength))
-
             // Write the abi-encoded calldata to memory piece by piece:
             mstore(freeMemoryPointer, shl(224, 0xa9059cbb)) // Properly shift and append the function selector for approve(address,uint256)
             mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
@@ -98,9 +92,6 @@ library SafeTransferLib {
 
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
-
-            // Update the free memory pointer for safety.
-            mstore(0x40, add(freeMemoryPointer, callDataLength))
 
             // Write the abi-encoded calldata to memory piece by piece:
             mstore(freeMemoryPointer, shl(224, 0x095ea7b3)) // Properly shift and append the function selector for approve(address,uint256)
