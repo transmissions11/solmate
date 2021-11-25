@@ -16,9 +16,21 @@ library SafeCastLib {
         y = uint128(x);
     }
 
+    function safeCastTo96(uint256 x) internal pure returns (uint96 y) {
+        require(x <= type(uint96).max);
+
+        y = uint96(x);
+    }
+
     function safeCastTo64(uint256 x) internal pure returns (uint64 y) {
         require(x <= type(uint64).max);
 
         y = uint64(x);
+    }
+
+    function safeCastTo32(uint256 x) internal pure returns (uint32 y) {
+        require(x <= type(uint32).max);
+
+        y = uint32(x);
     }
 }
