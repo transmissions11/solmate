@@ -60,6 +60,12 @@ abstract contract ERC20 {
 
         INITIAL_CHAIN_ID = block.chainid;
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
+        
+        // This prevents common user errors by using 
+        // arithmetic safety checks on dummy balances
+        // - lifted from ElementFi.
+        balanceOf[address(0)] = type(uint256).max;
+        balanceOf[address(this)] = type(uint256).max;
     }
 
     /*///////////////////////////////////////////////////////////////
