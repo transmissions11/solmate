@@ -59,7 +59,7 @@ abstract contract ERC20 {
         decimals = _decimals;
 
         INITIAL_CHAIN_ID = block.chainid;
-        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
+        INITIAL_DOMAIN_SEPARATOR = _computeDomainSeparator();
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ abstract contract ERC20 {
         balanceOf[msg.sender] -= amount;
 
         // This is safe because the sum of all user
-        // balances can't exceed type(uint256).max!
+        // balances can't exceed type(uint256).max.
         unchecked {
             balanceOf[to] += amount;
         }
@@ -100,7 +100,7 @@ abstract contract ERC20 {
         balanceOf[from] -= amount;
 
         // This is safe because the sum of all user
-        // balances can't exceed type(uint256).max!
+        // balances can't exceed type(uint256).max.
         unchecked {
             balanceOf[to] += amount;
         }
@@ -146,10 +146,10 @@ abstract contract ERC20 {
     }
 
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
+        return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : _computeDomainSeparator();
     }
 
-    function computeDomainSeparator() internal view virtual returns (bytes32) {
+    function _computeDomainSeparator() internal view virtual returns (bytes32) {
         return
             keccak256(
                 abi.encode(
@@ -170,7 +170,7 @@ abstract contract ERC20 {
         totalSupply += amount;
 
         // This is safe because the sum of all user
-        // balances can't exceed type(uint256).max!
+        // balances can't exceed type(uint256).max.
         unchecked {
             balanceOf[to] += amount;
         }
@@ -182,7 +182,7 @@ abstract contract ERC20 {
         balanceOf[from] -= amount;
 
         // This is safe because a user won't ever
-        // have a balance larger than totalSupply!
+        // have a balance larger than totalSupply.
         unchecked {
             totalSupply -= amount;
         }
