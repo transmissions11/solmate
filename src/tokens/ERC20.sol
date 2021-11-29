@@ -77,8 +77,8 @@ abstract contract ERC20 {
     function transfer(address to, uint256 amount) public virtual returns (bool) {
         balanceOf[msg.sender] -= amount;
 
-        // This is safe because the sum of all user
-        // balances can't exceed type(uint256).max!
+        // Cannot overflow because the sum of all user
+        // balances can't exceed the max uint256 value.
         unchecked {
             balanceOf[to] += amount;
         }
@@ -99,8 +99,8 @@ abstract contract ERC20 {
 
         balanceOf[from] -= amount;
 
-        // This is safe because the sum of all user
-        // balances can't exceed type(uint256).max!
+        // Cannot overflow because the sum of all user
+        // balances can't exceed the max uint256 value.
         unchecked {
             balanceOf[to] += amount;
         }
@@ -125,7 +125,7 @@ abstract contract ERC20 {
     ) public virtual {
         require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
 
-        // This is safe because the only math done is incrementing
+        // Unchecked because the only math done is incrementing
         // the owner's nonce which cannot realistically overflow.
         unchecked {
             bytes32 digest = keccak256(
@@ -169,8 +169,8 @@ abstract contract ERC20 {
     function _mint(address to, uint256 amount) internal virtual {
         totalSupply += amount;
 
-        // This is safe because the sum of all user
-        // balances can't exceed type(uint256).max!
+        // Cannot overflow because the sum of all user
+        // balances can't exceed the max uint256 value.
         unchecked {
             balanceOf[to] += amount;
         }
@@ -181,8 +181,8 @@ abstract contract ERC20 {
     function _burn(address from, uint256 amount) internal virtual {
         balanceOf[from] -= amount;
 
-        // This is safe because a user won't ever
-        // have a balance larger than totalSupply!
+        // Cannot underflow because a user's balance
+        // will never be larger than the total supply.
         unchecked {
             totalSupply -= amount;
         }
