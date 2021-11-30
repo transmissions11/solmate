@@ -35,23 +35,28 @@ contract DSTestPlus is DSTest {
         assertTrue(!data);
     }
 
-    function assertUint128Eq(uint128 num1, uint128 num2) internal virtual {
-        assertEq(uint256(num1), uint256(num2));
+    function assertUint128Eq(uint128 a, uint128 b) internal virtual {
+        assertEq(uint256(a), uint256(b));
     }
 
-    function assertUint64Eq(uint64 num1, uint64 num2) internal virtual {
-        assertEq(uint256(num1), uint256(num2));
+    function assertUint64Eq(uint64 a, uint64 b) internal virtual {
+        assertEq(uint256(a), uint256(b));
     }
 
-    function assertUint96Eq(uint96 num1, uint96 num2) internal virtual {
-        assertEq(uint256(num1), uint256(num2));
+    function assertUint96Eq(uint96 a, uint96 b) internal virtual {
+        assertEq(uint256(a), uint256(b));
     }
 
-    function assertUint32Eq(uint32 num1, uint32 num2) internal virtual {
-        assertEq(uint256(num1), uint256(num2));
+    function assertUint32Eq(uint32 a, uint32 b) internal virtual {
+        assertEq(uint256(a), uint256(b));
     }
 
-    function assertBytesEq(bytes memory b1, bytes memory b2) internal virtual {
-        assertEq(keccak256(b1), keccak256(b2));
+    function assertBytesEq(bytes memory a, bytes memory b) internal virtual {
+        if (keccak256(a) != keccak256(b)) {
+            emit log("Error: a == b not satisfied [bytes]");
+            emit log_named_bytes("  Expected", b);
+            emit log_named_bytes("    Actual", a);
+            fail();
+        }
     }
 }
