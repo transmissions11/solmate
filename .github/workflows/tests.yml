@@ -17,6 +17,9 @@ jobs:
       - name: Install dependencies
         run: nix-shell --run 'make'
 
+      - name: Check gas snapshots
+        run: nix-shell --run 'dapp check-snapshot'
+
       - name: Run tests
         run: nix-shell --run 'dapp test'
         env:
