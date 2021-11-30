@@ -1,6 +1,6 @@
 # solmate
 
-**Modern**, **opinionated** and **gas optimized** building blocks for **smart contract development**.
+**Modern**, **opinionated**, and **gas optimized** building blocks for **smart contract development**.
 
 ## Contracts
 
