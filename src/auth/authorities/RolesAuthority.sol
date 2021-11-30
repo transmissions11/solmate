@@ -93,12 +93,14 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = getRoleCapabilities[target][functionSig];
+        bytes32 lastCapabilities = getRoleCapabilities[target][functionSig];
 
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            getRoleCapabilities[target][functionSig] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+            getRoleCapabilities[target][functionSig] = enabled
+                ? lastCapabilities | shifted
+                : lastCapabilities & ~shifted;
         }
 
         emit RoleCapabilityUpdated(role, target, functionSig, enabled);
