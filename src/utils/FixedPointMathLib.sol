@@ -70,44 +70,73 @@ library FixedPointMathLib {
             case 0 {
                 switch n
                 case 0 {
+                    // 0^0 = 1
                     z := baseUnit
                 }
                 default {
+                    // 0^n = 0
                     z := 0
                 }
             }
             default {
                 switch mod(n, 2)
                 case 0 {
+                    // If n is even, store baseUnit in z for now.
                     z := baseUnit
                 }
                 default {
+                    // If n is odd, store x in z for now.
                     z := x
                 }
+
+                // Compute half the base unit.
                 let half := div(baseUnit, 2)
+
                 for {
+                    // Start by halving n before looping.
                     n := div(n, 2)
                 } n {
+                    // Each iteration we halve it again.
                     n := div(n, 2)
                 } {
+                    // Store x squared.
                     let xx := mul(x, x)
+
+                    // Revert if x^2 overflowed.
                     if iszero(eq(div(xx, x), x)) {
                         revert(0, 0)
                     }
+
+                    // Round to the nearest number.
                     let xxRound := add(xx, half)
+
+                    // Revert xx + half overflowed.
                     if lt(xxRound, xx) {
                         revert(0, 0)
                     }
+
+                    // Set x to scaled xxRound.
                     x := div(xxRound, baseUnit)
+
+                    // If n is even:
                     if mod(n, 2) {
+                        // Compute z * x.
                         let zx := mul(z, x)
+
+                        // If x is non-zero and zx overflowed, revert.
                         if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
                             revert(0, 0)
                         }
+
+                        // Round to the nearest number.
                         let zxRound := add(zx, half)
+
+                        // Revert if zx + half overflowed.
                         if lt(zxRound, zx) {
                             revert(0, 0)
                         }
+
+                        // Return properly scaled zxRound.
                         z := div(zxRound, baseUnit)
                     }
                 }
@@ -120,45 +149,44 @@ library FixedPointMathLib {
     //////////////////////////////////////////////////////////////*/
 
     function sqrt(uint256 x) internal pure returns (uint256 result) {
+        // Square root of 0 is zero.
         if (x == 0) return 0;
 
+        // Start off with a result of 1.
         result = 1;
 
+        // Store a temporary value to mutate later.
         uint256 xAux = x;
 
+        // Find the closest power of two that is larger than x.
         if (xAux >= 0x100000000000000000000000000000000) {
             xAux >>= 128;
             result <<= 64;
         }
-
         if (xAux >= 0x10000000000000000) {
             xAux >>= 64;
             result <<= 32;
         }
-
         if (xAux >= 0x100000000) {
             xAux >>= 32;
             result <<= 16;
         }
-
         if (xAux >= 0x10000) {
             xAux >>= 16;
             result <<= 8;
         }
-
         if (xAux >= 0x100) {
             xAux >>= 8;
             result <<= 4;
         }
-
         if (xAux >= 0x10) {
             xAux >>= 4;
             result <<= 2;
         }
-
         if (xAux >= 0x8) result <<= 1;
 
         unchecked {
+            // Shifting right by 1 is like dividing by 2.
             result = (result + x / result) >> 1;
             result = (result + x / result) >> 1;
             result = (result + x / result) >> 1;
@@ -167,8 +195,10 @@ library FixedPointMathLib {
             result = (result + x / result) >> 1;
             result = (result + x / result) >> 1;
 
+            // Compute a rounded down version of the result.
             uint256 roundedDownResult = x / result;
 
+            // If the rounded down result is smaller, use it as the result.
             if (result > roundedDownResult) result = roundedDownResult;
         }
     }
