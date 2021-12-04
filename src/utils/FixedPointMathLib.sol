@@ -89,23 +89,24 @@ library FixedPointMathLib {
                     z := x
                 }
 
-                // Compute half the base unit.
-                let half := div(baseUnit, 2)
+                // Shifting right by 1 is like dividing by 2.
+                let half := shr(1, baseUnit)
 
                 for {
-                    // Start by halving n before looping.
-                    n := div(n, 2)
+                    // Shift n right by 1 before looping to halve it.
+                    n := shr(1, n)
                 } n {
-                    // Each iteration we halve it again.
-                    n := div(n, 2)
+                    // Shift n right by 1 each iteration to halve it.
+                    n := shr(1, n)
                 } {
-                    // Store x squared.
-                    let xx := mul(x, x)
-
-                    // Revert if x^2 overflowed.
-                    if iszero(eq(div(xx, x), x)) {
+                    // Revert immediately if x^2 would overflow.
+                    // Equivalent to iszero(eq(div(xx, x), x))
+                    if shr(128, x) {
                         revert(0, 0)
                     }
+
+                    // Store x squared.
+                    let xx := mul(x, x)
 
                     // Round to the nearest number.
                     let xxRound := add(xx, half)
@@ -155,35 +156,35 @@ library FixedPointMathLib {
         // Start off with a result of 1.
         result = 1;
 
-        // Store a temporary value to mutate later.
-        uint256 xAux = x;
+        // Used below to help find a nearby power of 2.
+        uint256 x2 = x;
 
-        // Find the closest power of two that is larger than x.
-        if (xAux >= 0x100000000000000000000000000000000) {
-            xAux >>= 128;
+        // Find the closest power of 2 that is larger than x.
+        if (x2 >= 0x100000000000000000000000000000000) {
+            x2 >>= 128; // Like dividing by 2^128.
             result <<= 64;
         }
-        if (xAux >= 0x10000000000000000) {
-            xAux >>= 64;
+        if (x2 >= 0x10000000000000000) {
+            x2 >>= 64; // Like dividing by 2^128.
             result <<= 32;
         }
-        if (xAux >= 0x100000000) {
-            xAux >>= 32;
+        if (x2 >= 0x100000000) {
+            x2 >>= 32; // Like dividing by 2^32.
             result <<= 16;
         }
-        if (xAux >= 0x10000) {
-            xAux >>= 16;
+        if (x2 >= 0x10000) {
+            x2 >>= 16; // Like dividing by 2^16.
             result <<= 8;
         }
-        if (xAux >= 0x100) {
-            xAux >>= 8;
+        if (x2 >= 0x100) {
+            x2 >>= 8; // Like dividing by 2^8.
             result <<= 4;
         }
-        if (xAux >= 0x10) {
-            xAux >>= 4;
+        if (x2 >= 0x10) {
+            x2 >>= 4; // Like dividing by 2^4.
             result <<= 2;
         }
-        if (xAux >= 0x8) result <<= 1;
+        if (x2 >= 0x8) result <<= 1;
 
         unchecked {
             // Shifting right by 1 is like dividing by 2.
