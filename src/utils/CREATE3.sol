@@ -8,30 +8,27 @@ import {Bytes32AddressLib} from "./Bytes32AddressLib.sol";
 library CREATE3 {
     using Bytes32AddressLib for bytes32;
 
-    //   0x00  0x67  0x67XXXXXXXXXXXXXXXX  PUSH8 bytecode  0x363d3d37363d34f0
-    //   0x01  0x3d  0x3d                  RETURNDATASIZE  0 0x363d3d37363d34f0
-    //   0x02  0x52  0x52                  MSTORE
-    //   0x03  0x60  0x6008                PUSH1 08        8
-    //   0x04  0x60  0x6018                PUSH1 18        24 8
-    //   0x05  0xf3  0xf3                  RETURN
-
     //--------------------------------------------------------------------------------//
-    // Opcode     | Opcode + Arguments  | Description        | Stack View             //
+    // Opcode     | Opcode + Arguments    | Description      | Stack View             //
     //--------------------------------------------------------------------------------//
-    // 0x67       |  0x67XXXXXXXXXXXXXXXX | PUSH8 bytecode   | 0x363d3d37363d34f0     //
-    // 0x3d       |  0x3d                 | RETURNDATASIZE   | 0 0x363d3d37363d34f0   //
+    // 0x36       |  0x36                 | CALLDATASIZE     | size                   //
+    // 0x3d       |  0x3d                 | RETURNDATASIZE   | 0 size                 //
+    // 0x3d       |  0x3d                 | RETURNDATASIZE   | 0 0 size               //
+    // 0x37       |  0x37                 | CALLDATACOPY     |                        //
+    // 0x36       |  0x36                 | CALLDATASIZE     | size                   //
+    // 0x3d       |  0x3d                 | RETURNDATASIZE   | 0 size                 //
+    // 0x34       |  0x34                 | CALLVALUE        | value 0 size           //
+    // 0xf0       |  0xf0                 | CREATE           | newContract            //
+    //--------------------------------------------------------------------------------//
+    // Opcode     | Opcode + Arguments    | Description      | Stack View             //
+    //--------------------------------------------------------------------------------//
+    // 0x67       |  0x67XXXXXXXXXXXXXXXX | PUSH8 bytecode   | bytecode               //
+    // 0x3d       |  0x3d                 | RETURNDATASIZE   | 0 bytecode             //
     // 0x52       |  0x52                 | MSTORE           |                        //
     // 0x60       |  0x6008               | PUSH1 08         | 8                      //
     // 0x60       |  0x6018               | PUSH1 18         | 24 8                   //
     // 0xf3       |  0xf3                 | RETURN           |                        //
     //--------------------------------------------------------------------------------//
-
-    //   0x00  0x67  0x67XXXXXXXXXXXXXXXX  PUSH8 bytecode  0x363d3d37363d34f0
-    //   0x01  0x3d  0x3d                  RETURNDATASIZE  0 0x363d3d37363d34f0
-    //   0x02  0x52  0x52                  MSTORE
-    //   0x03  0x60  0x6008                PUSH1 08        8
-    //   0x04  0x60  0x6018                PUSH1 18        24 8
-    //   0x05  0xf3  0xf3                  RETURN
     bytes internal constant PROXY_BYTECODE = hex"67_36_3d_3d_37_36_3d_34_f0_3d_52_60_08_60_18_f3";
 
     bytes32 internal constant PROXY_BYTECODE_HASH = keccak256(PROXY_BYTECODE);
