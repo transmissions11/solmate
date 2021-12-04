@@ -111,7 +111,7 @@ library FixedPointMathLib {
                     // Round to the nearest number.
                     let xxRound := add(xx, half)
 
-                    // Revert xx + half overflowed.
+                    // Revert if xx + half overflowed.
                     if lt(xxRound, xx) {
                         revert(0, 0)
                     }
@@ -124,7 +124,7 @@ library FixedPointMathLib {
                         // Compute z * x.
                         let zx := mul(z, x)
 
-                        // If x is non-zero and zx overflowed, revert.
+                        // Revert if x is non-zero and z * x overflowed.
                         if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
                             revert(0, 0)
                         }
@@ -159,13 +159,13 @@ library FixedPointMathLib {
         // Used below to help find a nearby power of 2.
         uint256 x2 = x;
 
-        // Find the closest power of 2 that is larger than x.
+        // Find the closest power of 2 that is at most x.
         if (x2 >= 0x100000000000000000000000000000000) {
             x2 >>= 128; // Like dividing by 2^128.
             result <<= 64;
         }
         if (x2 >= 0x10000000000000000) {
-            x2 >>= 64; // Like dividing by 2^128.
+            x2 >>= 64; // Like dividing by 2^64.
             result <<= 32;
         }
         if (x2 >= 0x100000000) {
