@@ -73,7 +73,8 @@ library SSTORE2 {
             data := mload(0x40)
 
             // Update the free memory pointer to prevent overriding our data.
-            mstore(0x40, add(data, and(add(size, 31), not(31))))
+            // To ensure we move the pointer to the start of a new slot we bitwise and the length + 31 by bitwise not of 31.
+            mstore(0x40, add(data, and(add(add(size, 32), 31), not(31))))
 
             // Store the size of the data in the first slot (32 bytes) of free memory.
             mstore(data, size)
