@@ -23,9 +23,9 @@ contract WETH is ERC20("Wrapped Ether", "WETH", 18) {
     function withdraw(uint256 amount) external {
         _burn(msg.sender, amount);
 
-        msg.sender.safeTransferETH(amount);
-
         emit Withdrawal(msg.sender, amount);
+
+        msg.sender.safeTransferETH(amount);
     }
 
     receive() external payable {
