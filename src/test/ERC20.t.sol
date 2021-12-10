@@ -73,6 +73,22 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(address(0xBEEF)), 1e18);
     }
 
+    function testInfiniteApproveTransferFrom() public {
+        ERC20User from = new ERC20User(token);
+
+        token.mint(address(from), 1e18);
+
+        from.approve(address(this), type(uint256).max);
+
+        assertTrue(token.transferFrom(address(from), address(0xBEEF), 1e18));
+        assertEq(token.totalSupply(), 1e18);
+
+        assertEq(token.allowance(address(from), address(this)), type(uint256).max);
+
+        assertEq(token.balanceOf(address(from)), 0);
+        assertEq(token.balanceOf(address(0xBEEF)), 1e18);
+    }
+
     function testFailTransferInsufficientBalance() public {
         token.mint(address(this), 0.9e18);
         token.transfer(address(0xBEEF), 1e18);
