@@ -20,6 +20,80 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.decimals(), 18);
     }
 
+    function testMetaData() public {
+        assertEq(token.name(), "Token");
+        assertEq(token.symbol(), "TKN");
+        assertEq(token.decimals(), 18);
+    }
+
+    function testMint() public {
+        token.mint(address(0xBEEF), 1e18);
+
+        assertEq(token.totalSupply(), 1e18);
+        assertEq(token.balanceOf(address(0xBEEF)), 1e18);
+    }
+
+    function testBurn() public {
+        token.mint(address(0xBEEF), 1e18);
+        token.burn(address(0xBEEF), 0.9e18);
+
+        assertEq(token.totalSupply(), 1e18 - 0.9e18);
+        assertEq(token.balanceOf(address(0xBEEF)), 0.1e18);
+    }
+
+    function testApprove() public {
+        assertTrue(token.approve(address(0xBEEF), 1e18));
+
+        assertEq(token.allowance(address(this), address(0xBEEF)), 1e18);
+    }
+
+    function testTransfer() public {
+        token.mint(address(this), 1e18);
+
+        assertTrue(token.transfer(address(0xBEEF), 1e18));
+        assertEq(token.totalSupply(), 1e18);
+
+        assertEq(token.balanceOf(address(this)), 0);
+        assertEq(token.balanceOf(address(0xBEEF)), 1e18);
+    }
+
+    function testTransferFrom() public {
+        ERC20User from = new ERC20User(token);
+
+        token.mint(address(from), 1e18);
+
+        from.approve(address(this), 1e18);
+
+        assertTrue(token.transferFrom(address(from), address(0xBEEF), 1e18));
+        assertEq(token.totalSupply(), 1e18);
+
+        assertEq(token.allowance(address(from), address(this)), 0);
+
+        assertEq(token.balanceOf(address(from)), 0);
+        assertEq(token.balanceOf(address(0xBEEF)), 1e18);
+    }
+
+    function testFailTransferInsufficientBalance() public {
+        token.mint(address(this), 0.9e18);
+        token.transfer(address(0xBEEF), 1e18);
+    }
+
+    function testFailTransferFromInsufficientAllowance() public {
+        ERC20User from = new ERC20User(token);
+
+        token.mint(address(from), 1e18);
+        from.approve(address(this), 0.9e18);
+        token.transferFrom(address(from), address(0xBEEF), 1e18);
+    }
+
+    function testFailTransferFromInsufficientBalance() public {
+        ERC20User from = new ERC20User(token);
+
+        token.mint(address(from), 0.9e18);
+        from.approve(address(this), 1e18);
+        token.transferFrom(address(from), address(0xBEEF), 1e18);
+    }
+
     function testMetaData(
         string calldata name,
         string calldata symbol,
@@ -52,10 +126,10 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(from), mintAmount - burnAmount);
     }
 
-    function testApprove(address from, uint256 amount) public {
-        assertTrue(token.approve(from, amount));
+    function testApprove(address to, uint256 amount) public {
+        assertTrue(token.approve(to, amount));
 
-        assertEq(token.allowance(address(this), from), amount);
+        assertEq(token.allowance(address(this), to), amount);
     }
 
     function testTransfer(address from, uint256 amount) public {
@@ -97,6 +171,17 @@ contract ERC20Test is DSTestPlus {
             assertEq(token.balanceOf(address(from)), 0);
             assertEq(token.balanceOf(to), amount);
         }
+    }
+
+    function testFailTransferInsufficientBalance(
+        address to,
+        uint256 mintAmount,
+        uint256 sendAmount
+    ) public {
+        require(mintAmount < sendAmount);
+
+        token.mint(address(this), mintAmount);
+        token.transfer(to, sendAmount);
     }
 
     function testFailTransferFromInsufficientAllowance(
