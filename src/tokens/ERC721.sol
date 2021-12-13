@@ -72,7 +72,7 @@ abstract contract ERC721 {
                             ERC-20-LIKE LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function transfer(address to, uint256 tokenId) public virtual {
+    function transfer(address to, uint256 tokenId) public virtual returns (bool success) {
         require(msg.sender == ownerOf[tokenId], "NOT_OWNER");
         
         // Cannot overflow because because ownership is checked
@@ -89,6 +89,8 @@ abstract contract ERC721 {
         ownerOf[tokenId] = to;
         
         emit Transfer(msg.sender, to, tokenId); 
+        
+        success = true;
     }
 
     /*///////////////////////////////////////////////////////////////
