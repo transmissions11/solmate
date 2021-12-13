@@ -73,8 +73,9 @@ library SSTORE2 {
             data := mload(0x40)
 
             // Update the free memory pointer to prevent overriding our data.
-            // We use and(x, not(31)) as a cheaper equivalent to sub(n, mod(n, 32)).
-            // The logic described above ensures we point to the start of a clean slot.
+            // We use and(x, not(31)) as a cheaper equivalent to sub(x, mod(x, 32)).
+            // Adding 31 to size and running the result through the logic above ensures
+            // we move the free memory pointer to the start of the next empty 32 byte slot.
             mstore(0x40, add(data, and(add(add(size, 32), 31), not(31))))
 
             // Store the size of the data in the first slot (32 bytes) of free memory.
