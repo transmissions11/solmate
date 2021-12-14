@@ -12,21 +12,21 @@ library SSTORE2 {
 
         // Compute the creation code we need from our desired runtime code.
         bytes memory creationCode = abi.encodePacked(
-            //--------------------------------------------------------------------------------//
-            // Opcode     | Opcode + Arguments  | Description        | Stack View             //
-            //--------------------------------------------------------------------------------//
-            // 0x63       |  0x63XXXXXX         | PUSH4 codeSize     | codeSize               //
-            // 0x80       |  0x80               | DUP1               | codeSize codeSize      //
-            // 0x60       |  0x600e             | PUSH1 14           | 14 codeSize codeSize   //
-            // 0x60       |  0x6000             | PUSH1 00           | 0 14 codeSize codeSize //
-            // 0x39       |  0x39               | CODECOPY           | codeSize               //
-            // 0x60       |  0x6000             | PUSH1 00           | 0 codeSize             //
-            // 0xf3       |  0xf3               | RETURN             |                        //
-            //--------------------------------------------------------------------------------//
-            hex"63", // We use a 4 byte PUSH for future proofing, but in theory we could use a smaller PUSH.
-            uint32(runtimeCode.length), // We must cast it to a 32 bit number (4 bytes) as we use a PUSH4 above.
-            // If we used a smaller PUSH we'd need to change 0E (14 in hex) as it's used as the size of the creation code.
-            hex"80_60_0E_60_00_39_60_00_F3", // Optimized constructor code, copies the runtime code into memory and returns it.
+            //----------------------------------------------------------------------------------------------//
+            // Opcode     | Opcode + Arguments  | Description        | Stack View                           //
+            //----------------------------------------------------------------------------------------------//
+            // 0x60       |  0x600B             | PUSH1 11           | codeOffset                           //
+            // 0x59       |  0x59               | MSIZE              | 0 codeOffset                         //
+            // 0x81       |  0x81               | DUP2               | codeOffset 0 codeOffset              //
+            // 0x38       |  0x38               | CODESIZE           | codeSize codeOffset 0 codeOffset     //
+            // 0x03       |  0x03               | SUB                | (codeSize - codeOffset) 0 codeOffset //
+            // 0x80       |  0x80               | DUP                | (cS-cO) (cS-cO) 0 codeOffset         //
+            // 0x92       |  0x92               | SWAP3              | codeOffset (cS-cO) 0 (cS-cO)         //
+            // 0x59       |  0x59               | MSIZE              | 0 codeOffset (cS-cO) 0 (cS-cO)       //
+            // 0x39       |  0x39               | CODECOPY           | 0 (cS-cO)                            //
+            // 0xf3       |  0xf3               | RETURN             |                                      //
+            //----------------------------------------------------------------------------------------------//
+            hex"60_0B_59_81_38_03_80_92_59_39_F3", // Optimized constructor code, copies the runtime code into memory and returns it.
             runtimeCode // The bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
         );
 
