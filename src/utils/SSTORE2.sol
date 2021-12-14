@@ -12,20 +12,20 @@ library SSTORE2 {
 
         // Compute the creation code we need from our desired runtime code.
         bytes memory creationCode = abi.encodePacked(
-            //------------------------------------------------------------------------------------------------------------------------//
-            // Opcode     | Opcode + Arguments  | Description        | Stack View                                                     //
-            //------------------------------------------------------------------------------------------------------------------------//
-            // 0x60       |  0x600B             | PUSH1 11           | codeOffset                                                     //
-            // 0x59       |  0x59               | MSIZE              | 0 codeOffset                                                   //
-            // 0x81       |  0x81               | DUP2               | codeOffset 0 codeOffset                                        //
-            // 0x38       |  0x38               | CODESIZE           | codeSize codeOffset 0 codeOffset                               //
-            // 0x03       |  0x03               | SUB                | (codeSize - codeOffset) 0 codeOffset                           //
-            // 0x80       |  0x80               | DUP                | (codeSize - codeOffset) (codeSize - codeOffset) 0 codeOffset   //
-            // 0x92       |  0x92               | SWAP3              | codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset)   //
-            // 0x59       |  0x59               | MSIZE              | 0 codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset) //
-            // 0x39       |  0x39               | CODECOPY           | 0 (codeSize - codeOffset)                                      //
-            // 0xf3       |  0xf3               | RETURN             |                                                                //
-            //------------------------------------------------------------------------------------------------------------------------//
+            //------------------------------------------------------------------------------------------------------------------//
+            // Opcode     | Opcode + Arguments  | Description  | Stack View                                                     //
+            //------------------------------------------------------------------------------------------------------------------//
+            // 0x60       |  0x600B             | PUSH1 11     | codeOffset                                                     //
+            // 0x59       |  0x59               | MSIZE        | 0 codeOffset                                                   //
+            // 0x81       |  0x81               | DUP2         | codeOffset 0 codeOffset                                        //
+            // 0x38       |  0x38               | CODESIZE     | codeSize codeOffset 0 codeOffset                               //
+            // 0x03       |  0x03               | SUB          | (codeSize - codeOffset) 0 codeOffset                           //
+            // 0x80       |  0x80               | DUP          | (codeSize - codeOffset) (codeSize - codeOffset) 0 codeOffset   //
+            // 0x92       |  0x92               | SWAP3        | codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset)   //
+            // 0x59       |  0x59               | MSIZE        | 0 codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset) //
+            // 0x39       |  0x39               | CODECOPY     | 0 (codeSize - codeOffset)                                      //
+            // 0xf3       |  0xf3               | RETURN       |                                                                //
+            //------------------------------------------------------------------------------------------------------------------//
             hex"60_0B_59_81_38_03_80_92_59_39_F3", // Optimized constructor code, copies the runtime code into memory and returns it.
             runtimeCode // The bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
         );
