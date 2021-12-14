@@ -32,6 +32,13 @@ To install with **DappTools**:
 dapp install rari-capital/solmate
 ```
 
+To install with [**Forge**](https://github.com/gakonst/foundry/):
+
+```sh
+forge install rari-capital/solmate
+```
+
+
 To install with **Hardhat** or **Truffle**:
 
 ```sh
