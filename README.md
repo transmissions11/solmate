@@ -26,13 +26,19 @@ utils
 
 ## Installation
 
-To install with **DappTools**:
+To install with [**DappTools**](https://github.com/dapphub/dapptools):
 
 ```sh
 dapp install rari-capital/solmate
 ```
 
-To install with **Hardhat** or **Truffle**:
+To install with [**Foundry**](https://github.com/gakonst/foundry):
+
+```sh
+forge install rari-capital/solmate
+```
+
+To install with [**Hardhat**](https://github.com/nomiclabs/hardhat) or [**Truffle**](https://github.com/trufflesuite/truffle):
 
 ```sh
 npm install @rari-capital/solmate
