@@ -10,9 +10,7 @@ library SSTORE2 {
         bytes memory runtimeCode = abi.encodePacked(hex"00", data);
 
         bytes memory creationCode = abi.encodePacked(
-            hex"63",
-            uint32(runtimeCode.length),
-            hex"80_60_0E_60_00_39_60_00_F3",
+            hex"60_0B_59_81_38_03_80_92_59_39_F3",
             runtimeCode
         );
 
