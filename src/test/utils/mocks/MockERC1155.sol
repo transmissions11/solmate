@@ -5,6 +5,13 @@ import {ERC1155} from "../../../tokens/ERC1155.sol";
 
 contract MockERC1155 is ERC1155 {
 
+    constructor(
+        string memory _URI
+    ) {
+      URI = _URI;
+    }
+
+
     function mint(address to, uint256 id, uint256 amount, bytes memory data) external {
       _mint(to, id, amount, data);
     }

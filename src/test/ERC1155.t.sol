@@ -5,6 +5,7 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC1155} from "./utils/mocks/MockERC1155.sol";
+import {ERC1155User} from "./utils/users/ERC1155User.sol";
 
 contract ERC1155Test is DSTestPlus {
     MockERC1155 token;

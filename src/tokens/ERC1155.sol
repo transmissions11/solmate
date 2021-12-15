@@ -1,19 +1,25 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
+import {ERC165} from "./ERC165.sol";
 import {ERC1155TokenReceiver} from "./ERC1155TokenReceiver.sol";
 
 /// @notice Modern and gas efficient ERC1155 implementation.
 /// @author Modified from 0xsequence (https://github.com/0xsequence/erc-1155)
-abstract contract ERC1155 {
+abstract contract ERC1155 is ERC165 {
 
   /*///////////////////////////////////////////////////////////////
                             ERC1155 STORAGE
   //////////////////////////////////////////////////////////////*/
 
+  string private immutable URI;
+
   /// @dev onReceive function signatures
   bytes4 constant internal ERC1155_RECEIVED_VALUE = 0xf23a6e61;
   bytes4 constant internal ERC1155_BATCH_RECEIVED_VALUE = 0xbc197c81;
+
+  bytes4 private constant INTERFACE_ID_ERC1155 = 0xd9b67a26;
+  bytes4 private constant INTERFACE_ID_ERC1155_METADATA_URI = 0x0e89341c;
 
   mapping (address => mapping(uint256 => uint256)) internal balances;
 
@@ -28,6 +34,7 @@ abstract contract ERC1155 {
   event TransferBatch(address indexed operator, address indexed _from, address indexed _to, uint256[] ids, uint256[] amounts);
 
   event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
+
 
   /*///////////////////////////////////////////////////////////////
                     Public Transfer Functions
@@ -117,6 +124,14 @@ abstract contract ERC1155 {
     }
 
     return batchBalances;
+  }
+
+  /*///////////////////////////////////////////////////////////////
+                        Metadata Functions
+  //////////////////////////////////////////////////////////////*/
+
+  function uri(uint256) external view virtual returns (string memory) {
+    return URI;
   }
 
   /*///////////////////////////////////////////////////////////////
