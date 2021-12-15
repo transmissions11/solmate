@@ -61,7 +61,7 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
     emit TransferSingle(msg.sender, from, to, id, amount);
   }
 
-  function _callonERC1155Received(address from, address to, uint256 id, uint256 amount, uint256 gasLimit, bytes memory data) internal {
+  function _callonERC1155Received(address from, address to, uint256 id, uint256 amount, uint256 gasLimit, bytes memory data) internal view {
     if (to.code.length > 0) {
       bytes4 retval = ERC1155TokenReceiver(to).onERC1155Received{gas: gasLimit}(msg.sender, from, id, amount, data);
       require(retval == ERC1155_RECEIVED_VALUE, "INVALID_ON_RECEIVE_MESSAGE");
@@ -80,7 +80,7 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
     emit TransferBatch(msg.sender, from, to, ids, amounts);
   }
 
-  function _callonERC1155BatchReceived(address from, address to, uint256[] memory ids, uint256[] memory amounts, uint256 gasLimit, bytes memory data) internal {
+  function _callonERC1155BatchReceived(address from, address to, uint256[] memory ids, uint256[] memory amounts, uint256 gasLimit, bytes memory data) internal view {
     if (to.code.length > 0) {
       bytes4 retval = ERC1155TokenReceiver(to).onERC1155BatchReceived{gas: gasLimit}(msg.sender, from, ids, amounts, data);
       require(retval == ERC1155_BATCH_RECEIVED_VALUE, "INVALID_ON_RECEIVE_MESSAGE");
