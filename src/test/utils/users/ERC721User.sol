@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC721} from "../../tokens/ERC721.sol";
+import {ERC721} from "../../../tokens/ERC721.sol";
 
 contract ERC721User {
     ERC721 token;
