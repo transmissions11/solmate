@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {IERC1155TokenReceiver} from "../interfaces/IERC1155TokenReceiver.sol";
 import {IERC1155} from "../interfaces/IERC1155.sol";
-import {ERC165} from "../utils/ERC165.sol";
+import {ERC165} from "./ERC165.sol";
 
 
 /// @notice Modern and gas efficient ERC1155 implementation.
