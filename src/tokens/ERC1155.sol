@@ -33,7 +33,7 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
                     Public Transfer Functions
   //////////////////////////////////////////////////////////////*/
 
-  function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) public override {
+  function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) public {
     require((msg.sender == from) || isApprovedForAll(from, msg.sender), "INVALID_OPERATOR");
     require(to != address(0), "INVALID_RECIPIENT");
     // require(amount <= balances[from][id]) is not necessary since checked with safemath operations
@@ -42,7 +42,7 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
     _callonERC1155Received(from, to, id, amount, gasleft(), data);
   }
 
-  function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) public override {
+  function safeBatchTransferFrom(address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data) public {
     require((msg.sender == from) || isApprovedForAll(from, msg.sender), "INVALID_OPERATOR");
     require(to != address(0), "INVALID_RECIPIENT");
 
@@ -91,12 +91,12 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
                         Operator Functions
   //////////////////////////////////////////////////////////////*/
 
-  function setApprovalForAll(address operator, bool approved) external override {
+  function setApprovalForAll(address operator, bool approved) external {
     operators[msg.sender][operator] = approved;
     emit ApprovalForAll(msg.sender, operator, approved);
   }
 
-  function isApprovedForAll(address owner, address operator) public override view returns (bool isOperator) {
+  function isApprovedForAll(address owner, address operator) public view returns (bool isOperator) {
     return operators[owner][operator];
   }
 
@@ -104,11 +104,11 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
                         Balance Functions
   //////////////////////////////////////////////////////////////*/
 
-  function balanceOf(address owner, uint256 id) public override view returns (uint256) {
+  function balanceOf(address owner, uint256 id) public view returns (uint256) {
     return balances[owner][id];
   }
 
-  function balanceOfBatch(address[] memory owners, uint256[] memory ids) public override view returns (uint256[] memory) {
+  function balanceOfBatch(address[] memory owners, uint256[] memory ids) public view returns (uint256[] memory) {
     require(owners.length == ids.length, "INVALID_ARRAY_LENGTH");
 
     uint256[] memory batchBalances = new uint256[](owners.length);
@@ -123,7 +123,7 @@ abstract contract ERC1155 is ERC1155TokenReceiver {
                         ERC165 Functions
   //////////////////////////////////////////////////////////////*/
 
-  function supportsInterface(bytes4 interfaceID) public override virtual pure returns (bool) {
+  function supportsInterface(bytes4 interfaceID) public virtual pure returns (bool) {
     return interfaceID == this.supportsInterface.selector;
   }
 }
