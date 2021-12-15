@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-/// @title ERC1155 Token Receiver Interface
+/// @notice Modern and gas efficient ERC1155 Token Receiver implementation.
 /// @dev Enables accepting safe transfers
 /// @author Modified from 0xsequence (https://github.com/0xsequence/erc-1155)
-interface IERC1155TokenReceiver {
+abstract contract ERC1155TokenReceiver {
 
   /// @notice Handle the receipt of a single ERC1155 token type
   /// @dev An ERC1155-compliant smart contract MUST call this function on the token recipient contract, at the end of a `safeTransferFrom` after the balance has been updated
