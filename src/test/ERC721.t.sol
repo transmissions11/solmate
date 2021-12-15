@@ -2,9 +2,10 @@
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {InvariantTest} from "./utils/InvariantTest.sol";
-import {MockERC721} from "./utils/MockERC721.sol";
-import {ERC721User} from "./utils/ERC721User.sol";
+import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
+
+import {MockERC721} from "./utils/mocks/MockERC721.sol";
+import {ERC721User} from "./utils/users/ERC721User.sol";
 
 contract ERC721Test is DSTestPlus {
     MockERC721 token;
