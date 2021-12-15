@@ -5,7 +5,7 @@ import {ERC1155TokenReceiver} from "./ERC1155TokenReceiver.sol";
 
 /// @notice Modern and gas efficient ERC1155 implementation.
 /// @author Modified from 0xsequence (https://github.com/0xsequence/erc-1155)
-abstract contract ERC1155 is ERC1155TokenReceiver {
+abstract contract ERC1155 {
 
   /*///////////////////////////////////////////////////////////////
                             ERC1155 STORAGE
