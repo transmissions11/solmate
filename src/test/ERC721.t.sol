@@ -21,151 +21,156 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testMetadata(string memory name, string memory symbol, string memory baseURI) public {
-        MockERC721 tkn = new MockERC721(name, symbol);
+        MockERC721 tkn = new MockERC721(name, symbol, baseURI);
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
         assertEq(tkn.baseURI(), baseURI);
     }
 
-    function proveMint(address usr, uint256 tokenId) public {
+    function testMint(address usr, uint256 tokenId) public {
         token.mint(usr, tokenId);
 
-        assertEq(token.totalSupply(), tokenId);
-        assertEq(token.balanceOf(usr), tokenId);
+        assertEq(token.totalSupply(), 1);
+        assertEq(token.balanceOf(usr), 1);
+        assertEq(token.ownerOf(tokenId), usr);
     }
 
-    function proveTokenURI(address usr, uint256 tokenId) public {
-        token.mint(usr, tokenId);
-
-        assertEq(token.tokenURI(tokenId), abi.encodePacked(token.baseURI(), tokenURI(tokenId)));
+    function testTokenURI(uint256 tokenId) public {
+        assertBytesEq(bytes(token.tokenURI(tokenId)), abi.encodePacked(token.baseURI(), tokenId));
     }
 
-    function proveBurn(
+    function testBurn(
         address usr,
-        uint256[] calldata tokenIds0,
-        uint256[] calldata tokenIds1
+        uint256[] calldata tokenIds,
+        uint8 burnCount 
     ) public {
         // tokens minted must exceed tokens burned
-        if (tokenIds1.length > tokenIds0.length) return;
+        if (tokenIds.length < burnCount || tokenIds.length == 0) return;
+        if(usr == address(0)) return;
 
-        for (uint256 i = 0; i < tokenIds1.length; i++) {
-            token.mint(usr, tokenIds1[i]);
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            token.mint(usr, tokenIds[i]);
         }
 
-        for (uint256 i = 0; i < tokenIds0.length; i++) {
-            token.burn(tokenIds0[i]);
+        for (uint256 i = 0; i < burnCount; i++) {
+            token.burn(tokenIds[i]);
         }
 
-        assertEq(token.totalSupply(), tokenIds0.length - tokenIds1.length);
-        assertEq(token.balanceOf(usr), tokenIds0.length - tokenIds1.length);
+        assertEq(token.totalSupply(), tokenIds.length - burnCount);
+        assertEq(token.balanceOf(usr), tokenIds.length - burnCount);
     }
 
-    function proveApprove(address usr, uint256 tokenId) public {
+    function testApprove(address usr, uint256 tokenId) public {
         //assertTrue(token.approve(usr, tokenId));
 
         //assertEq(token.isApprovedForAll(msg.sender, usr, tokenId));
     }
 
-    function proveTransfer(address usr, uint256 tokenId) public {
-        token.mint(msg.sender, tokenId);
+    function testTransfer(address usr, uint256 tokenId) public {
+        token.mint(address(this), tokenId);
 
         assertTrue(token.transfer(usr, tokenId));
-        assertEq(token.totalSupply(), tokenId);
+        assertEq(token.totalSupply(), 1);
 
-        if (msg.sender == usr) {
-            assertEq(token.balanceOf(msg.sender), tokenId);
+        if (address(this) == usr) {
+            assertEq(token.balanceOf(address(this)), 1);
+            assertEq(token.ownerOf(tokenId), address(this));
         } else {
-            assertEq(token.balanceOf(msg.sender), 0);
-            assertEq(token.balanceOf(usr), tokenId);
+            assertEq(token.balanceOf(address(this)), 0);
+            assertEq(token.balanceOf(usr), 1);
+            assertEq(token.ownerOf(tokenId), usr);
         }
     }
 
-    function proveTransferFrom(
+    function testTransferFrom(
         address dst,
-        uint256[] calldata approvals,
-        uint256[] calldata tokenIds
-    ) public {
-        // dst must approve this for more than tokenIds.length
-        if (tokenIds.length > approvals.length) return;
-
-        ERC721User src = new ERC721User(token);
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            token.mint(address(src), tokenIds[i]);
-        }
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            token.approve(msg.sender, approvals[i]);
-        }
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            //assertTrue(token.transferFrom(address(src), dst, tokenIds[i]));
-        }
-
-        assertEq(token.totalSupply(), tokenIds.length);
-
-        //uint256 app = address(src) == msg.sender || approvals == type(uint256).max ? approvals : approvals - tokenIds;
-        //assertEq(token.allowance(address(src), msg.sender), app);
-
-        if (address(src) == dst) {
-            for (uint256 i = 0; i < tokenIds.length; i++) {
-                assertEq(token.balanceOf(address(src)), tokenIds[i]);
-            }
-        } else {
-            assertEq(token.balanceOf(address(src)), 0);
-            for (uint256 i = 0; i < tokenIds.length; i++) {
-                assertEq(token.balanceOf(dst), tokenIds[i]);
-            }
-        }
-    }
-
-    function proveSafeTransferFrom(
-        address dst,
-        uint256[] calldata approvals,
-        uint256[] calldata tokenIds
-    ) public {
-        // dst must approve this for more than tokenIds.length
-        if (tokenIds.length > approvals.length) return;
-
-        ERC721User src = new ERC721User(token);
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            token.mint(address(src), tokenIds[i]);
-        }
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            src.approve(msg.sender, approvals[i]);
-        }
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            //assertTrue(token.safeTransferFrom(address(src), dst, tokenIds[i]));
-        }
-
-        assertEq(token.totalSupply(), tokenIds.length);
-
-        //uint256 app = address(src) == msg.sender || approvals == type(uint256).max ? approvals : approvals - tokenIds;
-        //assertEq(token.allowance(address(src), msg.sender), app);
-
-        if (address(src) == dst) {
-            for (uint256 i = 0; i < tokenIds.length; i++) {
-                assertEq(token.balanceOf(address(src)), tokenIds[i]);
-            }
-        } else {
-            assertEq(token.balanceOf(address(src)), 0);
-            for (uint256 i = 0; i < tokenIds.length; i++) {
-                assertEq(token.balanceOf(dst), tokenIds[i]);
-            }
-        }
-    }
-
-    function proveSafeTransferFrom(
-        address dst,
-        uint256[] calldata approvals,
         uint256[] calldata tokenIds,
+        uint8 approvalCount
+    ) public {
+        // dst must approve this for more than tokenIds.length
+        if (tokenIds.length < approvalCount) return;
+        if(dst == address(0)) return;
+
+        ERC721User src = new ERC721User(token);
+
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            token.mint(address(src), tokenIds[i]);
+        }
+
+        for (uint256 i = 0; i < approvalCount; i++) {
+            src.approve(address(this), tokenIds[i]);
+            token.transferFrom(address(src), dst, tokenIds[i]);
+        }
+
+        assertEq(token.totalSupply(), tokenIds.length);
+
+        //uint256 app = address(src) == msg.sender || approvals == type(uint256).max ? approvals : approvals - tokenIds;
+        //assertEq(token.allowance(address(src), msg.sender), app);
+
+        if (address(src) == dst) {
+            for (uint256 i = 0; i < tokenIds.length; i++) {
+                assertEq(token.ownerOf(tokenIds[i]), address(src));
+            }
+        } else {
+            assertEq(token.balanceOf(address(src)), tokenIds.length - approvalCount);
+            for (uint256 i = 0; i < tokenIds.length; i++) {
+                if(i < approvalCount)
+                    assertEq(token.ownerOf(tokenIds[i]), dst);
+                else
+                    assertEq(token.ownerOf(tokenIds[i]), address(src));
+            }
+        }
+    }
+
+    function testSafeTransferFrom(
+        address dst,
+        uint256[] calldata tokenIds,
+        uint8 approvalCount
+    ) public {
+        // dst must approve this for more than tokenIds.length
+        if (tokenIds.length < approvalCount) return;
+        if(dst == address(0)) return;
+
+        ERC721User src = new ERC721User(token);
+
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            token.mint(address(src), tokenIds[i]);
+        }
+
+        for (uint256 i = 0; i < approvalCount; i++) {
+            src.approve(address(this), tokenIds[i]);
+            token.safeTransferFrom(address(src), dst, tokenIds[i]);
+        }
+
+        assertEq(token.totalSupply(), tokenIds.length);
+
+        //uint256 app = address(src) == msg.sender || approvals == type(uint256).max ? approvals : approvals - tokenIds;
+        //assertEq(token.allowance(address(src), msg.sender), app);
+
+        if (address(src) == dst) {
+            for (uint256 i = 0; i < tokenIds.length; i++) {
+                assertEq(token.ownerOf(tokenIds[i]), address(src));
+            }
+        } else {
+            assertEq(token.balanceOf(address(src)), tokenIds.length - approvalCount);
+            for (uint256 i = 0; i < tokenIds.length; i++) {
+                if(i < approvalCount)
+                    assertEq(token.ownerOf(tokenIds[i]), dst);
+                else
+                    assertEq(token.ownerOf(tokenIds[i]), address(src));
+            }
+        }
+    }
+
+    function testSafeTransferFrom(
+        address dst,
+        uint256[] calldata tokenIds,
+        uint8 approvalCount,
         bytes memory data
     ) public {
         // dst must approve this for more than tokenIds.length
-        if (tokenIds.length > approvals.length) return;
+        if (tokenIds.length < approvalCount) return;
+        if(dst == address(0)) return;
 
         ERC721User src = new ERC721User(token);
 
@@ -173,12 +178,9 @@ contract ERC721Test is DSTestPlus {
             token.mint(address(src), tokenIds[i]);
         }
 
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            src.approve(msg.sender, approvals[i]);
-        }
-
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            //assertTrue(token.safeTransferFrom(address(src), dst, tokenIds[i], data));
+        for (uint256 i = 0; i < approvalCount; i++) {
+            src.approve(address(this), tokenIds[i]);
+            token.safeTransferFrom(address(src), dst, tokenIds[i], data);
         }
 
         assertEq(token.totalSupply(), tokenIds.length);
@@ -188,12 +190,15 @@ contract ERC721Test is DSTestPlus {
 
         if (address(src) == dst) {
             for (uint256 i = 0; i < tokenIds.length; i++) {
-                assertEq(token.balanceOf(address(src)), tokenIds[i]);
+                assertEq(token.ownerOf(tokenIds[i]), address(src));
             }
         } else {
-            assertEq(token.balanceOf(address(src)), 0);
+            assertEq(token.balanceOf(address(src)), tokenIds.length - approvalCount);
             for (uint256 i = 0; i < tokenIds.length; i++) {
-                assertEq(token.balanceOf(dst), tokenIds[i]);
+                if(i < approvalCount)
+                    assertEq(token.ownerOf(tokenIds[i]), dst);
+                else
+                    assertEq(token.ownerOf(tokenIds[i]), address(src));
             }
         }
     }
