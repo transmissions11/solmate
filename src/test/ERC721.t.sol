@@ -11,25 +11,33 @@ contract ERC721Test is DSTestPlus {
     MockERC721 token;
 
     function setUp() public {
-        token = new MockERC721("Token", "TKN");
+        token = new MockERC721("Token", "TKN", "ipfs://somehash/");
     }
 
     function invariantMetadata() public {
         assertEq(token.name(), "Token");
         assertEq(token.symbol(), "TKN");
+        assertEq(token.baseURI(), "ipfs://somehash/");
     }
 
-    function testMetadata(string memory name, string memory symbol) public {
+    function testMetadata(string memory name, string memory symbol, string memory baseURI) public {
         MockERC721 tkn = new MockERC721(name, symbol);
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
+        assertEq(tkn.baseURI(), baseURI);
     }
 
     function proveMint(address usr, uint256 tokenId) public {
-        token.mint(usr, tokenId, "");
+        token.mint(usr, tokenId);
 
         assertEq(token.totalSupply(), tokenId);
         assertEq(token.balanceOf(usr), tokenId);
+    }
+
+    function proveTokenURI(address usr, uint256 tokenId) public {
+        token.mint(usr, tokenId);
+
+        assertEq(token.tokenURI(tokenId), abi.encodePacked(token.baseURI(), tokenURI(tokenId)));
     }
 
     function proveBurn(
@@ -41,7 +49,7 @@ contract ERC721Test is DSTestPlus {
         if (tokenIds1.length > tokenIds0.length) return;
 
         for (uint256 i = 0; i < tokenIds1.length; i++) {
-            token.mint(usr, tokenIds1[i], "");
+            token.mint(usr, tokenIds1[i]);
         }
 
         for (uint256 i = 0; i < tokenIds0.length; i++) {
@@ -59,7 +67,7 @@ contract ERC721Test is DSTestPlus {
     }
 
     function proveTransfer(address usr, uint256 tokenId) public {
-        token.mint(msg.sender, tokenId, "");
+        token.mint(msg.sender, tokenId);
 
         assertTrue(token.transfer(usr, tokenId));
         assertEq(token.totalSupply(), tokenId);
@@ -83,7 +91,7 @@ contract ERC721Test is DSTestPlus {
         ERC721User src = new ERC721User(token);
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            token.mint(address(src), tokenIds[i], "");
+            token.mint(address(src), tokenIds[i]);
         }
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
@@ -122,7 +130,7 @@ contract ERC721Test is DSTestPlus {
         ERC721User src = new ERC721User(token);
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            token.mint(address(src), tokenIds[i], "");
+            token.mint(address(src), tokenIds[i]);
         }
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
@@ -162,7 +170,7 @@ contract ERC721Test is DSTestPlus {
         ERC721User src = new ERC721User(token);
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
-            token.mint(address(src), tokenIds[i], "");
+            token.mint(address(src), tokenIds[i]);
         }
 
         for (uint256 i = 0; i < tokenIds.length; i++) {

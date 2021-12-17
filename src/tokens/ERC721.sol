@@ -22,6 +22,8 @@ abstract contract ERC721 {
 
     string public symbol;
 
+    string public baseURI;
+
     /*///////////////////////////////////////////////////////////////
                             ERC-721 STORAGE
     //////////////////////////////////////////////////////////////*/
@@ -31,8 +33,6 @@ abstract contract ERC721 {
     mapping(address => uint256) public balanceOf;
 
     mapping(uint256 => address) public ownerOf;
-
-    mapping(uint256 => string) public tokenURI;
 
     mapping(uint256 => address) public getApproved;
 
@@ -60,9 +60,10 @@ abstract contract ERC721 {
                             CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
     
-    constructor(string memory _name, string memory _symbol) {
+    constructor(string memory _name, string memory _symbol, string memory _baseURI) {
         name = _name;
         symbol = _symbol;
+        baseURI = _baseURI;
         
         INITIAL_CHAIN_ID = block.chainid;
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
@@ -174,6 +175,10 @@ abstract contract ERC721 {
         }
     }
 
+    function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
+        return string(abi.encodePacked(baseURI, tokenId));
+    }
+
     /*///////////////////////////////////////////////////////////////
                             EIP-2612-LIKE LOGIC
     //////////////////////////////////////////////////////////////*/
@@ -269,8 +274,7 @@ abstract contract ERC721 {
     
     function _mint(
         address to, 
-        uint256 tokenId, 
-        string memory tokenURI_
+        uint256 tokenId
     ) internal virtual { 
         require(ownerOf[tokenId] == address(0), "ALREADY_MINTED");
   
@@ -284,8 +288,6 @@ abstract contract ERC721 {
         }
         
         ownerOf[tokenId] = to;
-        
-        tokenURI[tokenId] = tokenURI_;
         
         emit Transfer(address(0), to, tokenId); 
     }
@@ -304,8 +306,6 @@ abstract contract ERC721 {
         }
         
         delete ownerOf[tokenId];
-        
-        delete tokenURI[tokenId];
         
         emit Transfer(owner, address(0), tokenId); 
     }
