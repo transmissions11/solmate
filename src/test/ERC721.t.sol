@@ -51,6 +51,14 @@ contract ERC721Test is DSTestPlus {
         assertBytesEq(bytes(token.tokenURI(tokenId)), abi.encodePacked(token.baseURI(), tokenId));
     }
 
+    function testBurnInexistentToken(uint256 tokenId) public {
+        try token.burn(tokenId) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "NOT_MINTED");
+        }
+    }
+
     function testBurn(
         address usr,
         uint256[] calldata tokenIds,
