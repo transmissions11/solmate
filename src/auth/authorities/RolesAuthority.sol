@@ -43,7 +43,7 @@ contract RolesAuthority is Auth, Authority {
                         ROLE CAPABILITY STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => mapping(bytes4 => bytes32)) public getRoleCapabilities;
+    mapping(address => mapping(bytes4 => bytes32)) public getRolesWithCapability;
 
     mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
 
@@ -55,7 +55,7 @@ contract RolesAuthority is Auth, Authority {
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            return bytes32(0) != getRoleCapabilities[target][functionSig] & shifted;
+            return bytes32(0) != getRolesWithCapability[target][functionSig] & shifted;
         }
     }
 
@@ -70,7 +70,7 @@ contract RolesAuthority is Auth, Authority {
     ) public view virtual override returns (bool) {
         if (isCapabilityPublic[target][functionSig]) return true;
 
-        return bytes32(0) != getUserRoles[user] & getRoleCapabilities[target][functionSig] || isUserRoot[user];
+        return bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig] || isUserRoot[user];
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -93,12 +93,12 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastCapabilities = getRoleCapabilities[target][functionSig];
+        bytes32 lastCapabilities = getRolesWithCapability[target][functionSig];
 
         unchecked {
             bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
 
-            getRoleCapabilities[target][functionSig] = enabled
+            getRolesWithCapability[target][functionSig] = enabled
                 ? lastCapabilities | shifted
                 : lastCapabilities & ~shifted;
         }
