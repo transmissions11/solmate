@@ -68,9 +68,10 @@ contract RolesAuthority is Auth, Authority {
         address target,
         bytes4 functionSig
     ) public view virtual override returns (bool) {
-        if (isCapabilityPublic[target][functionSig]) return true;
-
-        return bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig] || isUserRoot[user];
+        return
+            isCapabilityPublic[target][functionSig] ||
+            bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig] ||
+            isUserRoot[user];
     }
 
     /*///////////////////////////////////////////////////////////////
