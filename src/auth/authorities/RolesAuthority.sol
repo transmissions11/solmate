@@ -33,9 +33,9 @@ contract RolesAuthority is Auth, Authority {
 
     function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
         unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+            bytes32 roleMask = bytes32(2**uint256(role));
 
-            return bytes32(0) != getUserRoles[user] & shifted;
+            return bytes32(0) != getUserRoles[user] & roleMask;
         }
     }
 
@@ -53,9 +53,9 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig
     ) public view virtual returns (bool) {
         unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+            bytes32 roleMask = bytes32(2**uint256(role));
 
-            return bytes32(0) != getRolesWithCapability[target][functionSig] & shifted;
+            return bytes32(0) != getRolesWithCapability[target][functionSig] & roleMask;
         }
     }
 
@@ -96,11 +96,11 @@ contract RolesAuthority is Auth, Authority {
         bytes32 lastCapabilities = getRolesWithCapability[target][functionSig];
 
         unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+            bytes32 roleMask = bytes32(2**uint256(role));
 
             getRolesWithCapability[target][functionSig] = enabled
-                ? lastCapabilities | shifted
-                : lastCapabilities & ~shifted;
+                ? lastCapabilities | roleMask
+                : lastCapabilities & ~roleMask;
         }
 
         emit RoleCapabilityUpdated(role, target, functionSig, enabled);
@@ -118,9 +118,9 @@ contract RolesAuthority is Auth, Authority {
         bytes32 lastRoles = getUserRoles[user];
 
         unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
+            bytes32 roleMask = bytes32(2**uint256(role));
 
-            getUserRoles[user] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+            getUserRoles[user] = enabled ? lastRoles | roleMask : lastRoles & ~roleMask;
         }
 
         emit UserRoleUpdated(user, role, enabled);
