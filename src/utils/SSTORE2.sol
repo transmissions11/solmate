@@ -4,10 +4,10 @@ pragma solidity >=0.8.0;
 /// @notice Read and write to persistent storage at a fraction of the cost.
 /// @author Modified from 0xSequence (https://github.com/0xsequence/sstore2/blob/master/contracts/SSTORE2.sol)
 library SSTORE2 {
-    uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's zero to ensure the contract can't be called.
+    uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's a STOP opcode to ensure the contract can't be called.
 
     function write(bytes memory data) internal returns (address pointer) {
-        // Prefix the bytecode with a zero byte to ensure it cannot be called.
+        // Prefix the bytecode with a STOP opcode to ensure it cannot be called.
         bytes memory runtimeCode = abi.encodePacked(hex"00", data);
 
         // Compute the creation code we need from our desired runtime code.
