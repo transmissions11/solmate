@@ -50,4 +50,13 @@ contract ERC721User {
     ) public {
         token.safeTransferFrom(from, to, tokenId, data);
     }
+
+    function onERC721Received(
+        address operator,
+        address from,
+        uint256 tokenId,
+        bytes calldata data
+    ) external returns (bytes4) {
+        return 0x150b7a02;
+    }
 }
