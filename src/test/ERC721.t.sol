@@ -35,6 +35,18 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.ownerOf(tokenId), usr);
     }
 
+    function testMintSameToken(address usr, uint256 tokenId) public {
+        if (usr == address(0)) return;
+
+        token.mint(usr, tokenId);
+
+        try token.mint(usr, tokenId) {
+            fail();
+        } catch Error(string memory error) {
+            assertEq(error, "ALREADY_MINTED");
+        }
+    }
+
     function testTokenURI(uint256 tokenId) public {
         assertBytesEq(bytes(token.tokenURI(tokenId)), abi.encodePacked(token.baseURI(), tokenId));
     }
