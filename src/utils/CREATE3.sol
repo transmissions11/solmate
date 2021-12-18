@@ -67,6 +67,15 @@ library CREATE3 {
             )
         ).fromLast20Bytes();
 
-        return keccak256(abi.encodePacked(hex"d6_94", proxy, hex"01")).fromLast20Bytes();
+        return
+            keccak256(
+                abi.encodePacked(
+                    // 0xd6 = 0xc0 (short RLP prefix) + 0x16 (length of: 0x94 ++ proxy ++ 0x01)
+                    // 0x94 = 0x80 + 0x14 (0x14 = the length of an address, 20 bytes, in hex)
+                    hex"d6_94",
+                    proxy,
+                    hex"01" // Nonce of the proxy contract (1)
+                )
+            ).fromLast20Bytes();
     }
 }
