@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
+import {WETH} from "../tokens/WETH.sol";
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
-import {MockTrustChild} from "./utils/mocks/MockTrustChild.sol";
 
 import {CREATE3} from "../utils/CREATE3.sol";
 
@@ -37,8 +37,8 @@ contract CREATE3Test is DSTestPlus {
     function testFailDoubleDeployDifferentBytecode() public {
         bytes32 salt = keccak256(bytes("and sweet!"));
 
+        CREATE3.deploy(salt, type(WETH).creationCode, 0);
         CREATE3.deploy(salt, type(MockAuthChild).creationCode, 0);
-        CREATE3.deploy(salt, type(MockTrustChild).creationCode, 0);
     }
 
     function testDeployERC20(
