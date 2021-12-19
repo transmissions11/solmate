@@ -2,6 +2,7 @@
 pragma solidity >=0.7.0;
 
 /// @notice A generic interface for a contract which provides authorization data to an Auth instance.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Auth.sol)
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 interface Authority {
     function canCall(
@@ -12,6 +13,7 @@ interface Authority {
 }
 
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Auth.sol)
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 abstract contract Auth {
     event OwnerUpdated(address indexed user, address indexed newOwner);

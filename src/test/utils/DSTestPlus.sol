@@ -5,6 +5,8 @@ import {DSTest} from "ds-test/test.sol";
 
 import {Hevm} from "./Hevm.sol";
 
+/// @notice Extended testing framework for DappTools projects.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SSTORE2.sol)
 contract DSTestPlus is DSTest {
     Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
 
