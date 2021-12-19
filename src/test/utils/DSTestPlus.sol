@@ -5,6 +5,8 @@ import {DSTest} from "ds-test/test.sol";
 
 import {Hevm} from "./Hevm.sol";
 
+/// @notice Extended testing framework for DappTools projects.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SSTORE2.sol)
 contract DSTestPlus is DSTest {
     Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
 
@@ -62,6 +64,22 @@ contract DSTestPlus is DSTest {
 
     function assertUint32Eq(uint32 a, uint32 b) internal virtual {
         assertEq(uint256(a), uint256(b));
+    }
+
+    function assertApproxEq(
+        uint256 a,
+        uint256 b,
+        uint256 maxDelta
+    ) internal virtual {
+        uint256 absDelta = (a > b ? a - b : b - a);
+
+        if (absDelta > maxDelta) {
+            emit log("Error: a ~= b not satisfied [uint]");
+            emit log_named_uint("  Expected", a);
+            emit log_named_uint("    Actual", b);
+            emit log_named_uint(" Max Delta", maxDelta);
+            fail();
+        }
     }
 
     function assertBytesEq(bytes memory a, bytes memory b) internal virtual {

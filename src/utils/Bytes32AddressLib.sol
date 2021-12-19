@@ -2,7 +2,7 @@
 pragma solidity >=0.7.0;
 
 /// @notice Library for converting between addresses and bytes32 values.
-/// @author Original work by Transmissions11 (https://github.com/transmissions11)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/Bytes32AddressLib.sol)
 library Bytes32AddressLib {
     function fromLast20Bytes(bytes32 bytesValue) internal pure returns (address) {
         return address(uint160(uint256(bytesValue)));

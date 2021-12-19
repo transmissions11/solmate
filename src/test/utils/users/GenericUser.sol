@@ -17,7 +17,7 @@ contract GenericUser {
                     revert(add(32, returnData), returnDataSize)
                 }
             } else {
-                revert("REVERTED_WITHOUT_MESSAGE");
+                revert("REVERTED_WITHOUT_A_MESSAGE");
             }
         }
     }

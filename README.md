@@ -7,10 +7,8 @@
 ```ml
 auth
 ├─ Auth — "Flexible and updatable auth pattern"
-├─ Trust — "Ultra minimal authorization logic"
 ├─ authorities
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
-│  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
 tokens
 ├─ WETH — "Minimalist and modern Wrapped Ether implementation"
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"

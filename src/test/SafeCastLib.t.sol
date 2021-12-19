@@ -82,31 +82,31 @@ contract SafeCastLibTest is DSTestPlus {
     }
 
     function testFailSafeCastTo248(uint256 x) public pure {
-        if (type(uint248).max > x) revert();
+        if (type(uint248).max > x) x = type(uint248).max + 1;
 
         SafeCastLib.safeCastTo248(x);
     }
 
     function testFailSafeCastTo128(uint256 x) public pure {
-        if (type(uint128).max > x) revert();
+        if (type(uint128).max > x) x = type(uint128).max + 1;
 
         SafeCastLib.safeCastTo128(x);
     }
 
     function testFailSafeCastTo96(uint256 x) public pure {
-        if (type(uint96).max > x) revert();
+        if (type(uint96).max > x) x = type(uint96).max + 1;
 
         SafeCastLib.safeCastTo96(x);
     }
 
     function testFailSafeCastTo64(uint256 x) public pure {
-        if (type(uint64).max > x) revert();
+        if (type(uint64).max > x) x = type(uint64).max + 1;
 
         SafeCastLib.safeCastTo64(x);
     }
 
     function testFailSafeCastTo32(uint256 x) public pure {
-        if (type(uint32).max > x) revert();
+        if (type(uint32).max > x) x = type(uint32).max + 1;
 
         SafeCastLib.safeCastTo32(x);
     }
