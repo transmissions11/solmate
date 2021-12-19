@@ -14,9 +14,9 @@ interface Authority {
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 abstract contract Auth {
-    event OwnerUpdated(address indexed owner);
+    event OwnerUpdated(address indexed user, address indexed newOwner);
 
-    event AuthorityUpdated(Authority indexed authority);
+    event AuthorityUpdated(address indexed user, Authority indexed newAuthority);
 
     address public owner;
 
@@ -26,8 +26,8 @@ abstract contract Auth {
         owner = _owner;
         authority = _authority;
 
-        emit OwnerUpdated(_owner);
-        emit AuthorityUpdated(_authority);
+        emit OwnerUpdated(msg.sender, _owner);
+        emit AuthorityUpdated(msg.sender, _authority);
     }
 
     modifier requiresAuth() {
@@ -51,12 +51,12 @@ abstract contract Auth {
 
         authority = newAuthority;
 
-        emit AuthorityUpdated(newAuthority);
+        emit AuthorityUpdated(msg.sender, newAuthority);
     }
 
     function setOwner(address newOwner) public virtual requiresAuth {
         owner = newOwner;
 
-        emit OwnerUpdated(newOwner);
+        emit OwnerUpdated(msg.sender, newOwner);
     }
 }
