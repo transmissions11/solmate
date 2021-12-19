@@ -89,6 +89,27 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(address(0xBEEF)), 1e18);
     }
 
+    function testPermit() public {
+        uint256 privateKey = 0xBEEF;
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp))
+                )
+            )
+        );
+
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+
+        assertEq(token.allowance(owner, address(0xCAFE)), 1e18);
+        assertEq(token.nonces(owner), 1);
+    }
+
     function testFailTransferInsufficientBalance() public {
         token.mint(address(this), 0.9e18);
         token.transfer(address(0xBEEF), 1e18);
@@ -108,6 +129,79 @@ contract ERC20Test is DSTestPlus {
         token.mint(address(from), 0.9e18);
         from.approve(address(this), 1e18);
         token.transferFrom(address(from), address(0xBEEF), 1e18);
+    }
+
+    function testFailPermitBadNonce() public {
+        uint256 privateKey = 0xBEEF;
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 1, block.timestamp))
+                )
+            )
+        );
+
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+    }
+
+    function testFailPermitBadDeadline() public {
+        uint256 privateKey = 0xBEEF;
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp))
+                )
+            )
+        );
+
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp + 1, v, r, s);
+    }
+
+    function testFailPermitPastDeadline() public {
+        uint256 privateKey = 0xBEEF;
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp - 1))
+                )
+            )
+        );
+
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp - 1, v, r, s);
+    }
+
+    function testFailPermitReplay() public {
+        uint256 privateKey = 0xBEEF;
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp))
+                )
+            )
+        );
+
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
     function testMetaData(
@@ -189,6 +283,33 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
+    function testPermit(
+        uint256 privateKey,
+        address to,
+        uint256 amount,
+        uint256 deadline
+    ) public {
+        if (deadline < block.timestamp) deadline = block.timestamp;
+
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                )
+            )
+        );
+
+        token.permit(owner, to, amount, deadline, v, r, s);
+
+        assertEq(token.allowance(owner, to), amount);
+        assertEq(token.nonces(owner), 1);
+    }
+
     function testFailTransferInsufficientBalance(
         address to,
         uint256 mintAmount,
@@ -226,6 +347,105 @@ contract ERC20Test is DSTestPlus {
         token.mint(address(from), mintAmount);
         from.approve(address(this), sendAmount);
         token.transferFrom(address(from), to, sendAmount);
+    }
+
+    function testFailPermitBadNonce(
+        uint256 privateKey,
+        address to,
+        uint256 amount,
+        uint256 deadline,
+        uint256 nonce
+    ) public {
+        if (deadline < block.timestamp) deadline = block.timestamp;
+        if (nonce == 0) nonce = 1;
+
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, nonce, deadline))
+                )
+            )
+        );
+
+        token.permit(owner, to, amount, deadline, v, r, s);
+    }
+
+    function testFailPermitBadDeadline(
+        uint256 privateKey,
+        address to,
+        uint256 amount,
+        uint256 deadline
+    ) public {
+        if (deadline < block.timestamp) deadline = block.timestamp;
+
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                )
+            )
+        );
+
+        token.permit(owner, to, amount, deadline + 1, v, r, s);
+    }
+
+    function testFailPermitPastDeadline(
+        uint256 privateKey,
+        address to,
+        uint256 amount,
+        uint256 deadline
+    ) public {
+        deadline %= block.timestamp - 1;
+
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                )
+            )
+        );
+
+        token.permit(owner, to, amount, deadline, v, r, s);
+    }
+
+    function testFailPermitReplay(
+        uint256 privateKey,
+        address to,
+        uint256 amount,
+        uint256 deadline
+    ) public {
+        if (deadline < block.timestamp) deadline = block.timestamp;
+
+        address owner = hevm.addr(privateKey);
+
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                )
+            )
+        );
+
+        token.permit(owner, to, amount, deadline, v, r, s);
+        token.permit(owner, to, amount, deadline, v, r, s);
     }
 }
 
