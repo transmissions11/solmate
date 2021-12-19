@@ -227,7 +227,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 burnAmount
     ) public {
-        if (burnAmount > mintAmount) return;
+        burnAmount = wrap(burnAmount, 0, mintAmount);
 
         token.mint(from, mintAmount);
         token.burn(from, burnAmount);
@@ -261,7 +261,7 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        if (amount > approval) return;
+        amount = wrap(amount, 0, approval);
 
         ERC20User from = new ERC20User(token);
 

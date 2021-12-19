@@ -28,6 +28,19 @@ contract DSTestPlus is DSTest {
         emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
     }
 
+    // Wrap x between the min and max (both inclusive), used for bounding the range of fuzzer inputs.
+    // Source: https://stackoverflow.com/questions/14415753/wrap-value-into-range-min-max-without-division
+    function wrap(uint256 x, uint256 min, uint256 max) internal pure returns (uint256) {
+        // Add 1 to max to convert range from [min, max) to [min, max]
+        // Note: We can only do this if the upper bound is not type(uint256).max, since otherwise
+        // adding 1 will overflow. This means specifying a max value of type(uint256).max is the
+        // only exclusive upper bound, as it results in an upper bound of type(uint256).max-1. As
+        // a result, if you need a range of [n, type(uint256).max], you should call this method as
+        // `x = wrap(x, n-1, type(uint256).max) + 1`
+        max = max == type(uint256).max ? max : max + 1;
+        return x < min ? max - (min - x) % (max - min) : min + (x - min) % (max - min);
+    }
+
     function fail(string memory err) internal virtual {
         emit log_named_string("Error", err);
         fail();

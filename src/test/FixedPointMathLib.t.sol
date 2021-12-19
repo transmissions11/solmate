@@ -73,9 +73,12 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 baseUnit
     ) public {
-        // Ignore cases where x * y overflows.
+        // Convert cases where x * y overflows into useful test cases.
         unchecked {
-            if (x != 0 && (x * y) / x != y) return;
+            while (x != 0 && (x * y) / x != y) {
+                x /= 2;
+                y /= 2;
+            }
         }
 
         assertEq(FixedPointMathLib.fmul(x, y, baseUnit), baseUnit == 0 ? 0 : (x * y) / baseUnit);
@@ -99,14 +102,17 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 baseUnit
     ) public {
-        // Ignore cases where x * baseUnit overflows.
+        // Convert cases where x * baseUnit overflows into useful test cases.
         unchecked {
-            if (x != 0 && (x * baseUnit) / x != baseUnit) return;
+            while (x != 0 && (x * baseUnit) / x != baseUnit) {
+                x /= 2;
+                baseUnit /= 2;
+            }
         }
 
-        // Ignore cases where y is zero because it will cause a revert.
+        // y is zero will cause a revert, so set y to a "random" value
         if (y == 0) {
-            return;
+            y = uint256(keccak256(abi.encode(x, baseUnit)));
         }
 
         assertEq(FixedPointMathLib.fdiv(x, y, baseUnit), (x * baseUnit) / y);
@@ -133,9 +139,13 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
 
-        // Ignore cases where next * next overflows.
+        // Convert cases where next * next overflows into useful test cases.
         unchecked {
-            if (next * next < next) return;
+            while (next * next < next) {
+                x /= 2;
+                root = FixedPointMathLib.sqrt(x);
+                next = root + 1; // this cannot overflow since we'll never have a square root equal to type(uint256).max
+            }
         }
 
         assertTrue(root * root <= x && next * next > x);
