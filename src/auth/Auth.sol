@@ -39,14 +39,14 @@ abstract contract Auth {
     function isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
         Authority auth = authority; // Memoizing authority saves us a warm SLOAD, around 100 gas.
 
-        // Checking if the caller is the owner only after calling the authority saves gas in most cases, but
-        // be aware this renders authorized functions uncallable even to the owner if the authority reverts.
+        // Checking if the caller is the owner only after calling the authority saves gas in most cases, but be
+        // aware that this makes protected functions uncallable even to the owner if the authority is out of order.
         return (address(auth) != address(0) && auth.canCall(user, address(this), functionSig)) || user == owner;
     }
 
     function setAuthority(Authority newAuthority) public virtual {
         // We check if the caller is the owner first because we want to ensure they can
-        // always swap out the authority even if it's reverting or using a lot of gas.
+        // always swap out the authority even if it's reverting or using up a lot of gas.
         require(msg.sender == owner || authority.canCall(msg.sender, address(this), msg.sig));
 
         authority = newAuthority;
