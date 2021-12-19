@@ -33,13 +33,13 @@ abstract contract Auth {
     function setOwner(address newOwner) public virtual requiresAuth {
         owner = newOwner;
 
-        emit OwnerUpdated(owner);
+        emit OwnerUpdated(newOwner);
     }
 
     function setAuthority(Authority newAuthority) public virtual requiresAuth {
         authority = newAuthority;
 
-        emit AuthorityUpdated(authority);
+        emit AuthorityUpdated(newAuthority);
     }
 
     function isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
