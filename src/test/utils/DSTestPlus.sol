@@ -53,6 +53,22 @@ contract DSTestPlus is DSTest {
         assertEq(uint256(a), uint256(b));
     }
 
+    function assertApproxEq(
+        uint256 a,
+        uint256 b,
+        uint256 maxDelta
+    ) internal virtual {
+        uint256 absDelta = (a > b ? a - b : b - a);
+
+        if (absDelta > maxDelta) {
+            emit log("Error: a ~= b not satisfied [uint]");
+            emit log_named_uint("  Expected", a);
+            emit log_named_uint("    Actual", b);
+            emit log_named_uint(" Max Delta", maxDelta);
+            fail();
+        }
+    }
+
     function assertBytesEq(bytes memory a, bytes memory b) internal virtual {
         if (keccak256(a) != keccak256(b)) {
             emit log("Error: a == b not satisfied [bytes]");
