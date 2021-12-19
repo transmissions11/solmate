@@ -290,6 +290,7 @@ contract ERC20Test is DSTestPlus {
         uint256 deadline
     ) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
+        if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
 
@@ -357,6 +358,7 @@ contract ERC20Test is DSTestPlus {
         uint256 nonce
     ) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
+        if (privateKey == 0) privateKey = 1;
         if (nonce == 0) nonce = 1;
 
         address owner = hevm.addr(privateKey);
@@ -382,6 +384,7 @@ contract ERC20Test is DSTestPlus {
         uint256 deadline
     ) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
+        if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
 
@@ -406,6 +409,7 @@ contract ERC20Test is DSTestPlus {
         uint256 deadline
     ) public {
         deadline %= block.timestamp - 1;
+        if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
 
@@ -430,6 +434,7 @@ contract ERC20Test is DSTestPlus {
         uint256 deadline
     ) public {
         if (deadline < block.timestamp) deadline = block.timestamp;
+        if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
 
