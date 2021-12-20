@@ -22,7 +22,7 @@ contract DSTestPlusTest is DSTestPlus {
         uint256 min,
         uint256 max
     ) public {
-        if (min >= max) return;
+        if (min >= max) (min, max) = (max, min);
 
         uint256 bounded = bound(num, min, max);
 
@@ -35,7 +35,10 @@ contract DSTestPlusTest is DSTestPlus {
         uint256 min,
         uint256 max
     ) public pure {
-        if (max >= min) revert();
+        if (max == min) {
+            unchecked { min++; } // overflow ok since it's handled in the next if statement
+        }
+        if (max >= min) (min, max) = (max, min);
 
         bound(num, min, max);
     }
