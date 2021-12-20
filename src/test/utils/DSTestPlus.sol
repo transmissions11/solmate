@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
 import {DSTest} from "ds-test/test.sol";
 
 import {Hevm} from "./Hevm.sol";
 
 /// @notice Extended testing framework for DappTools projects.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SSTORE2.sol)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/test/utils/DSTestPlus.sol)
 contract DSTestPlus is DSTest {
     Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
 
@@ -26,19 +26,6 @@ contract DSTestPlus is DSTest {
         string memory label = checkpointLabel;
 
         emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
-    }
-
-    // Wrap x between the min and max (both inclusive), used for bounding the range of fuzzer inputs.
-    // Source: https://stackoverflow.com/questions/14415753/wrap-value-into-range-min-max-without-division
-    function wrap(uint256 x, uint256 min, uint256 max) internal pure returns (uint256) {
-        // Add 1 to max to convert range from [min, max) to [min, max]
-        // Note: We can only do this if the upper bound is not type(uint256).max, since otherwise
-        // adding 1 will overflow. This means specifying a max value of type(uint256).max is the
-        // only exclusive upper bound, as it results in an upper bound of type(uint256).max-1. As
-        // a result, if you need a range of [n, type(uint256).max], you should call this method as
-        // `x = wrap(x, n-1, type(uint256).max) + 1`
-        max = max == type(uint256).max ? max : max + 1;
-        return x < min ? max - (min - x) % (max - min) : min + (x - min) % (max - min);
     }
 
     function fail(string memory err) internal virtual {
@@ -71,13 +58,34 @@ contract DSTestPlus is DSTest {
         uint256 b,
         uint256 maxDelta
     ) internal virtual {
-        uint256 absDelta = (a > b ? a - b : b - a);
+        uint256 delta = a > b ? a - b : b - a;
 
-        if (absDelta > maxDelta) {
+        if (delta > maxDelta) {
             emit log("Error: a ~= b not satisfied [uint]");
             emit log_named_uint("  Expected", a);
             emit log_named_uint("    Actual", b);
             emit log_named_uint(" Max Delta", maxDelta);
+            emit log_named_uint("     Delta", delta);
+            fail();
+        }
+    }
+
+    function assertRelApproxEq(
+        uint256 a,
+        uint256 b,
+        uint256 maxPercentDelta
+    ) internal virtual {
+        uint256 delta = a > b ? a - b : b - a;
+        uint256 abs = a > b ? a : b;
+
+        uint256 percentDelta = (delta * 1e18) / abs;
+
+        if (percentDelta > maxPercentDelta) {
+            emit log("Error: a ~= b not satisfied [uint]");
+            emit log_named_uint("    Expected", a);
+            emit log_named_uint("      Actual", b);
+            emit log_named_uint(" Max % Delta", maxPercentDelta);
+            emit log_named_uint("     % Delta", percentDelta);
             fail();
         }
     }
@@ -89,5 +97,18 @@ contract DSTestPlus is DSTest {
             emit log_named_bytes("    Actual", a);
             fail();
         }
+    }
+
+    function bound(
+        uint256 x,
+        uint256 min,
+        uint256 max
+    ) internal pure returns (uint256) {
+        max = max == type(uint256).max ? max : max + 1;
+        x = max == type(uint256).max && x != 0 ? x - 1 : x;
+
+        uint256 bounded = x < min ? max - ((min - x) % (max - min)) : min + ((x - min) % (max - min));
+
+        return max == type(uint256).max && x != 0 ? bounded + 1 : bounded;
     }
 }

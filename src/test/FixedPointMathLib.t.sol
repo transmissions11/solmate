@@ -102,17 +102,11 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 baseUnit
     ) public {
-        // Convert cases where x * baseUnit overflows into useful test cases.
-        unchecked {
-            while (x != 0 && (x * baseUnit) / x != baseUnit) {
-                x /= 2;
-                baseUnit /= 2;
-            }
-        }
+        if (y == 0) y = 1;
 
-        // y is zero will cause a revert, so set y to a "random" value
-        if (y == 0) {
-            y = uint256(keccak256(abi.encode(x, baseUnit)));
+        // Ignore cases where x * baseUnit overflows.
+        unchecked {
+            if (x != 0 && (x * baseUnit) / x != baseUnit) return;
         }
 
         assertEq(FixedPointMathLib.fdiv(x, y, baseUnit), (x * baseUnit) / y);
@@ -139,13 +133,9 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
 
-        // Convert cases where next * next overflows into useful test cases.
+        // Ignore cases where next * next overflows.
         unchecked {
-            while (next * next < next) {
-                x /= 2;
-                root = FixedPointMathLib.sqrt(x);
-                next = root + 1; // this cannot overflow since we'll never have a square root equal to type(uint256).max
-            }
+            if (next * next < next) return;
         }
 
         assertTrue(root * root <= x && next * next > x);

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
 /// @notice Safe unsigned integer casting library that reverts on overflow.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SafeCastLib.sol)

@@ -205,6 +205,12 @@ library FixedPointMathLib {
         }
     }
 
+    function delta(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        unchecked {
+            return x > y ? x - y : y - x;
+        }
+    }
+
     function min(uint256 x, uint256 y) internal pure returns (uint256 z) {
         return x < y ? x : y;
     }

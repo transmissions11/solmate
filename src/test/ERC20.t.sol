@@ -227,7 +227,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 burnAmount
     ) public {
-        burnAmount = wrap(burnAmount, 0, mintAmount);
+        burnAmount = bound(burnAmount, 0, mintAmount);
 
         token.mint(from, mintAmount);
         token.burn(from, burnAmount);
@@ -261,7 +261,7 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        amount = wrap(amount, 0, approval);
+        amount = bound(amount, 0, approval);
 
         ERC20User from = new ERC20User(token);
 
@@ -408,7 +408,7 @@ contract ERC20Test is DSTestPlus {
         uint256 amount,
         uint256 deadline
     ) public {
-        deadline %= block.timestamp - 1;
+        deadline = bound(deadline, 0, block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
