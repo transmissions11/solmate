@@ -3,24 +3,9 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
+import {MockAuthority} from "./utils/mocks/MockAuthority.sol";
 
-import {Auth, Authority} from "../auth/Auth.sol";
-
-contract BooleanAuthority is Authority {
-    bool yes;
-
-    constructor(bool _yes) {
-        yes = _yes;
-    }
-
-    function canCall(
-        address,
-        address,
-        bytes4
-    ) public view override returns (bool) {
-        return yes;
-    }
-}
+import {Authority} from "../auth/Auth.sol";
 
 contract OutOfOrderAuthority is Authority {
     function canCall(
@@ -54,26 +39,26 @@ contract AuthTest is DSTestPlus {
     }
 
     function testSetOwnerWithPermissiveAuthority() public {
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.setOwner(address(this));
     }
 
     function testSetAuthorityWithPermissiveAuthority() public {
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
     function testCallFunctionWithPermissiveAuthority() public {
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.updateFlag();
     }
 
     function testSetAuthorityAsOwnerWithOutOfOrderAuthority() public {
         mockAuthChild.setAuthority(new OutOfOrderAuthority());
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
     }
 
     function testFailSetOwnerAsNonOwner() public {
@@ -92,19 +77,19 @@ contract AuthTest is DSTestPlus {
     }
 
     function testFailSetOwnerWithRestrictiveAuthority() public {
-        mockAuthChild.setAuthority(new BooleanAuthority(false));
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.setOwner(address(this));
     }
 
     function testFailSetAuthorityWithRestrictiveAuthority() public {
-        mockAuthChild.setAuthority(new BooleanAuthority(false));
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
     function testFailCallFunctionWithRestrictiveAuthority() public {
-        mockAuthChild.setAuthority(new BooleanAuthority(false));
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.updateFlag();
     }
@@ -132,7 +117,7 @@ contract AuthTest is DSTestPlus {
     function testSetOwnerWithPermissiveAuthority(address deadOwner, address newOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.setOwner(newOwner);
     }
@@ -140,7 +125,7 @@ contract AuthTest is DSTestPlus {
     function testSetAuthorityWithPermissiveAuthority(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.setAuthority(newAuthority);
     }
@@ -148,7 +133,7 @@ contract AuthTest is DSTestPlus {
     function testCallFunctionWithPermissiveAuthority(address deadOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setAuthority(new BooleanAuthority(true));
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.updateFlag();
     }
@@ -175,7 +160,7 @@ contract AuthTest is DSTestPlus {
     function testFailSetOwnerWithRestrictiveAuthority(address deadOwner, address newOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setAuthority(new BooleanAuthority(false));
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.setOwner(newOwner);
     }
@@ -183,7 +168,7 @@ contract AuthTest is DSTestPlus {
     function testFailSetAuthorityWithRestrictiveAuthority(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setAuthority(new BooleanAuthority(false));
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.setAuthority(newAuthority);
     }
@@ -191,7 +176,7 @@ contract AuthTest is DSTestPlus {
     function testFailCallFunctionWithRestrictiveAuthority(address deadOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setAuthority(new BooleanAuthority(false));
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.updateFlag();
     }
