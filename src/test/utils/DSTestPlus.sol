@@ -103,14 +103,20 @@ contract DSTestPlus is DSTest {
         uint256 x,
         uint256 min,
         uint256 max
-    ) internal pure returns (uint256) {
+    ) internal pure returns (uint256 result) {
         require(max >= min, "MAX_LESS_THAN_MIN");
 
-        x = max == type(uint256).max && x != 0 ? x - 1 : x;
-        max = max == type(uint256).max ? max : max + 1;
+        uint256 size = max - min;
 
-        uint256 bounded = x < min ? max - ((min - x) % (max - min)) : min + ((x - min) % (max - min));
+        if (max != type(uint256).max) size++; // Make the max inclusive.
+        if (size == 0) return min; // Using max would be work just as well.
+        // Ensure max is inclusive in cases where x != 0 and max is at uint max.
+        if (max == type(uint256).max && x != 0) x--; // Accounted for later.
 
-        return max == type(uint256).max && x != 0 ? bounded + 1 : bounded;
+        if (x < min) x += size * (((min - x) / size) + 1);
+        result = min + ((x - min) % size);
+
+        // Account for decrementing x to make max inclusive.
+        if (max == type(uint256).max && x != 0) result++;
     }
 }
