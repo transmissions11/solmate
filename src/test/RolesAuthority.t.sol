@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 
-import {Auth, Authority} from "../auth/Auth.sol";
+import {Authority} from "../auth/Auth.sol";
 import {RolesAuthority} from "../auth/authorities/RolesAuthority.sol";
 
 contract RolesAuthorityTest is DSTestPlus {
@@ -19,19 +19,8 @@ contract RolesAuthorityTest is DSTestPlus {
         mockAuthChild.setOwner(DEAD_ADDRESS);
     }
 
-    function invariantOwner() public {
-        assertEq(roles.owner(), address(this));
-        assertEq(mockAuthChild.owner(), DEAD_ADDRESS);
-    }
-
-    function invariantAuthority() public {
-        assertEq(address(roles.authority()), address(0));
-        assertEq(address(mockAuthChild.authority()), address(roles));
-    }
-
     function testSanityChecks() public {
         assertEq(roles.getUserRoles(address(this)), bytes32(0));
-        assertFalse(roles.isUserRoot(address(this)));
         assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
 
         try mockAuthChild.updateFlag() {
@@ -68,19 +57,6 @@ contract RolesAuthorityTest is DSTestPlus {
 
         assertFalse(roles.doesUserHaveRole(address(this), modRole));
         assertFalse(roles.doesUserHaveRole(address(this), userRole));
-    }
-
-    function testRoot() public {
-        assertFalse(roles.isUserRoot(address(this)));
-        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
-
-        roles.setRootUser(address(this), true);
-        assertTrue(roles.isUserRoot(address(this)));
-        assertTrue(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
-
-        roles.setRootUser(address(this), false);
-        assertFalse(roles.isUserRoot(address(this)));
-        assertFalse(roles.canCall(address(this), address(mockAuthChild), MockAuthChild.updateFlag.selector));
     }
 
     function testPublicCapabilities() public {

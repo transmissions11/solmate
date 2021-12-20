@@ -11,8 +11,6 @@ contract RolesAuthority is Auth, Authority {
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event UserRootUpdated(address indexed user, bool enabled);
-
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
 
     event PublicCapabilityUpdated(address indexed target, bytes4 indexed functionSig, bool enabled);
@@ -27,8 +25,6 @@ contract RolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                              USER ROLE STORAGE
     //////////////////////////////////////////////////////////////*/
-
-    mapping(address => bool) public isUserRoot;
 
     mapping(address => bytes32) public getUserRoles;
 
@@ -71,8 +67,7 @@ contract RolesAuthority is Auth, Authority {
     ) public view virtual override returns (bool) {
         return
             isCapabilityPublic[target][functionSig] ||
-            bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig] ||
-            isUserRoot[user];
+            bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig];
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -126,11 +121,5 @@ contract RolesAuthority is Auth, Authority {
         }
 
         emit UserRoleUpdated(user, role, enabled);
-    }
-
-    function setRootUser(address user, bool enabled) public virtual requiresAuth {
-        isUserRoot[user] = enabled;
-
-        emit UserRootUpdated(user, enabled);
     }
 }
