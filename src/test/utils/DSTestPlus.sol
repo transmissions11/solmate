@@ -104,7 +104,7 @@ contract DSTestPlus is DSTest {
         uint256 min,
         uint256 max
     ) internal pure returns (uint256) {
-        require(max > min, "MAX_NOT_GREATER_THAN_MIN");
+        require(max >= min, "MAX_LESS_THAN_MIN");
 
         x = max == type(uint256).max && x != 0 ? x - 1 : x;
         max = max == type(uint256).max ? max : max + 1;
