@@ -9,6 +9,7 @@ auth
 ├─ Auth — "Flexible and updatable auth pattern"
 ├─ authorities
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
+│  ├─ MultiRolesAuthority — "Flexible and target agnostic role based Authority"
 tokens
 ├─ WETH — "Minimalist and modern Wrapped Ether implementation"
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
