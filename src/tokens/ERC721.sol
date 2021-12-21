@@ -28,7 +28,9 @@ abstract contract ERC721 {
                             ERC-721 STORAGE
     //////////////////////////////////////////////////////////////*/
     
-    uint256 public totalSupply;
+    uint256 public minted;
+
+    uint256 public burned;
     
     mapping(address => uint256) public balanceOf;
 
@@ -72,6 +74,13 @@ abstract contract ERC721 {
     /*///////////////////////////////////////////////////////////////
                             ERC-20-LIKE LOGIC
     //////////////////////////////////////////////////////////////*/
+
+    function totalSupply() public view returns (uint256 result) {
+        // Cannot overflow because only minted tokens can ever be burned.
+        unchecked {
+            result = minted - burned;
+        }
+    }
 
     function transfer(address to, uint256 tokenId) public virtual returns (bool success) {
         require(msg.sender == ownerOf[tokenId], "NOT_OWNER");
@@ -273,16 +282,13 @@ abstract contract ERC721 {
     //////////////////////////////////////////////////////////////*/
     
     function _mint(
-        address to, 
-        uint256 tokenId
-    ) internal virtual { 
-        require(ownerOf[tokenId] == address(0), "ALREADY_MINTED");
-  
-        // Cannot realistically overflow from incrementing total supply beyond
+        address to
+    ) internal virtual returns (uint256 tokenId) { 
+        // Cannot realistically overflow from minting beyond
         // the max uint256 value, and because the sum of all user balances 
         // can't exceed the max uint256 value.
         unchecked {
-            totalSupply++;
+            tokenId = minted++;
             
             balanceOf[to]++;
         }
@@ -300,7 +306,7 @@ abstract contract ERC721 {
         // Cannot underflow because a user's balance
         // will never be larger than the total supply.
         unchecked {
-            totalSupply--;
+            burned++;
         
             balanceOf[owner]--;
         }
