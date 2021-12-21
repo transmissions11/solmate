@@ -1,7 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/andreasbigger/projects/rari/solmate'
-nix-env -f https://github.com/dapphub/dapptools/archive/master.tar.gz -iA solc-static-versions.solc_0_8_10
-npm install
-dapp update
-make: Leaving directory `/Users/andreasbigger/projects/rari/solmate'
- 
