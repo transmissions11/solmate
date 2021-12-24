@@ -159,7 +159,7 @@ library FixedPointMathLib {
                 // Used below to help find a nearby power of 2.
                 let x2 := x
 
-                // Find the smallest power of 2 that is at least sqrt(x).
+                // Find the lowest power of 2 that is at least sqrt(x).
                 if iszero(lt(x2, 0x100000000000000000000000000000000)) {
                     x2 := shr(128, x2) // Like dividing by 2^128.
                     result := shl(64, result)
