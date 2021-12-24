@@ -201,7 +201,7 @@ library FixedPointMathLib {
                 // Compute a rounded down version of the result.
                 let roundedDownResult := div(x, result)
 
-                // If the rounded down result is smaller, use it as the result.
+                // If the rounded down result is smaller, use it.
                 if gt(result, roundedDownResult) {
                     result := roundedDownResult
                 }
