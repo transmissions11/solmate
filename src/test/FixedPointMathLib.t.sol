@@ -49,6 +49,7 @@ contract FixedPointMathLibTest is DSTestPlus {
     }
 
     function testSqrt() public {
+        assertEq(FixedPointMathLib.sqrt(0), 0);
         assertEq(FixedPointMathLib.sqrt(1), 1);
         assertEq(FixedPointMathLib.sqrt(2704), 52);
         assertEq(FixedPointMathLib.sqrt(110889), 333);
