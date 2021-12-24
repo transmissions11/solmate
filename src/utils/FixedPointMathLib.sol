@@ -101,8 +101,10 @@ library FixedPointMathLib {
                     x := div(xxRound, baseUnit)
                     if mod(n, 2) {
                         let zx := mul(z, x)
-                        if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
-                            revert(0, 0)
+                        if iszero(eq(div(zx, x), z)) {
+                            if iszero(iszero(x)) {
+                                revert(0, 0)
+                            }
                         }
                         let zxRound := add(zx, half)
                         if lt(zxRound, zx) {
