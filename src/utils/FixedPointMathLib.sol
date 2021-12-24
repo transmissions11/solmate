@@ -47,12 +47,8 @@ library FixedPointMathLib {
             // Store x * baseUnit in z for now.
             z := mul(x, baseUnit)
 
-            if or(
-                // Revert if y is zero to ensure we don't divide by zero below.
-                iszero(y),
-                // Equivalent to require(x == 0 || (x * baseUnit) / x == baseUnit)
-                iszero(or(iszero(x), eq(div(z, x), baseUnit)))
-            ) {
+            // Equivalent to require(y != 0 && (x == 0 || (x * baseUnit) / x == baseUnit))
+            if iszero(and(iszero(iszero(y)), or(iszero(x), eq(div(z, x), baseUnit)))) {
                 revert(0, 0)
             }
 
