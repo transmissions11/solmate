@@ -1,26 +1,34 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+pragma solidity 0.8.10;
 
 import {Auth, Authority} from "../Auth.sol";
 
-/// @notice Role based Authority that supports up to 256 roles.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/RolesAuthority.sol)
-/// @author Modified from Dappsys (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)
-contract RolesAuthority is Auth, Authority {
+/// @notice Flexible and target agnostic role based Authority that supports up to 256 roles.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/MultiRolesAuthority.sol)
+contract MultiRolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
 
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
 
-    event PublicCapabilityUpdated(address indexed target, bytes4 indexed functionSig, bool enabled);
+    event PublicCapabilityUpdated(bytes4 indexed functionSig, bool enabled);
 
-    event RoleCapabilityUpdated(uint8 indexed role, address indexed target, bytes4 indexed functionSig, bool enabled);
+    event RoleCapabilityUpdated(uint8 indexed role, bytes4 indexed functionSig, bool enabled);
+
+    event TargetCustomAuthorityUpdated(address indexed target, Authority indexed authority);
 
     /*///////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
+
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
+
+    /*///////////////////////////////////////////////////////////////
+                       CUSTOM TARGET AUTHORITY STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    mapping(address => Authority) public getTargetCustomAuthority;
 
     /*///////////////////////////////////////////////////////////////
                              USER ROLE STORAGE
@@ -36,23 +44,19 @@ contract RolesAuthority is Auth, Authority {
         }
     }
 
-    /*///////////////////////////////////////////////////////////////
+    /*/////i//////////////////////////////////////////////////////////
                         ROLE CAPABILITY STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => mapping(bytes4 => bytes32)) public getRolesWithCapability;
+    mapping(bytes4 => bytes32) public getRolesWithCapability;
 
-    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
+    mapping(bytes4 => bool) public isCapabilityPublic;
 
-    function doesRoleHaveCapability(
-        uint8 role,
-        address target,
-        bytes4 functionSig
-    ) public view virtual returns (bool) {
+    function doesRoleHaveCapability(uint8 role, bytes4 functionSig) public view virtual returns (bool) {
         unchecked {
             bytes32 roleMask = bytes32(2**uint256(role));
 
-            return bytes32(0) != getRolesWithCapability[target][functionSig] & roleMask;
+            return bytes32(0) != getRolesWithCapability[functionSig] & roleMask;
         }
     }
 
@@ -65,42 +69,52 @@ contract RolesAuthority is Auth, Authority {
         address target,
         bytes4 functionSig
     ) public view virtual override returns (bool) {
+        Authority customAuthority = getTargetCustomAuthority[target];
+
+        if (address(customAuthority) != address(0)) return customAuthority.canCall(user, target, functionSig);
+
         return
-            isCapabilityPublic[target][functionSig] ||
-            bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig];
+            bytes32(0) != getUserRoles[user] & getRolesWithCapability[functionSig] || isCapabilityPublic[functionSig];
+    }
+
+    /*///////////////////////////////////////////////////////////////
+               CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function setTargetCustomAuthority(address target, Authority customAuthority) public virtual requiresAuth {
+        getTargetCustomAuthority[target] = customAuthority;
+
+        emit TargetCustomAuthorityUpdated(target, customAuthority);
     }
 
     /*///////////////////////////////////////////////////////////////
                   ROLE CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setPublicCapability(
-        address target,
-        bytes4 functionSig,
-        bool enabled
-    ) public virtual requiresAuth {
-        isCapabilityPublic[target][functionSig] = enabled;
-
-        emit PublicCapabilityUpdated(target, functionSig, enabled);
-    }
-
     function setRoleCapability(
         uint8 role,
-        address target,
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastCapabilities = getRolesWithCapability[target][functionSig];
+        bytes32 lastCapabilities = getRolesWithCapability[functionSig];
 
         unchecked {
             bytes32 roleMask = bytes32(2**uint256(role));
 
-            getRolesWithCapability[target][functionSig] = enabled
-                ? lastCapabilities | roleMask
-                : lastCapabilities & ~roleMask;
+            getRolesWithCapability[functionSig] = enabled ? lastCapabilities | roleMask : lastCapabilities & ~roleMask;
         }
 
-        emit RoleCapabilityUpdated(role, target, functionSig, enabled);
+        emit RoleCapabilityUpdated(role, functionSig, enabled);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                  PUBLIC CAPABILITY CONFIGURATION LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function setPublicCapability(bytes4 functionSig, bool enabled) public virtual requiresAuth {
+        isCapabilityPublic[functionSig] = enabled;
+
+        emit PublicCapabilityUpdated(functionSig, enabled);
     }
 
     /*///////////////////////////////////////////////////////////////

@@ -67,7 +67,7 @@ contract SSTORE2Test is DSTestPlus {
     function testWriteReadCustomStartBound(bytes calldata testBytes, uint256 startIndex) public {
         if (testBytes.length == 0) return;
 
-        startIndex %= testBytes.length;
+        startIndex = bound(startIndex, 0, testBytes.length);
 
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes), startIndex), bytes(testBytes[startIndex:]));
     }
@@ -79,8 +79,8 @@ contract SSTORE2Test is DSTestPlus {
     ) public {
         if (testBytes.length == 0) return;
 
-        startIndex %= testBytes.length;
-        endIndex %= testBytes.length;
+        endIndex = bound(endIndex, 0, testBytes.length);
+        startIndex = bound(startIndex, 0, testBytes.length);
 
         if (startIndex > endIndex) return;
 
@@ -107,7 +107,7 @@ contract SSTORE2Test is DSTestPlus {
     }
 
     function testFailWriteReadCustomStartBoundOutOfRange(bytes calldata testBytes, uint256 startIndex) public {
-        if (testBytes.length >= startIndex) revert();
+        startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max);
 
         SSTORE2.read(SSTORE2.write(testBytes), startIndex);
     }
@@ -117,7 +117,7 @@ contract SSTORE2Test is DSTestPlus {
         uint256 startIndex,
         uint256 endIndex
     ) public {
-        if (endIndex >= startIndex) revert();
+        endIndex = bound(endIndex, startIndex + 1, type(uint256).max);
 
         SSTORE2.read(SSTORE2.write(testBytes), startIndex, endIndex);
     }
