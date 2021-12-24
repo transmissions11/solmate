@@ -3,8 +3,6 @@ pragma solidity >=0.8.0;
 
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
-/// @author Modified from Dappsys V2 (https://github.com/dapp-org/dappsys-v2/blob/main/src/math.sol)
-/// and ABDK (https://github.com/abdk-consulting/abdk-libraries-solidity/blob/master/ABDKMath64x64.sol)
 library FixedPointMathLib {
     /*///////////////////////////////////////////////////////////////
                             COMMON BASE UNITS
