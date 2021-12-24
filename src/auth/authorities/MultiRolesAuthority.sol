@@ -36,7 +36,7 @@ contract MultiRolesAuthority is Auth, Authority {
 
     mapping(address => bytes32) public getUserRoles;
 
-    function doesUserHaveRole(address user, uint8 role) external view returns (bool) {
+    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
         unchecked {
             bytes32 roleMask = bytes32(2**uint256(role));
 
@@ -52,7 +52,7 @@ contract MultiRolesAuthority is Auth, Authority {
 
     mapping(bytes4 => bool) public isCapabilityPublic;
 
-    function doesRoleHaveCapability(uint8 role, bytes4 functionSig) external view virtual returns (bool) {
+    function doesRoleHaveCapability(uint8 role, bytes4 functionSig) public view virtual returns (bool) {
         unchecked {
             bytes32 roleMask = bytes32(2**uint256(role));
 
@@ -68,7 +68,7 @@ contract MultiRolesAuthority is Auth, Authority {
         address user,
         address target,
         bytes4 functionSig
-    ) external view override returns (bool) {
+    ) public view virtual override returns (bool) {
         Authority customAuthority = getTargetCustomAuthority[target];
 
         if (address(customAuthority) != address(0)) return customAuthority.canCall(user, target, functionSig);
@@ -81,7 +81,7 @@ contract MultiRolesAuthority is Auth, Authority {
                CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setTargetCustomAuthority(address target, Authority customAuthority) external requiresAuth {
+    function setTargetCustomAuthority(address target, Authority customAuthority) public virtual requiresAuth {
         getTargetCustomAuthority[target] = customAuthority;
 
         emit TargetCustomAuthorityUpdated(target, customAuthority);
@@ -95,7 +95,7 @@ contract MultiRolesAuthority is Auth, Authority {
         uint8 role,
         bytes4 functionSig,
         bool enabled
-    ) external requiresAuth {
+    ) public virtual requiresAuth {
         bytes32 lastCapabilities = getRolesWithCapability[functionSig];
 
         unchecked {
@@ -111,7 +111,7 @@ contract MultiRolesAuthority is Auth, Authority {
                   PUBLIC CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setPublicCapability(bytes4 functionSig, bool enabled) external requiresAuth {
+    function setPublicCapability(bytes4 functionSig, bool enabled) public virtual requiresAuth {
         isCapabilityPublic[functionSig] = enabled;
 
         emit PublicCapabilityUpdated(functionSig, enabled);
@@ -125,7 +125,7 @@ contract MultiRolesAuthority is Auth, Authority {
         address user,
         uint8 role,
         bool enabled
-    ) external requiresAuth {
+    ) public virtual requiresAuth {
         bytes32 lastRoles = getUserRoles[user];
 
         unchecked {
