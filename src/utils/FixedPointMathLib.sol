@@ -121,9 +121,12 @@ library FixedPointMathLib {
                         // Compute z * x.
                         let zx := mul(z, x)
 
-                        // Revert if x is non-zero and z * x overflowed.
-                        if and(iszero(iszero(x)), iszero(eq(div(zx, x), z))) {
-                            revert(0, 0)
+                        // If z * x overflowed:
+                        if iszero(eq(div(zx, x), z)) {
+                            // Revert if x is non-zero.
+                            if iszero(iszero(x)) {
+                                revert(0, 0)
+                            }
                         }
 
                         // Round to the nearest number.
