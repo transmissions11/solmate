@@ -198,7 +198,7 @@ contract SafeTransferLibTest is DSTestPlus {
     function testTransferETH(address recipient, uint256 amount) public {
         if (uint256(uint160(recipient)) <= 18) return; // Some precompiles cause reverts.
 
-        amount %= address(this).balance;
+        amount = bound(amount, 0, address(this).balance);
 
         SafeTransferLib.safeTransferETH(recipient, amount);
     }

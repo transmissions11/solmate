@@ -64,7 +64,7 @@ contract WETHTest is DSTestPlus {
     }
 
     function testDeposit(uint256 amount) public {
-        if (amount > address(this).balance) return;
+        amount = bound(amount, 0, address(this).balance);
 
         assertEq(weth.balanceOf(address(this)), 0);
         assertEq(weth.totalSupply(), 0);
@@ -76,7 +76,7 @@ contract WETHTest is DSTestPlus {
     }
 
     function testFallbackDeposit(uint256 amount) public {
-        if (amount > address(this).balance) return;
+        amount = bound(amount, 0, address(this).balance);
 
         assertEq(weth.balanceOf(address(this)), 0);
         assertEq(weth.totalSupply(), 0);
@@ -88,8 +88,8 @@ contract WETHTest is DSTestPlus {
     }
 
     function testWithdraw(uint256 depositAmount, uint256 withdrawAmount) public {
-        if (depositAmount > address(this).balance) return;
-        if (withdrawAmount > depositAmount) return;
+        depositAmount = bound(depositAmount, 0, address(this).balance);
+        withdrawAmount = bound(withdrawAmount, 0, depositAmount);
 
         weth.deposit{value: depositAmount}();
 

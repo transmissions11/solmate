@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
 contract GenericUser {
     function tryCall(address target, bytes memory data) public virtual returns (bool success, bytes memory returnData) {
@@ -17,7 +17,7 @@ contract GenericUser {
                     revert(add(32, returnData), returnDataSize)
                 }
             } else {
-                revert("REVERTED_WITHOUT_MESSAGE");
+                revert("REVERTED_WITHOUT_A_MESSAGE");
             }
         }
     }
