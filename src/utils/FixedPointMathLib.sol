@@ -120,56 +120,88 @@ library FixedPointMathLib {
     //////////////////////////////////////////////////////////////*/
 
     function sqrt(uint256 x) internal pure returns (uint256 result) {
-        if (x == 0) return 0;
+        assembly {
+            switch x
+            case 0 {
 
-        result = 1;
+            }
+            default {
+                result := 1
 
-        uint256 xAux = x;
+                let xAux := x
 
-        if (xAux >= 0x100000000000000000000000000000000) {
-            xAux >>= 128;
-            result <<= 64;
-        }
+                if iszero(lt(xAux, 0x100000000000000000000000000000000)) {
+                    xAux := shr(128, xAux)
+                    result := shl(64, result)
+                }
 
-        if (xAux >= 0x10000000000000000) {
-            xAux >>= 64;
-            result <<= 32;
-        }
+                if iszero(lt(xAux, 0x10000000000000000)) {
+                    xAux := shr(64, xAux)
+                    result := shl(32, result)
+                }
 
-        if (xAux >= 0x100000000) {
-            xAux >>= 32;
-            result <<= 16;
-        }
+                if iszero(lt(xAux, 0x100000000)) {
+                    xAux := shr(32, xAux)
+                    result := shl(16, result)
+                }
 
-        if (xAux >= 0x10000) {
-            xAux >>= 16;
-            result <<= 8;
-        }
+                if iszero(lt(xAux, 0x10000)) {
+                    xAux := shr(16, xAux)
+                    result := shl(8, result)
+                }
 
-        if (xAux >= 0x100) {
-            xAux >>= 8;
-            result <<= 4;
-        }
+                if iszero(lt(xAux, 0x100)) {
+                    xAux := shr(8, xAux)
+                    result := shl(4, result)
+                }
 
-        if (xAux >= 0x10) {
-            xAux >>= 4;
-            result <<= 2;
-        }
+                if iszero(lt(xAux, 0x10)) {
+                    xAux := shr(4, xAux)
+                    result := shl(2, result)
+                }
 
-        if (xAux >= 0x8) result <<= 1;
+                if iszero(lt(xAux, 0x8)) {
+                    result := shl(1, result)
+                }
 
-        unchecked {
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                result := shr(1, add(result, div(x, result)))
 
-            uint256 roundedDownResult = x / result;
+                if eq(result, 0) {
+                    revert(0, 0)
+                }
+                let roundedDownResult := div(x, result)
 
-            if (result > roundedDownResult) result = roundedDownResult;
+                if gt(result, roundedDownResult) {
+                    result := roundedDownResult
+                }
+            }
         }
     }
 
