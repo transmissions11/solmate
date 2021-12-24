@@ -151,57 +151,61 @@ library FixedPointMathLib {
     //////////////////////////////////////////////////////////////*/
 
     function sqrt(uint256 x) internal pure returns (uint256 result) {
-        // Square root of 0 is zero.
-        if (x == 0) return 0;
+        assembly {
+            // If x is zero, just return 0.
+            if iszero(iszero(x)) {
+                // Start off with a result of 1.
+                result := 1
 
-        // Start off with a result of 1.
-        result = 1;
+                // Used below to help find a nearby power of 2.
+                let x2 := x
 
-        // Used below to help find a nearby power of 2.
-        uint256 x2 = x;
+                // Find the closest power of 2 that is at most x.
+                if iszero(lt(x2, 0x100000000000000000000000000000000)) {
+                    x2 := shr(128, x2) // Like dividing by 2^128.
+                    result := shl(64, result)
+                }
+                if iszero(lt(x2, 0x10000000000000000)) {
+                    x2 := shr(64, x2) // Like dividing by 2^64.
+                    result := shl(32, result)
+                }
+                if iszero(lt(x2, 0x100000000)) {
+                    x2 := shr(32, x2) // Like dividing by 2^32.
+                    result := shl(16, result)
+                }
+                if iszero(lt(x2, 0x10000)) {
+                    x2 := shr(16, x2) // Like dividing by 2^16.
+                    result := shl(8, result)
+                }
+                if iszero(lt(x2, 0x100)) {
+                    x2 := shr(8, x2) // Like dividing by 2^8.
+                    result := shl(4, result)
+                }
+                if iszero(lt(x2, 0x10)) {
+                    x2 := shr(4, x2) // Like dividing by 2^4.
+                    result := shl(2, result)
+                }
+                if iszero(lt(x2, 0x8)) {
+                    result := shl(1, result)
+                }
 
-        // Find the closest power of 2 that is at most x.
-        if (x2 >= 0x100000000000000000000000000000000) {
-            x2 >>= 128; // Like dividing by 2^128.
-            result <<= 64;
-        }
-        if (x2 >= 0x10000000000000000) {
-            x2 >>= 64; // Like dividing by 2^64.
-            result <<= 32;
-        }
-        if (x2 >= 0x100000000) {
-            x2 >>= 32; // Like dividing by 2^32.
-            result <<= 16;
-        }
-        if (x2 >= 0x10000) {
-            x2 >>= 16; // Like dividing by 2^16.
-            result <<= 8;
-        }
-        if (x2 >= 0x100) {
-            x2 >>= 8; // Like dividing by 2^8.
-            result <<= 4;
-        }
-        if (x2 >= 0x10) {
-            x2 >>= 4; // Like dividing by 2^4.
-            result <<= 2;
-        }
-        if (x2 >= 0x8) result <<= 1;
+                // Shifting right by 1 is like dividing by 2.
+                result := shr(1, add(result, div(x, result)))
+                result := shr(1, add(result, div(x, result)))
+                result := shr(1, add(result, div(x, result)))
+                result := shr(1, add(result, div(x, result)))
+                result := shr(1, add(result, div(x, result)))
+                result := shr(1, add(result, div(x, result)))
+                result := shr(1, add(result, div(x, result)))
 
-        unchecked {
-            // Shifting right by 1 is like dividing by 2.
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
-            result = (result + x / result) >> 1;
+                // Compute a rounded down version of the result.
+                let roundedDownResult := div(x, result)
 
-            // Compute a rounded down version of the result.
-            uint256 roundedDownResult = x / result;
-
-            // If the rounded down result is smaller, use it as the result.
-            if (result > roundedDownResult) result = roundedDownResult;
+                // If the rounded down result is smaller, use it.
+                if gt(result, roundedDownResult) {
+                    result := roundedDownResult
+                }
+            }
         }
     }
 }
