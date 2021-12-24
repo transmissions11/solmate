@@ -1,17 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-/// @notice A generic interface for a contract which provides authorization data to an Auth instance.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Auth.sol)
-/// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
-interface Authority {
-    function canCall(
-        address user,
-        address target,
-        bytes4 functionSig
-    ) external view returns (bool);
-}
-
 /// @notice Provides a flexible and updatable auth pattern which is completely separate from application logic.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Auth.sol)
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
@@ -61,4 +50,15 @@ abstract contract Auth {
 
         emit OwnerUpdated(msg.sender, newOwner);
     }
+}
+
+/// @notice A generic interface for a contract which provides authorization data to an Auth instance.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Auth.sol)
+/// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
+interface Authority {
+    function canCall(
+        address user,
+        address target,
+        bytes4 functionSig
+    ) external view returns (bool);
 }
