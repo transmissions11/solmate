@@ -121,11 +121,7 @@ library FixedPointMathLib {
 
     function sqrt(uint256 x) internal pure returns (uint256 result) {
         assembly {
-            switch x
-            case 0 {
-
-            }
-            default {
+            if iszero(iszero(x)) {
                 result := 1
 
                 let xAux := x
