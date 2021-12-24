@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.7.0;
+pragma solidity >=0.8.0;
 
 /// @notice Safe unsigned integer casting library that reverts on overflow.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SafeCastLib.sol)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeCast.sol)
 library SafeCastLib {
     function safeCastTo248(uint256 x) internal pure returns (uint248 y) {

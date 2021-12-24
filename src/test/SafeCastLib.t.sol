@@ -52,61 +52,61 @@ contract SafeCastLibTest is DSTestPlus {
     }
 
     function testSafeCastTo248(uint256 x) public {
-        x %= type(uint248).max;
+        x = bound(x, 0, type(uint248).max);
 
         assertEq(SafeCastLib.safeCastTo248(x), x);
     }
 
     function testSafeCastTo128(uint256 x) public {
-        x %= type(uint128).max;
+        x = bound(x, 0, type(uint128).max);
 
         assertEq(SafeCastLib.safeCastTo128(x), x);
     }
 
     function testSafeCastTo96(uint256 x) public {
-        x %= type(uint96).max;
+        x = bound(x, 0, type(uint96).max);
 
         assertEq(SafeCastLib.safeCastTo96(x), x);
     }
 
     function testSafeCastTo64(uint256 x) public {
-        x %= type(uint64).max;
+        x = bound(x, 0, type(uint64).max);
 
         assertEq(SafeCastLib.safeCastTo64(x), x);
     }
 
     function testSafeCastTo32(uint256 x) public {
-        x %= type(uint32).max;
+        x = bound(x, 0, type(uint32).max);
 
         assertEq(SafeCastLib.safeCastTo32(x), x);
     }
 
     function testFailSafeCastTo248(uint256 x) public pure {
-        if (type(uint248).max > x) revert();
+        x = bound(x, type(uint248).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo248(x);
     }
 
     function testFailSafeCastTo128(uint256 x) public pure {
-        if (type(uint128).max > x) revert();
+        x = bound(x, type(uint128).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo128(x);
     }
 
     function testFailSafeCastTo96(uint256 x) public pure {
-        if (type(uint96).max > x) revert();
+        x = bound(x, type(uint96).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo96(x);
     }
 
     function testFailSafeCastTo64(uint256 x) public pure {
-        if (type(uint64).max > x) revert();
+        x = bound(x, type(uint64).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo64(x);
     }
 
     function testFailSafeCastTo32(uint256 x) public pure {
-        if (type(uint32).max > x) revert();
+        x = bound(x, type(uint32).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo32(x);
     }
