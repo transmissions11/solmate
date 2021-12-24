@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC1155} from "../../../tokens/ERC1155.sol";
+import {ERC1155, ERC1155TokenReceiver} from "../../../tokens/ERC1155.sol";
 
 contract ERC1155User {
     ERC1155 token;
@@ -10,31 +10,27 @@ contract ERC1155User {
         token = _token;
     }
 
-    function approve(address spender, uint256 amount) public virtual returns (bool) {
-        return token.approve(spender, amount);
+    function setApprovalForAll(address operator, bool approved) public virtual {
+        token.setApprovalForAll(operator, approved);
     }
 
-    function transfer(address to, uint256 amount) public virtual returns (bool) {
-        return token.transfer(to, amount);
-    }
-
-    function transferFrom(
+    function safeTransferFrom(
         address from,
         address to,
-        uint256 amount
-    ) public virtual returns (bool) {
-        return token.transferFrom(from, to, amount);
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public virtual {
+        token.safeTransferFrom(from, to, id, amount, data);
     }
 
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
+    function safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
     ) public virtual {
-        return token.permit(owner, spender, value, deadline, v, r, s);
+        token.safeBatchTransferFrom(from, to, ids, amounts, data);
     }
 }

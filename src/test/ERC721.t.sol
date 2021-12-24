@@ -11,20 +11,18 @@ contract ERC721Test is DSTestPlus {
     MockERC721 token;
 
     function setUp() public {
-        token = new MockERC721("Token", "TKN", "ipfs://somehash/");
+        token = new MockERC721("Token", "TKN");
     }
 
     function invariantMetadata() public {
         assertEq(token.name(), "Token");
         assertEq(token.symbol(), "TKN");
-        assertEq(token.baseURI(), "ipfs://somehash/");
     }
 
-    function testMetadata(string memory name, string memory symbol, string memory baseURI) public {
-        MockERC721 tkn = new MockERC721(name, symbol, baseURI);
+    function testMetadata(string memory name, string memory symbol) public {
+        MockERC721 tkn = new MockERC721(name, symbol);
         assertEq(tkn.name(), name);
         assertEq(tkn.symbol(), symbol);
-        assertEq(tkn.baseURI(), baseURI);
     }
 
     function testMint(address usr, uint256 tokenId) public {
@@ -47,10 +45,6 @@ contract ERC721Test is DSTestPlus {
         }
     }
 
-    function testTokenURI(uint256 tokenId) public {
-        assertBytesEq(bytes(token.tokenURI(tokenId)), abi.encodePacked(token.baseURI(), tokenId));
-    }
-
     function testBurnInexistentToken(uint256 tokenId) public {
         try token.burn(tokenId) {
             fail();
@@ -62,11 +56,11 @@ contract ERC721Test is DSTestPlus {
     function testBurn(
         address usr,
         uint256[] calldata tokenIds,
-        uint8 burnCount 
+        uint8 burnCount
     ) public {
         // tokens minted must exceed tokens burned
         if (tokenIds.length < burnCount || tokenIds.length == 0) return;
-        if(usr == address(0)) return;
+        if (usr == address(0)) return;
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
             token.mint(usr, tokenIds[i]);
@@ -137,28 +131,12 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.balanceOf(address(receiver)), 1);
         assertEq(token.ownerOf(tokenId), address(receiver));
 
-        // The operator now should not be able to transfer the token 
+        // The operator now should not be able to transfer the token
         // since it was not approved by the current user
         try operator.safeTransferFrom(address(receiver), address(usr), tokenId) {
             fail();
         } catch Error(string memory error) {
             assertEq(error, "NOT_APPROVED");
-        }
-    }
-
-    function testTransfer(address usr, uint256 tokenId) public {
-        token.mint(address(this), tokenId);
-
-        assertTrue(token.transfer(usr, tokenId));
-        assertEq(token.totalSupply(), 1);
-
-        if (address(this) == usr) {
-            assertEq(token.balanceOf(address(this)), 1);
-            assertEq(token.ownerOf(tokenId), address(this));
-        } else {
-            assertEq(token.balanceOf(address(this)), 0);
-            assertEq(token.balanceOf(usr), 1);
-            assertEq(token.ownerOf(tokenId), usr);
         }
     }
 }
