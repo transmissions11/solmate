@@ -35,7 +35,7 @@ abstract contract ERC20 {
     mapping(address => mapping(address => uint256)) public allowance;
 
     /*///////////////////////////////////////////////////////////////
-                           EIP-2612 STORAGE
+                             EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
     bytes32 public constant PERMIT_TYPEHASH =
@@ -140,7 +140,7 @@ abstract contract ERC20 {
 
             address recoveredAddress = ecrecover(digest, v, r, s);
 
-            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_PERMIT_SIGNATURE");
+            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
 
             allowance[recoveredAddress][spender] = value;
         }
