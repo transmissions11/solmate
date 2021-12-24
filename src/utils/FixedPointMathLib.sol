@@ -67,11 +67,11 @@ library FixedPointMathLib {
             case 0 {
                 switch n
                 case 0 {
-                    // 0^0 = 1
+                    // 0 ** 0 = 1
                     z := baseUnit
                 }
                 default {
-                    // 0^n = 0
+                    // 0 ** n = 0
                     z := 0
                 }
             }
@@ -96,7 +96,7 @@ library FixedPointMathLib {
                     // Shift n right by 1 each iteration to halve it.
                     n := shr(1, n)
                 } {
-                    // Revert immediately if x^2 would overflow.
+                    // Revert immediately if x ** 2 would overflow.
                     // Equivalent to iszero(eq(div(xx, x), x))
                     if shr(128, x) {
                         revert(0, 0)
@@ -149,61 +149,61 @@ library FixedPointMathLib {
                         GENERAL NUMBER UTILITIES
     //////////////////////////////////////////////////////////////*/
 
-    function sqrt(uint256 x) internal pure returns (uint256 result) {
+    function sqrt(uint256 x) internal pure returns (uint256 z) {
         assembly {
-            // If x is zero, just return 0.
+            // If x is not zero:
             if iszero(iszero(x)) {
-                // Start off with a result of 1.
-                result := 1
+                // Start off with z at 1.
+                z := 1
 
                 // Used below to help find a nearby power of 2.
                 let x2 := x
 
                 // Find the lowest power of 2 that is at least sqrt(x).
                 if iszero(lt(x2, 0x100000000000000000000000000000000)) {
-                    x2 := shr(128, x2) // Like dividing by 2^128.
-                    result := shl(64, result)
+                    x2 := shr(128, x2) // Like dividing by 2 ** 128.
+                    z := shl(64, z)
                 }
                 if iszero(lt(x2, 0x10000000000000000)) {
-                    x2 := shr(64, x2) // Like dividing by 2^64.
-                    result := shl(32, result)
+                    x2 := shr(64, x2) // Like dividing by 2 ** 64.
+                    z := shl(32, z)
                 }
                 if iszero(lt(x2, 0x100000000)) {
-                    x2 := shr(32, x2) // Like dividing by 2^32.
-                    result := shl(16, result)
+                    x2 := shr(32, x2) // Like dividing by 2 ** 32.
+                    z := shl(16, z)
                 }
                 if iszero(lt(x2, 0x10000)) {
-                    x2 := shr(16, x2) // Like dividing by 2^16.
-                    result := shl(8, result)
+                    x2 := shr(16, x2) // Like dividing by 2 ** 16.
+                    z := shl(8, z)
                 }
                 if iszero(lt(x2, 0x100)) {
-                    x2 := shr(8, x2) // Like dividing by 2^8.
-                    result := shl(4, result)
+                    x2 := shr(8, x2) // Like dividing by 2 ** 8.
+                    z := shl(4, z)
                 }
                 if iszero(lt(x2, 0x10)) {
-                    x2 := shr(4, x2) // Like dividing by 2^4.
-                    result := shl(2, result)
+                    x2 := shr(4, x2) // Like dividing by 2 ** 4.
+                    z := shl(2, z)
                 }
                 if iszero(lt(x2, 0x8)) {
-                    // Equivalent to 2^result.
-                    result := shl(1, result)
+                    // Equivalent to 2 ** z.
+                    z := shl(1, z)
                 }
 
                 // Shifting right by 1 is like dividing by 2.
-                result := shr(1, add(result, div(x, result)))
-                result := shr(1, add(result, div(x, result)))
-                result := shr(1, add(result, div(x, result)))
-                result := shr(1, add(result, div(x, result)))
-                result := shr(1, add(result, div(x, result)))
-                result := shr(1, add(result, div(x, result)))
-                result := shr(1, add(result, div(x, result)))
+                z := shr(1, add(z, div(x, z)))
+                z := shr(1, add(z, div(x, z)))
+                z := shr(1, add(z, div(x, z)))
+                z := shr(1, add(z, div(x, z)))
+                z := shr(1, add(z, div(x, z)))
+                z := shr(1, add(z, div(x, z)))
+                z := shr(1, add(z, div(x, z)))
 
-                // Compute a rounded down version of the result.
-                let roundedDownResult := div(x, result)
+                // Compute a rounded down version of z.
+                let zRoundDown := div(x, z)
 
-                // If the rounded down result is smaller, use it.
-                if gt(result, roundedDownResult) {
-                    result := roundedDownResult
+                // If zRoundDown is smaller, use it.
+                if lt(zRoundDown, z) {
+                    z := zRoundDown
                 }
             }
         }
