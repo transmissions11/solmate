@@ -95,7 +95,7 @@ library FixedPointMathLib {
                     n := shr(1, n)
                 } {
                     // Revert immediately if x ** 2 would overflow.
-                    // Equivalent to iszero(eq(div(xx, x), x))
+                    // Equivalent to iszero(eq(div(xx, x), x)) here.
                     if shr(128, x) {
                         revert(0, 0)
                     }
