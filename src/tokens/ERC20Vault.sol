@@ -62,11 +62,10 @@ contract ERC20Vault is ERC20 {
     /// @param underlyingAmount The amount of underlying tokens that were withdrawn.
     event Withdraw(address indexed owner, address indexed to, uint256 underlyingAmount);
 
-
     /// @notice Deposit a specific amount of underlying tokens.
     /// @param to The address to receive shares corresponding to the deposit
     /// @param underlyingAmount The amount of the underlying token to deposit.
-    function deposit(address to, uint256 underlyingAmount) external virtual returns(uint256 shares) {
+    function deposit(address to, uint256 underlyingAmount) external virtual returns (uint256 shares) {
         // We don't allow depositing 0 to prevent emitting a useless event.
         require(underlyingAmount != 0, "AMOUNT_CANNOT_BE_ZERO");
 
@@ -79,7 +78,7 @@ contract ERC20Vault is ERC20 {
         // Transfer in underlying tokens from the user.
         // This will revert if the user does not have the amount specified.
         underlying.safeTransferFrom(msg.sender, address(this), underlyingAmount);
-    
+
         afterDeposit(underlyingAmount);
     }
 
@@ -125,7 +124,6 @@ contract ERC20Vault is ERC20 {
 
         underlying.safeTransfer(to, underlyingAmount);
     }
-
 
     function beforeWithdraw(uint256 underlyingAmount) internal virtual {}
 
