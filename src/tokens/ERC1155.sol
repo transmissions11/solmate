@@ -63,7 +63,9 @@ abstract contract ERC1155 {
 
         // TODO: unchecekd?
         balanceOf[from][id] -= amount;
-        balanceOf[to][id] += amount;
+        unchecked {
+            balanceOf[to][id] += amount;
+        }
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -87,19 +89,25 @@ abstract contract ERC1155 {
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "INVALID_OPERATOR");
 
-        // TODO does chaching len actually help here
         uint256 nTransfer = ids.length;
 
-        unchecked {
-            // Counter overflow is incredibly unrealistic.
-            for (uint256 i = 0; i < nTransfer; i++) {
-                // TODO: how do we unchecked just i increment
+        for (uint256 i = 0; i < nTransfer; ) {
 
-                // TODO: does caching amounts[i] help here?
-                // todo: unchecked
-                balanceOf[from][ids[i]] -= amounts[i];
+            // TODO: does caching amounts[i] help here?
+            /*
+            pre
+                testSafeBatchTransferFrom() (gas: 1607432)
+            caching amounts[i]
+                testSafeBatchTransferFrom() (gas: 1607432)
+            */
+
+            balanceOf[from][ids[i]] -= amounts[i];
+            // Counter overflow is incredibly unrealistic.
+            unchecked {
                 balanceOf[to][ids[i]] += amounts[i];
+                i++;
             }
+            
         }
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
@@ -120,9 +128,10 @@ abstract contract ERC1155 {
         returns (uint256[] memory batchbalanceOf)
     {
         require(owners.length == ids.length, "ARRAY_MISMATCH");
-
+        batchbalanceOf = new uint256[](owners.length);
+        // caching owners.length costs more gas than it saves
+        // Counter overflow is incredibly unrealistic.
         unchecked {
-            // Counter overflow is incredibly unrealistic.
             for (uint256 i = 0; i < owners.length; i++) {
                 batchbalanceOf[i] = balanceOf[owners[i]][ids[i]];
             }
@@ -150,6 +159,7 @@ abstract contract ERC1155 {
         uint256 amount,
         bytes memory data
     ) internal {
+
         unchecked {
             balanceOf[to][id] += amount;
         }
@@ -173,12 +183,20 @@ abstract contract ERC1155 {
     ) internal {
         require(ids.length == amounts.length, "INVALID_ARRAYS_LENGTH");
 
-        // tODO: does this save?
+
+        /*  Batch mint with arrays of length 1
+        pre
+            testBatchMint() (gas: 12878)
+        using ids.length over nMint
+            testBatchMint() (gas: 12883)
+        pre + unchecked i increment
+            testBatchMint() (gas: 12810)
+        */
+
         uint256 nMint = ids.length;
-        // TODO: incr loop unchecked
-        for (uint256 i = 0; i < nMint; i++) {
-            // TODO: comment
-            unchecked {
+        
+        unchecked {
+            for (uint256 i = 0; i < nMint; i++) {
                 balanceOf[to][ids[i]] += amounts[i];
             }
         }
@@ -199,14 +217,17 @@ abstract contract ERC1155 {
         uint256[] memory ids,
         uint256[] memory amounts
     ) internal {
-        // TODO: does this actuallys ave gas
+        
         uint256 nBurn = ids.length;
 
         require(nBurn == amounts.length, "ARRAY_MISMATCH");
 
         // TODO: how do we incrmeent i without breaking everything in this looop
-        for (uint256 i = 0; i < nBurn; i++) {
-            balanceOf[from][ids[i]] -= amounts[i];
+        //can be unchecked assuming inheriting contract checks from owns ids
+        unchecked {
+            for (uint256 i = 0; i < nBurn; i++) {
+                balanceOf[from][ids[i]] -= amounts[i];
+            }
         }
 
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);

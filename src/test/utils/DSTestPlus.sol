@@ -53,6 +53,13 @@ contract DSTestPlus is DSTest {
         assertEq(uint256(a), uint256(b));
     }
 
+    function assertUintArrayEq(uint256[] memory a, uint256[] memory b) internal virtual {
+        require(a.length == b.length, "UINT_ARR_LEN_MISMATCH");
+        for (uint i = 0; i < a.length; i++) {
+            assertEq(a[i], b[i]);
+        }
+    }
+
     function assertApproxEq(
         uint256 a,
         uint256 b,
