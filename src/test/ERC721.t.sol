@@ -26,6 +26,7 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testMint(address usr, uint256 tokenId) public {
+        if (usr == address(0)) return;
         token.mint(usr, tokenId);
 
         assertEq(token.totalSupply(), 1);
@@ -63,6 +64,11 @@ contract ERC721Test is DSTestPlus {
         if (usr == address(0)) return;
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
+            //if tokenIds array has any duplicate ids mint will revert
+            for (uint256 j = 0; j < i; j++) {
+                if (tokenIds[i] == tokenIds[j]) return;
+            }
+            
             token.mint(usr, tokenIds[i]);
         }
 
