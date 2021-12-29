@@ -31,22 +31,18 @@ contract MultiRolesAuthority is Auth, Authority {
     mapping(address => Authority) public getTargetCustomAuthority;
 
     /*///////////////////////////////////////////////////////////////
-                            USER ROLE STORAGE
+                            ROLE/USER STORAGE
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bytes32) public getUserRoles;
 
-    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
-        return (uint256(getUserRoles[user]) >> role) & 1 != 0;
-    }
-
-    /*/////i//////////////////////////////////////////////////////////
-                         ROLE CAPABILITY STORAGE
-    //////////////////////////////////////////////////////////////*/
+    mapping(bytes4 => bool) public isCapabilityPublic;
 
     mapping(bytes4 => bytes32) public getRolesWithCapability;
 
-    mapping(bytes4 => bool) public isCapabilityPublic;
+    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
+        return (uint256(getUserRoles[user]) >> role) & 1 != 0;
+    }
 
     function doesRoleHaveCapability(uint8 role, bytes4 functionSig) public view virtual returns (bool) {
         return (uint256(getRolesWithCapability[functionSig]) >> role) & 1 != 0;
@@ -80,24 +76,6 @@ contract MultiRolesAuthority is Auth, Authority {
     }
 
     /*///////////////////////////////////////////////////////////////
-                  ROLE CAPABILITY CONFIGURATION LOGIC
-    //////////////////////////////////////////////////////////////*/
-
-    function setRoleCapability(
-        uint8 role,
-        bytes4 functionSig,
-        bool enabled
-    ) public virtual requiresAuth {
-        if (enabled) {
-            getRolesWithCapability[functionSig] |= bytes32(1 << role);
-        } else {
-            getRolesWithCapability[functionSig] &= ~bytes32(1 << role);
-        }
-
-        emit RoleCapabilityUpdated(role, functionSig, enabled);
-    }
-
-    /*///////////////////////////////////////////////////////////////
                   PUBLIC CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
@@ -123,5 +101,23 @@ contract MultiRolesAuthority is Auth, Authority {
         }
 
         emit UserRoleUpdated(user, role, enabled);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                  ROLE CAPABILITY CONFIGURATION LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function setRoleCapability(
+        uint8 role,
+        bytes4 functionSig,
+        bool enabled
+    ) public virtual requiresAuth {
+        if (enabled) {
+            getRolesWithCapability[functionSig] |= bytes32(1 << role);
+        } else {
+            getRolesWithCapability[functionSig] &= ~bytes32(1 << role);
+        }
+
+        emit RoleCapabilityUpdated(role, functionSig, enabled);
     }
 }
