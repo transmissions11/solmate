@@ -31,21 +31,17 @@ contract MultiRolesAuthority is Auth, Authority {
     mapping(address => Authority) public getTargetCustomAuthority;
 
     /*///////////////////////////////////////////////////////////////
-                             USER ROLE STORAGE
+                            USER ROLE STORAGE
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bytes32) public getUserRoles;
 
     function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            return bytes32(0) != getUserRoles[user] & roleMask;
-        }
+        return (uint256(getUserRoles[user]) >> role) & 1 != 0;
     }
 
     /*/////i//////////////////////////////////////////////////////////
-                        ROLE CAPABILITY STORAGE
+                         ROLE CAPABILITY STORAGE
     //////////////////////////////////////////////////////////////*/
 
     mapping(bytes4 => bytes32) public getRolesWithCapability;
@@ -53,11 +49,7 @@ contract MultiRolesAuthority is Auth, Authority {
     mapping(bytes4 => bool) public isCapabilityPublic;
 
     function doesRoleHaveCapability(uint8 role, bytes4 functionSig) public view virtual returns (bool) {
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            return bytes32(0) != getRolesWithCapability[functionSig] & roleMask;
-        }
+        return (uint256(getRolesWithCapability[functionSig]) >> role) & 1 != 0;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -74,7 +66,7 @@ contract MultiRolesAuthority is Auth, Authority {
         if (address(customAuthority) != address(0)) return customAuthority.canCall(user, target, functionSig);
 
         return
-            bytes32(0) != getUserRoles[user] & getRolesWithCapability[functionSig] || isCapabilityPublic[functionSig];
+            isCapabilityPublic[functionSig] || bytes32(0) != getUserRoles[user] & getRolesWithCapability[functionSig];
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -96,12 +88,10 @@ contract MultiRolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastCapabilities = getRolesWithCapability[functionSig];
-
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            getRolesWithCapability[functionSig] = enabled ? lastCapabilities | roleMask : lastCapabilities & ~roleMask;
+        if (enabled) {
+            getRolesWithCapability[functionSig] |= bytes32(1 << role);
+        } else {
+            getRolesWithCapability[functionSig] &= ~bytes32(1 << role);
         }
 
         emit RoleCapabilityUpdated(role, functionSig, enabled);
@@ -126,12 +116,10 @@ contract MultiRolesAuthority is Auth, Authority {
         uint8 role,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = getUserRoles[user];
-
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            getUserRoles[user] = enabled ? lastRoles | roleMask : lastRoles & ~roleMask;
+        if (enabled) {
+            getUserRoles[user] |= bytes32(1 << role);
+        } else {
+            getUserRoles[user] &= ~bytes32(1 << role);
         }
 
         emit UserRoleUpdated(user, role, enabled);
