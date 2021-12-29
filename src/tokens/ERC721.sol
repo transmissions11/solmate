@@ -25,7 +25,7 @@ abstract contract ERC721 {
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
     /*///////////////////////////////////////////////////////////////
-                             ERC721 STORAGE                        
+                            ERC721 STORAGE                        
     //////////////////////////////////////////////////////////////*/
 
     uint256 public totalSupply;
@@ -54,7 +54,7 @@ abstract contract ERC721 {
     function approve(address spender, uint256 id) public virtual {
         address owner = ownerOf[id];
 
-        require(msg.sender == owner || isApprovedForAll[owner][msg.sender], "NOT_APPROVED");
+        require(msg.sender == owner || isApprovedForAll[owner][msg.sender], "NOT_AUTHORIZED");
 
         getApproved[id] = spender;
 
@@ -72,13 +72,13 @@ abstract contract ERC721 {
         address to,
         uint256 id
     ) public virtual {
-        require(from == ownerOf[id], "NOT_OWNER");
+        require(from == ownerOf[id], "WRONG_FROM");
 
         require(to != address(0), "INVALID_RECIPIENT");
 
         require(
             msg.sender == from || msg.sender == getApproved[id] || isApprovedForAll[from][msg.sender],
-            "NOT_APPROVED"
+            "NOT_AUTHORIZED"
         );
 
         // Underflow of the sender's balance is impossible because we check for
@@ -107,7 +107,7 @@ abstract contract ERC721 {
             to.code.length == 0 ||
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") ==
                 ERC721TokenReceiver.onERC721Received.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -123,7 +123,7 @@ abstract contract ERC721 {
             to.code.length == 0 ||
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) ==
                 ERC721TokenReceiver.onERC721Received.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -147,7 +147,7 @@ abstract contract ERC721 {
 
         require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
-        // Cannot realistically overflow on human timescales.
+        // Counter overflow is incredibly unrealistic.
         unchecked {
             totalSupply++;
 
@@ -164,7 +164,7 @@ abstract contract ERC721 {
 
         require(ownerOf[id] != address(0), "NOT_MINTED");
 
-        // Ownership check ensures no underflow.
+        // Ownership check above ensures no underflow.
         unchecked {
             totalSupply--;
 
@@ -187,7 +187,7 @@ abstract contract ERC721 {
             to.code.length == 0 ||
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") ==
                 ERC721TokenReceiver.onERC721Received.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -202,7 +202,7 @@ abstract contract ERC721 {
             to.code.length == 0 ||
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) ==
                 ERC721TokenReceiver.onERC721Received.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 }
