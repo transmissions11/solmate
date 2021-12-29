@@ -23,37 +23,25 @@ contract RolesAuthority is Auth, Authority {
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
 
     /*///////////////////////////////////////////////////////////////
-                             USER ROLE STORAGE
+                            ROLE/USER STORAGE
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bytes32) public getUserRoles;
 
-    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            return bytes32(0) != getUserRoles[user] & roleMask;
-        }
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                        ROLE CAPABILITY STORAGE
-    //////////////////////////////////////////////////////////////*/
+    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
 
     mapping(address => mapping(bytes4 => bytes32)) public getRolesWithCapability;
 
-    mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
+    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
+        return (uint256(getUserRoles[user]) >> role) & 1 != 0;
+    }
 
     function doesRoleHaveCapability(
         uint8 role,
         address target,
         bytes4 functionSig
     ) public view virtual returns (bool) {
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            return bytes32(0) != getRolesWithCapability[target][functionSig] & roleMask;
-        }
+        return (uint256(getRolesWithCapability[target][functionSig]) >> role) & 1 != 0;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -90,14 +78,10 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastCapabilities = getRolesWithCapability[target][functionSig];
-
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            getRolesWithCapability[target][functionSig] = enabled
-                ? lastCapabilities | roleMask
-                : lastCapabilities & ~roleMask;
+        if (enabled) {
+            getRolesWithCapability[target][functionSig] |= bytes32(1 << role);
+        } else {
+            getRolesWithCapability[target][functionSig] &= ~bytes32(1 << role);
         }
 
         emit RoleCapabilityUpdated(role, target, functionSig, enabled);
@@ -112,12 +96,10 @@ contract RolesAuthority is Auth, Authority {
         uint8 role,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = getUserRoles[user];
-
-        unchecked {
-            bytes32 roleMask = bytes32(2**uint256(role));
-
-            getUserRoles[user] = enabled ? lastRoles | roleMask : lastRoles & ~roleMask;
+        if (enabled) {
+            getUserRoles[user] |= bytes32(1 << role);
+        } else {
+            getUserRoles[user] &= ~bytes32(1 << role);
         }
 
         emit UserRoleUpdated(user, role, enabled);
