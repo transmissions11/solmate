@@ -37,7 +37,7 @@ abstract contract ERC1155 {
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
     /*///////////////////////////////////////////////////////////////
-                          METADATA STORAGE/LOGIC
+                             METADATA LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function uri(uint256 id) public view virtual returns (string memory);
