@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {ERC20} from "./ERC20.sol";
-import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
-import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
+import {ERC20} from "../../tokens/ERC20.sol";
+import {FixedPointMathLib} from "../../utils/FixedPointMathLib.sol";
+import {SafeTransferLib} from "../../utils/SafeTransferLib.sol";
 
 /// @title Yield Bearing Vault
 /// @author joeysantoro, Transmissions11 and JetJadeja
