@@ -37,7 +37,7 @@ contract RevertingERC721Recipient is ERC721TokenReceiver {
         uint256,
         bytes calldata
     ) public virtual override returns (bytes4) {
-        revert("I_ALWAYS_REVERT");
+        revert(string(abi.encodePacked(ERC721TokenReceiver.onERC721Received.selector)));
     }
 }
 
@@ -97,8 +97,6 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testApproveAll() public {
-        token.mint(address(this), 1337);
-
         token.setApprovalForAll(address(0xBEEF), true);
 
         assertTrue(token.isApprovedForAll(address(this), address(0xBEEF)));
@@ -396,13 +394,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.getApproved(id), to);
     }
 
-    function testApproveAll(
-        address to,
-        uint256 id,
-        bool approved
-    ) public {
-        token.mint(address(this), id);
-
+    function testApproveAll(address to, bool approved) public {
         token.setApprovalForAll(to, approved);
 
         assertBoolEq(token.isApprovedForAll(address(this), to), approved);
@@ -461,9 +453,7 @@ contract ERC721Test is DSTestPlus {
     function testSafeTransferFromToEOA(uint256 id, address to) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18) return; // Some precompiles cause reverts.
-
-        if (to.code.length > 0) return;
+        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
 
         ERC721User from = new ERC721User(token);
 
@@ -527,9 +517,7 @@ contract ERC721Test is DSTestPlus {
     function testSafeMintToEOA(uint256 id, address to) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18) return; // Some precompiles cause reverts.
-
-        if (to.code.length > 0) return;
+        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
 
         token.safeMint(to, id);
 

@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {ERC1155, ERC1155TokenReceiver} from "../../../tokens/ERC1155.sol";
 
-contract ERC1155User is ERC1155TokenReceiver{
+contract ERC1155User is ERC1155TokenReceiver {
     ERC1155 token;
 
     constructor(ERC1155 _token) {
@@ -16,7 +16,7 @@ contract ERC1155User is ERC1155TokenReceiver{
         uint256,
         uint256,
         bytes calldata
-    ) external virtual override returns (bytes4) { 
+    ) external virtual override returns (bytes4) {
         return ERC1155TokenReceiver.onERC1155Received.selector;
     }
 

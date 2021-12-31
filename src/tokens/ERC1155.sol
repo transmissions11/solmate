@@ -59,13 +59,10 @@ abstract contract ERC1155 {
         uint256 amount,
         bytes memory data
     ) public virtual {
-        require(msg.sender == from || isApprovedForAll[from][msg.sender], "INVALID_OPERATOR");
+        require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        // TODO: unchecekd?
         balanceOf[from][id] -= amount;
-        unchecked {
-            balanceOf[to][id] += amount;
-        }
+        balanceOf[to][id] += amount;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -74,7 +71,7 @@ abstract contract ERC1155 {
                 ? to != address(0)
                 : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -85,28 +82,19 @@ abstract contract ERC1155 {
         uint256[] memory amounts,
         bytes memory data
     ) public virtual {
-        // TODO: remove and just have a comment about how out of bounds will catch
-        require(ids.length == amounts.length, "ARRAY_MISMATCH");
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
-        require(msg.sender == from || isApprovedForAll[from][msg.sender], "INVALID_OPERATOR");
+        require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        uint256 nTransfer = ids.length;
-
-        for (uint256 i = 0; i < nTransfer; ) {
-            // TODO: how do we unchecked just i increment
-
-            // TODO: does caching amounts[i] help here?
-            /*
-            pre
-                testSafeBatchTransferFrom() (gas: 1607432)
-            caching amounts[i]
-                testSafeBatchTransferFrom() (gas: 1607432)
-            */
-
+        // TODO: does caching ids.length help? we get it above?
+        for (uint256 i = 0; i < ids.length; ) {
+            // TODO: does any caching help here?
             balanceOf[from][ids[i]] -= amounts[i];
-            // Counter overflow is incredibly unrealistic.
+            balanceOf[to][ids[i]] += amounts[i];
+
+            // An array can't have a total length
+            // larger than the max uint256 value.
             unchecked {
-                balanceOf[to][ids[i]] += amounts[i];
                 i++;
             }
         }
@@ -118,7 +106,7 @@ abstract contract ERC1155 {
                 ? to != address(0)
                 : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) ==
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -126,17 +114,18 @@ abstract contract ERC1155 {
         public
         view
         virtual
-        returns (uint256[] memory batchbalanceOf)
+        returns (uint256[] memory balances)
     {
-        // TODO: remove and just have a comment about how out of bounds will catch
-        require(owners.length == ids.length, "ARRAY_MISMATCH");
-        batchbalanceOf = new uint256[](owners.length);
-        // caching owners.length costs more gas than it saves
-        // Counter overflow is incredibly unrealistic.
+        require(owners.length == ids.length, "LENGTH_MISMATCH");
+
+        balances = new uint256[](owners.length);
+
         unchecked {
-            // TODO: better comment about unchecked counter
+            // TODO: coment about unchecked counter
+            // TODO: does caching owners length help? we get it above?
             for (uint256 i = 0; i < owners.length; i++) {
-                batchbalanceOf[i] = balanceOf[owners[i]][ids[i]];
+                // TODO: does caching any of this help?
+                balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
     }
@@ -162,9 +151,7 @@ abstract contract ERC1155 {
         uint256 amount,
         bytes memory data
     ) internal {
-        unchecked {
-            balanceOf[to][id] += amount;
-        }
+        balanceOf[to][id] += amount;
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
@@ -173,7 +160,7 @@ abstract contract ERC1155 {
                 ? to != address(0)
                 : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -183,33 +170,29 @@ abstract contract ERC1155 {
         uint256[] memory amounts,
         bytes memory data
     ) internal {
-        require(ids.length == amounts.length, "INVALID_ARRAYS_LENGTH");
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
-        /*  Batch mint with arrays of length 1
-        pre
-            testBatchMint() (gas: 12878)
-        using ids.length over nMint
-            testBatchMint() (gas: 12883)
-        pre + unchecked i increment
-            testBatchMint() (gas: 12810)
-        */
+        // TODO: does caching ids length help? we get it above?
+        // TODO: we should standardize if we use ids or owners
+        for (uint256 i = 0; i < ids.length; ) {
+            // TODO: does caching anything help
+            balanceOf[to][ids[i]] += amounts[i];
 
-        uint256 nMint = ids.length;
-
-        unchecked {
-            for (uint256 i = 0; i < nMint; i++) {
-                balanceOf[to][ids[i]] += amounts[i];
+            // An array can't have a total length
+            // larger than the max uint256 value.
+            unchecked {
+                i++;
             }
         }
 
-        emit TransferBatch(msg.sender, address(0x0), to, ids, amounts);
+        emit TransferBatch(msg.sender, address(0), to, ids, amounts);
 
         require(
             to.code.length == 0
                 ? to != address(0)
                 : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) ==
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector,
-            "INVALID_RECIPIENT"
+            "UNSAFE_RECIPIENT"
         );
     }
 
@@ -218,16 +201,18 @@ abstract contract ERC1155 {
         uint256[] memory ids,
         uint256[] memory amounts
     ) internal {
-        uint256 nBurn = ids.length;
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
-        // TODO: remove and just have a comment about how out of bounds will catch
-        require(nBurn == amounts.length, "ARRAY_MISMATCH");
+        // TODO: does caching ids length help? we get it above?
+        // TODO: we should standardize if we use ids or owners
+        for (uint256 i = 0; i < ids.length; ) {
+            // TODO: does caching anything help
+            balanceOf[from][ids[i]] -= amounts[i];
 
-        // TODO: how do we incrmeent i without breaking everything in this looop
-        //can be unchecked assuming inheriting contract checks from owns ids
-        unchecked {
-            for (uint256 i = 0; i < nBurn; i++) {
-                balanceOf[from][ids[i]] -= amounts[i];
+            // An array can't have a total length
+            // larger than the max uint256 value.
+            unchecked {
+                i++;
             }
         }
 
@@ -252,7 +237,7 @@ interface ERC1155TokenReceiver {
         address operator,
         address from,
         uint256 id,
-        uint256 value,
+        uint256 amount,
         bytes calldata data
     ) external returns (bytes4);
 
@@ -260,7 +245,7 @@ interface ERC1155TokenReceiver {
         address operator,
         address from,
         uint256[] calldata ids,
-        uint256[] calldata values,
+        uint256[] calldata amounts,
         bytes calldata data
     ) external returns (bytes4);
 }

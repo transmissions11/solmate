@@ -131,4 +131,16 @@ contract DSTestPlus is DSTest {
         // Account for decrementing x to make max inclusive.
         if (max == type(uint256).max && x != 0) result++;
     }
+
+    function min3(
+        uint256 a,
+        uint256 b,
+        uint256 c
+    ) internal pure returns (uint256) {
+        return a > b ? (b > c ? c : b) : (a > c ? c : a);
+    }
+
+    function min2(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a > b ? b : a;
+    }
 }
