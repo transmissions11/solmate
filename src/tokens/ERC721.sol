@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 /// @notice Modern, minimalist, and gas efficient ERC-721 implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
+/// @dev Note that balanceOf does not revert if passed the zero address, in defiance of the ERC.
 abstract contract ERC721 {
     /*///////////////////////////////////////////////////////////////
                                  EVENTS
