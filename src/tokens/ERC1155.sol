@@ -177,7 +177,6 @@ abstract contract ERC1155 {
         // TODO: does caching ids length help? we get it above?
         // TODO: we should standardize if we use ids or owners
         for (uint256 i = 0; i < ids.length; ) {
-            // TODO: does caching anything help
             balanceOf[to][ids[i]] += amounts[i];
 
             // An array can't have a total length
@@ -208,7 +207,6 @@ abstract contract ERC1155 {
         // TODO: does caching ids length help? we get it above?
         // TODO: we should standardize if we use ids or owners
         for (uint256 i = 0; i < ids.length; ) {
-            // TODO: does caching anything help
             balanceOf[from][ids[i]] -= amounts[i];
 
             // An array can't have a total length
