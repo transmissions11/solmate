@@ -24,27 +24,23 @@ contract ERC20Vault is ERC20 {
 
     /// @notice Creates a new Vault that accepts a specific underlying token.
     /// @param _underlying The ERC20 compliant token the Vault should accept.
-    /// @param _namePrefix A name prefix to be applied before
-    /// @param _symbolPrefix The ERC20 compliant token the Vault should accept.
+    /// @param _name The name for the vault token.
+    /// @param _symbol The symbol for the vault token.
 
     constructor(
         ERC20 _underlying,
-        string memory _namePrefix,
-        string memory _symbolPrefix
+        string memory _name,
+        string memory _symbol
     )
         ERC20(
-            string(abi.encodePacked(_namePrefix, _underlying.name(), " Vault")),
-            string(abi.encodePacked(_symbolPrefix, _underlying.symbol())),
+            _name,
+            _symbol,
             _underlying.decimals()
         )
     {
         underlying = _underlying;
 
         baseUnit = 10**decimals;
-
-        // Prevent minting of shares until
-        // the initialize function is called.
-        totalSupply = type(uint256).max;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -66,9 +62,6 @@ contract ERC20Vault is ERC20 {
     /// @param to The address to receive shares corresponding to the deposit
     /// @param underlyingAmount The amount of the underlying token to deposit.
     function deposit(address to, uint256 underlyingAmount) external virtual returns (uint256 shares) {
-        // We don't allow depositing 0 to prevent emitting a useless event.
-        require(underlyingAmount != 0, "AMOUNT_CANNOT_BE_ZERO");
-
         shares = underlyingAmount.fdiv(exchangeRate(), baseUnit);
         // Determine the equivalent amount of shares and mint them.
         _mint(to, shares);
@@ -86,9 +79,6 @@ contract ERC20Vault is ERC20 {
     /// @param to The address to receive underlying tokens corresponding to the withdrawal.
     /// @param underlyingAmount The amount of underlying tokens to withdraw.
     function withdraw(address to, uint256 underlyingAmount) external virtual returns (uint256 shares) {
-        // We don't allow withdrawing 0 to prevent emitting a useless event.
-        require(underlyingAmount != 0, "AMOUNT_CANNOT_BE_ZERO");
-
         shares = underlyingAmount.fdiv(exchangeRate(), baseUnit);
 
         // Determine the equivalent amount of shares and burn them.
@@ -155,7 +145,7 @@ contract ERC20Vault is ERC20 {
 
     /// @notice Calculates the total amount of underlying tokens the Vault holds.
     /// @return totalUnderlyingHeld The total amount of underlying tokens the Vault holds.
-    function totalHoldings() public view virtual returns (uint256 totalUnderlyingHeld) {
+    function totalHoldings() public view virtual returns (uint256) {
         return underlying.balanceOf(address(this));
     }
 }
