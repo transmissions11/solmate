@@ -122,11 +122,11 @@ abstract contract ERC1155 {
 
         balances = new uint256[](owners.length);
 
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
         unchecked {
-            // TODO: coment about unchecked counter
             // TODO: does caching owners length help? we get it above?
             for (uint256 i = 0; i < owners.length; i++) {
-                // TODO: does caching any of this help?
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
@@ -175,7 +175,7 @@ abstract contract ERC1155 {
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
         // TODO: does caching ids length help? we get it above?
-        // TODO: we should standardize if we use ids or owners
+
         for (uint256 i = 0; i < ids.length; ) {
             balanceOf[to][ids[i]] += amounts[i];
 
@@ -205,7 +205,6 @@ abstract contract ERC1155 {
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
         // TODO: does caching ids length help? we get it above?
-        // TODO: we should standardize if we use ids or owners
         for (uint256 i = 0; i < ids.length; ) {
             balanceOf[from][ids[i]] -= amounts[i];
 
