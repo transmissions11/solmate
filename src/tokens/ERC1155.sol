@@ -88,9 +88,11 @@ abstract contract ERC1155 {
 
         // TODO: does caching ids.length help? we get it above?
         for (uint256 i = 0; i < ids.length; ) {
-            // TODO: does any caching help here?
-            balanceOf[from][ids[i]] -= amounts[i];
-            balanceOf[to][ids[i]] += amounts[i];
+            uint256 id = ids[i];
+            uint256 amount = amounts[i];
+
+            balanceOf[from][id] -= amount;
+            balanceOf[to][id] += amount;
 
             // An array can't have a total length
             // larger than the max uint256 value.
