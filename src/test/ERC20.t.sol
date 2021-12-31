@@ -316,7 +316,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 sendAmount
     ) public {
-        require(mintAmount < sendAmount);
+        sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(address(this), mintAmount);
         token.transfer(to, sendAmount);
@@ -327,7 +327,7 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        require(approval < amount);
+        amount = bound(amount, approval + 1, type(uint256).max);
 
         ERC20User from = new ERC20User(token);
 
@@ -341,7 +341,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 sendAmount
     ) public {
-        require(mintAmount < sendAmount);
+        sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         ERC20User from = new ERC20User(token);
 
