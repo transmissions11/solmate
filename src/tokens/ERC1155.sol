@@ -82,12 +82,13 @@ abstract contract ERC1155 {
         uint256[] memory amounts,
         bytes memory data
     ) public virtual {
-        require(ids.length == amounts.length, "LENGTH_MISMATCH");
+        uint256 idsLength = ids.length; // Saves MLOADs.
+
+        require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        // TODO: does caching ids.length help? we get it above?
-        for (uint256 i = 0; i < ids.length; ) {
+        for (uint256 i = 0; i < idsLength; ) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
@@ -118,15 +119,16 @@ abstract contract ERC1155 {
         virtual
         returns (uint256[] memory balances)
     {
-        require(owners.length == ids.length, "LENGTH_MISMATCH");
+        uint256 ownersLength = owners.length; // Saves MLOADs.
+
+        require(ownersLength == ids.length, "LENGTH_MISMATCH");
 
         balances = new uint256[](owners.length);
 
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            // TODO: does caching owners length help? we get it above?
-            for (uint256 i = 0; i < owners.length; i++) {
+            for (uint256 i = 0; i < ownersLength; i++) {
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
@@ -172,11 +174,11 @@ abstract contract ERC1155 {
         uint256[] memory amounts,
         bytes memory data
     ) internal {
-        require(ids.length == amounts.length, "LENGTH_MISMATCH");
+        uint256 idsLength = ids.length; // Saves MLOADs.
 
-        // TODO: does caching ids length help? we get it above?
+        require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < ids.length; ) {
+        for (uint256 i = 0; i < idsLength; ) {
             balanceOf[to][ids[i]] += amounts[i];
 
             // An array can't have a total length
@@ -202,10 +204,11 @@ abstract contract ERC1155 {
         uint256[] memory ids,
         uint256[] memory amounts
     ) internal {
-        require(ids.length == amounts.length, "LENGTH_MISMATCH");
+        uint256 idsLength = ids.length; // Saves MLOADs.
 
-        // TODO: does caching ids length help? we get it above?
-        for (uint256 i = 0; i < ids.length; ) {
+        require(idsLength == amounts.length, "LENGTH_MISMATCH");
+
+        for (uint256 i = 0; i < idsLength; ) {
             balanceOf[from][ids[i]] -= amounts[i];
 
             // An array can't have a total length
