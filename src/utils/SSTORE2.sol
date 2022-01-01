@@ -89,7 +89,7 @@ library SSTORE2 {
             // the memory pointer remains word-aligned, following the Solidity convention.
             mstore(0x40, add(data, and(add(add(size, 32), 31), not(31))))
 
-            // Store the size of the data in the first slot (32 bytes) of free memory.
+            // Store the size of the data in the first 32 byte chunk of free memory.
             mstore(data, size)
 
             // Copy the code into memory right after the 32 bytes we used to store the size.
