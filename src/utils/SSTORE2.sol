@@ -7,11 +7,14 @@ pragma solidity >=0.8.0;
 library SSTORE2 {
     uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's a STOP opcode to ensure the contract can't be called.
 
+    /*///////////////////////////////////////////////////////////////
+                               WRITE LOGIC
+    //////////////////////////////////////////////////////////////*/
+
     function write(bytes memory data) internal returns (address pointer) {
         // Prefix the bytecode with a STOP opcode to ensure it cannot be called.
         bytes memory runtimeCode = abi.encodePacked(hex"00", data);
 
-        // Compute the creation code we need from our desired runtime code.
         bytes memory creationCode = abi.encodePacked(
             //---------------------------------------------------------------------------------------------------------------//
             // Opcode  | Opcode + Arguments  | Description  | Stack View                                                     //
@@ -37,9 +40,12 @@ library SSTORE2 {
             pointer := create(0, add(creationCode, 32), mload(creationCode))
         }
 
-        // If the pointer is 0 then the deployment failed.
         require(pointer != address(0), "DEPLOYMENT_FAILED");
     }
+
+    /*///////////////////////////////////////////////////////////////
+                               READ LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     function read(address pointer) internal view returns (bytes memory) {
         return readBytecode(pointer, DATA_OFFSET, pointer.code.length - DATA_OFFSET);
@@ -63,6 +69,10 @@ library SSTORE2 {
 
         return readBytecode(pointer, start, end - start);
     }
+
+    /*///////////////////////////////////////////////////////////////
+                         INTERNAL HELPER LOGIC
+    //////////////////////////////////////////////////////////////*/
 
     function readBytecode(
         address pointer,
