@@ -63,6 +63,52 @@ contract ERC1155Recipient is ERC1155TokenReceiver {
     }
 }
 
+contract RevertingERC1155Recipient is ERC1155TokenReceiver {
+    function onERC1155Received(
+        address,
+        address,
+        uint256,
+        uint256,
+        bytes calldata
+    ) public pure override returns (bytes4) {
+        revert(string(abi.encodePacked(ERC1155TokenReceiver.onERC1155Received.selector)));
+    }
+
+    function onERC1155BatchReceived(
+        address,
+        address,
+        uint256[] calldata,
+        uint256[] calldata,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        revert(string(abi.encodePacked(ERC1155TokenReceiver.onERC1155BatchReceived.selector)));
+    }
+}
+
+contract WrongReturnDataERC1155Recipient is ERC1155TokenReceiver {
+    function onERC1155Received(
+        address,
+        address,
+        uint256,
+        uint256,
+        bytes calldata
+    ) public pure override returns (bytes4) {
+        return 0xCAFEBEEF;
+    }
+
+    function onERC1155BatchReceived(
+        address,
+        address,
+        uint256[] calldata,
+        uint256[] calldata,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return 0xCAFEBEEF;
+    }
+}
+
+contract NonERC1155Recipient {}
+
 contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
     MockERC1155 token;
 
@@ -758,6 +804,542 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         for (uint256 i = 0; i < normalizedTos.length; i++) {
             assertEq(balances[i], token.balanceOf(normalizedTos[i], normalizedIds[i]));
         }
+    }
+
+    function testFailMintToZero(
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public {
+        token.mint(address(0), id, amount, data);
+    }
+
+    function testFailMintToNonERC155Recipient(
+        uint256 id,
+        uint256 mintAmount,
+        bytes memory mintData
+    ) public {
+        token.mint(address(new NonERC1155Recipient()), id, mintAmount, mintData);
+    }
+
+    function testFailMintToRevertingERC155Recipient(
+        uint256 id,
+        uint256 mintAmount,
+        bytes memory mintData
+    ) public {
+        token.mint(address(new RevertingERC1155Recipient()), id, mintAmount, mintData);
+    }
+
+    function testFailMintToWrongReturnDataERC155Recipient(
+        uint256 id,
+        uint256 mintAmount,
+        bytes memory mintData
+    ) public {
+        token.mint(address(new RevertingERC1155Recipient()), id, mintAmount, mintData);
+    }
+
+    function testFailBurnInsufficientBalance(
+        address to,
+        uint256 id,
+        uint256 mintAmount,
+        uint256 burnAmount,
+        bytes memory mintData
+    ) public {
+        burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
+
+        token.mint(to, id, mintAmount, mintData);
+        token.burn(to, id, burnAmount);
+    }
+
+    function testFailSafeTransferFromInsufficientBalance(
+        address to,
+        uint256 id,
+        uint256 mintAmount,
+        uint256 transferAmount,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        transferAmount = bound(transferAmount, mintAmount + 1, type(uint256).max);
+
+        token.mint(address(from), id, mintAmount, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeTransferFrom(address(from), to, id, transferAmount, transferData);
+    }
+
+    function testFailSafeTransferFromSelfInsufficientBalance(
+        address to,
+        uint256 id,
+        uint256 mintAmount,
+        uint256 transferAmount,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        transferAmount = bound(transferAmount, mintAmount + 1, type(uint256).max);
+
+        token.mint(address(this), id, mintAmount, mintData);
+        token.safeTransferFrom(address(this), to, id, transferAmount, transferData);
+    }
+
+    function testFailSafeTransferFromToZero(
+        uint256 id,
+        uint256 mintAmount,
+        uint256 transferAmount,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        transferAmount = bound(transferAmount, 0, mintAmount);
+
+        token.mint(address(this), id, mintAmount, mintData);
+        token.safeTransferFrom(address(this), address(0), id, transferAmount, transferData);
+    }
+
+    function testFailSafeTransferFromToNonERC155Recipient(
+        uint256 id,
+        uint256 mintAmount,
+        uint256 transferAmount,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        transferAmount = bound(transferAmount, 0, mintAmount);
+
+        token.mint(address(this), id, mintAmount, mintData);
+        token.safeTransferFrom(address(this), address(new NonERC1155Recipient()), id, transferAmount, transferData);
+    }
+
+    function testFailSafeTransferFromToRevertingERC1155Recipient(
+        uint256 id,
+        uint256 mintAmount,
+        uint256 transferAmount,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        transferAmount = bound(transferAmount, 0, mintAmount);
+
+        token.mint(address(this), id, mintAmount, mintData);
+        token.safeTransferFrom(
+            address(this),
+            address(new RevertingERC1155Recipient()),
+            id,
+            transferAmount,
+            transferData
+        );
+    }
+
+    function testFailSafeTransferFromToWrongReturnDataERC1155Recipient(
+        uint256 id,
+        uint256 mintAmount,
+        uint256 transferAmount,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        transferAmount = bound(transferAmount, 0, mintAmount);
+
+        token.mint(address(this), id, mintAmount, mintData);
+        token.safeTransferFrom(
+            address(this),
+            address(new WrongReturnDataERC1155Recipient()),
+            id,
+            transferAmount,
+            transferData
+        );
+    }
+
+    function testFailSafeBatchTransferInsufficientBalance(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory transferAmounts,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(from)][id];
+
+            uint256 mintAmount = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            uint256 transferAmount = bound(transferAmounts[i], mintAmount + 1, type(uint256).max);
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = mintAmount;
+            normalizedTransferAmounts[i] = transferAmount;
+
+            userMintAmounts[address(from)][id] += mintAmount;
+        }
+
+        token.batchMint(address(from), normalizedIds, normalizedMintAmounts, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeBatchTransferFrom(address(from), to, normalizedIds, normalizedTransferAmounts, transferData);
+    }
+
+    function testFailSafeBatchTransferFromToZero(
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory transferAmounts,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(from)][id];
+
+            uint256 mintAmount = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            uint256 transferAmount = bound(transferAmounts[i], 0, mintAmount);
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = mintAmount;
+            normalizedTransferAmounts[i] = transferAmount;
+
+            userMintAmounts[address(from)][id] += mintAmount;
+        }
+
+        token.batchMint(address(from), normalizedIds, normalizedMintAmounts, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeBatchTransferFrom(address(from), address(0), normalizedIds, normalizedTransferAmounts, transferData);
+    }
+
+    function testFailSafeBatchTransferFromToNonERC1155Recipient(
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory transferAmounts,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(from)][id];
+
+            uint256 mintAmount = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            uint256 transferAmount = bound(transferAmounts[i], 0, mintAmount);
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = mintAmount;
+            normalizedTransferAmounts[i] = transferAmount;
+
+            userMintAmounts[address(from)][id] += mintAmount;
+        }
+
+        token.batchMint(address(from), normalizedIds, normalizedMintAmounts, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeBatchTransferFrom(
+            address(from),
+            address(new NonERC1155Recipient()),
+            normalizedIds,
+            normalizedTransferAmounts,
+            transferData
+        );
+    }
+
+    function testFailSafeBatchTransferFromToRevertingERC1155Recipient(
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory transferAmounts,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(from)][id];
+
+            uint256 mintAmount = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            uint256 transferAmount = bound(transferAmounts[i], 0, mintAmount);
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = mintAmount;
+            normalizedTransferAmounts[i] = transferAmount;
+
+            userMintAmounts[address(from)][id] += mintAmount;
+        }
+
+        token.batchMint(address(from), normalizedIds, normalizedMintAmounts, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeBatchTransferFrom(
+            address(from),
+            address(new RevertingERC1155Recipient()),
+            normalizedIds,
+            normalizedTransferAmounts,
+            transferData
+        );
+    }
+
+    function testFailSafeBatchTransferFromToWrongReturnDataERC1155Recipient(
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory transferAmounts,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(from)][id];
+
+            uint256 mintAmount = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            uint256 transferAmount = bound(transferAmounts[i], 0, mintAmount);
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = mintAmount;
+            normalizedTransferAmounts[i] = transferAmount;
+
+            userMintAmounts[address(from)][id] += mintAmount;
+        }
+
+        token.batchMint(address(from), normalizedIds, normalizedMintAmounts, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeBatchTransferFrom(
+            address(from),
+            address(new WrongReturnDataERC1155Recipient()),
+            normalizedIds,
+            normalizedTransferAmounts,
+            transferData
+        );
+    }
+
+    function testFailSafeBatchTransferFromWithArrayLengthMismatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory transferAmounts,
+        bytes memory mintData,
+        bytes memory transferData
+    ) public {
+        ERC1155User from = new ERC1155User(token);
+
+        if (ids.length == mintAmounts.length || ids.length == transferAmounts.length) revert();
+
+        token.batchMint(address(from), ids, mintAmounts, mintData);
+
+        from.setApprovalForAll(address(this), true);
+
+        token.safeBatchTransferFrom(address(from), to, ids, transferAmounts, transferData);
+    }
+
+    function testFailBatchBurnInsufficientBalance(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory burnAmounts,
+        bytes memory mintData
+    ) public {
+        uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedBurnAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[to][id];
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            normalizedBurnAmounts[i] = bound(burnAmounts[i], normalizedMintAmounts[i] + 1, type(uint256).max);
+
+            userMintAmounts[to][id] += normalizedMintAmounts[i];
+        }
+
+        token.batchMint(to, normalizedIds, normalizedMintAmounts, mintData);
+
+        token.batchBurn(to, normalizedIds, normalizedBurnAmounts);
+    }
+
+    function testFailBatchBurnWithArrayLengthMismatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory burnAmounts,
+        bytes memory mintData
+    ) public {
+        if (ids.length == mintAmounts.length || ids.length == burnAmounts.length) revert();
+
+        token.batchMint(to, ids, mintAmounts, mintData);
+
+        token.batchBurn(to, ids, burnAmounts);
+    }
+
+    function testFailBatchMintToZero(
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory mintData
+    ) public {
+        uint256 minLength = min2(ids.length, amounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(0)][id];
+
+            uint256 mintAmount = bound(amounts[i], 0, remainingMintAmountForId);
+
+            normalizedIds[i] = id;
+            normalizedAmounts[i] = mintAmount;
+
+            userMintAmounts[address(0)][id] += mintAmount;
+        }
+
+        token.batchMint(address(0), normalizedIds, normalizedAmounts, mintData);
+    }
+
+    function testFailBatchMintToNonERC1155Recipient(
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory mintData
+    ) public {
+        NonERC1155Recipient to = new NonERC1155Recipient();
+
+        uint256 minLength = min2(ids.length, amounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(to)][id];
+
+            uint256 mintAmount = bound(amounts[i], 0, remainingMintAmountForId);
+
+            normalizedIds[i] = id;
+            normalizedAmounts[i] = mintAmount;
+
+            userMintAmounts[address(to)][id] += mintAmount;
+        }
+
+        token.batchMint(address(to), normalizedIds, normalizedAmounts, mintData);
+    }
+
+    function testFailBatchMintToRevertingERC1155Recipient(
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory mintData
+    ) public {
+        RevertingERC1155Recipient to = new RevertingERC1155Recipient();
+
+        uint256 minLength = min2(ids.length, amounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(to)][id];
+
+            uint256 mintAmount = bound(amounts[i], 0, remainingMintAmountForId);
+
+            normalizedIds[i] = id;
+            normalizedAmounts[i] = mintAmount;
+
+            userMintAmounts[address(to)][id] += mintAmount;
+        }
+
+        token.batchMint(address(to), normalizedIds, normalizedAmounts, mintData);
+    }
+
+    function testFailBatchMintToWrongReturnDataERC1155Recipient(
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory mintData
+    ) public {
+        WrongReturnDataERC1155Recipient to = new WrongReturnDataERC1155Recipient();
+
+        uint256 minLength = min2(ids.length, amounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[address(to)][id];
+
+            uint256 mintAmount = bound(amounts[i], 0, remainingMintAmountForId);
+
+            normalizedIds[i] = id;
+            normalizedAmounts[i] = mintAmount;
+
+            userMintAmounts[address(to)][id] += mintAmount;
+        }
+
+        token.batchMint(address(to), normalizedIds, normalizedAmounts, mintData);
+    }
+
+    function testFailBatchMintWithArrayMismatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory mintData
+    ) public {
+        if (ids.length == amounts.length) revert();
+
+        token.batchMint(address(to), ids, amounts, mintData);
+    }
+
+    function testFailBalanceOfBatchWithArrayMismatch(address[] memory tos, uint256[] memory ids) public view {
+        if (tos.length == ids.length) revert();
+
+        token.balanceOfBatch(tos, ids);
     }
 
     function onERC1155Received(
