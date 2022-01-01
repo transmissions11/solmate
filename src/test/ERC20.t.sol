@@ -311,6 +311,17 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.nonces(owner), 1);
     }
 
+    function testFailBurnInsufficientBalance(
+        address to,
+        uint256 mintAmount,
+        uint256 burnAmount
+    ) public {
+        burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
+
+        token.mint(to, mintAmount);
+        token.burn(to, burnAmount);
+    }
+
     function testFailTransferInsufficientBalance(
         address to,
         uint256 mintAmount,
