@@ -2,7 +2,9 @@
 pragma solidity >=0.8.0;
 
 /// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC20.sol)
 /// @author Modified from Uniswap (https://github.com/Uniswap/uniswap-v2-core/blob/master/contracts/UniswapV2ERC20.sol)
+/// @dev Do not manually set balances without updating totalSupply, as the sum of all user balances must not exceed it.
 abstract contract ERC20 {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
@@ -33,7 +35,7 @@ abstract contract ERC20 {
     mapping(address => mapping(address => uint256)) public allowance;
 
     /*///////////////////////////////////////////////////////////////
-                           EIP-2612 STORAGE
+                             EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
     bytes32 public constant PERMIT_TYPEHASH =
@@ -93,9 +95,9 @@ abstract contract ERC20 {
         address to,
         uint256 amount
     ) public virtual returns (bool) {
-        if (allowance[from][msg.sender] != type(uint256).max) {
-            allowance[from][msg.sender] -= amount;
-        }
+        uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
+
+        if (allowed != type(uint256).max) allowance[from][msg.sender] = allowed - amount;
 
         balanceOf[from] -= amount;
 
@@ -137,7 +139,8 @@ abstract contract ERC20 {
             );
 
             address recoveredAddress = ecrecover(digest, v, r, s);
-            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_PERMIT_SIGNATURE");
+
+            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
 
             allowance[recoveredAddress][spender] = value;
         }
@@ -155,7 +158,7 @@ abstract contract ERC20 {
                 abi.encode(
                     keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
                     keccak256(bytes(name)),
-                    keccak256(bytes("1")),
+                    keccak256("1"),
                     block.chainid,
                     address(this)
                 )

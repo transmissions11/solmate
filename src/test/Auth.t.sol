@@ -3,22 +3,17 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
+import {MockAuthority} from "./utils/mocks/MockAuthority.sol";
 
-import {Auth, Authority} from "../auth/Auth.sol";
+import {Authority} from "../auth/Auth.sol";
 
-contract BooleanAuthority is Authority {
-    bool yes;
-
-    constructor(bool _yes) {
-        yes = _yes;
-    }
-
+contract OutOfOrderAuthority is Authority {
     function canCall(
         address,
         address,
         bytes4
-    ) public view override returns (bool) {
-        return yes;
+    ) public pure override returns (bool) {
+        revert("OUT_OF_ORDER");
     }
 }
 
@@ -29,39 +24,167 @@ contract AuthTest is DSTestPlus {
         mockAuthChild = new MockAuthChild();
     }
 
-    function invariantOwner() public {
-        assertEq(mockAuthChild.owner(), address(this));
+    function testSetOwnerAsOwner() public {
+        mockAuthChild.setOwner(address(0xBEEF));
+        assertEq(mockAuthChild.owner(), address(0xBEEF));
     }
 
-    function invariantAuthority() public {
-        assertEq(address(mockAuthChild.authority()), address(0));
+    function testSetAuthorityAsOwner() public {
+        mockAuthChild.setAuthority(Authority(address(0xBEEF)));
+        assertEq(address(mockAuthChild.authority()), address(0xBEEF));
     }
 
-    function testFailNonOwner1() public {
+    function testCallFunctionAsOwner() public {
+        mockAuthChild.updateFlag();
+    }
+
+    function testSetOwnerWithPermissiveAuthority() public {
+        mockAuthChild.setAuthority(new MockAuthority(true));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setOwner(address(this));
+    }
+
+    function testSetAuthorityWithPermissiveAuthority() public {
+        mockAuthChild.setAuthority(new MockAuthority(true));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setAuthority(Authority(address(0xBEEF)));
+    }
+
+    function testCallFunctionWithPermissiveAuthority() public {
+        mockAuthChild.setAuthority(new MockAuthority(true));
         mockAuthChild.setOwner(address(0));
         mockAuthChild.updateFlag();
     }
 
-    function testFailNonOwner2() public {
-        mockAuthChild.setOwner(address(0));
-        mockAuthChild.setOwner(address(0));
+    function testSetAuthorityAsOwnerWithOutOfOrderAuthority() public {
+        mockAuthChild.setAuthority(new OutOfOrderAuthority());
+        mockAuthChild.setAuthority(new MockAuthority(true));
     }
 
-    function testFailRejectingAuthority1() public {
-        mockAuthChild.setAuthority(Authority(address(new BooleanAuthority(false))));
+    function testFailSetOwnerAsNonOwner() public {
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setOwner(address(0xBEEF));
+    }
+
+    function testFailSetAuthorityAsNonOwner() public {
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setAuthority(Authority(address(0xBEEF)));
+    }
+
+    function testFailCallFunctionAsNonOwner() public {
         mockAuthChild.setOwner(address(0));
         mockAuthChild.updateFlag();
     }
 
-    function testFailRejectingAuthority2() public {
-        mockAuthChild.setAuthority(Authority(address(new BooleanAuthority(false))));
+    function testFailSetOwnerWithRestrictiveAuthority() public {
+        mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
+        mockAuthChild.setOwner(address(this));
+    }
+
+    function testFailSetAuthorityWithRestrictiveAuthority() public {
+        mockAuthChild.setAuthority(new MockAuthority(false));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.setAuthority(Authority(address(0xBEEF)));
+    }
+
+    function testFailCallFunctionWithRestrictiveAuthority() public {
+        mockAuthChild.setAuthority(new MockAuthority(false));
+        mockAuthChild.setOwner(address(0));
+        mockAuthChild.updateFlag();
+    }
+
+    function testFailSetOwnerAsOwnerWithOutOfOrderAuthority() public {
+        mockAuthChild.setAuthority(new OutOfOrderAuthority());
         mockAuthChild.setOwner(address(0));
     }
 
-    function testAcceptingOwner() public {
-        mockAuthChild.setAuthority(Authority(address(new BooleanAuthority(true))));
-        mockAuthChild.setOwner(address(0));
+    function testFailCallFunctionAsOwnerWithOutOfOrderAuthority() public {
+        mockAuthChild.setAuthority(new OutOfOrderAuthority());
         mockAuthChild.updateFlag();
+    }
+
+    function testSetOwnerAsOwner(address newOwner) public {
+        mockAuthChild.setOwner(newOwner);
+        assertEq(mockAuthChild.owner(), newOwner);
+    }
+
+    function testSetAuthorityAsOwner(Authority newAuthority) public {
+        mockAuthChild.setAuthority(newAuthority);
+        assertEq(address(mockAuthChild.authority()), address(newAuthority));
+    }
+
+    function testSetOwnerWithPermissiveAuthority(address deadOwner, address newOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new MockAuthority(true));
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.setOwner(newOwner);
+    }
+
+    function testSetAuthorityWithPermissiveAuthority(address deadOwner, Authority newAuthority) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new MockAuthority(true));
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.setAuthority(newAuthority);
+    }
+
+    function testCallFunctionWithPermissiveAuthority(address deadOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new MockAuthority(true));
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.updateFlag();
+    }
+
+    function testFailSetOwnerAsNonOwner(address deadOwner, address newOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.setOwner(newOwner);
+    }
+
+    function testFailSetAuthorityAsNonOwner(address deadOwner, Authority newAuthority) public {
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.setAuthority(newAuthority);
+    }
+
+    function testFailCallFunctionAsNonOwner(address deadOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.updateFlag();
+    }
+
+    function testFailSetOwnerWithRestrictiveAuthority(address deadOwner, address newOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new MockAuthority(false));
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.setOwner(newOwner);
+    }
+
+    function testFailSetAuthorityWithRestrictiveAuthority(address deadOwner, Authority newAuthority) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new MockAuthority(false));
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.setAuthority(newAuthority);
+    }
+
+    function testFailCallFunctionWithRestrictiveAuthority(address deadOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new MockAuthority(false));
+        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.updateFlag();
+    }
+
+    function testFailSetOwnerAsOwnerWithOutOfOrderAuthority(address deadOwner) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+
+        mockAuthChild.setAuthority(new OutOfOrderAuthority());
+        mockAuthChild.setOwner(deadOwner);
     }
 }

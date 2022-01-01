@@ -49,23 +49,11 @@ contract FixedPointMathLibTest is DSTestPlus {
     }
 
     function testSqrt() public {
+        assertEq(FixedPointMathLib.sqrt(0), 0);
+        assertEq(FixedPointMathLib.sqrt(1), 1);
         assertEq(FixedPointMathLib.sqrt(2704), 52);
         assertEq(FixedPointMathLib.sqrt(110889), 333);
         assertEq(FixedPointMathLib.sqrt(32239684), 5678);
-    }
-
-    function testMin() public {
-        assertEq(FixedPointMathLib.min(4, 100), 4);
-        assertEq(FixedPointMathLib.min(500, 400), 400);
-        assertEq(FixedPointMathLib.min(10000, 10001), 10000);
-        assertEq(FixedPointMathLib.min(1e18, 0.1e18), 0.1e18);
-    }
-
-    function testMax() public {
-        assertEq(FixedPointMathLib.max(4, 100), 100);
-        assertEq(FixedPointMathLib.max(500, 400), 500);
-        assertEq(FixedPointMathLib.max(10000, 10001), 10001);
-        assertEq(FixedPointMathLib.max(1e18, 0.1e18), 1e18);
     }
 
     function testFMul(
@@ -73,9 +61,12 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 baseUnit
     ) public {
-        // Ignore cases where x * y overflows.
+        // Convert cases where x * y overflows into useful test cases.
         unchecked {
-            if (x != 0 && (x * y) / x != y) return;
+            while (x != 0 && (x * y) / x != y) {
+                x /= 2;
+                y /= 2;
+            }
         }
 
         assertEq(FixedPointMathLib.fmul(x, y, baseUnit), baseUnit == 0 ? 0 : (x * y) / baseUnit);
@@ -99,14 +90,11 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 baseUnit
     ) public {
+        if (y == 0) y = 1;
+
         // Ignore cases where x * baseUnit overflows.
         unchecked {
             if (x != 0 && (x * baseUnit) / x != baseUnit) return;
-        }
-
-        // Ignore cases where y is zero because it will cause a revert.
-        if (y == 0) {
-            return;
         }
 
         assertEq(FixedPointMathLib.fdiv(x, y, baseUnit), (x * baseUnit) / y);
@@ -139,21 +127,5 @@ contract FixedPointMathLibTest is DSTestPlus {
         }
 
         assertTrue(root * root <= x && next * next > x);
-    }
-
-    function testMin(uint256 x, uint256 y) public {
-        if (x < y) {
-            assertEq(FixedPointMathLib.min(x, y), x);
-        } else {
-            assertEq(FixedPointMathLib.min(x, y), y);
-        }
-    }
-
-    function testMax(uint256 x, uint256 y) public {
-        if (x > y) {
-            assertEq(FixedPointMathLib.max(x, y), x);
-        } else {
-            assertEq(FixedPointMathLib.max(x, y), y);
-        }
     }
 }

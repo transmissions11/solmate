@@ -7,13 +7,14 @@
 ```ml
 auth
 ├─ Auth — "Flexible and updatable auth pattern"
-├─ Trust — "Ultra minimal authorization logic"
 ├─ authorities
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
-│  ├─ TrustAuthority — "Simple Authority which only authorizes trusted users"
+│  ├─ MultiRolesAuthority — "Flexible and target agnostic role based Authority"
 tokens
 ├─ WETH — "Minimalist and modern Wrapped Ether implementation"
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
+├─ ERC721 — "Modern, minimalist, and gas efficient ERC721 implementation"
+├─ ERC1155 — "Minimalist and gas efficient standard ERC1155 implementation"
 utils
 ├─ SSTORE2 - "Library for cheaper reads and writes to persistent storage"
 ├─ CREATE3 — "Deploy to deterministic addresses without an initcode factor"

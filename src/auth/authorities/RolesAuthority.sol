@@ -4,13 +4,12 @@ pragma solidity >=0.8.0;
 import {Auth, Authority} from "../Auth.sol";
 
 /// @notice Role based Authority that supports up to 256 roles.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/RolesAuthority.sol)
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)
 contract RolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
-
-    event UserRootUpdated(address indexed user, bool enabled);
 
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
 
@@ -21,42 +20,29 @@ contract RolesAuthority is Auth, Authority {
     /*///////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
+
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
 
     /*///////////////////////////////////////////////////////////////
-                             USER ROLE STORAGE
+                            ROLE/USER STORAGE
     //////////////////////////////////////////////////////////////*/
-
-    mapping(address => bool) public isUserRoot;
 
     mapping(address => bytes32) public getUserRoles;
 
-    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
-        unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-
-            return bytes32(0) != getUserRoles[user] & shifted;
-        }
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                        ROLE CAPABILITY STORAGE
-    //////////////////////////////////////////////////////////////*/
-
-    mapping(address => mapping(bytes4 => bytes32)) public getRoleCapabilities;
-
     mapping(address => mapping(bytes4 => bool)) public isCapabilityPublic;
+
+    mapping(address => mapping(bytes4 => bytes32)) public getRolesWithCapability;
+
+    function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
+        return (uint256(getUserRoles[user]) >> role) & 1 != 0;
+    }
 
     function doesRoleHaveCapability(
         uint8 role,
         address target,
         bytes4 functionSig
     ) public view virtual returns (bool) {
-        unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-
-            return bytes32(0) != getRoleCapabilities[target][functionSig] & shifted;
-        }
+        return (uint256(getRolesWithCapability[target][functionSig]) >> role) & 1 != 0;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -68,9 +54,9 @@ contract RolesAuthority is Auth, Authority {
         address target,
         bytes4 functionSig
     ) public view virtual override returns (bool) {
-        if (isCapabilityPublic[target][functionSig]) return true;
-
-        return bytes32(0) != getUserRoles[user] & getRoleCapabilities[target][functionSig] || isUserRoot[user];
+        return
+            isCapabilityPublic[target][functionSig] ||
+            bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSig];
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -93,14 +79,10 @@ contract RolesAuthority is Auth, Authority {
         bytes4 functionSig,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastCapabilities = getRoleCapabilities[target][functionSig];
-
-        unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-
-            getRoleCapabilities[target][functionSig] = enabled
-                ? lastCapabilities | shifted
-                : lastCapabilities & ~shifted;
+        if (enabled) {
+            getRolesWithCapability[target][functionSig] |= bytes32(1 << role);
+        } else {
+            getRolesWithCapability[target][functionSig] &= ~bytes32(1 << role);
         }
 
         emit RoleCapabilityUpdated(role, target, functionSig, enabled);
@@ -115,20 +97,12 @@ contract RolesAuthority is Auth, Authority {
         uint8 role,
         bool enabled
     ) public virtual requiresAuth {
-        bytes32 lastRoles = getUserRoles[user];
-
-        unchecked {
-            bytes32 shifted = bytes32(uint256(uint256(2)**uint256(role)));
-
-            getUserRoles[user] = enabled ? lastRoles | shifted : lastRoles & ~shifted;
+        if (enabled) {
+            getUserRoles[user] |= bytes32(1 << role);
+        } else {
+            getUserRoles[user] &= ~bytes32(1 << role);
         }
 
         emit UserRoleUpdated(user, role, enabled);
-    }
-
-    function setRootUser(address user, bool enabled) public virtual requiresAuth {
-        isUserRoot[user] = enabled;
-
-        emit UserRootUpdated(user, enabled);
     }
 }

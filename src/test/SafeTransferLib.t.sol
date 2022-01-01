@@ -127,9 +127,7 @@ contract SafeTransferLibTest is DSTestPlus {
         address to,
         uint256 amount
     ) public {
-        if (nonContract.code.length > 0) return;
-
-        if (uint256(uint160(nonContract)) <= 18) return; // Some precompiles cause reverts.
+        if (uint256(uint160(nonContract)) <= 18 || nonContract.code.length > 0) return;
 
         SafeTransferLib.safeTransfer(SolmateERC20(nonContract), to, amount);
     }
@@ -164,9 +162,7 @@ contract SafeTransferLibTest is DSTestPlus {
         address to,
         uint256 amount
     ) public {
-        if (nonContract.code.length > 0) return;
-
-        if (uint256(uint160(nonContract)) <= 18) return; // Some precompiles cause reverts.
+        if (uint256(uint160(nonContract)) <= 18 || nonContract.code.length > 0) return;
 
         SafeTransferLib.safeTransferFrom(SolmateERC20(nonContract), from, to, amount);
     }
@@ -188,17 +184,15 @@ contract SafeTransferLibTest is DSTestPlus {
         address to,
         uint256 amount
     ) public {
-        if (nonContract.code.length > 0) return;
-
-        if (uint256(uint160(nonContract)) <= 18) return; // Some precompiles cause reverts.
+        if (uint256(uint160(nonContract)) <= 18 || nonContract.code.length > 0) return;
 
         SafeTransferLib.safeApprove(SolmateERC20(nonContract), to, amount);
     }
 
     function testTransferETH(address recipient, uint256 amount) public {
-        if (uint256(uint160(recipient)) <= 18) return; // Some precompiles cause reverts.
+        if (uint256(uint160(recipient)) <= 18) return;
 
-        amount %= address(this).balance;
+        amount = bound(amount, 0, address(this).balance);
 
         SafeTransferLib.safeTransferETH(recipient, amount);
     }
