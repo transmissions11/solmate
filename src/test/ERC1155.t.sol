@@ -1171,50 +1171,6 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeBatchTransferFrom(address(from), to, ids, transferAmounts, transferData);
     }
 
-    function testFailBatchBurnInsufficientBalance(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory mintAmounts,
-        uint256[] memory burnAmounts,
-        bytes memory mintData
-    ) public {
-        uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
-
-        uint256[] memory normalizedIds = new uint256[](minLength);
-        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
-        uint256[] memory normalizedBurnAmounts = new uint256[](minLength);
-
-        for (uint256 i = 0; i < minLength; i++) {
-            uint256 id = ids[i];
-
-            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[to][id];
-
-            normalizedIds[i] = id;
-            normalizedMintAmounts[i] = bound(mintAmounts[i], 0, remainingMintAmountForId);
-            normalizedBurnAmounts[i] = bound(burnAmounts[i], normalizedMintAmounts[i] + 1, type(uint256).max);
-
-            userMintAmounts[to][id] += normalizedMintAmounts[i];
-        }
-
-        token.batchMint(to, normalizedIds, normalizedMintAmounts, mintData);
-
-        token.batchBurn(to, normalizedIds, normalizedBurnAmounts);
-    }
-
-    function testFailBatchBurnWithArrayLengthMismatch(
-        address to,
-        uint256[] memory ids,
-        uint256[] memory mintAmounts,
-        uint256[] memory burnAmounts,
-        bytes memory mintData
-    ) public {
-        if (ids.length == mintAmounts.length || ids.length == burnAmounts.length) revert();
-
-        token.batchMint(to, ids, mintAmounts, mintData);
-
-        token.batchBurn(to, ids, burnAmounts);
-    }
-
     function testFailBatchMintToZero(
         uint256[] memory ids,
         uint256[] memory amounts,
@@ -1334,6 +1290,50 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         if (ids.length == amounts.length) revert();
 
         token.batchMint(address(to), ids, amounts, mintData);
+    }
+
+    function testFailBatchBurnInsufficientBalance(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory burnAmounts,
+        bytes memory mintData
+    ) public {
+        uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
+
+        uint256[] memory normalizedIds = new uint256[](minLength);
+        uint256[] memory normalizedMintAmounts = new uint256[](minLength);
+        uint256[] memory normalizedBurnAmounts = new uint256[](minLength);
+
+        for (uint256 i = 0; i < minLength; i++) {
+            uint256 id = ids[i];
+
+            uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[to][id];
+
+            normalizedIds[i] = id;
+            normalizedMintAmounts[i] = bound(mintAmounts[i], 0, remainingMintAmountForId);
+            normalizedBurnAmounts[i] = bound(burnAmounts[i], normalizedMintAmounts[i] + 1, type(uint256).max);
+
+            userMintAmounts[to][id] += normalizedMintAmounts[i];
+        }
+
+        token.batchMint(to, normalizedIds, normalizedMintAmounts, mintData);
+
+        token.batchBurn(to, normalizedIds, normalizedBurnAmounts);
+    }
+
+    function testFailBatchBurnWithArrayLengthMismatch(
+        address to,
+        uint256[] memory ids,
+        uint256[] memory mintAmounts,
+        uint256[] memory burnAmounts,
+        bytes memory mintData
+    ) public {
+        if (ids.length == mintAmounts.length || ids.length == burnAmounts.length) revert();
+
+        token.batchMint(to, ids, mintAmounts, mintData);
+
+        token.batchBurn(to, ids, burnAmounts);
     }
 
     function testFailBalanceOfBatchWithArrayMismatch(address[] memory tos, uint256[] memory ids) public view {
