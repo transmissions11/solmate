@@ -43,7 +43,7 @@ abstract contract ERC1155 {
     function uri(uint256 id) public view virtual returns (string memory);
 
     /*///////////////////////////////////////////////////////////////
-                            ERC1155 ACTIONS
+                             ERC1155 LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function setApprovalForAll(address operator, bool approved) public virtual {
@@ -146,7 +146,7 @@ abstract contract ERC1155 {
     }
 
     /*///////////////////////////////////////////////////////////////
-                       INTERNAL MINT/BURN LOGIC
+                        INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function _mint(
