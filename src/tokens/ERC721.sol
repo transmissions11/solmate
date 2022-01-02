@@ -90,9 +90,9 @@ abstract contract ERC721 {
             balanceOf[to]++;
         }
 
-        delete getApproved[id];
-
         ownerOf[id] = to;
+
+        delete getApproved[id];
 
         emit Transfer(from, to, id);
     }
@@ -173,6 +173,8 @@ abstract contract ERC721 {
         }
 
         delete ownerOf[id];
+
+        delete getApproved[id];
 
         emit Transfer(owner, address(0), id);
     }
