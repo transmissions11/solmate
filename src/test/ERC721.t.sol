@@ -96,6 +96,19 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.getApproved(1337), address(0xBEEF));
     }
 
+    function testApproveBurn() public {
+        token.mint(address(this), 1337);
+
+        token.approve(address(0xBEEF), 1337);
+
+        token.burn(1337);
+
+        assertEq(token.totalSupply(), 0);
+        assertEq(token.balanceOf(address(this)), 0);
+        assertEq(token.ownerOf(1337), address(0));
+        assertEq(token.getApproved(1337), address(0));
+    }
+
     function testApproveAll() public {
         token.setApprovalForAll(address(0xBEEF), true);
 
@@ -392,6 +405,19 @@ contract ERC721Test is DSTestPlus {
         token.approve(to, id);
 
         assertEq(token.getApproved(id), to);
+    }
+
+    function testApproveBurn(address to, uint256 id) public {
+        token.mint(address(this), id);
+
+        token.approve(address(to), id);
+
+        token.burn(id);
+
+        assertEq(token.totalSupply(), 0);
+        assertEq(token.balanceOf(address(this)), 0);
+        assertEq(token.ownerOf(id), address(0));
+        assertEq(token.getApproved(id), address(0));
     }
 
     function testApproveAll(address to, bool approved) public {
