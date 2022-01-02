@@ -97,7 +97,6 @@ contract ERC20Vault is ERC20 {
     /// @param to The address to receive underlying tokens corresponding to the withdrawal.
     /// @param shareAmount The amount of shares to redeem for underlying tokens.
     function redeem(address to, uint256 shareAmount) external virtual returns (uint256 underlyingAmount) {
-        // We don't allow redeeming 0 to prevent emitting a useless event.
 
         // Determine the equivalent amount of underlying tokens.
         underlyingAmount = shareAmount.fmul(exchangeRate(), baseUnit);
