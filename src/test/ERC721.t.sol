@@ -74,7 +74,6 @@ contract ERC721Test is DSTestPlus {
     function testMint() public {
         token.mint(address(0xBEEF), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.balanceOf(address(0xBEEF)), 1);
         assertEq(token.ownerOf(1337), address(0xBEEF));
     }
@@ -83,7 +82,6 @@ contract ERC721Test is DSTestPlus {
         token.mint(address(0xBEEF), 1337);
         token.burn(1337);
 
-        assertEq(token.totalSupply(), 0);
         assertEq(token.balanceOf(address(0xBEEF)), 0);
         assertEq(token.ownerOf(1337), address(0));
     }
@@ -103,7 +101,6 @@ contract ERC721Test is DSTestPlus {
 
         token.burn(1337);
 
-        assertEq(token.totalSupply(), 0);
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.ownerOf(1337), address(0));
         assertEq(token.getApproved(1337), address(0));
@@ -124,7 +121,6 @@ contract ERC721Test is DSTestPlus {
 
         token.transferFrom(address(from), address(0xBEEF), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(1337), address(0));
         assertEq(token.ownerOf(1337), address(0xBEEF));
         assertEq(token.balanceOf(address(0xBEEF)), 1);
@@ -136,7 +132,6 @@ contract ERC721Test is DSTestPlus {
 
         token.transferFrom(address(this), address(0xBEEF), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(1337), address(0));
         assertEq(token.ownerOf(1337), address(0xBEEF));
         assertEq(token.balanceOf(address(0xBEEF)), 1);
@@ -152,7 +147,6 @@ contract ERC721Test is DSTestPlus {
 
         token.transferFrom(address(from), address(0xBEEF), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(1337), address(0));
         assertEq(token.ownerOf(1337), address(0xBEEF));
         assertEq(token.balanceOf(address(0xBEEF)), 1);
@@ -168,7 +162,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeTransferFrom(address(from), address(0xBEEF), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(1337), address(0));
         assertEq(token.ownerOf(1337), address(0xBEEF));
         assertEq(token.balanceOf(address(0xBEEF)), 1);
@@ -185,7 +178,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeTransferFrom(address(from), address(recipient), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(1337), address(0));
         assertEq(token.ownerOf(1337), address(recipient));
         assertEq(token.balanceOf(address(recipient)), 1);
@@ -207,7 +199,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeTransferFrom(address(from), address(recipient), 1337, "testing 123");
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(1337), address(0));
         assertEq(token.ownerOf(1337), address(recipient));
         assertEq(token.balanceOf(address(recipient)), 1);
@@ -222,7 +213,6 @@ contract ERC721Test is DSTestPlus {
     function testSafeMintToEOA() public {
         token.safeMint(address(0xBEEF), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.ownerOf(1337), address(address(0xBEEF)));
         assertEq(token.balanceOf(address(address(0xBEEF))), 1);
     }
@@ -232,7 +222,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeMint(address(to), 1337);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.ownerOf(1337), address(to));
         assertEq(token.balanceOf(address(to)), 1);
 
@@ -247,7 +236,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeMint(address(to), 1337, "testing 123");
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.ownerOf(1337), address(to));
         assertEq(token.balanceOf(address(to)), 1);
 
@@ -381,7 +369,6 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(to, id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.balanceOf(to), 1);
         assertEq(token.ownerOf(id), to);
     }
@@ -392,7 +379,6 @@ contract ERC721Test is DSTestPlus {
         token.mint(to, id);
         token.burn(id);
 
-        assertEq(token.totalSupply(), 0);
         assertEq(token.balanceOf(to), 0);
         assertEq(token.ownerOf(id), address(0));
     }
@@ -414,7 +400,6 @@ contract ERC721Test is DSTestPlus {
 
         token.burn(id);
 
-        assertEq(token.totalSupply(), 0);
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.ownerOf(id), address(0));
         assertEq(token.getApproved(id), address(0));
@@ -437,7 +422,6 @@ contract ERC721Test is DSTestPlus {
 
         token.transferFrom(address(from), to, id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(id), address(0));
         assertEq(token.ownerOf(id), to);
         assertEq(token.balanceOf(to), 1);
@@ -451,7 +435,6 @@ contract ERC721Test is DSTestPlus {
 
         token.transferFrom(address(this), to, id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(id), address(0));
         assertEq(token.ownerOf(id), to);
         assertEq(token.balanceOf(to), 1);
@@ -469,7 +452,6 @@ contract ERC721Test is DSTestPlus {
 
         token.transferFrom(address(from), to, id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(id), address(0));
         assertEq(token.ownerOf(id), to);
         assertEq(token.balanceOf(to), 1);
@@ -489,7 +471,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeTransferFrom(address(from), to, id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(id), address(0));
         assertEq(token.ownerOf(id), to);
         assertEq(token.balanceOf(to), 1);
@@ -506,7 +487,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeTransferFrom(address(from), address(recipient), id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(id), address(0));
         assertEq(token.ownerOf(id), address(recipient));
         assertEq(token.balanceOf(address(recipient)), 1);
@@ -528,7 +508,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeTransferFrom(address(from), address(recipient), id, data);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.getApproved(id), address(0));
         assertEq(token.ownerOf(id), address(recipient));
         assertEq(token.balanceOf(address(recipient)), 1);
@@ -547,7 +526,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeMint(to, id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.ownerOf(id), address(to));
         assertEq(token.balanceOf(address(to)), 1);
     }
@@ -557,7 +535,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeMint(address(to), id);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.ownerOf(id), address(to));
         assertEq(token.balanceOf(address(to)), 1);
 
@@ -572,7 +549,6 @@ contract ERC721Test is DSTestPlus {
 
         token.safeMint(address(to), id, data);
 
-        assertEq(token.totalSupply(), 1);
         assertEq(token.ownerOf(id), address(to));
         assertEq(token.balanceOf(address(to)), 1);
 
@@ -723,52 +699,5 @@ contract ERC721Test is DSTestPlus {
 
     function testFailSafeMintToERC721RecipientWithWrongReturnDataWithData(uint256 id, bytes calldata data) public {
         token.safeMint(address(new WrongReturnDataERC721Recipient()), id, data);
-    }
-}
-
-contract ERC721Invariants is DSTestPlus, DSInvariantTest {
-    BalanceSum balanceSum;
-    MockERC721 token;
-
-    function setUp() public {
-        token = new MockERC721("Token", "TKN");
-        balanceSum = new BalanceSum(token);
-
-        addTargetContract(address(balanceSum));
-    }
-
-    function invariantBalanceSum() public {
-        assertEq(token.totalSupply(), balanceSum.sum());
-    }
-}
-
-contract BalanceSum {
-    MockERC721 token;
-    uint256 public sum;
-
-    constructor(MockERC721 _token) {
-        token = _token;
-    }
-
-    function mint(address from, uint256 id) public {
-        token.mint(from, id);
-        sum++;
-    }
-
-    function burn(uint256 id) public {
-        token.burn(id);
-        sum--;
-    }
-
-    function approve(address to, uint256 amount) public {
-        token.approve(to, amount);
-    }
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 amount
-    ) public {
-        token.transferFrom(from, to, amount);
     }
 }

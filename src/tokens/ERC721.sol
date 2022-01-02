@@ -29,8 +29,6 @@ abstract contract ERC721 {
                             ERC721 STORAGE                        
     //////////////////////////////////////////////////////////////*/
 
-    uint256 public totalSupply;
-
     mapping(address => uint256) public balanceOf;
 
     mapping(uint256 => address) public ownerOf;
@@ -150,8 +148,6 @@ abstract contract ERC721 {
 
         // Counter overflow is incredibly unrealistic.
         unchecked {
-            totalSupply++;
-
             balanceOf[to]++;
         }
 
@@ -167,8 +163,6 @@ abstract contract ERC721 {
 
         // Ownership check above ensures no underflow.
         unchecked {
-            totalSupply--;
-
             balanceOf[owner]--;
         }
 
