@@ -35,7 +35,7 @@ abstract contract ERC721 {
 
     mapping(uint256 => address) public getApproved;
 
-    mapping(address => mapping(address => bool)) public isApprovedForAll;
+    mapping(address => mapping(address => bool)) private _isApprovedForAll;
 
     /*///////////////////////////////////////////////////////////////
                               CONSTRUCTOR
@@ -53,7 +53,7 @@ abstract contract ERC721 {
     function approve(address spender, uint256 id) public virtual {
         address owner = ownerOf[id];
 
-        require(msg.sender == owner || isApprovedForAll[owner][msg.sender], "NOT_AUTHORIZED");
+        require(msg.sender == owner || isApprovedForAll(owner, msg.sender), "NOT_AUTHORIZED");
 
         getApproved[id] = spender;
 
@@ -61,9 +61,13 @@ abstract contract ERC721 {
     }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
-        isApprovedForAll[msg.sender][operator] = approved;
+        _isApprovedForAll[msg.sender][operator] = approved;
 
         emit ApprovalForAll(msg.sender, operator, approved);
+    }
+
+    function isApprovedForAll(address owner, address operator) public view virtual returns (bool) {
+        return _isApprovedForAll[msg.sender][operator];
     }
 
     function transferFrom(
@@ -76,7 +80,7 @@ abstract contract ERC721 {
         require(to != address(0), "INVALID_RECIPIENT");
 
         require(
-            msg.sender == from || msg.sender == getApproved[id] || isApprovedForAll[from][msg.sender],
+            msg.sender == from || msg.sender == getApproved[id] || isApprovedForAll(from, msg.sender),
             "NOT_AUTHORIZED"
         );
 
