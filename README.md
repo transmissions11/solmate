@@ -25,6 +25,18 @@ utils
 ├─ SafeTransferLib — "Safe ERC20/ETH transfer lib that handles missing return values"
 ```
 
+## Safety
+
+This is **experimental software** and is provided on an "as is" and "as available" basis. 
+
+While each [major release has been audited](audits) be aware that these contracts are **not designed with user safety** in mind:
+
+- There are implicit invariants these contracts expect to hold.
+- **You can easily shoot yourself in the foot if you're not careful.**
+- You should thoroughly read each contract you plan to use top to bottom.
+
+We **do not give any warranties** and **will not be liable for any loss**, direct or indirect through continued use of this codebase.
+
 ## Installation
 
 To install with [**DappTools**](https://github.com/dapphub/dapptools):
