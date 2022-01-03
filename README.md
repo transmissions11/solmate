@@ -35,7 +35,7 @@ While each [major release has been audited](audits), these contracts are **not d
 - **You can easily shoot yourself in the foot if you're not careful.**
 - You should thoroughly read each contract you plan to use top to bottom.
 
-We **do not give any warranties** and **will not be liable for any loss**, incurred through any use of this codebase.
+We **do not give any warranties** and **will not be liable for any loss** incurred through any use of this codebase.
 
 ## Installation
 
