@@ -7,7 +7,7 @@ import {SafeTransferLib} from "../../utils/SafeTransferLib.sol";
 
 /// @title Yield Bearing Vault
 /// @author joeysantoro, Transmissions11 and JetJadeja
-contract ERC20Vault is ERC20 {
+contract ERC4626Vault is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
