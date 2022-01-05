@@ -51,7 +51,7 @@ contract ERC4626Vault is ERC20 {
     /// @param sender The address that deposited into the Vault.
     /// @param to The address that received deposit shares.
     /// @param underlyingAmount The amount of underlying tokens that were deposited.
-    event Deposit(address indexed sender, address indexed to, uint256 underlyingAmount);
+    event Deposit(address indexed from, address indexed to, uint256 underlyingAmount);
 
     /// @notice Emitted after a successful withdrawal.
     /// @param owner The address that withdrew from the Vault.
