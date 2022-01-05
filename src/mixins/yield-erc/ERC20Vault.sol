@@ -48,9 +48,10 @@ contract ERC4626Vault is ERC20 {
     //////////////////////////////////////////////////////////////*/
 
     /// @notice Emitted after a successful deposit.
-    /// @param user The address that deposited into the Vault.
+    /// @param sender The address that deposited into the Vault.
+    /// @param to The address that received deposit shares.
     /// @param underlyingAmount The amount of underlying tokens that were deposited.
-    event Deposit(address indexed user, uint256 underlyingAmount);
+    event Deposit(address indexed sender, address indexed to, uint256 underlyingAmount);
 
     /// @notice Emitted after a successful withdrawal.
     /// @param owner The address that withdrew from the Vault.
@@ -66,7 +67,7 @@ contract ERC4626Vault is ERC20 {
         // Determine the equivalent amount of shares and mint them.
         _mint(to, shares);
 
-        emit Deposit(to, underlyingAmount);
+        emit Deposit(msg.sender, to, underlyingAmount);
 
         // Transfer in underlying tokens from the user.
         // This will revert if the user does not have the amount specified.
