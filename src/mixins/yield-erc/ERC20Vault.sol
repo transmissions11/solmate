@@ -128,8 +128,8 @@ contract ERC4626Vault is ERC20 {
         return balanceOf[user].fmul(exchangeRate(), baseUnit);
     }
 
-    /// @notice Returns the amount of underlying tokens an share can be redeemed for.
-    /// @return The amount of underlying tokens an share can be redeemed for.
+    /// @notice Returns the amount of underlying tokens a share can be redeemed for.
+    /// @return The amount of underlying tokens a share can be redeemed for.
     function exchangeRate() public view returns (uint256) {
         // Get the total supply of shares.
         uint256 shareSupply = totalSupply;
