@@ -1371,9 +1371,10 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
     ) public {
         ERC1155User from = new ERC1155User(token);
 
+        if (ids.length == 0 && mintAmounts.length == 0 && transferAmounts.length == 0) revert();
+
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
-        require(minLength > 0);
-        
+
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);
         uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
@@ -1713,9 +1714,10 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         uint256[] memory burnAmounts,
         bytes memory mintData
     ) public {
+        if (ids.length == 0 && mintAmounts.length == 0 && burnAmounts.length == 0) revert();
+
         uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
-        require(minLength > 0);
-        
+
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);
         uint256[] memory normalizedBurnAmounts = new uint256[](minLength);
