@@ -105,14 +105,8 @@ abstract contract ERC721 {
         if(to.code.length != 0){
             try ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") returns (bytes4 retval) {
                 require(retval == ERC721TokenReceiver.onERC721Received.selector, "UNSAFE_RECIPIENT");
-            } catch (bytes memory reason) {
-                if (reason.length == 0) {
-                    revert("UNSAFE_RECIPIENT");
-                } else {
-                    assembly {
-                        revert(add(32, reason), mload(reason))
-                    }
-                }
+            } catch {
+                revert("UNSAFE_RECIPIENT");
             }
         }
     }
@@ -128,14 +122,8 @@ abstract contract ERC721 {
         if(to.code.length != 0){
             try ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) returns (bytes4 retval) {
                 require(retval == ERC721TokenReceiver.onERC721Received.selector, "UNSAFE_RECIPIENT");
-            } catch (bytes memory reason) {
-                if (reason.length == 0) {
-                    revert("UNSAFE_RECIPIENT");
-                } else {
-                    assembly {
-                        revert(add(32, reason), mload(reason))
-                    }
-                }
+            } catch {
+                revert("UNSAFE_RECIPIENT");
             }
         }
     }
