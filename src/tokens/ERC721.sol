@@ -102,12 +102,7 @@ abstract contract ERC721 {
     ) public virtual {
         transferFrom(from, to, id);
 
-        require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
-            "UNSAFE_RECIPIENT"
-        );
+        require(to.code.length == 0 || _isValidRecipient(from, to, id, ""), "UNSAFE_RECIPIENT");
     }
 
     function safeTransferFrom(
@@ -118,12 +113,27 @@ abstract contract ERC721 {
     ) public virtual {
         transferFrom(from, to, id);
 
-        require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) ==
-                ERC721TokenReceiver.onERC721Received.selector,
-            "UNSAFE_RECIPIENT"
-        );
+        require(to.code.length == 0 || _isValidRecipient(from, to, id, data), "UNSAFE_RECIPIENT");
+    }
+
+    function _isValidRecipient(
+        address from,
+        address to,
+        uint256 id,
+        bytes memory data
+    )
+    private returns(bool) {
+        try ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) returns (bytes4 retval) {
+            return retval == ERC721TokenReceiver.onERC721Received.selector;
+        } catch (bytes memory reason) {
+            if (reason.length == 0) {
+                return false;
+            } else {
+                assembly {
+                    revert(add(32, reason), mload(reason))
+                }
+            }
+        }
     }
 
     /*///////////////////////////////////////////////////////////////
