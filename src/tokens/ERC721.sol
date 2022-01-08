@@ -102,7 +102,19 @@ abstract contract ERC721 {
     ) public virtual {
         transferFrom(from, to, id);
 
-        require(to.code.length == 0 || _isValidRecipient(from, to, id, ""), "UNSAFE_RECIPIENT");
+        if(to.code.length != 0){
+            try ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") returns (bytes4 retval) {
+                require(retval == ERC721TokenReceiver.onERC721Received.selector, "UNSAFE_RECIPIENT");
+            } catch (bytes memory reason) {
+                if (reason.length == 0) {
+                    revert("UNSAFE_RECIPIENT");
+                } else {
+                    assembly {
+                        revert(add(32, reason), mload(reason))
+                    }
+                }
+            }
+        }
     }
 
     function safeTransferFrom(
@@ -113,24 +125,16 @@ abstract contract ERC721 {
     ) public virtual {
         transferFrom(from, to, id);
 
-        require(to.code.length == 0 || _isValidRecipient(from, to, id, data), "UNSAFE_RECIPIENT");
-    }
-
-    function _isValidRecipient(
-        address from,
-        address to,
-        uint256 id,
-        bytes memory data
-    )
-    private returns(bool) {
-        try ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) returns (bytes4 retval) {
-            return retval == ERC721TokenReceiver.onERC721Received.selector;
-        } catch (bytes memory reason) {
-            if (reason.length == 0) {
-                return false;
-            } else {
-                assembly {
-                    revert(add(32, reason), mload(reason))
+        if(to.code.length != 0){
+            try ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) returns (bytes4 retval) {
+                require(retval == ERC721TokenReceiver.onERC721Received.selector, "UNSAFE_RECIPIENT");
+            } catch (bytes memory reason) {
+                if (reason.length == 0) {
+                    revert("UNSAFE_RECIPIENT");
+                } else {
+                    assembly {
+                        revert(add(32, reason), mload(reason))
+                    }
                 }
             }
         }
