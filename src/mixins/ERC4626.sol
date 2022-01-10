@@ -28,7 +28,7 @@ abstract contract ERC4626 is ERC20 {
 
     /// @notice The base unit of the underlying token and hence vault.
     /// @dev Equal to 10 ** decimals. Used for fixed point arithmetic.
-    uint256 public immutable baseUnit;
+    uint256 internal immutable baseUnit;
 
     /// @notice Creates a new vault that accepts a specific underlying token.
     /// @param _underlying The ERC20 compliant token the vault should accept.
@@ -77,6 +77,30 @@ abstract contract ERC4626 is ERC20 {
         beforeWithdraw(underlyingAmount);
 
         underlying.safeTransfer(to, underlyingAmount);
+    }
+
+    function withdrawFrom(
+        address from,
+        address to,
+        uint256 underlyingAmount
+    ) external virtual returns (uint256 shareAmount) {
+        if (allowance[from][msg.sender] != type(uint256).max) {
+            allowance[from][msg.sender] -= shareAmount;
+        }
+
+        redeem(to, shareAmount = calculateShares(underlyingAmount));
+    }
+
+    function redeemFrom(
+        address from,
+        address to,
+        uint256 shareAmount
+    ) external virtual returns (uint256 underlyingAmount) {
+        if (allowance[from][msg.sender] != type(uint256).max) {
+            allowance[from][msg.sender] -= shareAmount;
+        }
+
+        withdraw(to, underlyingAmount = calculateUnderlying(shareAmount));
     }
 
     function beforeWithdraw(uint256 underlyingAmount) internal virtual {}
