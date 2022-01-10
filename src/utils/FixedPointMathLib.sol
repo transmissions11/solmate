@@ -36,6 +36,33 @@ library FixedPointMathLib {
         }
     }
 
+    function fmulUp(
+        uint256 x,
+        uint256 y,
+        uint256 baseUnit
+    ) internal pure returns (uint256 z) {
+        assembly {
+            // Store x * y in z for now.
+            z := mul(x, y)
+
+            // Equivalent to require(x == 0 || (x * y) / x == y)
+            if iszero(or(iszero(x), eq(div(z, x), y))) {
+                revert(0, 0)
+            }
+
+            // Compute z + baseUnit - 1.
+            let zUp := add(z, sub(baseUnit, 1))
+
+            // If the addition overflowed, revert.
+            if lt(zUp, z) {
+                revert(0, 0)
+            }
+
+            // If baseUnit is zero this will return zero instead of reverting.
+            z := div(z, baseUnit)
+        }
+    }
+
     function fdiv(
         uint256 x,
         uint256 y,
