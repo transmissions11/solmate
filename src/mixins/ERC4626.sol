@@ -83,7 +83,7 @@ abstract contract ERC4626 is ERC20 {
         address from,
         address to,
         uint256 underlyingAmount
-    ) external virtual returns (uint256 shareAmount) {
+    ) public virtual returns (uint256 shareAmount) {
         if (allowance[from][msg.sender] != type(uint256).max) {
             allowance[from][msg.sender] -= shareAmount;
         }
@@ -95,7 +95,7 @@ abstract contract ERC4626 is ERC20 {
         address from,
         address to,
         uint256 shareAmount
-    ) external virtual returns (uint256 underlyingAmount) {
+    ) public virtual returns (uint256 underlyingAmount) {
         if (allowance[from][msg.sender] != type(uint256).max) {
             allowance[from][msg.sender] -= shareAmount;
         }
@@ -113,7 +113,7 @@ abstract contract ERC4626 is ERC20 {
 
     function totalHoldings() public view virtual returns (uint256);
 
-    function balanceOfUnderlying(address user) external view virtual returns (uint256) {
+    function balanceOfUnderlying(address user) public view virtual returns (uint256) {
         return calculateUnderlying(balanceOf[user]);
     }
 
