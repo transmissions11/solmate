@@ -84,11 +84,13 @@ abstract contract ERC4626 is ERC20 {
         address to,
         uint256 underlyingAmount
     ) public virtual returns (uint256 shareAmount) {
+        shareAmount = calculateShares(underlyingAmount);
+
         if (allowance[from][msg.sender] != type(uint256).max) {
             allowance[from][msg.sender] -= shareAmount;
         }
 
-        redeem(to, shareAmount = calculateShares(underlyingAmount));
+        redeem(to, shareAmount);
     }
 
     function redeemFrom(
