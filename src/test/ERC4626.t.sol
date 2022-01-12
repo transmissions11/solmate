@@ -55,4 +55,66 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.balanceOfUnderlying(address(this)), 0);
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
+
+    function testAtomicDepositRedeem() public {
+        underlying.mint(address(this), 1e18);
+        underlying.approve(address(vault), 1e18);
+
+        uint256 preDepositBal = underlying.balanceOf(address(this));
+
+        vault.deposit(address(this), 1e18);
+
+        assertEq(vault.totalHoldings(), 1e18);
+        assertEq(vault.balanceOf(address(this)), 1e18);
+        assertEq(vault.balanceOfUnderlying(address(this)), 1e18);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - 1e18);
+
+        vault.redeem(address(this), 1e18);
+
+        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.balanceOf(address(this)), 0);
+        assertEq(vault.balanceOfUnderlying(address(this)), 0);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                 DEPOSIT/WITHDRAWAL SANITY CHECK TESTS
+    //////////////////////////////////////////////////////////////*/
+
+    function testFailDepositWithNotEnoughApproval() public {
+        underlying.mint(address(this), 0.5e18);
+        underlying.approve(address(vault), 0.5e18);
+
+        vault.deposit(address(this), 1e18);
+    }
+
+    function testFailWithdrawWithNotEnoughBalance() public {
+        underlying.mint(address(this), 0.5e18);
+        underlying.approve(address(vault), 0.5e18);
+
+        vault.deposit(address(this), 0.5e18);
+
+        vault.withdraw(address(this), 1e18);
+    }
+
+    function testFailRedeemWithNotEnoughBalance() public {
+        underlying.mint(address(this), 0.5e18);
+        underlying.approve(address(vault), 0.5e18);
+
+        vault.deposit(address(this), 0.5e18);
+
+        vault.redeem(address(this), 1e18);
+    }
+
+    function testFailRedeemWithNoBalance() public {
+        vault.redeem(address(this), 1e18);
+    }
+
+    function testFailWithdrawWithNoBalance() public {
+        vault.withdraw(address(this), 1e18);
+    }
+
+    function testFailDepositWithNoApproval() public {
+        vault.deposit(address(this), 1e18);
+    }
 }
