@@ -8,8 +8,6 @@ import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
-// dapp test -m ':ERC4626Test\.'
-
 contract ERC4626Test is DSTestPlus {
     MockERC4626 vault;
     MockERC20 underlying;
@@ -75,6 +73,23 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.balanceOf(address(this)), 0);
         assertEq(vault.balanceOfUnderlying(address(this)), 0);
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
+    }
+
+    function testAtomicDepositWithdrawFrom() public {
+        // ERC4626User usr = new ERC4626User(vault, underlying);
+        // underlying.mint(address(usr), 1e18);
+        // usr.approve(address(this), 1e18);
+        // uint256 preDepositBal = underlying.balanceOf(address(this));
+        // vault.deposit(address(usr), 1e18);
+        // assertEq(vault.totalHoldings(), 1e18);
+        // assertEq(vault.balanceOf(address(this)), 1e18);
+        // assertEq(vault.balanceOfUnderlying(address(this)), 1e18);
+        // assertEq(underlying.balanceOf(address(this)), preDepositBal - 1e18);
+        // vault.withdrawFrom(address(usr), address(this), 1e18);
+    }
+
+    function testAtomicDepositRedeemFrom() public {
+        // ERC4626User usr = new ERC4626User(vault, underlying);
     }
 
     /*///////////////////////////////////////////////////////////////
