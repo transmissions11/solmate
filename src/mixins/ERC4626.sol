@@ -114,6 +114,8 @@ abstract contract ERC4626 is ERC20 {
     function totalHoldings() public view virtual returns (uint256);
 
     function balanceOfUnderlying(address user) public view virtual returns (uint256) {
+        if (balanceOf[user] == 0) return 0;
+
         return calculateUnderlying(balanceOf[user]);
     }
 
