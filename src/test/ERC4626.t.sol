@@ -30,10 +30,10 @@ contract ERC4626Test is DSTestPlus {
     }
 
     function testDeposit() public {
-        ERC4626User usr = new ERC4626User(vault);
+        ERC4626User usr = new ERC4626User(vault, underlying);
     }
 
     function testWithdraw() public {
-        ERC4626User usr = new ERC4626User(vault);
+        ERC4626User usr = new ERC4626User(vault, underlying);
     }
 }
