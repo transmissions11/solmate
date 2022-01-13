@@ -8,10 +8,10 @@ import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
-// NOTE: dapp test -m ':ERC4626Test\.'
-// NOTE: dapp test -m ':ERC4626Test\.testMultipleAtomicDepositWithdraw'
-
 // TODO: verify hooks are being called
+// TODO: implement fuzzing for tests where applicable
+// TODO: think of if there are any invariants that must hold true
+
 contract ERC4626Test is DSTestPlus {
     MockERC4626 vault;
     MockERC20 underlying;
@@ -26,6 +26,14 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.symbol(), "vwTKN");
         assertEq(vault.decimals(), 18);
     }
+
+    // TODO: verify if this implementation is correct or giving us false trust
+    // function invariantUnderlyingSharesRatio() public {
+    //     uint256 underlyingBalance = vault.calculateUnderlying(underlying.balanceOf(address(this)));
+    //     uint256 sharesBalance = vault.calculateShares(underlying.balanceOf(address(this)));
+    //     assertEq(vault.calculateUnderlying(sharesBalance), underlyingBalance);
+    //     assertEq(vault.calculateShares(underlyingBalance), sharesBalance);
+    // }
 
     function testMetaData() public {
         assertEq(vault.name(), "Mock Token Vault");
@@ -93,6 +101,7 @@ contract ERC4626Test is DSTestPlus {
         ERC4626User alice = new ERC4626User(vault, underlying);
         ERC4626User bob = new ERC4626User(vault, underlying);
 
+        // TODO: make amount fuzzable, currently appears to overflow
         uint256 aliceUnderlyingAmount = 2e18;
         uint256 bobUnderlyingAmount = 3e18;
 
