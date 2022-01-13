@@ -67,10 +67,10 @@ contract ERC4626Test is DSTestPlus {
         underlying.approve(address(vault), 10e18);
 
         uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-        emit log_named_uint("underlyingAmount ", underlyingAmount);
+        emit log_named_uint("underlyingAmount ", underlyingAmount); // -> returns 0?
 
         assertEq(vault.totalHoldings(), underlyingAmount);
-        emit log_named_uint("totalHoldings ", vault.totalHoldings());
+        emit log_named_uint("totalHoldings ", vault.totalHoldings()); // -> returns 0?
 
         // TODO: implement withdraw
     }
