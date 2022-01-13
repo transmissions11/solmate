@@ -59,48 +59,44 @@ abstract contract ERC4626 is ERC20 {
         afterDeposit(underlyingAmount);
     }
 
-    function withdraw(address to, uint256 underlyingAmount) public virtual returns (uint256 shares) {
-        _burn(msg.sender, shares = calculateShares(underlyingAmount));
+    function mint(address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
+        _mint(to, shareAmount);
 
-        emit Withdraw(msg.sender, to, underlyingAmount);
+        emit Deposit(msg.sender, to, underlyingAmount = calculateUnderlying(shareAmount));
+
+        underlying.safeTransferFrom(msg.sender, address(this), underlyingAmount);
+
+        afterDeposit(underlyingAmount);
+    }
+
+    function withdraw(address from, address to, uint256 underlyingAmount) public virtual returns (uint256 shares) {
+        shares = calculateShares(underlyingAmount);
+
+        if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
+            allowance[from][msg.sender] -= shares;
+        }
+        
+        _burn(from, shares);
+
+        emit Withdraw(from, to, underlyingAmount);
 
         beforeWithdraw(underlyingAmount);
 
         underlying.safeTransfer(to, underlyingAmount);
     }
 
-    function redeem(address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
-        _burn(msg.sender, shareAmount);
+    function redeem(address from, address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
+        if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
+            allowance[from][msg.sender] -= shareAmount;
+        }
 
-        emit Withdraw(msg.sender, to, underlyingAmount = calculateUnderlying(shareAmount));
+        _burn(from, shareAmount);
+
+        emit Withdraw(from, to, underlyingAmount = calculateUnderlying(shareAmount));
 
         beforeWithdraw(underlyingAmount);
 
         underlying.safeTransfer(to, underlyingAmount);
-    }
-
-    function withdrawFrom(
-        address from,
-        address to,
-        uint256 underlyingAmount
-    ) public virtual returns (uint256 shareAmount) {
-        if (allowance[from][msg.sender] != type(uint256).max) {
-            allowance[from][msg.sender] -= shareAmount;
-        }
-
-        redeem(to, shareAmount = calculateShares(underlyingAmount));
-    }
-
-    function redeemFrom(
-        address from,
-        address to,
-        uint256 shareAmount
-    ) public virtual returns (uint256 underlyingAmount) {
-        if (allowance[from][msg.sender] != type(uint256).max) {
-            allowance[from][msg.sender] -= shareAmount;
-        }
-
-        withdraw(to, underlyingAmount = calculateUnderlying(shareAmount));
     }
 
     function beforeWithdraw(uint256 underlyingAmount) internal virtual {}
@@ -120,16 +116,19 @@ abstract contract ERC4626 is ERC20 {
     function calculateShares(uint256 underlyingAmount) public view virtual returns (uint256) {
         uint256 shareSupply = totalSupply;
 
-        if (shareSupply == 0) return baseUnit;
+        if (shareSupply == 0) return underlyingAmount;
 
-        return underlyingAmount.fdiv(totalHoldings().fdiv(shareSupply, baseUnit), baseUnit);
+        uint256 exchangeRate = totalHoldings().fdiv(shareSupply, baseUnit);
+
+        return underlyingAmount.fdiv(exchangeRate, baseUnit);
     }
 
     function calculateUnderlying(uint256 shareAmount) public view virtual returns (uint256) {
         uint256 shareSupply = totalSupply;
+        if (shareSupply == 0) return shareAmount;
 
-        if (shareSupply == 0) return baseUnit;
+        uint256 exchangeRate = totalHoldings().fdiv(shareSupply, baseUnit);
 
-        return shareAmount.fmulUp(totalHoldings().fdiv(shareSupply, baseUnit), baseUnit);
+        return shareAmount.fmulUp(exchangeRate, baseUnit);
     }
 }
