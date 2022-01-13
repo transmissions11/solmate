@@ -63,11 +63,16 @@ contract ERC4626Test is DSTestPlus {
         // TODO: make amount fuzzable, currently appears to overflow
         uint256 shareAmount = 2e18;
 
-        underlying.mint(address(this), shareAmount);
-        underlying.approve(address(vault), shareAmount);
+        underlying.mint(address(this), 10e18);
+        underlying.approve(address(vault), 10e18);
 
         uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-        emit log_uint(underlyingAmount); // -> returns 0
+        emit log_named_uint("underlyingAmount ", underlyingAmount);
+
+        assertEq(vault.totalHoldings(), underlyingAmount);
+        emit log_named_uint("totalHoldings ", vault.totalHoldings());
+
+        // TODO: implement withdraw
     }
 
     function testMultipleAtomicDepositWithdraw() public {
