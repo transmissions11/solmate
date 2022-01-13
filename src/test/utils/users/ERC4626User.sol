@@ -16,4 +16,12 @@ contract ERC4626User is ERC20User {
     function deposit(address to, uint256 underlyingAmount) public virtual returns (uint256 shares) {
         return vault.deposit(to, underlyingAmount);
     }
+
+    function withdraw(
+        address from,
+        address to,
+        uint256 underlyingAmount
+    ) public virtual returns (uint256 shares) {
+        return vault.withdraw(from, to, underlyingAmount);
+    }
 }

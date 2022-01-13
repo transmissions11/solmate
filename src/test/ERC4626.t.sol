@@ -34,7 +34,7 @@ contract ERC4626Test is DSTestPlus {
     //////////////////////////////////////////////////////////////*/
 
     function testSingleAtomicDepositWithdraw() public {
-        // uint256 amount = fuzzAmount / 10**underlying.decimals();
+        // TODO: make amount fuzzable, currently appears to overflow
         uint256 amount = 2e18;
 
         underlying.mint(address(this), amount);
@@ -94,31 +94,45 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.balanceOf(address(bob)), bobAmount);
         assertEq(vault.balanceOfUnderlying(address(bob)), bobAmount);
         assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal - bobAmount);
+
+        alice.withdraw(address(alice), address(alice), aliceAmount);
+
+        assertEq(vault.totalHoldings(), bobAmount);
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.balanceOfUnderlying(address(alice)), 0);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
+
+        bob.withdraw(address(bob), address(bob), bobAmount);
+
+        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.balanceOf(address(bob)), 0);
+        assertEq(vault.balanceOfUnderlying(address(bob)), 0);
+        assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal);
     }
 
-    // function testSingleAtomicDepositRedeem() public {
-    //     // uint256 amount = fuzzAmount / 10**underlying.decimals();
-    //     uint256 amount = 2e18;
+    function testSingleAtomicDepositRedeem() public {
+        // TODO: make amount fuzzable, currently appears to overflow
+        uint256 amount = 2e18;
 
-    //     underlying.mint(address(this), amount);
-    //     underlying.approve(address(vault), amount);
+        underlying.mint(address(this), amount);
+        underlying.approve(address(vault), amount);
 
-    //     uint256 preDepositBal = underlying.balanceOf(address(this));
+        uint256 preDepositBal = underlying.balanceOf(address(this));
 
-    //     vault.deposit(address(this), amount);
+        vault.deposit(address(this), amount);
 
-    //     assertEq(vault.totalHoldings(), amount);
-    //     assertEq(vault.balanceOf(address(this)), amount);
-    //     assertEq(vault.balanceOfUnderlying(address(this)), amount);
-    //     assertEq(underlying.balanceOf(address(this)), preDepositBal - amount);
+        assertEq(vault.totalHoldings(), amount);
+        assertEq(vault.balanceOf(address(this)), amount);
+        assertEq(vault.balanceOfUnderlying(address(this)), amount);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - amount);
 
-    //     vault.redeem(address(this), address(this), amount);
+        vault.redeem(address(this), address(this), amount);
 
-    //     assertEq(vault.totalHoldings(), 0);
-    //     assertEq(vault.balanceOf(address(this)), 0);
-    //     assertEq(vault.balanceOfUnderlying(address(this)), 0);
-    //     assertEq(underlying.balanceOf(address(this)), preDepositBal);
-    // }
+        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.balanceOf(address(this)), 0);
+        assertEq(vault.balanceOfUnderlying(address(this)), 0);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal);
+    }
 
     /*///////////////////////////////////////////////////////////////
                  DEPOSIT/WITHDRAWAL SANITY CHECK TESTS
