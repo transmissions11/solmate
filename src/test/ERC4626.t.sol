@@ -62,17 +62,18 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
-    // function testSingleAtomicMintWithdraw() public {
-    //     // TODO: make amount fuzzable, currently appears to overflow
-    //     uint256 shareAmount = 2e18; // shareAmount
+    function testSingleAtomicMintWithdraw() public {
+        // TODO: make amount fuzzable, currently appears to overflow
+        uint256 shareAmount = 2e18; // shareAmount
 
-    //     underlying.mint(address(this), shareAmount);
-    //     underlying.approve(address(vault), shareAmount);
+        underlying.mint(address(this), shareAmount);
+        underlying.approve(address(vault), shareAmount);
 
-    //     // // Mint requires the returned amount
-    //     uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-    //     assertEq(vault.totalHoldings(), underlyingAmount);
-    // }
+        // // Mint requires the returned amount
+        uint256 underlyingAmount = vault.mint(address(this), shareAmount);
+        assertEq(underlyingAmount, shareAmount);
+        assertEq(vault.totalHoldings(), underlyingAmount);
+    }
 
     function testMultipleAtomicDepositWithdraw() public {
         ERC4626User alice = new ERC4626User(vault, underlying);
