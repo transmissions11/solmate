@@ -60,9 +60,9 @@ abstract contract ERC4626 is ERC20 {
     }
 
     function mint(address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
-        _mint(to, underlyingAmount = calculateUnderlying(shareAmount));
+        _mint(to, shareAmount);
 
-        emit Deposit(msg.sender, to, underlyingAmount);
+        emit Deposit(msg.sender, to, underlyingAmount = calculateUnderlying(shareAmount));
 
         underlying.safeTransferFrom(msg.sender, address(this), underlyingAmount);
 

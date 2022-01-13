@@ -2,7 +2,6 @@
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
-import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
@@ -10,11 +9,12 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
 // TODO: verify hooks are being called
 // TODO: implement fuzzing for tests where applicable
-// TODO: think of if there are any invariants that must hold true (underlying / shares?)
+// TODO: think of if there are any invariants and how you would implement them
+// TODO: fix mint implementation
 
 contract ERC4626Test is DSTestPlus {
-    MockERC4626 vault;
     MockERC20 underlying;
+    MockERC4626 vault;
 
     function setUp() public {
         underlying = new MockERC20("Mock Token", "TKN", 18);
@@ -27,23 +27,11 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
-    // TODO: verify if this implementation is correct or giving us false trust
-    // function invariantUnderlyingSharesRatio() public {
-    //     uint256 underlyingBalance = vault.calculateUnderlying(underlying.balanceOf(address(this)));
-    //     uint256 sharesBalance = vault.calculateShares(underlying.balanceOf(address(this)));
-    //     assertEq(vault.calculateUnderlying(sharesBalance), underlyingBalance);
-    //     assertEq(vault.calculateShares(underlyingBalance), sharesBalance);
-    // }
-
     function testMetaData() public {
         assertEq(vault.name(), "Mock Token Vault");
         assertEq(vault.symbol(), "vwTKN");
         assertEq(vault.decimals(), 18);
     }
-
-    /*///////////////////////////////////////////////////////////////
-                        DEPOSIT/WITHDRAWAL TESTS
-    //////////////////////////////////////////////////////////////*/
 
     function testSingleAtomicDepositWithdraw() public {
         // TODO: make amount fuzzable, currently appears to overflow
@@ -178,9 +166,11 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
-    /*///////////////////////////////////////////////////////////////
-                 DEPOSIT/WITHDRAWAL SANITY CHECK TESTS
-    //////////////////////////////////////////////////////////////*/
+    function testUnderlyingSharesRatio(uint256 underlyingBalance) public {
+        uint256 sharesBalance = vault.calculateShares(underlyingBalance);
+        assertEq(vault.calculateUnderlying(sharesBalance), underlyingBalance);
+        assertEq(vault.calculateShares(underlyingBalance), sharesBalance);
+    }
 
     function testFailDepositWithNotEnoughApproval() public {
         underlying.mint(address(this), 0.5e18);
