@@ -10,7 +10,7 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
 // TODO: verify hooks are being called
 // TODO: implement fuzzing for tests where applicable
-// TODO: think of if there are any invariants that must hold true
+// TODO: think of if there are any invariants that must hold true (underlying / shares?)
 
 contract ERC4626Test is DSTestPlus {
     MockERC4626 vault;
