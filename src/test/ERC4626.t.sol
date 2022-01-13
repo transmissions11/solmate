@@ -8,6 +8,10 @@ import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
+// NOTE: dapp test -m ':ERC4626Test\.'
+// NOTE: dapp test -m ':ERC4626Test\.testMultipleAtomicDepositWithdraw'
+
+// TODO: verify hooks are being called
 contract ERC4626Test is DSTestPlus {
     MockERC4626 vault;
     MockERC20 underlying;
@@ -35,14 +39,15 @@ contract ERC4626Test is DSTestPlus {
 
     function testSingleAtomicDepositWithdraw() public {
         // TODO: make amount fuzzable, currently appears to overflow
-        uint256 amount = 2e18;
+        uint256 amount = 2e18; // underlyingAmount
 
         underlying.mint(address(this), amount);
         underlying.approve(address(vault), amount);
 
         uint256 preDepositBal = underlying.balanceOf(address(this));
 
-        vault.deposit(address(this), amount);
+        uint256 shares = vault.deposit(address(this), amount);
+        assertEq(shares, amount);
 
         assertEq(vault.totalHoldings(), amount);
         assertEq(vault.balanceOf(address(this)), amount);
@@ -57,7 +62,18 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
-    // dapp test -m ':ERC4626Test\.testMultipleAtomicDepositWithdraw' --verbosity 3
+    // function testSingleAtomicMintWithdraw() public {
+    //     // TODO: make amount fuzzable, currently appears to overflow
+    //     uint256 shareAmount = 2e18; // shareAmount
+
+    //     underlying.mint(address(this), shareAmount);
+    //     underlying.approve(address(vault), shareAmount);
+
+    //     // // Mint requires the returned amount
+    //     uint256 underlyingAmount = vault.mint(address(this), shareAmount);
+    //     assertEq(vault.totalHoldings(), underlyingAmount);
+    // }
+
     function testMultipleAtomicDepositWithdraw() public {
         ERC4626User alice = new ERC4626User(vault, underlying);
         ERC4626User bob = new ERC4626User(vault, underlying);
@@ -119,7 +135,8 @@ contract ERC4626Test is DSTestPlus {
 
         uint256 preDepositBal = underlying.balanceOf(address(this));
 
-        vault.deposit(address(this), amount);
+        uint256 underlyingAmount = vault.deposit(address(this), amount);
+        assertEq(underlyingAmount, amount);
 
         assertEq(vault.totalHoldings(), amount);
         assertEq(vault.balanceOf(address(this)), amount);
