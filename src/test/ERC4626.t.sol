@@ -39,22 +39,23 @@ contract ERC4626Test is DSTestPlus {
 
     function testSingleAtomicDepositWithdraw() public {
         // TODO: make amount fuzzable, currently appears to overflow
-        uint256 amount = 2e18; // underlyingAmount
+        uint256 underlyingAmount = 2e18; // underlyingAmount
 
-        underlying.mint(address(this), amount);
-        underlying.approve(address(vault), amount);
+        underlying.mint(address(this), underlyingAmount);
+        underlying.approve(address(vault), underlyingAmount);
 
         uint256 preDepositBal = underlying.balanceOf(address(this));
 
-        uint256 shares = vault.deposit(address(this), amount);
-        assertEq(shares, amount);
+        uint256 shareAmount = vault.deposit(address(this), underlyingAmount);
+        assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
+        assertEq(vault.calculateShares(underlyingAmount), shareAmount);
 
-        assertEq(vault.totalHoldings(), amount);
-        assertEq(vault.balanceOf(address(this)), amount);
-        assertEq(vault.balanceOfUnderlying(address(this)), amount);
-        assertEq(underlying.balanceOf(address(this)), preDepositBal - amount);
+        assertEq(vault.totalHoldings(), underlyingAmount);
+        assertEq(vault.balanceOf(address(this)), underlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(this)), underlyingAmount);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - underlyingAmount);
 
-        vault.withdraw(address(this), address(this), amount);
+        vault.withdraw(address(this), address(this), underlyingAmount);
 
         assertEq(vault.totalHoldings(), 0);
         assertEq(vault.balanceOf(address(this)), 0);
@@ -70,10 +71,10 @@ contract ERC4626Test is DSTestPlus {
         underlying.approve(address(vault), shareAmount);
 
         uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-        assertEq(vault.totalHoldings(), underlyingAmount);
         assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
         assertEq(vault.calculateShares(underlyingAmount), shareAmount);
 
+        assertEq(vault.totalHoldings(), underlyingAmount);
         // TODO: add calculateUnderlying / calculateShares checks to other test cases
     }
 
@@ -81,47 +82,49 @@ contract ERC4626Test is DSTestPlus {
         ERC4626User alice = new ERC4626User(vault, underlying);
         ERC4626User bob = new ERC4626User(vault, underlying);
 
-        uint256 aliceAmount = 2e18;
-        uint256 bobAmount = 3e18;
+        uint256 aliceUnderlyingAmount = 2e18;
+        uint256 bobUnderlyingAmount = 3e18;
 
-        underlying.mint(address(alice), aliceAmount);
-        alice.approve(address(vault), aliceAmount);
+        underlying.mint(address(alice), aliceUnderlyingAmount);
+        alice.approve(address(vault), aliceUnderlyingAmount);
 
-        underlying.mint(address(bob), bobAmount);
-        bob.approve(address(vault), bobAmount);
+        underlying.mint(address(bob), bobUnderlyingAmount);
+        bob.approve(address(vault), bobUnderlyingAmount);
 
         uint256 alicePreDepositBal = underlying.balanceOf(address(alice));
         uint256 bobPreDepositBal = underlying.balanceOf(address(bob));
 
-        assertEq(alicePreDepositBal, aliceAmount);
-        assertEq(bobPreDepositBal, bobAmount);
-        assertEq(underlying.allowance(address(alice), address(vault)), aliceAmount);
-        assertEq(underlying.allowance(address(bob), address(vault)), bobAmount);
+        assertEq(alicePreDepositBal, aliceUnderlyingAmount);
+        assertEq(bobPreDepositBal, bobUnderlyingAmount);
+        assertEq(underlying.allowance(address(alice), address(vault)), aliceUnderlyingAmount);
+        assertEq(underlying.allowance(address(bob), address(vault)), bobUnderlyingAmount);
 
-        uint256 aliceShares = alice.deposit(address(alice), aliceAmount);
-        assertEq(aliceShares, aliceAmount);
+        uint256 aliceShareAmount = alice.deposit(address(alice), aliceUnderlyingAmount);
+        assertEq(vault.calculateUnderlying(aliceShareAmount), aliceUnderlyingAmount);
+        assertEq(vault.calculateShares(aliceUnderlyingAmount), aliceShareAmount);
 
-        assertEq(vault.totalHoldings(), aliceAmount);
-        assertEq(vault.balanceOf(address(alice)), aliceAmount);
-        assertEq(vault.balanceOfUnderlying(address(alice)), aliceAmount);
-        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceAmount);
+        assertEq(vault.totalHoldings(), aliceUnderlyingAmount);
+        assertEq(vault.balanceOf(address(alice)), aliceUnderlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
-        uint256 bobShares = bob.deposit(address(bob), bobAmount);
-        assertEq(bobShares, bobAmount);
+        uint256 bobShareAmount = bob.deposit(address(bob), bobUnderlyingAmount);
+        assertEq(vault.calculateUnderlying(bobShareAmount), bobUnderlyingAmount);
+        assertEq(vault.calculateShares(bobUnderlyingAmount), bobShareAmount);
 
-        assertEq(vault.totalHoldings(), aliceAmount + bobAmount);
-        assertEq(vault.balanceOf(address(bob)), bobAmount);
-        assertEq(vault.balanceOfUnderlying(address(bob)), bobAmount);
-        assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal - bobAmount);
+        assertEq(vault.totalHoldings(), aliceUnderlyingAmount + bobUnderlyingAmount);
+        assertEq(vault.balanceOf(address(bob)), bobUnderlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(bob)), bobUnderlyingAmount);
+        assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal - bobUnderlyingAmount);
 
-        alice.withdraw(address(alice), address(alice), aliceAmount);
+        alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
 
-        assertEq(vault.totalHoldings(), bobAmount);
+        assertEq(vault.totalHoldings(), bobUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), 0);
         assertEq(vault.balanceOfUnderlying(address(alice)), 0);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
 
-        bob.withdraw(address(bob), address(bob), bobAmount);
+        bob.withdraw(address(bob), address(bob), bobUnderlyingAmount);
 
         assertEq(vault.totalHoldings(), 0);
         assertEq(vault.balanceOf(address(bob)), 0);
@@ -131,22 +134,23 @@ contract ERC4626Test is DSTestPlus {
 
     function testSingleAtomicDepositRedeem() public {
         // TODO: make amount fuzzable, currently appears to overflow
-        uint256 amount = 2e18;
+        uint256 underlyingAmount = 2e18;
 
-        underlying.mint(address(this), amount);
-        underlying.approve(address(vault), amount);
+        underlying.mint(address(this), underlyingAmount);
+        underlying.approve(address(vault), underlyingAmount);
 
         uint256 preDepositBal = underlying.balanceOf(address(this));
 
-        uint256 underlyingAmount = vault.deposit(address(this), amount);
-        assertEq(underlyingAmount, amount);
+        uint256 shareAmount = vault.deposit(address(this), underlyingAmount);
+        assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
+        assertEq(vault.calculateShares(underlyingAmount), shareAmount);
 
-        assertEq(vault.totalHoldings(), amount);
-        assertEq(vault.balanceOf(address(this)), amount);
-        assertEq(vault.balanceOfUnderlying(address(this)), amount);
-        assertEq(underlying.balanceOf(address(this)), preDepositBal - amount);
+        assertEq(vault.totalHoldings(), underlyingAmount);
+        assertEq(vault.balanceOf(address(this)), underlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(this)), underlyingAmount);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - underlyingAmount);
 
-        vault.redeem(address(this), address(this), amount);
+        vault.redeem(address(this), address(this), underlyingAmount);
 
         assertEq(vault.totalHoldings(), 0);
         assertEq(vault.balanceOf(address(this)), 0);
