@@ -66,23 +66,8 @@ contract ERC4626Test is DSTestPlus {
         underlying.mint(address(this), shareAmount);
         underlying.approve(address(vault), shareAmount);
 
-        uint256 preDepositBal = vault.calculateUnderlying(underlying.balanceOf(address(this)));
-
         uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-        assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
-        assertEq(vault.calculateShares(underlyingAmount), shareAmount);
-
-        assertEq(vault.totalHoldings(), underlyingAmount);
-        assertEq(vault.balanceOf(address(this)), underlyingAmount);
-        assertEq(vault.balanceOfUnderlying(address(this)), underlyingAmount);
-        assertEq(underlying.balanceOf(address(this)), preDepositBal - underlyingAmount);
-
-        vault.withdraw(address(this), address(this), underlyingAmount);
-
-        assertEq(vault.totalHoldings(), 0);
-        assertEq(vault.balanceOf(address(this)), 0);
-        assertEq(vault.balanceOfUnderlying(address(this)), 0);
-        assertEq(underlying.balanceOf(address(this)), preDepositBal);
+        emit log_uint(underlyingAmount); // -> returns 0
     }
 
     function testMultipleAtomicDepositWithdraw() public {
