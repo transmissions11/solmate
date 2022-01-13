@@ -69,10 +69,12 @@ contract ERC4626Test is DSTestPlus {
         underlying.mint(address(this), shareAmount);
         underlying.approve(address(vault), shareAmount);
 
-        // // Mint requires the returned amount
         uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-        assertEq(underlyingAmount, shareAmount);
         assertEq(vault.totalHoldings(), underlyingAmount);
+        assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
+        assertEq(vault.calculateShares(underlyingAmount), shareAmount);
+
+        // TODO: add calculateUnderlying / calculateShares checks to other test cases
     }
 
     function testMultipleAtomicDepositWithdraw() public {
