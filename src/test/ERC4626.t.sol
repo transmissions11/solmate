@@ -39,7 +39,7 @@ contract ERC4626Test is DSTestPlus {
 
     function testSingleAtomicDepositWithdraw() public {
         // TODO: make amount fuzzable, currently appears to overflow
-        uint256 underlyingAmount = 2e18; // underlyingAmount
+        uint256 underlyingAmount = 2e18;
 
         underlying.mint(address(this), underlyingAmount);
         underlying.approve(address(vault), underlyingAmount);
@@ -65,17 +65,28 @@ contract ERC4626Test is DSTestPlus {
 
     function testSingleAtomicMintWithdraw() public {
         // TODO: make amount fuzzable, currently appears to overflow
-        uint256 shareAmount = 2e18; // shareAmount
+        uint256 shareAmount = 2e18;
 
         underlying.mint(address(this), shareAmount);
         underlying.approve(address(vault), shareAmount);
+
+        uint256 preDepositBal = vault.calculateUnderlying(underlying.balanceOf(address(this)));
 
         uint256 underlyingAmount = vault.mint(address(this), shareAmount);
         assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
         assertEq(vault.calculateShares(underlyingAmount), shareAmount);
 
         assertEq(vault.totalHoldings(), underlyingAmount);
-        // TODO: add calculateUnderlying / calculateShares checks to other test cases
+        assertEq(vault.balanceOf(address(this)), underlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(this)), underlyingAmount);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - underlyingAmount);
+
+        vault.withdraw(address(this), address(this), underlyingAmount);
+
+        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.balanceOf(address(this)), 0);
+        assertEq(vault.balanceOfUnderlying(address(this)), 0);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
     function testMultipleAtomicDepositWithdraw() public {
