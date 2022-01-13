@@ -34,19 +34,22 @@ contract ERC4626Test is DSTestPlus {
     //////////////////////////////////////////////////////////////*/
 
     function testAtomicDepositWithdraw() public {
-        underlying.mint(address(this), 2e18);
-        underlying.approve(address(vault), 2e18);
+        // uint256 amount = fuzzAmount / 10**underlying.decimals();
+        uint256 amount = 2e18;
+
+        underlying.mint(address(this), amount);
+        underlying.approve(address(vault), amount);
 
         uint256 preDepositBal = underlying.balanceOf(address(this));
 
-        vault.deposit(address(this), 2e18);
+        vault.deposit(address(this), amount);
 
-        assertEq(vault.totalHoldings(), 2e18);
-        assertEq(vault.balanceOf(address(this)), 2e18);
-        assertEq(vault.balanceOfUnderlying(address(this)), 2e18);
-        assertEq(underlying.balanceOf(address(this)), preDepositBal - 2e18);
+        assertEq(vault.totalHoldings(), amount);
+        assertEq(vault.balanceOf(address(this)), amount);
+        assertEq(vault.balanceOfUnderlying(address(this)), amount);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - amount);
 
-        vault.withdraw(address(this), address(this), 2e18);
+        vault.withdraw(address(this), address(this), amount);
 
         assertEq(vault.totalHoldings(), 0);
         assertEq(vault.balanceOf(address(this)), 0);
@@ -55,20 +58,22 @@ contract ERC4626Test is DSTestPlus {
     }
 
     function testAtomicDepositRedeem() public {
-        underlying.mint(address(this), 2e18);
-        underlying.approve(address(vault), 2e18);
+        // uint256 amount = fuzzAmount / 10**underlying.decimals();
+        uint256 amount = 2e18;
+
+        underlying.mint(address(this), amount);
+        underlying.approve(address(vault), amount);
 
         uint256 preDepositBal = underlying.balanceOf(address(this));
 
-        vault.deposit(address(this), 2e18);
+        vault.deposit(address(this), amount);
 
-        assertEq(vault.totalHoldings(), 2e18);
-        assertEq(vault.balanceOf(address(this)), 2e18);
-        assertEq(vault.balanceOfUnderlying(address(this)), 2e18);
+        assertEq(vault.totalHoldings(), amount);
+        assertEq(vault.balanceOf(address(this)), amount);
+        assertEq(vault.balanceOfUnderlying(address(this)), amount);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - amount);
 
-        assertEq(underlying.balanceOf(address(this)), preDepositBal - 2e18);
-
-        vault.redeem(address(this), address(this), 2e18);
+        vault.redeem(address(this), address(this), amount);
 
         assertEq(vault.totalHoldings(), 0);
         assertEq(vault.balanceOf(address(this)), 0);
