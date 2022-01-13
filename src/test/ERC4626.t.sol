@@ -55,19 +55,25 @@ contract ERC4626Test is DSTestPlus {
     }
 
     function testAtomicDepositRedeem() public {
-        // underlying.mint(address(this), 1e18);
-        // underlying.approve(address(vault), 1e18);
-        // uint256 preDepositBal = underlying.balanceOf(address(this));
-        // vault.deposit(address(this), 1e18);
-        // assertEq(vault.totalHoldings(), 1e18);
-        // assertEq(vault.balanceOf(address(this)), 1e18);
-        // assertEq(vault.balanceOfUnderlying(address(this)), 1e18);
-        // assertEq(underlying.balanceOf(address(this)), preDepositBal - 1e18);
-        // vault.redeem(address(this), 1e18);
-        // assertEq(vault.totalHoldings(), 0);
-        // assertEq(vault.balanceOf(address(this)), 0);
-        // assertEq(vault.balanceOfUnderlying(address(this)), 0);
-        // assertEq(underlying.balanceOf(address(this)), preDepositBal);
+        underlying.mint(address(this), 2e18);
+        underlying.approve(address(vault), 2e18);
+
+        uint256 preDepositBal = underlying.balanceOf(address(this));
+
+        vault.deposit(address(this), 2e18);
+
+        assertEq(vault.totalHoldings(), 2e18);
+        assertEq(vault.balanceOf(address(this)), 2e18);
+        assertEq(vault.balanceOfUnderlying(address(this)), 2e18);
+
+        assertEq(underlying.balanceOf(address(this)), preDepositBal - 2e18);
+
+        vault.redeem(address(this), address(this), 2e18);
+
+        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.balanceOf(address(this)), 0);
+        assertEq(vault.balanceOfUnderlying(address(this)), 0);
+        assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
     /*///////////////////////////////////////////////////////////////
