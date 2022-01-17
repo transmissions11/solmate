@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "../test/utils/DSTestPlus.sol";
 import {ERC20} from "../tokens/ERC20.sol";
 import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 /// @notice Minimal ERC4646 tokenized vault implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
-abstract contract ERC4626 is ERC20, DSTestPlus {
+abstract contract ERC4626 is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
@@ -103,8 +102,6 @@ abstract contract ERC4626 is ERC20, DSTestPlus {
 
         emit Withdraw(from, to, underlyingAmount = calculateUnderlying(shareAmount));
 
-        emit log_named_uint("underlyingAmount", underlyingAmount);
-
         beforeWithdraw(underlyingAmount);
 
         underlying.safeTransfer(to, underlyingAmount);
@@ -136,7 +133,7 @@ abstract contract ERC4626 is ERC20, DSTestPlus {
 
     function calculateUnderlying(uint256 shareAmount) public view virtual returns (uint256) {
         uint256 shareSupply = totalSupply;
-        if (shareSupply == 0) return 0;
+        if (shareSupply == 0) return shareAmount;
 
         uint256 exchangeRate = totalHoldings().fdiv(shareSupply, baseUnit);
 

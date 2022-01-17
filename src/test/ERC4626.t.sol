@@ -59,29 +59,6 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
-    function testSingleAtomicMintRedeem() public {
-        ERC4626User alice = new ERC4626User(vault, underlying);
-
-        uint256 aliceShareAmount = 100;
-        uint256 aliceUnderlyingAmount = 10e18;
-
-        uint256 preDepositShareBal = vault.totalSupply();
-        uint256 preDepositBal = vault.totalHoldings();
-
-        underlying.mint(address(alice), aliceUnderlyingAmount);
-        alice.approve(address(vault), aliceUnderlyingAmount);
-
-        uint256 underlyingAmount = vault.mint(address(alice), aliceShareAmount);
-
-        assertEq(vault.totalSupply(), aliceShareAmount);
-        assertEq(vault.totalHoldings(), underlyingAmount);
-
-        alice.redeem(address(alice), address(alice), aliceShareAmount);
-
-        assertEq(vault.totalSupply(), preDepositShareBal);
-        assertEq(vault.totalHoldings(), preDepositBal);
-    }
-
     function testMultipleAtomicDepositWithdraw() public {
         ERC4626User alice = new ERC4626User(vault, underlying);
         ERC4626User bob = new ERC4626User(vault, underlying);
@@ -161,6 +138,32 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.balanceOf(address(this)), 0);
         assertEq(vault.balanceOfUnderlying(address(this)), 0);
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
+    }
+
+    function testSingleAtomicMintRedeem() public {
+        ERC4626User alice = new ERC4626User(vault, underlying);
+
+        uint256 aliceShareAmount = 100;
+        uint256 aliceUnderlyingAmount = 10e18;
+
+        uint256 preDepositShareBal = vault.totalSupply();
+        uint256 preDepositBal = vault.totalHoldings();
+
+        underlying.mint(address(alice), aliceUnderlyingAmount);
+        alice.approve(address(vault), aliceUnderlyingAmount);
+
+        uint256 underlyingAmount = vault.mint(address(alice), aliceShareAmount);
+
+        // Expect exchange rate of 1:1 on first mint
+        // This currently fails
+        assertEq(underlyingAmount, aliceShareAmount);
+        assertEq(vault.totalSupply(), aliceShareAmount);
+        assertEq(vault.totalHoldings(), underlyingAmount);
+
+        alice.redeem(address(alice), address(alice), aliceShareAmount);
+
+        assertEq(vault.totalSupply(), preDepositShareBal);
+        assertEq(vault.totalHoldings(), preDepositBal);
     }
 
     function testUnderlyingSharesRatio(uint256 underlyingBalance) public {
