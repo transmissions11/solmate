@@ -59,20 +59,27 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
     }
 
-    function testSingleAtomicMintWithdraw() public {
-        // TODO: make amount fuzzable, currently appears to overflow
-        uint256 shareAmount = 2e18;
+    function testSingleAtomicMintRedeem() public {
+        ERC4626User alice = new ERC4626User(vault, underlying);
 
-        underlying.mint(address(this), 10e18);
-        underlying.approve(address(vault), 10e18);
+        uint256 aliceShareAmount = 100;
+        uint256 aliceUnderlyingAmount = 10e18;
 
-        uint256 underlyingAmount = vault.mint(address(this), shareAmount);
-        emit log_named_uint("underlyingAmount ", underlyingAmount); // -> returns 0?
+        uint256 preDepositShareBal = vault.totalSupply();
+        uint256 preDepositBal = vault.totalHoldings();
 
+        underlying.mint(address(alice), aliceUnderlyingAmount);
+        alice.approve(address(vault), aliceUnderlyingAmount);
+
+        uint256 underlyingAmount = vault.mint(address(alice), aliceShareAmount);
+
+        assertEq(vault.totalSupply(), aliceShareAmount);
         assertEq(vault.totalHoldings(), underlyingAmount);
-        emit log_named_uint("totalHoldings ", vault.totalHoldings()); // -> returns 0?
 
-        // TODO: implement withdraw
+        alice.redeem(address(alice), address(alice), aliceShareAmount);
+
+        assertEq(vault.totalSupply(), preDepositShareBal);
+        assertEq(vault.totalHoldings(), preDepositBal);
     }
 
     function testMultipleAtomicDepositWithdraw() public {
