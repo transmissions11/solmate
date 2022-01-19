@@ -46,14 +46,14 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
         assertEq(vault.calculateShares(underlyingAmount), shareAmount);
 
-        assertEq(vault.totalHoldings(), underlyingAmount);
+        assertEq(vault.totalUnderlying(), underlyingAmount);
         assertEq(vault.balanceOf(address(this)), underlyingAmount);
         assertEq(vault.balanceOfUnderlying(address(this)), underlyingAmount);
         assertEq(underlying.balanceOf(address(this)), preDepositBal - underlyingAmount);
 
         vault.withdraw(address(this), address(this), underlyingAmount);
 
-        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(this)), 0);
         assertEq(vault.balanceOfUnderlying(address(this)), 0);
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
@@ -85,7 +85,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.calculateUnderlying(aliceShareAmount), aliceUnderlyingAmount);
         assertEq(vault.calculateShares(aliceUnderlyingAmount), aliceShareAmount);
 
-        assertEq(vault.totalHoldings(), aliceUnderlyingAmount);
+        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), aliceUnderlyingAmount);
         assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
@@ -94,21 +94,21 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.calculateUnderlying(bobShareAmount), bobUnderlyingAmount);
         assertEq(vault.calculateShares(bobUnderlyingAmount), bobShareAmount);
 
-        assertEq(vault.totalHoldings(), aliceUnderlyingAmount + bobUnderlyingAmount);
+        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount + bobUnderlyingAmount);
         assertEq(vault.balanceOf(address(bob)), bobUnderlyingAmount);
         assertEq(vault.balanceOfUnderlying(address(bob)), bobUnderlyingAmount);
         assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal - bobUnderlyingAmount);
 
         alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
 
-        assertEq(vault.totalHoldings(), bobUnderlyingAmount);
+        assertEq(vault.totalUnderlying(), bobUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), 0);
         assertEq(vault.balanceOfUnderlying(address(alice)), 0);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
 
         bob.withdraw(address(bob), address(bob), bobUnderlyingAmount);
 
-        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(bob)), 0);
         assertEq(vault.balanceOfUnderlying(address(bob)), 0);
         assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal);
@@ -127,14 +127,14 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.calculateUnderlying(shareAmount), underlyingAmount);
         assertEq(vault.calculateShares(underlyingAmount), shareAmount);
 
-        assertEq(vault.totalHoldings(), underlyingAmount);
+        assertEq(vault.totalUnderlying(), underlyingAmount);
         assertEq(vault.balanceOf(address(this)), underlyingAmount);
         assertEq(vault.balanceOfUnderlying(address(this)), underlyingAmount);
         assertEq(underlying.balanceOf(address(this)), preDepositBal - underlyingAmount);
 
         vault.redeem(address(this), address(this), underlyingAmount);
 
-        assertEq(vault.totalHoldings(), 0);
+        assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(this)), 0);
         assertEq(vault.balanceOfUnderlying(address(this)), 0);
         assertEq(underlying.balanceOf(address(this)), preDepositBal);
@@ -147,23 +147,23 @@ contract ERC4626Test is DSTestPlus {
         uint256 aliceUnderlyingAmount = 10e18;
 
         uint256 preDepositShareBal = vault.totalSupply();
-        uint256 preDepositBal = vault.totalHoldings();
+        uint256 preDepositBal = vault.totalUnderlying();
 
         underlying.mint(address(alice), aliceUnderlyingAmount);
         alice.approve(address(vault), aliceUnderlyingAmount);
 
-        uint256 underlyingAmount = vault.mint(address(alice), aliceShareAmount);
+        uint256 underlyingAmount = alice.mint(address(alice), aliceShareAmount);
 
         // Expect exchange rate of 1:1 on first mint
         // This currently fails
         assertEq(underlyingAmount, aliceShareAmount);
         assertEq(vault.totalSupply(), aliceShareAmount);
-        assertEq(vault.totalHoldings(), underlyingAmount);
+        assertEq(vault.totalUnderlying(), underlyingAmount);
 
         alice.redeem(address(alice), address(alice), aliceShareAmount);
 
         assertEq(vault.totalSupply(), preDepositShareBal);
-        assertEq(vault.totalHoldings(), preDepositBal);
+        assertEq(vault.totalUnderlying(), preDepositBal);
     }
 
     function testUnderlyingSharesRatio(uint256 underlyingBalance) public {
