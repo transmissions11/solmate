@@ -239,4 +239,8 @@ contract ERC4626Test is DSTestPlus {
     function testFailDepositWithNoApproval() public {
         vault.deposit(address(this), 1e18);
     }
+
+    function testFailMintWithNoApproval() public {
+        vault.mint(address(this), 1e18);
+    }
 }
