@@ -9,6 +9,7 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
 // TODO: implement fuzz test for testMultipleMintDepositRedeemWithdraw
 // TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
+// TODO: discuss whether to make baseUnit public instead of internal
 
 contract ERC4626Test is DSTestPlus {
     MockERC20 underlying;
@@ -36,7 +37,8 @@ contract ERC4626Test is DSTestPlus {
 
         // Ignore cases where amount * baseUnit overflows.
         unchecked {
-            if (amount != 0 && (amount * vault.baseUnit()) / amount != vault.baseUnit()) return;
+            uint256 baseUnit = 10**vault.decimals();
+            if (amount != 0 && (amount * baseUnit) / amount != baseUnit) return;
         }
 
         uint256 aliceUnderlyingAmount = amount;
@@ -76,7 +78,8 @@ contract ERC4626Test is DSTestPlus {
 
         // Ignore cases where amount * baseUnit overflows.
         unchecked {
-            if (amount != 0 && (amount * vault.baseUnit()) / amount != vault.baseUnit()) return;
+            uint256 baseUnit = 10**vault.decimals();
+            if (amount != 0 && (amount * baseUnit) / amount != baseUnit) return;
         }
 
         uint256 aliceShareAmount = amount;
