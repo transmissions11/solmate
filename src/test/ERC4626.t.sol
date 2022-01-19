@@ -36,6 +36,13 @@ contract ERC4626Test is DSTestPlus {
     }
 
     function testSingleDepositWithdraw(uint256 amount) public {
+        if (amount == 0) amount = 1;
+
+        // Ignore cases where amount * baseUnit overflows.
+        unchecked {
+            if (amount != 0 && (amount * vault.baseUnit()) / amount != vault.baseUnit()) return;
+        }
+
         uint256 aliceUnderlyingAmount = amount;
 
         ERC4626User alice = new ERC4626User(vault, underlying);
@@ -66,6 +73,8 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.balanceOf(address(alice)), 0);
         assertEq(vault.balanceOfUnderlying(address(alice)), 0);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
+
+        emit log_named_uint("amount", amount);
     }
 
     function testSingleMintRedeem() public {
