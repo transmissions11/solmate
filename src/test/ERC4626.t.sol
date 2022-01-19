@@ -7,8 +7,9 @@ import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
-// TODO: implement fuzz tests
+// TODO: implement fuzz test for testMultipleMintDepositRedeemWithdraw
 // TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
+// TODO: discuss whether to make baseUnit public instead of internal
 
 contract ERC4626Test is DSTestPlus {
     MockERC20 underlying;
@@ -31,8 +32,16 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
-    function testSingleDepositWithdraw() public {
-        uint256 aliceUnderlyingAmount = 10e18;
+    function testSingleDepositWithdraw(uint256 amount) public {
+        if (amount == 0) amount = 1;
+
+        // Ignore cases where amount * baseUnit overflows.
+        unchecked {
+            uint256 baseUnit = 10**vault.decimals();
+            if (amount != 0 && (amount * baseUnit) / amount != baseUnit) return;
+        }
+
+        uint256 aliceUnderlyingAmount = amount;
 
         ERC4626User alice = new ERC4626User(vault, underlying);
 
@@ -64,8 +73,16 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
     }
 
-    function testSingleMintRedeem() public {
-        uint256 aliceShareAmount = 10e18;
+    function testSingleMintRedeem(uint256 amount) public {
+        if (amount == 0) amount = 1;
+
+        // Ignore cases where amount * baseUnit overflows.
+        unchecked {
+            uint256 baseUnit = 10**vault.decimals();
+            if (amount != 0 && (amount * baseUnit) / amount != baseUnit) return;
+        }
+
+        uint256 aliceShareAmount = amount;
 
         ERC4626User alice = new ERC4626User(vault, underlying);
 
@@ -194,12 +211,6 @@ contract ERC4626Test is DSTestPlus {
         // Alice and Bob left the vault, should be empty again
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalUnderlying(), 0);
-    }
-
-    function testUnderlyingSharesRatio(uint256 underlyingBalance) public {
-        uint256 sharesBalance = vault.calculateShares(underlyingBalance);
-        assertEq(vault.calculateUnderlying(sharesBalance), underlyingBalance);
-        assertEq(vault.calculateShares(underlyingBalance), sharesBalance);
     }
 
     function testFailDepositWithNotEnoughApproval() public {
