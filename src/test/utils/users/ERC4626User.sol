@@ -17,6 +17,10 @@ contract ERC4626User is ERC20User {
         return vault.deposit(to, underlyingAmount);
     }
 
+    function mint(address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
+        return vault.mint(to, shareAmount);
+    }
+
     function withdraw(
         address from,
         address to,
