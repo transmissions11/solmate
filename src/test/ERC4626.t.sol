@@ -9,7 +9,6 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
 // TODO: implement fuzz test for testMultipleMintDepositRedeemWithdraw
 // TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
-// TODO: discuss whether to make baseUnit public instead of internal
 
 contract ERC4626Test is DSTestPlus {
     MockERC20 underlying;
