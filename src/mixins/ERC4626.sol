@@ -139,6 +139,7 @@ abstract contract ERC4626 is ERC20 {
 
     function calculateUnderlying(uint256 shareAmount) public view virtual returns (uint256) {
         uint256 shareSupply = totalSupply;
+
         if (shareSupply == 0) return shareAmount;
 
         uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);

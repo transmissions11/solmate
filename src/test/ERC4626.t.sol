@@ -154,14 +154,14 @@ contract ERC4626Test is DSTestPlus {
 
         uint256 underlyingAmount = alice.mint(address(alice), aliceShareAmount);
 
-        // Expect exchange rate of 1:1 on first mint
-        // This currently fails
+        // On first mint expect the ratio of shares to underlying to be 1:1
         assertEq(underlyingAmount, aliceShareAmount);
         assertEq(vault.totalSupply(), aliceShareAmount);
         assertEq(vault.totalUnderlying(), underlyingAmount);
 
         alice.redeem(address(alice), address(alice), aliceShareAmount);
 
+        assertEq(underlyingAmount, aliceShareAmount);
         assertEq(vault.totalSupply(), preDepositShareBal);
         assertEq(vault.totalUnderlying(), preDepositBal);
     }
