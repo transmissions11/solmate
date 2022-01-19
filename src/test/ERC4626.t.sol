@@ -3,8 +3,6 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
-
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
@@ -13,8 +11,6 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 // TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
 
 contract ERC4626Test is DSTestPlus {
-    using FixedPointMathLib for uint256;
-
     MockERC20 underlying;
     MockERC4626 vault;
 
