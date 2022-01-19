@@ -34,56 +34,32 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
-    function testMultipleAtomicDepositWithdraw() public {
+    function testSingleAtomicDepositWithdraw() public {
+        uint256 amount = 10e18;
+
         ERC4626User alice = new ERC4626User(vault, underlying);
-        ERC4626User bob = new ERC4626User(vault, underlying);
 
-        // TODO: make amount fuzzable, currently appears to overflow
-        uint256 aliceUnderlyingAmount = 2e18;
-        uint256 bobUnderlyingAmount = 3e18;
-
-        underlying.mint(address(alice), aliceUnderlyingAmount);
-        alice.approve(address(vault), aliceUnderlyingAmount);
-        assertEq(underlying.allowance(address(alice), address(vault)), aliceUnderlyingAmount);
-
-        underlying.mint(address(bob), bobUnderlyingAmount);
-        bob.approve(address(vault), bobUnderlyingAmount);
-        assertEq(underlying.allowance(address(bob), address(vault)), bobUnderlyingAmount);
+        underlying.mint(address(alice), amount);
+        alice.approve(address(vault), amount);
+        assertEq(underlying.allowance(address(alice), address(vault)), amount);
 
         uint256 alicePreDepositBal = underlying.balanceOf(address(alice));
-        uint256 bobPreDepositBal = underlying.balanceOf(address(bob));
 
-        uint256 aliceShareAmount = alice.deposit(address(alice), aliceUnderlyingAmount);
-        assertEq(vault.calculateUnderlying(aliceShareAmount), aliceUnderlyingAmount);
-        assertEq(vault.calculateShares(aliceUnderlyingAmount), aliceShareAmount);
+        uint256 aliceShareAmount = alice.deposit(address(alice), amount);
+        assertEq(vault.calculateUnderlying(aliceShareAmount), amount);
+        assertEq(vault.calculateShares(amount), aliceShareAmount);
 
-        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount);
-        assertEq(vault.balanceOf(address(alice)), aliceUnderlyingAmount);
-        assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
-        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
+        assertEq(vault.totalUnderlying(), amount);
+        assertEq(vault.balanceOf(address(alice)), amount);
+        assertEq(vault.balanceOfUnderlying(address(alice)), amount);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - amount);
 
-        uint256 bobShareAmount = bob.deposit(address(bob), bobUnderlyingAmount);
-        assertEq(vault.calculateUnderlying(bobShareAmount), bobUnderlyingAmount);
-        assertEq(vault.calculateShares(bobUnderlyingAmount), bobShareAmount);
+        alice.withdraw(address(alice), address(alice), amount);
 
-        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount + bobUnderlyingAmount);
-        assertEq(vault.balanceOf(address(bob)), bobUnderlyingAmount);
-        assertEq(vault.balanceOfUnderlying(address(bob)), bobUnderlyingAmount);
-        assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal - bobUnderlyingAmount);
-
-        alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
-
-        assertEq(vault.totalUnderlying(), bobUnderlyingAmount);
+        assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
         assertEq(vault.balanceOfUnderlying(address(alice)), 0);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
-
-        bob.withdraw(address(bob), address(bob), bobUnderlyingAmount);
-
-        assertEq(vault.totalUnderlying(), 0);
-        assertEq(vault.balanceOf(address(bob)), 0);
-        assertEq(vault.balanceOfUnderlying(address(bob)), 0);
-        assertEq(underlying.balanceOf(address(bob)), bobPreDepositBal);
     }
 
     function testMultipleAtomicScenario() public {
@@ -195,7 +171,7 @@ contract ERC4626Test is DSTestPlus {
         vault.deposit(address(this), 1e18);
     }
 
-    function testFailWithdrawWithNotEnoughBalance() public {
+    function testFailWithdrawWithNotEnoughUnderlyingAmount() public {
         underlying.mint(address(this), 0.5e18);
         underlying.approve(address(vault), 0.5e18);
 
@@ -204,7 +180,7 @@ contract ERC4626Test is DSTestPlus {
         vault.withdraw(address(this), address(this), 1e18);
     }
 
-    function testFailRedeemWithNotEnoughBalance() public {
+    function testFailRedeemWithNotEnoughShareAmount() public {
         underlying.mint(address(this), 0.5e18);
         underlying.approve(address(vault), 0.5e18);
 
@@ -213,12 +189,12 @@ contract ERC4626Test is DSTestPlus {
         vault.redeem(address(this), address(this), 1e18);
     }
 
-    function testFailRedeemWithNoBalance() public {
-        vault.redeem(address(this), address(this), 1e18);
+    function testFailWithdrawWithNoUnderlyingAmount() public {
+        vault.withdraw(address(this), address(this), 1e18);
     }
 
-    function testFailWithdrawWithNoBalance() public {
-        vault.withdraw(address(this), address(this), 1e18);
+    function testFailRedeemWithNoShareAmount() public {
+        vault.redeem(address(this), address(this), 1e18);
     }
 
     function testFailDepositWithNoApproval() public {
