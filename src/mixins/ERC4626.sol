@@ -90,9 +90,11 @@ abstract contract ERC4626 is ERC20 {
             allowance[from][msg.sender] -= shareAmount;
         }
 
+        underlyingAmount = calculateUnderlying(shareAmount);
+
         _burn(from, shareAmount);
 
-        emit Withdraw(from, to, underlyingAmount = calculateUnderlying(shareAmount));
+        emit Withdraw(from, to, underlyingAmount);
 
         beforeWithdraw(underlyingAmount);
 
@@ -107,7 +109,9 @@ abstract contract ERC4626 is ERC20 {
                         VAULT ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function totalHoldings() public view virtual returns (uint256);
+    function totalUnderlying() public view virtual returns (uint256) {
+        return underlying.balanceOf(address(this));
+    }
 
     function balanceOfUnderlying(address user) public view virtual returns (uint256) {
         return calculateUnderlying(balanceOf[user]);
@@ -118,7 +122,7 @@ abstract contract ERC4626 is ERC20 {
 
         if (shareSupply == 0) return underlyingAmount;
 
-        uint256 exchangeRate = totalHoldings().fdiv(shareSupply, baseUnit);
+        uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
 
         return underlyingAmount.fdiv(exchangeRate, baseUnit);
     }
@@ -127,7 +131,7 @@ abstract contract ERC4626 is ERC20 {
         uint256 shareSupply = totalSupply;
         if (shareSupply == 0) return shareAmount;
 
-        uint256 exchangeRate = totalHoldings().fdiv(shareSupply, baseUnit);
+        uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
 
         return shareAmount.fmulUp(exchangeRate, baseUnit);
     }
