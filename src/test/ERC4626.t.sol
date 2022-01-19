@@ -97,7 +97,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
     }
 
-    function testMultipleAtomicScenario() public {
+    function testMultipleMintDepositRedeemWithdraw() public {
         // Scenario:
         // - Alice mints 2e18 tokens
         // - Bob deposits 4e18 tokens
