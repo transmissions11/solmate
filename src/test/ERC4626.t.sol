@@ -7,9 +7,6 @@ import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
 
-// TODO: verify hooks are being called
-// TODO: implement fuzzing for tests where applicable
-// TODO: think of if there are any invariants and how you would implement them
 // TODO: fix mint implementation
 // TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
 
@@ -46,6 +43,7 @@ contract ERC4626Test is DSTestPlus {
         uint256 alicePreDepositBal = underlying.balanceOf(address(alice));
 
         uint256 aliceShareAmount = alice.deposit(address(alice), aliceUnderlyingAmount);
+        assertEq(vault.isAfterDepositHookCalled(), 1);
 
         // Expect exchange rate to be 1:1 on initial deposit
         assertEq(aliceUnderlyingAmount, aliceShareAmount);
@@ -58,6 +56,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
         alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
+        assertEq(vault.isBeforeWithdrawHookCalled(), 1);
 
         assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
@@ -77,6 +76,7 @@ contract ERC4626Test is DSTestPlus {
         uint256 alicePreDepositBal = underlying.balanceOf(address(alice));
 
         uint256 aliceUnderlyingAmount = alice.mint(address(alice), aliceShareAmount);
+        assertEq(vault.isAfterDepositHookCalled(), 1);
 
         // Expect exchange rate to be 1:1 on initial mint
         assertEq(aliceShareAmount, aliceUnderlyingAmount);
@@ -89,6 +89,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
         alice.redeem(address(alice), address(alice), aliceShareAmount);
+        assertEq(vault.isBeforeWithdrawHookCalled(), 1);
 
         assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
@@ -122,6 +123,7 @@ contract ERC4626Test is DSTestPlus {
         // Alice mints
         uint256 aliceUnderlyingAmount = alice.mint(address(alice), aliceDesiredShareAmount);
         uint256 aliceShareAmount = vault.calculateShares(aliceUnderlyingAmount);
+        assertEq(vault.isAfterDepositHookCalled(), 1);
 
         // Expect to have received the requested mint amount
         assertEq(aliceShareAmount, aliceDesiredShareAmount);
@@ -138,6 +140,7 @@ contract ERC4626Test is DSTestPlus {
         // Bob deposits
         uint256 bobShareAmount = bob.deposit(address(bob), bobDesiredUnderlyingAmount);
         uint256 bobUnderlyingAmount = vault.calculateUnderlying(bobShareAmount);
+        assertEq(vault.isAfterDepositHookCalled(), 2);
 
         // Expect to have received the requested underlying amount
         assertEq(bobUnderlyingAmount, bobDesiredUnderlyingAmount);
@@ -168,6 +171,7 @@ contract ERC4626Test is DSTestPlus {
 
         // Alice redeems her share balance
         uint256 aliceRedeemUnderlyingAmount = alice.redeem(address(alice), address(alice), aliceShareAmount);
+        assertEq(vault.isBeforeWithdrawHookCalled(), 1);
         assertEq(aliceRedeemUnderlyingAmount, aliceUnderlyingAmount + (mutationUnderlyingAmount / 3) * 1);
         assertEq(vault.balanceOf((address(alice))), 0);
         assertEq(vault.balanceOfUnderlying((address(alice))), 0);
@@ -182,6 +186,7 @@ contract ERC4626Test is DSTestPlus {
             address(bob),
             bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2
         );
+        assertEq(vault.isBeforeWithdrawHookCalled(), 2);
         assertEq(bobWithdrawShareAmount, bobShareAmount);
         assertEq(vault.balanceOf((address(bob))), 0);
         assertEq(vault.balanceOfUnderlying((address(bob))), 0);
