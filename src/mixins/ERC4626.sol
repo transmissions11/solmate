@@ -144,6 +144,6 @@ abstract contract ERC4626 is ERC20 {
 
         uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
 
-        return shareAmount.fmul(exchangeRate, baseUnit);
+        return shareAmount.fmulUp(exchangeRate, baseUnit);
     }
 }
