@@ -61,12 +61,9 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 baseUnit
     ) public {
-        // Convert cases where x * y overflows into useful test cases.
+        // Ignore cases where x * y overflows.
         unchecked {
-            while (x != 0 && (x * y) / x != y) {
-                x /= 2;
-                y /= 2;
-            }
+            if (x != 0 && (x * y) / x != y) return;
         }
 
         assertEq(FixedPointMathLib.fmul(x, y, baseUnit), baseUnit == 0 ? 0 : (x * y) / baseUnit);
