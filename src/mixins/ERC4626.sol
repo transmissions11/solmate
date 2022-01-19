@@ -28,7 +28,7 @@ abstract contract ERC4626 is ERC20 {
 
     /// @notice The base unit of the underlying token and hence vault.
     /// @dev Equal to 10 ** decimals. Used for fixed point arithmetic.
-    uint256 internal immutable baseUnit;
+    uint256 public immutable baseUnit;
 
     /// @notice Creates a new vault that accepts a specific underlying token.
     /// @param _underlying The ERC20 compliant token the vault should accept.
@@ -144,6 +144,6 @@ abstract contract ERC4626 is ERC20 {
 
         uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
 
-        return shareAmount.fmulUp(exchangeRate, baseUnit);
+        return shareAmount.fmul(exchangeRate, baseUnit);
     }
 }

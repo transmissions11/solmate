@@ -3,6 +3,8 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
+import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
+
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockERC4626} from "./utils/mocks/MockERC4626.sol";
 import {ERC4626User} from "./utils/users/ERC4626User.sol";
@@ -11,6 +13,8 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 // TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
 
 contract ERC4626Test is DSTestPlus {
+    using FixedPointMathLib for uint256;
+
     MockERC20 underlying;
     MockERC4626 vault;
 
@@ -49,19 +53,19 @@ contract ERC4626Test is DSTestPlus {
         assertEq(aliceUnderlyingAmount, aliceShareAmount);
         assertEq(vault.calculateUnderlying(aliceShareAmount), aliceUnderlyingAmount);
         assertEq(vault.calculateShares(aliceUnderlyingAmount), aliceShareAmount);
-        // assertEq(vault.totalSupply(), aliceShareAmount);
-        // assertEq(vault.totalUnderlying(), aliceUnderlyingAmount);
-        // assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
-        // assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
-        // assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
+        assertEq(vault.totalSupply(), aliceShareAmount);
+        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount);
+        assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
+        assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
-        // alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
-        // assertEq(vault.isBeforeWithdrawHookCalled(), 1);
+        alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
+        assertEq(vault.isBeforeWithdrawHookCalled(), 1);
 
-        // assertEq(vault.totalUnderlying(), 0);
-        // assertEq(vault.balanceOf(address(alice)), 0);
-        // assertEq(vault.balanceOfUnderlying(address(alice)), 0);
-        // assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
+        assertEq(vault.totalUnderlying(), 0);
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.balanceOfUnderlying(address(alice)), 0);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
     }
 
     function testSingleMintRedeem() public {
@@ -194,6 +198,34 @@ contract ERC4626Test is DSTestPlus {
         // Alice and Bob left the vault, should be empty again
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalUnderlying(), 0);
+    }
+
+    function testCalculateSharesUnderlying(uint256 amount) public {
+        // I'm assuming we need to scale the fuzz amount beforehand as we are multiplying and we can easily overflow
+
+        uint256 underlyingAmount = amount;
+        underlying.mint(address(vault), underlyingAmount);
+
+        // calculateUnderlying and calculateShares currently throw, presumably an overflow
+
+        // function calculateShares(uint256 underlyingAmount) public view virtual returns (uint256) {
+        //     uint256 shareSupply = totalSupply;
+        //     if (shareSupply == 0) return underlyingAmount;
+        //     uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
+        //     return underlyingAmount.fdiv(exchangeRate, baseUnit);
+        // }
+
+        // function calculateUnderlying(uint256 shareAmount) public view virtual returns (uint256) {
+        //     uint256 shareSupply = totalSupply;
+        //     if (shareSupply == 0) return shareAmount;
+        //     uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
+        //     return shareAmount.fmulUp(exchangeRate, baseUnit);
+        // }
+
+        uint256 shareSupply = underlyingAmount; // 1:100 ratio
+        uint256 exchangeRate = vault.totalUnderlying().fdiv(shareSupply, vault.baseUnit());
+
+        emit log_named_uint("exchangeRate", exchangeRate);
     }
 
     function testFailDepositWithNotEnoughApproval() public {
