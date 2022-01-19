@@ -164,11 +164,19 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), preMutationShareBal - aliceShareAmount);
         assertEq(vault.totalUnderlying(), preMutationBal + mutationUnderlyingAmount - aliceRedeemUnderlyingAmount);
 
-        // Bob withdraws his share balance
-        uint256 bobWithdrawUnderlyingAmount = bob.withdraw(address(bob), address(bob), bobUnderlyingAmount);
-        assertEq(bobWithdrawUnderlyingAmount, bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2);
+        // Bob withdraws his share balance (share balance remains the same)
+        assertEq(vault.balanceOfUnderlying(address(bob)), bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2);
+        assertEq(vault.balanceOf(address(bob)), bobShareAmount);
+        uint256 bobWithdrawShareAmount = bob.withdraw(
+            address(bob),
+            address(bob),
+            bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2
+        );
+        assertEq(bobWithdrawShareAmount, bobShareAmount);
         assertEq(vault.balanceOf((address(bob))), 0);
         assertEq(vault.balanceOfUnderlying((address(bob))), 0);
+
+        // Alice and Bob left the vault, should be empty again
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalUnderlying(), 0);
     }
