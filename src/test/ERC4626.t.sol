@@ -11,7 +11,7 @@ import {ERC4626User} from "./utils/users/ERC4626User.sol";
 // TODO: implement fuzzing for tests where applicable
 // TODO: think of if there are any invariants and how you would implement them
 // TODO: fix mint implementation
-// TODO: implement more complex scenario where part of the tokens are redeems or withdrawn
+// TODO: implement more complex scenario where part of the tokens are redeemed or withdrawn
 
 contract ERC4626Test is DSTestPlus {
     MockERC20 underlying;
