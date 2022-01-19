@@ -34,27 +34,61 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
-    function testSingleAtomicDepositWithdraw() public {
-        uint256 amount = 10e18;
+    function testSingleDepositWithdraw() public {
+        uint256 aliceUnderlyingAmount = 10e18;
 
         ERC4626User alice = new ERC4626User(vault, underlying);
 
-        underlying.mint(address(alice), amount);
-        alice.approve(address(vault), amount);
-        assertEq(underlying.allowance(address(alice), address(vault)), amount);
+        underlying.mint(address(alice), aliceUnderlyingAmount);
+        alice.approve(address(vault), aliceUnderlyingAmount);
+        assertEq(underlying.allowance(address(alice), address(vault)), aliceUnderlyingAmount);
 
         uint256 alicePreDepositBal = underlying.balanceOf(address(alice));
 
-        uint256 aliceShareAmount = alice.deposit(address(alice), amount);
-        assertEq(vault.calculateUnderlying(aliceShareAmount), amount);
-        assertEq(vault.calculateShares(amount), aliceShareAmount);
+        uint256 aliceShareAmount = alice.deposit(address(alice), aliceUnderlyingAmount);
 
-        assertEq(vault.totalUnderlying(), amount);
-        assertEq(vault.balanceOf(address(alice)), amount);
-        assertEq(vault.balanceOfUnderlying(address(alice)), amount);
-        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - amount);
+        // Expect exchange rate to be 1:1 on initial deposit
+        assertEq(aliceUnderlyingAmount, aliceShareAmount);
+        assertEq(vault.calculateUnderlying(aliceShareAmount), aliceUnderlyingAmount);
+        assertEq(vault.calculateShares(aliceUnderlyingAmount), aliceShareAmount);
+        assertEq(vault.totalSupply(), aliceShareAmount);
+        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount);
+        assertEq(vault.balanceOf(address(alice)), aliceUnderlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
-        alice.withdraw(address(alice), address(alice), amount);
+        alice.withdraw(address(alice), address(alice), aliceUnderlyingAmount);
+
+        assertEq(vault.totalUnderlying(), 0);
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.balanceOfUnderlying(address(alice)), 0);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
+    }
+
+    function testSingleMintRedeem() public {
+        uint256 aliceShareAmount = 10e18;
+
+        ERC4626User alice = new ERC4626User(vault, underlying);
+
+        underlying.mint(address(alice), aliceShareAmount);
+        alice.approve(address(vault), aliceShareAmount);
+        assertEq(underlying.allowance(address(alice), address(vault)), aliceShareAmount);
+
+        uint256 alicePreDepositBal = underlying.balanceOf(address(alice));
+
+        uint256 aliceUnderlyingAmount = alice.mint(address(alice), aliceShareAmount);
+
+        // Expect exchange rate to be 1:1 on initial mint
+        assertEq(aliceShareAmount, aliceUnderlyingAmount);
+        assertEq(vault.calculateUnderlying(aliceShareAmount), aliceUnderlyingAmount);
+        assertEq(vault.calculateShares(aliceUnderlyingAmount), aliceShareAmount);
+        assertEq(vault.totalSupply(), aliceShareAmount);
+        assertEq(vault.totalUnderlying(), aliceUnderlyingAmount);
+        assertEq(vault.balanceOf(address(alice)), aliceUnderlyingAmount);
+        assertEq(vault.balanceOfUnderlying(address(alice)), aliceUnderlyingAmount);
+        assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
+
+        alice.redeem(address(alice), address(alice), aliceShareAmount);
 
         assertEq(vault.totalUnderlying(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
