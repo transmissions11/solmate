@@ -15,9 +15,12 @@ contract ERC4626Test is DSTestPlus {
     MockERC20 underlying;
     MockERC4626 vault;
 
+    uint256 private baseUnit;
+
     function setUp() public {
         underlying = new MockERC20("Mock Token", "TKN", 18);
         vault = new MockERC4626(underlying, "Mock Token Vault", "vwTKN");
+        baseUnit = 10**vault.decimals();
     }
 
     function invariantMetadata() public {
@@ -37,7 +40,6 @@ contract ERC4626Test is DSTestPlus {
 
         // Ignore cases where amount * baseUnit overflows.
         unchecked {
-            uint256 baseUnit = 10**vault.decimals();
             if (amount != 0 && (amount * baseUnit) / amount != baseUnit) return;
         }
 
@@ -78,7 +80,6 @@ contract ERC4626Test is DSTestPlus {
 
         // Ignore cases where amount * baseUnit overflows.
         unchecked {
-            uint256 baseUnit = 10**vault.decimals();
             if (amount != 0 && (amount * baseUnit) / amount != baseUnit) return;
         }
 
