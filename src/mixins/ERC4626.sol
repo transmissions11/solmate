@@ -15,25 +15,17 @@ abstract contract ERC4626 is ERC20 {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Deposit(address indexed from, address indexed to, uint256 underlyingAmount);
+    event Deposit(address indexed from, address indexed to, uint256 amount);
 
-    event Withdraw(address indexed from, address indexed to, uint256 underlyingAmount);
+    event Withdraw(address indexed from, address indexed to, uint256 amount);
 
     /*///////////////////////////////////////////////////////////////
                                 IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
-    /// @notice The underlying token the vault accepts.
     ERC20 public immutable underlying;
 
-    /// @notice The base unit of the underlying token and hence vault.
-    /// @dev Equal to 10 ** decimals. Used for fixed point arithmetic.
-    uint256 internal immutable baseUnit;
-
-    /// @notice Creates a new vault that accepts a specific underlying token.
-    /// @param _underlying The ERC20 compliant token the vault should accept.
-    /// @param _name The name for the vault token.
-    /// @param _symbol The symbol for the vault token.
+    uint256 internal immutable SCALAR;
 
     constructor(
         ERC20 _underlying,
@@ -42,100 +34,125 @@ abstract contract ERC4626 is ERC20 {
     ) ERC20(_name, _symbol, _underlying.decimals()) {
         underlying = _underlying;
 
-        baseUnit = 10**decimals;
+        SCALAR = 10**decimals;
     }
 
     /*///////////////////////////////////////////////////////////////
                         DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function deposit(address to, uint256 underlyingAmount) public virtual returns (uint256 shares) {
-        _mint(to, shares = calculateShares(underlyingAmount));
+    function deposit(address to, uint256 amount) public virtual returns (uint256 shares) {
+        shares = previewDeposit(amount);
 
-        emit Deposit(msg.sender, to, underlyingAmount);
+        _mint(to, shares);
 
-        underlying.safeTransferFrom(msg.sender, address(this), underlyingAmount);
+        emit Deposit(msg.sender, to, amount);
 
-        afterDeposit(underlyingAmount);
+        underlying.safeTransferFrom(msg.sender, address(this), amount);
+
+        afterDeposit(amount);
     }
 
-    function mint(address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
-        underlyingAmount = calculateUnderlying(shareAmount);
-        
-        _mint(to, shareAmount);
+    function mint(address to, uint256 shares) public virtual returns (uint256 amount) {
+        amount = previewMint(shares);
 
-        emit Deposit(msg.sender, to, underlyingAmount);
+        _mint(to, shares);
 
-        underlying.safeTransferFrom(msg.sender, address(this), underlyingAmount);
+        emit Deposit(msg.sender, to, amount);
 
-        afterDeposit(underlyingAmount);
+        underlying.safeTransferFrom(msg.sender, address(this), amount);
+
+        afterDeposit(amount);
     }
 
-    function withdraw(address from, address to, uint256 underlyingAmount) public virtual returns (uint256 shares) {
-        shares = calculateShares(underlyingAmount);
+    function withdraw(
+        address from,
+        address to,
+        uint256 amount
+    ) public virtual returns (uint256 shares) {
+        uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
 
-        if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
-            allowance[from][msg.sender] -= shares;
-        }
-        
+        if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
+
+        shares = previewMint(amount);
+
         _burn(from, shares);
 
-        emit Withdraw(from, to, underlyingAmount);
+        emit Withdraw(from, to, amount);
 
-        beforeWithdraw(underlyingAmount);
+        beforeWithdraw(amount);
 
-        underlying.safeTransfer(to, underlyingAmount);
+        underlying.safeTransfer(to, amount);
     }
 
-    function redeem(address from, address to, uint256 shareAmount) public virtual returns (uint256 underlyingAmount) {
-        if (msg.sender != from && allowance[from][msg.sender] != type(uint256).max) {
-            allowance[from][msg.sender] -= shareAmount;
-        }
+    function redeem(
+        address from,
+        address to,
+        uint256 shares
+    ) public virtual returns (uint256 amount) {
+        uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
 
-        underlyingAmount = calculateUnderlying(shareAmount);
+        if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
 
-        _burn(from, shareAmount);
+        amount = previewRedeem(shares);
 
-        emit Withdraw(from, to, underlyingAmount);
+        _burn(from, shares);
 
-        beforeWithdraw(underlyingAmount);
+        emit Withdraw(from, to, amount);
 
-        underlying.safeTransfer(to, underlyingAmount);
+        beforeWithdraw(amount);
+
+        underlying.safeTransfer(to, amount);
     }
-
-    function beforeWithdraw(uint256 underlyingAmount) internal virtual {}
-
-    function afterDeposit(uint256 underlyingAmount) internal virtual {}
 
     /*///////////////////////////////////////////////////////////////
                         VAULT ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function totalUnderlying() public view virtual returns (uint256) {
-        return underlying.balanceOf(address(this));
-    }
+    function totalUnderlying() public view virtual returns (uint256);
 
     function balanceOfUnderlying(address user) public view virtual returns (uint256) {
-        return calculateUnderlying(balanceOf[user]);
+        return previewRedeem(balanceOf[user]);
     }
 
-    function calculateShares(uint256 underlyingAmount) public view virtual returns (uint256) {
-        uint256 shareSupply = totalSupply;
-
-        if (shareSupply == 0) return underlyingAmount;
-
-        uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
-
-        return underlyingAmount.fdiv(exchangeRate, baseUnit);
+    function exchangeRate() public view returns (uint256) {
+        return previewRedeem(SCALAR);
     }
 
-    function calculateUnderlying(uint256 shareAmount) public view virtual returns (uint256) {
-        uint256 shareSupply = totalSupply;
-        
-        if (shareSupply == 0) return shareAmount;
+    function previewDeposit(uint256 amount) public view returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        uint256 exchangeRate = totalUnderlying().fdiv(shareSupply, baseUnit);
-
-        return shareAmount.fmulUp(exchangeRate, baseUnit);
+        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
+        return supply == 0 ? SCALAR : amount.fmul(totalSupply.fdiv(totalUnderlying(), SCALAR), SCALAR);
     }
+
+    function previewMint(uint256 shares) public view returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
+        return supply == 0 ? SCALAR : shares.fmulUp(totalUnderlying().fdiv(totalSupply, SCALAR), SCALAR);
+    }
+
+    function previewWithdraw(uint256 amount) public view returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
+        // TODO: do we even have an intermediate? what if we did (amount *underlying) / supply
+        return supply == 0 ? SCALAR : amount.fmulUp(totalUnderlying().fdiv(totalSupply, SCALAR), SCALAR);
+    }
+
+    function previewRedeem(uint256 shares) public view returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
+        return supply == 0 ? SCALAR : shares.fmul(totalUnderlying().fdiv(totalSupply, SCALAR), SCALAR);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                         INTERNAL HOOKS LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function beforeWithdraw(uint256 amount) internal virtual {}
+
+    function afterDeposit(uint256 amount) internal virtual {}
 }
