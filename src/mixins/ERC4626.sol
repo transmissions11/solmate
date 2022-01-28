@@ -42,7 +42,8 @@ abstract contract ERC4626 is ERC20 {
     //////////////////////////////////////////////////////////////*/
 
     function deposit(uint256 amount, address to) public virtual returns (uint256 shares) {
-        shares = previewDeposit(amount);
+        // Check for rounding error since we round down in previewDeposit.
+        require((shares = previewDeposit(amount)) != 0, "ZERO_SHARES");
 
         _mint(to, shares);
 
@@ -54,7 +55,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     function mint(uint256 shares, address to) public virtual returns (uint256 amount) {
-        amount = previewMint(shares);
+        amount = previewMint(shares); // No need to check for rounding error, previewMint rounds up.
 
         _mint(to, shares);
 
@@ -74,7 +75,7 @@ abstract contract ERC4626 is ERC20 {
 
         if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
 
-        shares = previewMint(amount);
+        shares = previewWithdraw(amount); // No need to check for rounding error, previewWithdraw rounds up.
 
         _burn(from, shares);
 
@@ -94,7 +95,8 @@ abstract contract ERC4626 is ERC20 {
 
         if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
 
-        amount = previewRedeem(shares);
+        // Check for rounding error since we round down in previewRedeem.
+        require((amount = previewRedeem(shares)) != 0, "ZERO_SHARES");
 
         _burn(from, shares);
 
