@@ -3,89 +3,88 @@ pragma solidity >=0.8.0;
 
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
+/// @author Inspired by USM (https://github.com/usmfum/USM/blob/master/contracts/WadMath.sol)
 library FixedPointMathLib {
     /*///////////////////////////////////////////////////////////////
-                            COMMON BASE UNITS
+                   SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
-    uint256 internal constant YAD = 1e8;
-    uint256 internal constant WAD = 1e18;
-    uint256 internal constant RAY = 1e27;
-    uint256 internal constant RAD = 1e45;
+    uint256 internal constant WAD = 1e18; // Most common fixed point scalar.
+
+    function mulWad(uint256 x, uint256 y) internal pure returns (uint256) {
+        return mulDiv(x, y, WAD); // Equivalent to (x * y) / WAD rounded down.
+    }
+
+    function mulWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
+        return mulDivUp(x, y, WAD); // Equivalent to (x * y) / WAD rounded up.
+    }
+
+    function divWad(uint256 x, uint256 y) internal pure returns (uint256) {
+        return mulDiv(x, WAD, y); // Equivalent to (x * WAD) / y rounded down.
+    }
+
+    function divWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
+        return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
+    }
 
     /*///////////////////////////////////////////////////////////////
-                         FIXED POINT OPERATIONS
+                     LOW LEVEL FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
-    function fmul(
+    function mulDiv(
         uint256 x,
         uint256 y,
-        uint256 baseUnit
+        uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
             // Store x * y in z for now.
             z := mul(x, y)
 
-            // Equivalent to require(x == 0 || (x * y) / x == y)
-            if iszero(or(iszero(x), eq(div(z, x), y))) {
+            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+
+            // TODO: might be cheaper to split into two ifs and check div(z,x) first
+            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
-            // If baseUnit is zero this will return zero instead of reverting.
-            z := div(z, baseUnit)
+            // Divide z by the denominator.
+            z := div(z, denominator)
         }
     }
 
-    function fmulUp(
+    function mulDivUp(
         uint256 x,
         uint256 y,
-        uint256 baseUnit
+        uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
             // Store x * y in z for now.
             z := mul(x, y)
 
-            // Equivalent to require(x == 0 || (x * y) / x == y)
-            if iszero(or(iszero(x), eq(div(z, x), y))) {
+            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+
+            // TODO: might be cheaper to split into two ifs and check div(z,x) first
+            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
-            // Compute z + baseUnit - 1.
-            let zUp := add(z, sub(baseUnit, 1))
+            // Compute z + (denominator - 1).
+            let zUp := add(z, sub(denominator, 1))
 
             // If the addition overflowed, revert.
             if lt(zUp, z) {
                 revert(0, 0)
             }
 
-            // If baseUnit is zero this will return zero instead of reverting.
-            z := div(z, baseUnit)
+            // Divide zUp by the denominator.
+            z := div(zUp, denominator)
         }
     }
 
-    function fdiv(
-        uint256 x,
-        uint256 y,
-        uint256 baseUnit
-    ) internal pure returns (uint256 z) {
-        assembly {
-            // Store x * baseUnit in z for now.
-            z := mul(x, baseUnit)
-
-            // Equivalent to require(y != 0 && (x == 0 || (x * baseUnit) / x == baseUnit))
-            if iszero(and(iszero(iszero(y)), or(iszero(x), eq(div(z, x), baseUnit)))) {
-                revert(0, 0)
-            }
-
-            // We ensure y is not zero above, so there is never division by zero here.
-            z := div(z, y)
-        }
-    }
-
-    function fpow(
+    function rpow(
         uint256 x,
         uint256 n,
-        uint256 baseUnit
+        uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
             switch x
@@ -93,7 +92,7 @@ library FixedPointMathLib {
                 switch n
                 case 0 {
                     // 0 ** 0 = 1
-                    z := baseUnit
+                    z := denominator
                 }
                 default {
                     // 0 ** n = 0
@@ -103,8 +102,8 @@ library FixedPointMathLib {
             default {
                 switch mod(n, 2)
                 case 0 {
-                    // If n is even, store baseUnit in z for now.
-                    z := baseUnit
+                    // If n is even, store denominator in z for now.
+                    z := denominator
                 }
                 default {
                     // If n is odd, store x in z for now.
@@ -112,7 +111,7 @@ library FixedPointMathLib {
                 }
 
                 // Shifting right by 1 is like dividing by 2.
-                let half := shr(1, baseUnit)
+                let half := shr(1, denominator)
 
                 for {
                     // Shift n right by 1 before looping to halve it.
@@ -139,12 +138,14 @@ library FixedPointMathLib {
                     }
 
                     // Set x to scaled xxRound.
-                    x := div(xxRound, baseUnit)
+                    x := div(xxRound, denominator)
 
                     // If n is even:
                     if mod(n, 2) {
                         // Compute z * x.
                         let zx := mul(z, x)
+
+                        // TODO: this is basically round up on half muldiv, can prolly optimize
 
                         // If z * x overflowed:
                         if iszero(eq(div(zx, x), z)) {
@@ -163,7 +164,7 @@ library FixedPointMathLib {
                         }
 
                         // Return properly scaled zxRound.
-                        z := div(zxRound, baseUnit)
+                        z := div(zxRound, denominator)
                     }
                 }
             }

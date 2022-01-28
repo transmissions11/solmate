@@ -41,7 +41,7 @@ abstract contract ERC4626 is ERC20 {
                         DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function deposit(address to, uint256 amount) public virtual returns (uint256 shares) {
+    function deposit(uint256 amount, address to) public virtual returns (uint256 shares) {
         shares = previewDeposit(amount);
 
         _mint(to, shares);
@@ -53,7 +53,7 @@ abstract contract ERC4626 is ERC20 {
         afterDeposit(amount);
     }
 
-    function mint(address to, uint256 shares) public virtual returns (uint256 amount) {
+    function mint(uint256 shares, address to) public virtual returns (uint256 amount) {
         amount = previewMint(shares);
 
         _mint(to, shares);
@@ -66,9 +66,9 @@ abstract contract ERC4626 is ERC20 {
     }
 
     function withdraw(
-        address from,
+        uint256 amount,
         address to,
-        uint256 amount
+        address from
     ) public virtual returns (uint256 shares) {
         uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
 
@@ -86,9 +86,9 @@ abstract contract ERC4626 is ERC20 {
     }
 
     function redeem(
-        address from,
+        uint256 shares,
         address to,
-        uint256 shares
+        address from
     ) public virtual returns (uint256 amount) {
         uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
 
@@ -109,43 +109,38 @@ abstract contract ERC4626 is ERC20 {
                         VAULT ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function totalUnderlying() public view virtual returns (uint256);
+    function totalAssets() public view virtual returns (uint256);
 
-    function balanceOfUnderlying(address user) public view virtual returns (uint256) {
+    function assetsOf(address user) public view virtual returns (uint256) {
         return previewRedeem(balanceOf[user]);
     }
 
-    function exchangeRate() public view returns (uint256) {
+    function assetsPerShare() public view returns (uint256) {
         return previewRedeem(SCALAR);
     }
 
     function previewDeposit(uint256 amount) public view returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
-        return supply == 0 ? SCALAR : amount.fmul(totalSupply.fdiv(totalUnderlying(), SCALAR), SCALAR);
+        return supply == 0 ? SCALAR : amount.mulDiv(totalSupply, totalAssets());
     }
 
     function previewMint(uint256 shares) public view returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
-        return supply == 0 ? SCALAR : shares.fmulUp(totalUnderlying().fdiv(totalSupply, SCALAR), SCALAR);
+        return supply == 0 ? SCALAR : shares.mulDivUp(totalAssets(), totalSupply);
     }
 
     function previewWithdraw(uint256 amount) public view returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
-        // TODO: do we even have an intermediate? what if we did (amount *underlying) / supply
-        return supply == 0 ? SCALAR : amount.fmulUp(totalUnderlying().fdiv(totalSupply, SCALAR), SCALAR);
+        return supply == 0 ? SCALAR : amount.mulDivUp(totalSupply, totalAssets());
     }
 
     function previewRedeem(uint256 shares) public view returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        // TODO: what do we do about the intermediate exchange rate? do we do it up? can we get rid of it?
-        return supply == 0 ? SCALAR : shares.fmul(totalUnderlying().fdiv(totalSupply, SCALAR), SCALAR);
+        return supply == 0 ? SCALAR : shares.mulDiv(totalAssets(), totalSupply);
     }
 
     /*///////////////////////////////////////////////////////////////
