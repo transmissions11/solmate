@@ -55,9 +55,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     function mint(uint256 shares, address to) public virtual returns (uint256 amount) {
-        amount = previewMint(shares); // No need to check for rounding error, previewMint rounds up.
-
-        _mint(to, shares);
+        _mint(to, amount = previewMint(shares)); // No need to check for rounding error, previewMint rounds up.
 
         emit Deposit(msg.sender, to, amount);
 
@@ -75,9 +73,7 @@ abstract contract ERC4626 is ERC20 {
 
         if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
 
-        shares = previewWithdraw(amount); // No need to check for rounding error, previewWithdraw rounds up.
-
-        _burn(from, shares);
+        _burn(from, shares = previewWithdraw(amount)); // No need to check for rounding error, previewWithdraw rounds up.
 
         emit Withdraw(from, to, amount);
 
@@ -124,25 +120,21 @@ abstract contract ERC4626 is ERC20 {
     function previewDeposit(uint256 amount) public view returns (uint256 shares) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? SCALAR : amount.mulDiv(totalSupply, totalAssets());
+        return supply == 0 ? amount : amount.mulDiv(totalSupply, totalAssets());
     }
 
     function previewMint(uint256 shares) public view returns (uint256 amount) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? SCALAR : shares.mulDivUp(totalAssets(), totalSupply);
+        return supply == 0 ? amount : shares.mulDivUp(totalAssets(), totalSupply);
     }
 
     function previewWithdraw(uint256 amount) public view returns (uint256 shares) {
-        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
-
-        return supply == 0 ? SCALAR : amount.mulDivUp(totalSupply, totalAssets());
+        return amount.mulDivUp(totalSupply, totalAssets());
     }
 
     function previewRedeem(uint256 shares) public view returns (uint256 amount) {
-        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
-
-        return supply == 0 ? SCALAR : shares.mulDiv(totalAssets(), totalSupply);
+        return shares.mulDiv(totalAssets(), totalSupply);
     }
 
     /*///////////////////////////////////////////////////////////////
