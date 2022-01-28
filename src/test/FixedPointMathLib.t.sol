@@ -108,12 +108,12 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 denominator
     ) public {
-        // Ignore cases where x * y + denominator - 1 overflows or denominator is 0.
+        // Ignore cases where x * y overflows or denominator is 0.
         unchecked {
-            if (denominator == 0 || (x != 0 && (x * y) / x != y) || (x * y + denominator - 1) < (x * y)) return;
+            if (denominator == 0 || (x != 0 && (x * y) / x != y)) return;
         }
 
-        assertEq(FixedPointMathLib.mulDivUp(x, y, denominator), (x * y + denominator - 1) / denominator);
+        assertEq(FixedPointMathLib.mulDivUp(x, y, denominator), x * y == 0 ? 0 : (x * y - 1) / denominator + 1);
     }
 
     function testFailMulDivUpOverflow(
@@ -121,9 +121,9 @@ contract FixedPointMathLibTest is DSTestPlus {
         uint256 y,
         uint256 denominator
     ) public pure {
-        // Ignore cases where x * y + denominator - 1 does not overflow or denominator is 0.
+        // Ignore cases where x * y does not overflow or denominator is 0.
         unchecked {
-            if (denominator == 0 || (x * y) / x == y || (x * y + denominator - 1) >= (x * y)) revert();
+            if (denominator == 0 || (x * y) / x == y) revert();
         }
 
         FixedPointMathLib.mulDivUp(x, y, denominator);
