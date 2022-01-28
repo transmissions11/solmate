@@ -134,8 +134,6 @@ library FixedPointMathLib {
                         // Compute z * x.
                         let zx := mul(z, x)
 
-                        // TODO: this is basically round up on half muldiv, can prolly optimize
-
                         // If z * x overflowed:
                         if iszero(eq(div(zx, x), z)) {
                             // Revert if x is non-zero.
