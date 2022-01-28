@@ -6,7 +6,7 @@ import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 /// @notice Minimal ERC4646 tokenized vault implementation.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixinz/ERC4626.sol)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
 abstract contract ERC4626 is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
@@ -106,7 +106,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     /*///////////////////////////////////////////////////////////////
-                        VAULT ACCOUNTING LOGIC
+                           ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function totalAssets() public view virtual returns (uint256);
@@ -119,25 +119,25 @@ abstract contract ERC4626 is ERC20 {
         return previewRedeem(SCALAR);
     }
 
-    function previewDeposit(uint256 amount) public view returns (uint256) {
+    function previewDeposit(uint256 amount) public view returns (uint256 shares) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? SCALAR : amount.mulDiv(totalSupply, totalAssets());
     }
 
-    function previewMint(uint256 shares) public view returns (uint256) {
+    function previewMint(uint256 shares) public view returns (uint256 amount) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? SCALAR : shares.mulDivUp(totalAssets(), totalSupply);
     }
 
-    function previewWithdraw(uint256 amount) public view returns (uint256) {
+    function previewWithdraw(uint256 amount) public view returns (uint256 shares) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? SCALAR : amount.mulDivUp(totalSupply, totalAssets());
     }
 
-    function previewRedeem(uint256 shares) public view returns (uint256) {
+    function previewRedeem(uint256 shares) public view returns (uint256 amount) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? SCALAR : shares.mulDiv(totalAssets(), totalSupply);
