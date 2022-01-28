@@ -6,10 +6,10 @@ pragma solidity >=0.8.0;
 /// @author Inspired by USM (https://github.com/usmfum/USM/blob/master/contracts/WadMath.sol)
 library FixedPointMathLib {
     /*///////////////////////////////////////////////////////////////
-                   SIMPLIFIED FIXED POINT OPERATIONS
+                    SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
-    uint256 internal constant WAD = 1e18; // Most common fixed point scalar.
+    uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
     function mulWad(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDiv(x, y, WAD); // Equivalent to (x * y) / WAD rounded down.
@@ -28,7 +28,7 @@ library FixedPointMathLib {
     }
 
     /*///////////////////////////////////////////////////////////////
-                     LOW LEVEL FIXED POINT OPERATIONS
+                    LOW LEVEL FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
     function mulDiv(

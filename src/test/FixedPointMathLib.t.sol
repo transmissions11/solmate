@@ -6,6 +6,8 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 contract FixedPointMathLibTest is DSTestPlus {
+    // TODO: test wad operations
+
     function testMulDiv() public {
         assertEq(FixedPointMathLib.mulDiv(2.5e27, 0.5e27, 1e27), 1.25e27);
         assertEq(FixedPointMathLib.mulDiv(2.5e18, 0.5e18, 1e18), 1.25e18);
