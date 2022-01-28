@@ -96,7 +96,7 @@ abstract contract ERC4626 is ERC20 {
         if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
 
         // Check for rounding error since we round down in previewRedeem.
-        require((amount = previewRedeem(shares)) != 0, "ZERO_SHARES");
+        require((amount = previewRedeem(shares)) != 0, "ZERO_ASSETS");
 
         _burn(from, shares);
 
