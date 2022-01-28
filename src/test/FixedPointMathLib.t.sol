@@ -6,7 +6,57 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 contract FixedPointMathLibTest is DSTestPlus {
-    // TODO: test wad operations
+    function testMulWad() public {
+        assertEq(FixedPointMathLib.mulWad(2.5e18, 0.5e18), 1.25e18);
+        assertEq(FixedPointMathLib.mulWad(3e18, 1e18), 3e18);
+        assertEq(FixedPointMathLib.mulWad(369, 271), 0);
+    }
+
+    function testMulWadEdgeCases() public {
+        assertEq(FixedPointMathLib.mulWad(0, 1e18), 0);
+        assertEq(FixedPointMathLib.mulWad(1e18, 0), 0);
+        assertEq(FixedPointMathLib.mulWad(0, 0), 0);
+    }
+
+    function testMulWadUp() public {
+        assertEq(FixedPointMathLib.mulWadUp(2.5e18, 0.5e18), 1.25e18);
+        assertEq(FixedPointMathLib.mulWadUp(3e18, 1e18), 3e18);
+        assertEq(FixedPointMathLib.mulWadUp(369, 271), 1);
+    }
+
+    function testMulWadUpEdgeCases() public {
+        assertEq(FixedPointMathLib.mulWadUp(0, 1e18), 0);
+        assertEq(FixedPointMathLib.mulWadUp(1e18, 0), 0);
+        assertEq(FixedPointMathLib.mulWadUp(0, 0), 0);
+    }
+
+    function testDivWad() public {
+        assertEq(FixedPointMathLib.divWad(1.25e18, 0.5e18), 2.5e18);
+        assertEq(FixedPointMathLib.divWad(3e18, 1e18), 3e18);
+        assertEq(FixedPointMathLib.divWad(2, 100000000000000e18), 0);
+    }
+
+    function testDivWadEdgeCases() public {
+        assertEq(FixedPointMathLib.divWad(0, 1e18), 0);
+    }
+
+    function testFailDivWadZeroDenominator() public pure {
+        FixedPointMathLib.divWad(1e18, 0);
+    }
+
+    function testDivWadUp() public {
+        assertEq(FixedPointMathLib.divWadUp(1.25e18, 0.5e18), 2.5e18);
+        assertEq(FixedPointMathLib.divWadUp(3e18, 1e18), 3e18);
+        assertEq(FixedPointMathLib.divWadUp(2, 100000000000000e18), 1);
+    }
+
+    function testDivWadUpEdgeCases() public {
+        assertEq(FixedPointMathLib.divWadUp(0, 1e18), 0);
+    }
+
+    function testFailDivWadUpZeroDenominator() public pure {
+        FixedPointMathLib.divWadUp(1e18, 0);
+    }
 
     function testMulDiv() public {
         assertEq(FixedPointMathLib.mulDiv(2.5e27, 0.5e27, 1e27), 1.25e27);
@@ -71,6 +121,86 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.sqrt(2704), 52);
         assertEq(FixedPointMathLib.sqrt(110889), 333);
         assertEq(FixedPointMathLib.sqrt(32239684), 5678);
+    }
+
+    function testMulWad(uint256 x, uint256 y) public {
+        // Ignore cases where x * y overflows.
+        unchecked {
+            if ((x != 0 && (x * y) / x != y)) return;
+        }
+
+        assertEq(FixedPointMathLib.mulWad(x, y), (x * y) / 1e18);
+    }
+
+    function testFailMulWadOverflow(uint256 x, uint256 y) public pure {
+        // Ignore cases where x * y does not overflow.
+        unchecked {
+            if ((x * y) / x == y) revert();
+        }
+
+        FixedPointMathLib.mulWad(x, y);
+    }
+
+    function testMulWadUp(uint256 x, uint256 y) public {
+        // Ignore cases where x * y overflows.
+        unchecked {
+            if ((x != 0 && (x * y) / x != y)) return;
+        }
+
+        assertEq(FixedPointMathLib.mulWadUp(x, y), x * y == 0 ? 0 : (x * y - 1) / 1e18 + 1);
+    }
+
+    function testFailMulWadUpOverflow(uint256 x, uint256 y) public pure {
+        // Ignore cases where x * y does not overflow.
+        unchecked {
+            if ((x * y) / x == y) revert();
+        }
+
+        FixedPointMathLib.mulWadUp(x, y);
+    }
+
+    function testDivWad(uint256 x, uint256 y) public {
+        // Ignore cases where x * WAD overflows or y is 0.
+        unchecked {
+            if (y == 0 || (x != 0 && (x * 1e18) / 1e18 != x)) return;
+        }
+
+        assertEq(FixedPointMathLib.divWad(x, y), (x * 1e18) / y);
+    }
+
+    function testFailDivWadOverflow(uint256 x, uint256 y) public pure {
+        // Ignore cases where x * WAD does not overflow or y is 0.
+        unchecked {
+            if (y == 0 || (x * 1e18) / 1e18 == x) revert();
+        }
+
+        FixedPointMathLib.divWad(x, y);
+    }
+
+    function testFailDivWadZeroDenominator(uint256 x) public pure {
+        FixedPointMathLib.divWad(x, 0);
+    }
+
+    function testDivWadUp(uint256 x, uint256 y) public {
+        // Ignore cases where x * WAD overflows or y is 0.
+        unchecked {
+            if (y == 0 || (x != 0 && (x * 1e18) / 1e18 != x)) return;
+        }
+
+        assertEq(FixedPointMathLib.divWadUp(x, y), x * 1e18 == 0 ? 0 : (x * 1e18 - 1) / y + 1);
+    }
+
+    function testFailDivWadUpOverflow(uint256 x, uint256 y) public pure {
+        // Ignore cases where x * WAD does not overflow or y is 0.
+        unchecked {
+            if (y == 0 || (x * 1e18) / 1e18 == x) revert();
+        }
+
+        FixedPointMathLib.divWadUp(x, y);
+    }
+
+    function testFailDivWadUpZeroDenominator(uint256 x) public pure {
+        FixedPointMathLib.divWadUp(x, 0);
     }
 
     function testMulDiv(
