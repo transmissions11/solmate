@@ -23,16 +23,16 @@ abstract contract ERC4626 is ERC20 {
                                 IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
-    ERC20 public immutable underlying;
+    ERC20 public immutable asset;
 
     uint256 internal immutable SCALAR;
 
     constructor(
-        ERC20 _underlying,
+        ERC20 _asset,
         string memory _name,
         string memory _symbol
-    ) ERC20(_name, _symbol, _underlying.decimals()) {
-        underlying = _underlying;
+    ) ERC20(_name, _symbol, _asset.decimals()) {
+        asset = _asset;
 
         SCALAR = 10**decimals;
     }
@@ -49,7 +49,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Deposit(msg.sender, to, amount);
 
-        underlying.safeTransferFrom(msg.sender, address(this), amount);
+        asset.safeTransferFrom(msg.sender, address(this), amount);
 
         afterDeposit(amount);
     }
@@ -61,7 +61,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Deposit(msg.sender, to, amount);
 
-        underlying.safeTransferFrom(msg.sender, address(this), amount);
+        asset.safeTransferFrom(msg.sender, address(this), amount);
 
         afterDeposit(amount);
     }
@@ -83,7 +83,7 @@ abstract contract ERC4626 is ERC20 {
 
         beforeWithdraw(amount);
 
-        underlying.safeTransfer(to, amount);
+        asset.safeTransfer(to, amount);
     }
 
     function redeem(
@@ -104,7 +104,7 @@ abstract contract ERC4626 is ERC20 {
 
         beforeWithdraw(amount);
 
-        underlying.safeTransfer(to, amount);
+        asset.safeTransfer(to, amount);
     }
 
     /*///////////////////////////////////////////////////////////////
