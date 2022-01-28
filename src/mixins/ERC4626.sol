@@ -20,12 +20,10 @@ abstract contract ERC4626 is ERC20 {
     event Withdraw(address indexed from, address indexed to, uint256 amount);
 
     /*///////////////////////////////////////////////////////////////
-                                IMMUTABLES
+                               IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
     ERC20 public immutable asset;
-
-    uint256 internal immutable SCALAR;
 
     constructor(
         ERC20 _asset,
@@ -33,8 +31,6 @@ abstract contract ERC4626 is ERC20 {
         string memory _symbol
     ) ERC20(_name, _symbol, _asset.decimals()) {
         asset = _asset;
-
-        SCALAR = 10**decimals;
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -114,7 +110,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     function assetsPerShare() public view returns (uint256) {
-        return previewRedeem(SCALAR);
+        return previewRedeem(10**decimals);
     }
 
     function previewDeposit(uint256 amount) public view returns (uint256 shares) {
