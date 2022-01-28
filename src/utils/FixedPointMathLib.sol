@@ -65,7 +65,7 @@ library FixedPointMathLib {
             }
 
             // First, divide z - 1 by the denominator and add 1.
-            // Then multiply that 1 if z is non-zero, or 0 otherwise.
+            // Then multiply it by 0 if z is zero, or 1 otherwise.
             z := mul(iszero(iszero(z)), add(div(sub(z, 1), denominator), 1))
         }
     }
