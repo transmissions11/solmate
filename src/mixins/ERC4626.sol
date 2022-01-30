@@ -109,28 +109,32 @@ abstract contract ERC4626 is ERC20 {
         return previewRedeem(balanceOf[user]);
     }
 
-    function assetsPerShare() public view returns (uint256) {
+    function assetsPerShare() public view virtual returns (uint256) {
         return previewRedeem(10**decimals);
     }
 
-    function previewDeposit(uint256 amount) public view returns (uint256 shares) {
+    function previewDeposit(uint256 amount) public view virtual returns (uint256 shares) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? amount : amount.mulDiv(totalSupply, totalAssets());
     }
 
-    function previewMint(uint256 shares) public view returns (uint256 amount) {
+    function previewMint(uint256 shares) public view virtual returns (uint256 amount) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? amount : shares.mulDivUp(totalAssets(), totalSupply);
+        return supply == 0 ? shares : shares.mulDivUp(totalAssets(), totalSupply);
     }
 
-    function previewWithdraw(uint256 amount) public view returns (uint256 shares) {
-        return amount.mulDivUp(totalSupply, totalAssets());
+    function previewWithdraw(uint256 amount) public view virtual returns (uint256 shares) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        return supply == 0 ? amount : amount.mulDivUp(totalSupply, totalAssets());
     }
 
-    function previewRedeem(uint256 shares) public view returns (uint256 amount) {
-        return shares.mulDiv(totalAssets(), totalSupply);
+    function previewRedeem(uint256 shares) public view virtual returns (uint256 amount) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        return supply == 0 ? shares : shares.mulDiv(totalAssets(), totalSupply);
     }
 
     /*///////////////////////////////////////////////////////////////
