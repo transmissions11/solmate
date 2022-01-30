@@ -116,7 +116,7 @@ abstract contract ERC4626 is ERC20 {
     function previewDeposit(uint256 amount) public view virtual returns (uint256 shares) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? amount : amount.mulDiv(totalSupply, totalAssets());
+        return supply == 0 ? amount : amount.mulDivDown(totalSupply, totalAssets());
     }
 
     function previewMint(uint256 shares) public view virtual returns (uint256 amount) {
@@ -134,7 +134,7 @@ abstract contract ERC4626 is ERC20 {
     function previewRedeem(uint256 shares) public view virtual returns (uint256 amount) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? shares : shares.mulDiv(totalAssets(), totalSupply);
+        return supply == 0 ? shares : shares.mulDivDown(totalAssets(), totalSupply);
     }
 
     /*///////////////////////////////////////////////////////////////

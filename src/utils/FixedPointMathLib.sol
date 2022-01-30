@@ -11,16 +11,16 @@ library FixedPointMathLib {
 
     uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
-    function mulWad(uint256 x, uint256 y) internal pure returns (uint256) {
-        return mulDiv(x, y, WAD); // Equivalent to (x * y) / WAD rounded down.
+    function mulWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
+        return mulDivDown(x, y, WAD); // Equivalent to (x * y) / WAD rounded down.
     }
 
     function mulWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDivUp(x, y, WAD); // Equivalent to (x * y) / WAD rounded up.
     }
 
-    function divWad(uint256 x, uint256 y) internal pure returns (uint256) {
-        return mulDiv(x, WAD, y); // Equivalent to (x * WAD) / y rounded down.
+    function divWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
+        return mulDivDown(x, WAD, y); // Equivalent to (x * WAD) / y rounded down.
     }
 
     function divWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
@@ -31,7 +31,7 @@ library FixedPointMathLib {
                     LOW LEVEL FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
-    function mulDiv(
+    function mulDivDown(
         uint256 x,
         uint256 y,
         uint256 denominator
