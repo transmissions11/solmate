@@ -22,6 +22,10 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
+    function invariantAssetsPerShare() public {
+        assertGe(vault.assetsPerShare(), 1e18);
+    }
+
     function testMetaData() public {
         assertEq(vault.name(), "Mock Token Vault");
         assertEq(vault.symbol(), "vwTKN");
