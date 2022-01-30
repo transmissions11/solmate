@@ -48,7 +48,7 @@ contract ERC4626Test is DSTestPlus {
         uint256 aliceShareAmount = alice.deposit(aliceUnderlyingAmount, address(alice));
         assertEq(vault.afterDepositHookCalledCounter(), 1);
 
-        // Expect exchange rate to be 1:1 on initial deposit
+        // Expect exchange rate to be 1:1 on initial deposit.
         assertEq(aliceUnderlyingAmount, aliceShareAmount);
         assertEq(vault.previewWithdraw(aliceShareAmount), aliceUnderlyingAmount);
         assertEq(vault.previewDeposit(aliceUnderlyingAmount), aliceShareAmount);
@@ -83,7 +83,7 @@ contract ERC4626Test is DSTestPlus {
         uint256 aliceUnderlyingAmount = alice.mint(aliceShareAmount, address(alice));
         assertEq(vault.afterDepositHookCalledCounter(), 1);
 
-        // Expect exchange rate to be 1:1 on initial mint
+        // Expect exchange rate to be 1:1 on initial mint.
         assertEq(aliceShareAmount, aliceUnderlyingAmount);
         assertEq(vault.previewWithdraw(aliceShareAmount), aliceUnderlyingAmount);
         assertEq(vault.previewDeposit(aliceUnderlyingAmount), aliceShareAmount);
@@ -125,37 +125,37 @@ contract ERC4626Test is DSTestPlus {
         bob.approve(address(vault), 4e18);
         assertEq(underlying.allowance(address(bob), address(vault)), 4e18);
 
-        // Alice mints
+        // Alice mints.
         uint256 aliceUnderlyingAmount = alice.mint(aliceDesiredShareAmount, address(alice));
         uint256 aliceShareAmount = vault.previewDeposit(aliceUnderlyingAmount);
         assertEq(vault.afterDepositHookCalledCounter(), 1);
 
-        // Expect to have received the requested mint amount
+        // Expect to have received the requested mint amount.
         assertEq(aliceShareAmount, aliceDesiredShareAmount);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
         assertEq(vault.assetsOf(address(alice)), aliceUnderlyingAmount);
 
-        // Expect a 1:1 ratio before mutation
+        // Expect a 1:1 ratio before mutation.
         assertEq(aliceUnderlyingAmount, aliceDesiredShareAmount);
 
-        // Sanity check
+        // Sanity check.
         assertEq(vault.totalSupply(), aliceShareAmount);
         assertEq(vault.totalAssets(), aliceUnderlyingAmount);
 
-        // Bob deposits
+        // Bob deposits.
         uint256 bobShareAmount = bob.deposit(bobDesiredUnderlyingAmount, address(bob));
         uint256 bobUnderlyingAmount = vault.previewWithdraw(bobShareAmount);
         assertEq(vault.afterDepositHookCalledCounter(), 2);
 
-        // Expect to have received the requested underlying amount
+        // Expect to have received the requested underlying amount.
         assertEq(bobUnderlyingAmount, bobDesiredUnderlyingAmount);
         assertEq(vault.balanceOf(address(bob)), bobShareAmount);
         assertEq(vault.assetsOf(address(bob)), bobUnderlyingAmount);
 
-        // Expect a 1:1 ratio before mutation
+        // Expect a 1:1 ratio before mutation.
         assertEq(bobShareAmount, bobUnderlyingAmount);
 
-        // Sanity check
+        // Sanity check.
         uint256 preMutationShareBal = aliceShareAmount + bobShareAmount;
         uint256 preMutationBal = aliceUnderlyingAmount + bobUnderlyingAmount;
         assertEq(vault.totalSupply(), preMutationShareBal);
@@ -178,8 +178,8 @@ contract ERC4626Test is DSTestPlus {
         uint256 aliceRedeemUnderlyingAmount = alice.redeem(aliceShareAmount, address(alice), address(alice));
         assertEq(vault.beforeWithdrawHookCalledCounter(), 1);
         assertEq(aliceRedeemUnderlyingAmount, aliceUnderlyingAmount + (mutationUnderlyingAmount / 3) * 1);
-        assertEq(vault.balanceOf((address(alice))), 0);
-        assertEq(vault.assetsOf((address(alice))), 0);
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.assetsOf(address(alice)), 0);
         assertEq(vault.totalSupply(), preMutationShareBal - aliceShareAmount);
         assertEq(vault.totalAssets(), preMutationBal + mutationUnderlyingAmount - aliceRedeemUnderlyingAmount);
 
@@ -193,10 +193,10 @@ contract ERC4626Test is DSTestPlus {
         );
         assertEq(vault.beforeWithdrawHookCalledCounter(), 2);
         assertEq(bobWithdrawShareAmount, bobShareAmount);
-        assertEq(vault.balanceOf((address(bob))), 0);
-        assertEq(vault.assetsOf((address(bob))), 0);
+        assertEq(vault.balanceOf(address(bob)), 0);
+        assertEq(vault.assetsOf(address(bob)), 0);
 
-        // Alice and Bob left the vault, should be empty again
+        // Alice and Bob left the vault, should be empty again.
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalAssets(), 0);
     }
@@ -241,5 +241,31 @@ contract ERC4626Test is DSTestPlus {
 
     function testFailMintWithNoApproval() public {
         vault.mint(1e18, address(this));
+    }
+
+    function testFailDepositZero() public {
+        vault.deposit(0, address(this));
+    }
+
+    function testMintZero() public {
+        vault.mint(0, address(this));
+
+        assertEq(vault.balanceOf(address(this)), 0);
+        assertEq(vault.assetsOf(address(this)), 0);
+        assertEq(vault.totalSupply(), 0);
+        assertEq(vault.totalAssets(), 0);
+    }
+
+    function testFailRedeemZero() public {
+        vault.redeem(0, address(this), address(this));
+    }
+
+    function testWithdrawZero() public {
+        vault.withdraw(0, address(this), address(this));
+
+        assertEq(vault.balanceOf(address(this)), 0);
+        assertEq(vault.assetsOf(address(this)), 0);
+        assertEq(vault.totalSupply(), 0);
+        assertEq(vault.totalAssets(), 0);
     }
 }
