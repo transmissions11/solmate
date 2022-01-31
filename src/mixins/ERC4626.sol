@@ -15,9 +15,9 @@ abstract contract ERC4626 is ERC20 {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Deposit(address indexed from, address indexed to, uint256 amount);
+    event Deposit(uint256 amount, address indexed to, address indexed from);
 
-    event Withdraw(address indexed from, address indexed to, uint256 amount);
+    event Withdraw(uint256 amount, address indexed to, address indexed from);
 
     /*///////////////////////////////////////////////////////////////
                                IMMUTABLES
@@ -43,7 +43,7 @@ abstract contract ERC4626 is ERC20 {
 
         _mint(to, shares);
 
-        emit Deposit(msg.sender, to, amount);
+        emit Deposit(amount, to, msg.sender);
 
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
@@ -53,7 +53,7 @@ abstract contract ERC4626 is ERC20 {
     function mint(uint256 shares, address to) public virtual returns (uint256 amount) {
         _mint(to, amount = previewMint(shares)); // No need to check for rounding error, previewMint rounds up.
 
-        emit Deposit(msg.sender, to, amount);
+        emit Deposit(amount, to, msg.sender);
 
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
@@ -71,7 +71,7 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(from, shares = previewWithdraw(amount)); // No need to check for rounding error, previewWithdraw rounds up.
 
-        emit Withdraw(from, to, amount);
+        emit Withdraw(amount, to, from);
 
         beforeWithdraw(amount);
 
@@ -92,7 +92,7 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(from, shares);
 
-        emit Withdraw(from, to, amount);
+        emit Withdraw(amount, to, from);
 
         beforeWithdraw(amount);
 
@@ -136,6 +136,14 @@ abstract contract ERC4626 is ERC20 {
 
         return supply == 0 ? shares : shares.mulDivDown(totalAssets(), totalSupply);
     }
+
+    function maxDeposit() public virtual returns (uint256 maxAmount) { return type(uint256).max; }
+
+    function maxMint() public virtual returns (uint256 maxShares) { return type(uint256).max; }
+
+    function maxWithdraw() public virtual returns (uint256 maxAmount) { return type(uint256).max; }
+
+    function maxRedeem() public virtual returns (uint256 maxShares) { return type(uint256).max; }
 
     /*///////////////////////////////////////////////////////////////
                          INTERNAL HOOKS LOGIC
