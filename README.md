@@ -10,6 +10,8 @@ auth
 ├─ authorities
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
 │  ├─ MultiRolesAuthority — "Flexible and target agnostic role based Authority"
+mixins
+├─ ERC4626 — "Minimal ERC4626 tokenized vault implementation"
 tokens
 ├─ WETH — "Minimalist and modern Wrapped Ether implementation"
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
