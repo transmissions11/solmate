@@ -65,11 +65,13 @@ abstract contract ERC4626 is ERC20 {
         address to,
         address from
     ) public virtual returns (uint256 shares) {
+        shares = previewWithdraw(amount); // No need to check for rounding error, previewWithdraw rounds up.
+
         uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
 
         if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
 
-        _burn(from, shares = previewWithdraw(amount)); // No need to check for rounding error, previewWithdraw rounds up.
+        _burn(from, shares); 
 
         emit Withdraw(from, to, amount);
 
