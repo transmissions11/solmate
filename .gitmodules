@@ -4,3 +4,6 @@
 [submodule "lib/weird-erc20"]
 	path = lib/weird-erc20
 	url = https://github.com/d-xo/weird-erc20
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/rari-capital/solmate
