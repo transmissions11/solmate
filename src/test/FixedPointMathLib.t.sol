@@ -187,7 +187,7 @@ contract FixedPointMathLibTest is DSTestPlus {
             if (y == 0 || (x != 0 && (x * 1e18) / 1e18 != x)) return;
         }
 
-        assertEq(FixedPointMathLib.divWadUp(x, y), x * 1e18 == 0 ? 0 : (x * 1e18 - 1) / y + 1);
+        assertEq(FixedPointMathLib.divWadUp(x, y), x == 0 ? 0 : (x * 1e18 - 1) / y + 1);
     }
 
     function testFailDivWadUpOverflow(uint256 x, uint256 y) public pure {
