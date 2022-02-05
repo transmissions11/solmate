@@ -38,7 +38,7 @@ abstract contract ERC20 {
                              EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    bytes32 public constant PERMIT_TYPEHASH =
+    bytes32 internal constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
     uint256 internal immutable INITIAL_CHAIN_ID;
