@@ -133,7 +133,7 @@ library SafeTransferLib {
                 success := 1
             }
             default {
-                // It returned some malformed input.
+                // It returned some malformed output.
                 success := 0
             }
         }
