@@ -10,6 +10,9 @@ import {ERC20User} from "./utils/users/ERC20User.sol";
 contract ERC20Test is DSTestPlus {
     MockERC20 token;
 
+    bytes32 constant PERMIT_TYPEHASH =
+        keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+
     function setUp() public {
         token = new MockERC20("Token", "TKN", 18);
     }
@@ -99,7 +102,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp))
                 )
             )
         );
@@ -141,7 +144,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 1, block.timestamp))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 1, block.timestamp))
                 )
             )
         );
@@ -159,7 +162,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp))
                 )
             )
         );
@@ -177,7 +180,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp - 1))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp - 1))
                 )
             )
         );
@@ -195,7 +198,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, address(0xCAFE), 1e18, 0, block.timestamp))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp))
                 )
             )
         );
@@ -300,7 +303,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
@@ -380,7 +383,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, nonce, deadline))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, nonce, deadline))
                 )
             )
         );
@@ -405,7 +408,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
@@ -430,7 +433,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
@@ -455,7 +458,7 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, to, amount, 0, deadline))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, to, amount, 0, deadline))
                 )
             )
         );
