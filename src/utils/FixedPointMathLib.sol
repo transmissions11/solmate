@@ -65,7 +65,8 @@ library FixedPointMathLib {
             }
 
             // First, divide z - 1 by the denominator and add 1.
-            // Then multiply it by 0 if z is zero, or 1 otherwise.
+            // We allow z - 1 to underflow is z is 0, because we multiply the
+            // end result by 0 if z is zero, ensuring we return 0 if z is zero.
             z := mul(iszero(iszero(z)), add(div(sub(z, 1), denominator), 1))
         }
     }
