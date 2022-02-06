@@ -161,9 +161,9 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), preMutationShareBal);
         assertEq(vault.totalAssets(), preMutationBal);
 
-        // Simulate a positive mutation (+3e18) within the vault.
-        // The vault now contains more tokens than deposited which causes the exchange rate to change.
-        // Alice share is 33.33% of the vault, Bob 66.66% of the vault.
+        // Simulate a positive mutation (+3e18) within the Vault.
+        // The Vault now contains more tokens than deposited which causes the exchange rate to change.
+        // Alice share is 33.33% of the Vault, Bob 66.66% of the Vault.
         // Alice's share count stays the same but the underlying amount changes from 2e18 to 3e18.
         // Bob's share count stays the same but the underlying amount changes from 4e18 to 6e18.
         underlying.mint(address(vault), mutationUnderlyingAmount);
@@ -196,7 +196,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.balanceOf(address(bob)), 0);
         assertEq(vault.assetsOf(address(bob)), 0);
 
-        // Alice and Bob left the vault, should be empty again.
+        // Alice and Bob left the Vault, should be empty again.
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalAssets(), 0);
     }
