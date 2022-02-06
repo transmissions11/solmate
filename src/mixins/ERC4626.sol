@@ -43,6 +43,8 @@ abstract contract ERC4626 is ERC20 {
                         DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    uint256 internal totalFloat; // Tokens sitting idly in the Vault.
+
     function deposit(uint256 amount, address to) public virtual returns (uint256 shares) {
         // Check for rounding error since we round down in previewDeposit.
         require((shares = previewDeposit(amount)) != 0, "ZERO_SHARES");
@@ -51,6 +53,8 @@ abstract contract ERC4626 is ERC20 {
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
         _mint(to, shares);
+
+        totalFloat += amount;
 
         emit Deposit(msg.sender, to, amount, shares);
 
@@ -64,6 +68,8 @@ abstract contract ERC4626 is ERC20 {
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
         _mint(to, amount);
+
+        totalFloat += amount;
 
         emit Deposit(msg.sender, to, amount, shares);
 
@@ -87,6 +93,8 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(from, shares);
 
+        totalFloat -= amount;
+
         emit Withdraw(from, to, amount, shares);
 
         asset.safeTransfer(to, amount);
@@ -108,6 +116,8 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(from, shares);
 
+        totalFloat -= amount;
+
         emit Withdraw(from, to, amount, shares);
 
         asset.safeTransfer(to, amount);
@@ -117,7 +127,9 @@ abstract contract ERC4626 is ERC20 {
                            ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function totalAssets() public view virtual returns (uint256);
+    function totalAssets() public view virtual returns (uint256) {
+        return totalFloat;
+    }
 
     function assetsOf(address user) public view virtual returns (uint256) {
         return previewRedeem(balanceOf[user]);
@@ -127,28 +139,48 @@ abstract contract ERC4626 is ERC20 {
         return previewRedeem(ONE);
     }
 
-    function previewDeposit(uint256 amount) public view virtual returns (uint256 shares) {
+    function previewDeposit(uint256 amount) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? amount : amount.mulDivDown(supply, totalAssets());
     }
 
-    function previewMint(uint256 shares) public view virtual returns (uint256 amount) {
+    function previewMint(uint256 shares) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? shares : shares.mulDivUp(totalAssets(), supply);
     }
 
-    function previewWithdraw(uint256 amount) public view virtual returns (uint256 shares) {
+    function previewWithdraw(uint256 amount) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? amount : amount.mulDivUp(supply, totalAssets());
     }
 
-    function previewRedeem(uint256 shares) public view virtual returns (uint256 amount) {
+    function previewRedeem(uint256 shares) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
+    }
+
+    /*///////////////////////////////////////////////////////////////
+                     DEPOSIT/WITHDRAWAL LIMIT LOGIC
+    //////////////////////////////////////////////////////////////*/
+
+    function maxDeposit(address) public virtual returns (uint256) {
+        return type(uint256).max;
+    }
+
+    function maxMint(address) public virtual returns (uint256) {
+        return type(uint256).max;
+    }
+
+    function maxWithdraw(address user) public virtual returns (uint256) {
+        return assetsOf(user);
+    }
+
+    function maxRedeem(address user) public virtual returns (uint256) {
+        return balanceOf[user];
     }
 
     /*///////////////////////////////////////////////////////////////
