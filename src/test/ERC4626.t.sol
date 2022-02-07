@@ -167,7 +167,6 @@ contract ERC4626Test is DSTestPlus {
         // Alice's share count stays the same but the underlying amount changes from 2e18 to 3e18.
         // Bob's share count stays the same but the underlying amount changes from 4e18 to 6e18.
         underlying.mint(address(vault), mutationUnderlyingAmount);
-        vault.syncFloat();
         assertEq(vault.totalSupply(), preMutationShareBal);
         assertEq(vault.totalAssets(), preMutationBal + mutationUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);

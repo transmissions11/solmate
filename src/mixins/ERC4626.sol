@@ -43,8 +43,6 @@ abstract contract ERC4626 is ERC20 {
                         DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    uint256 internal totalFloat; // Tokens sitting idly in the Vault.
-
     function deposit(uint256 amount, address to) public virtual returns (uint256 shares) {
         // Check for rounding error since we round down in previewDeposit.
         require((shares = previewDeposit(amount)) != 0, "ZERO_SHARES");
@@ -53,8 +51,6 @@ abstract contract ERC4626 is ERC20 {
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
         _mint(to, shares);
-
-        totalFloat += amount;
 
         emit Deposit(msg.sender, to, amount, shares);
 
@@ -68,8 +64,6 @@ abstract contract ERC4626 is ERC20 {
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
         _mint(to, amount);
-
-        totalFloat += amount;
 
         emit Deposit(msg.sender, to, amount, shares);
 
@@ -93,8 +87,6 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(from, shares);
 
-        totalFloat -= amount;
-
         emit Withdraw(from, to, amount, shares);
 
         asset.safeTransfer(to, amount);
@@ -116,8 +108,6 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(from, shares);
 
-        totalFloat -= amount;
-
         emit Withdraw(from, to, amount, shares);
 
         asset.safeTransfer(to, amount);
@@ -127,9 +117,7 @@ abstract contract ERC4626 is ERC20 {
                            ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function totalAssets() public view virtual returns (uint256) {
-        return totalFloat;
-    }
+    function totalAssets() public view virtual returns (uint256);
 
     function assetsOf(address user) public view virtual returns (uint256) {
         return previewRedeem(balanceOf[user]);
