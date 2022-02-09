@@ -7,6 +7,7 @@ import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 /// @notice Minimal ERC4646 tokenized Vault implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
+/// @dev Do not use in production! ERC-4626 is still in the review stage and is subject to change.
 abstract contract ERC4626 is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
