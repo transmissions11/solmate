@@ -88,18 +88,12 @@ abstract contract ERC1155 {
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i; i < idsLength; i = _uncheckedInc(i)) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
             balanceOf[from][id] -= amount;
             balanceOf[to][id] += amount;
-
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                i++;
-            }
         }
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
@@ -128,7 +122,7 @@ abstract contract ERC1155 {
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            for (uint256 i = 0; i < ownersLength; i++) {
+            for (uint256 i; i < ownersLength; i++) {
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
@@ -178,14 +172,8 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i; i < idsLength; i = _uncheckedInc(i)) {
             balanceOf[to][ids[i]] += amounts[i];
-
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                i++;
-            }
         }
 
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
@@ -208,14 +196,8 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i; i < idsLength; i = _uncheckedInc(i)) {
             balanceOf[from][ids[i]] -= amounts[i];
-
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                i++;
-            }
         }
 
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
@@ -230,6 +212,16 @@ abstract contract ERC1155 {
 
         emit TransferSingle(msg.sender, from, address(0), id, amount);
     }
+
+    function _uncheckedInc(uint256 i) private pure returns (uint256) {
+    /**
+     * @dev An array can't have a total length
+     * larger than the max uint256 value.
+     */
+    unchecked {
+        return i + 1;
+    }
+}
 }
 
 /// @notice A generic interface for a contract which properly accepts ERC1155 tokens.
