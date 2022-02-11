@@ -11,6 +11,11 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo248(2.5e27), 2.5e27);
     }
 
+    function testSafeCastTo224() public {
+        assertEq(SafeCastLib.safeCastTo224(2.5e36), 2.5e36);
+        assertEq(SafeCastLib.safeCastTo224(2.5e27), 2.5e27);
+    }
+
     function testSafeCastTo128() public {
         assertEq(SafeCastLib.safeCastTo128(2.5e27), 2.5e27);
         assertEq(SafeCastLib.safeCastTo128(2.5e18), 2.5e18);
@@ -31,8 +36,17 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo32(2.5e7), 2.5e7);
     }
 
+    function testSafeCastTo8() public {
+        assertEq(SafeCastLib.safeCastTo8(100), 100);
+        assertEq(SafeCastLib.safeCastTo8(250), 250);
+    }
+
     function testFailSafeCastTo248() public pure {
         SafeCastLib.safeCastTo248(type(uint248).max + 1);
+    }
+
+    function testFailSafeCastTo224() public pure {
+        SafeCastLib.safeCastTo224(type(uint224).max + 1);
     }
 
     function testFailSafeCastTo128() public pure {
@@ -51,10 +65,20 @@ contract SafeCastLibTest is DSTestPlus {
         SafeCastLib.safeCastTo32(type(uint32).max + 1);
     }
 
+    function testFailSafeCastTo8() public pure {
+        SafeCastLib.safeCastTo8(type(uint8).max + 1);
+    }
+
     function testSafeCastTo248(uint256 x) public {
         x = bound(x, 0, type(uint248).max);
 
         assertEq(SafeCastLib.safeCastTo248(x), x);
+    }
+
+    function testSafeCastTo224(uint256 x) public {
+        x = bound(x, 0, type(uint224).max);
+
+        assertEq(SafeCastLib.safeCastTo224(x), x);
     }
 
     function testSafeCastTo128(uint256 x) public {
@@ -81,10 +105,22 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo32(x), x);
     }
 
+    function testSafeCastTo8(uint256 x) public {
+        x = bound(x, 0, type(uint8).max);
+
+        assertEq(SafeCastLib.safeCastTo8(x), x);
+    }
+
     function testFailSafeCastTo248(uint256 x) public pure {
         x = bound(x, type(uint248).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo248(x);
+    }
+
+    function testFailSafeCastTo224(uint256 x) public pure {
+        x = bound(x, type(uint224).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo224(x);
     }
 
     function testFailSafeCastTo128(uint256 x) public pure {
@@ -109,5 +145,11 @@ contract SafeCastLibTest is DSTestPlus {
         x = bound(x, type(uint32).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo32(x);
+    }
+
+    function testFailSafeCastTo8(uint256 x) public pure {
+        x = bound(x, type(uint8).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo8(x);
     }
 }
