@@ -37,8 +37,8 @@ contract SafeCastLibTest is DSTestPlus {
     }
 
     function testSafeCastTo8() public {
-        assertEq(SafeCastLib.safeCastTo8(2.5e7), 2.5e7);
-        assertEq(SafeCastLib.safeCastTo8(2.5e3), 2.5e3);
+        assertEq(SafeCastLib.safeCastTo8(100), 100);
+        assertEq(SafeCastLib.safeCastTo8(250), 250);
     }
 
     function testFailSafeCastTo248() public pure {
