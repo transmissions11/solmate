@@ -40,8 +40,10 @@ library FixedPointMathLib {
             // Store x * y in z for now.
             z := mul(x, y)
 
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+            // require(denominator != 0 && (x == 0 || (x * y) / x == y)) is equivalent to
+            // if (!(denominator != 0 && (x == 0 || (x * y) / x == y))) { revert() } which is equivalent to
+            // if (denominator == 0 || !(x == 0 || (x * y) / x == y)) { revert() }
+            if or(iszero(denominator), iszero(or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
@@ -59,8 +61,10 @@ library FixedPointMathLib {
             // Store x * y in z for now.
             z := mul(x, y)
 
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+            // require(denominator != 0 && (x == 0 || (x * y) / x == y)) is equivalent to
+            // if (!(denominator != 0 && (x == 0 || (x * y) / x == y))) { revert() } which is equivalent to
+            // if (denominator == 0 || !(x == 0 || (x * y) / x == y)) { revert() }
+            if or(iszero(denominator), iszero(or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
