@@ -292,7 +292,7 @@ contract ERC20Test is DSTestPlus {
         uint256 amount,
         uint256 deadline
     ) public {
-        uint256 privateKey = privKey
+        uint256 privateKey = privKey;
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
