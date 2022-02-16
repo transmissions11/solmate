@@ -287,11 +287,12 @@ contract ERC20Test is DSTestPlus {
     }
 
     function testPermit(
-        uint256 privateKey,
+        uint248 privKey,
         address to,
         uint256 amount,
         uint256 deadline
     ) public {
+        uint256 privateKey = privKey;
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
