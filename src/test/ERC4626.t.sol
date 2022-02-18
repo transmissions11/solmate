@@ -365,4 +365,38 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalAssets(), 0);
     }
+
+    function testVaultInteractionsForSomeoneElse() public {
+        // init 2 users with a 1e18 balance
+        ERC4626User alice = new ERC4626User(vault, underlying);
+        ERC4626User bob = new ERC4626User(vault, underlying);
+        underlying.mint(address(alice), 1e18);
+        underlying.mint(address(bob), 1e18);
+        alice.approve(address(vault), 1e18);
+        bob.approve(address(vault), 1e18);
+
+        // alice deposits 1e18 for bob
+        alice.deposit(1e18, address(bob));
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.balanceOf(address(bob)), 1e18);
+        assertEq(underlying.balanceOf(address(alice)), 0);
+
+        // bob mint 1e18 for alice
+        bob.mint(1e18, address(alice));
+        assertEq(vault.balanceOf(address(alice)), 1e18);
+        assertEq(vault.balanceOf(address(bob)), 1e18);
+        assertEq(underlying.balanceOf(address(bob)), 0);
+
+        // alice redeem 1e18 for bob
+        alice.redeem(1e18, address(bob), address(alice));
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.balanceOf(address(bob)), 1e18);
+        assertEq(underlying.balanceOf(address(bob)), 1e18);
+
+        // bob withdraw 1e18 for alice
+        bob.withdraw(1e18, address(alice), address(bob));
+        assertEq(vault.balanceOf(address(alice)), 0);
+        assertEq(vault.balanceOf(address(bob)), 0);
+        assertEq(underlying.balanceOf(address(alice)), 1e18);
+    }
 }
