@@ -64,7 +64,7 @@ abstract contract ERC4626 is ERC20 {
         // Need to transfer before minting or ERC777s could reenter.
         asset.safeTransferFrom(msg.sender, address(this), amount);
 
-        _mint(to, amount);
+        _mint(to, shares);
 
         emit Deposit(msg.sender, to, amount, shares);
 
