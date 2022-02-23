@@ -123,7 +123,7 @@ abstract contract ERC1155 {
 
         require(ownersLength == ids.length, "LENGTH_MISMATCH");
 
-        balances = new uint256[](owners.length);
+        balances = new uint256[](ownersLength);
 
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
