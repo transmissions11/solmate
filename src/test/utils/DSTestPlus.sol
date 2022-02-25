@@ -13,19 +13,21 @@ contract DSTestPlus is DSTest {
     address internal constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
     string private checkpointLabel;
-    uint256 private checkpointGasLeft;
+    uint256 private checkpointGasLeft = 1; // Start the slot warm.
 
     function startMeasuringGas(string memory label) internal virtual {
         checkpointLabel = label;
+
         checkpointGasLeft = gasleft();
     }
 
     function stopMeasuringGas() internal virtual {
         uint256 checkpointGasLeft2 = gasleft();
 
-        string memory label = checkpointLabel;
+        // Subtract 100 to account for the warm SLOAD in startMeasuringGas.
+        uint256 gasDelta = checkpointGasLeft - checkpointGasLeft2 - 100;
 
-        emit log_named_uint(string(abi.encodePacked(label, " Gas")), checkpointGasLeft - checkpointGasLeft2);
+        emit log_named_uint(string(abi.encodePacked(checkpointLabel, " Gas")), gasDelta);
     }
 
     function fail(string memory err) internal virtual {
