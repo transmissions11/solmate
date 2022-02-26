@@ -16,7 +16,7 @@ tokens
 ├─ WETH — "Minimalist and modern Wrapped Ether implementation"
 ├─ ERC20 — "Modern and gas efficient ERC20 + EIP-2612 implementation"
 ├─ ERC721 — "Modern, minimalist, and gas efficient ERC721 implementation"
-├─ ERC721-A — "Modern, minimalist, and gas efficient ERC721-A implementation for cheaper batch minting"
+├─ ERC721-A — "Modern, minimalist, ERC721-A implementation for cheaper batch minting"
 ├─ ERC1155 — "Minimalist and gas efficient standard ERC1155 implementation"
 utils
 ├─ SSTORE2 - "Library for cheaper reads and writes to persistent storage"
