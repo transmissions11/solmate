@@ -219,4 +219,23 @@ library FixedPointMathLib {
             }
         }
     }
+
+    // assumes wad, should support arbitrary scalar at some point
+    function rsqrt(uint256 x) internal pure returns (uint256 g) {
+        g = divWadDown(2e18, x); // shitty initial guess of 2/x
+
+        unchecked {
+            uint256 xhalf = x >> 1;
+
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g)));
+            g = mulWadDown(g, 1.5e18 - mulWadDown(xhalf, mulWadDown(g, g))); // can do less iters with a better guess
+        }
+    }
 }

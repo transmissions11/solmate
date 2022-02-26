@@ -6,6 +6,20 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 contract FixedPointMathLibTest is DSTestPlus {
+    /////////////////////////////////////////////////////////////////////////
+
+    function testFastRSqrt(uint256 x) public {
+        assertEq(FixedPointMathLib.rsqrt(x), FixedPointMathLib.divWadDown(1e18, FixedPointMathLib.sqrt(x)));
+    }
+
+    function testFastRSqrt() public {
+        assertEq(FixedPointMathLib.rsqrt(4e18), 0.5e18);
+        assertEq(FixedPointMathLib.rsqrt(16e18), 0.25e18);
+        assertEq(FixedPointMathLib.rsqrt(64e18), 0.125e18);
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+
     function testMulWadDown() public {
         assertEq(FixedPointMathLib.mulWadDown(2.5e18, 0.5e18), 1.25e18);
         assertEq(FixedPointMathLib.mulWadDown(3e18, 1e18), 3e18);
