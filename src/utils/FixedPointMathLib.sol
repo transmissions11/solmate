@@ -313,38 +313,40 @@ library FixedPointMathLib {
             // Each term (x^n / n!) equals the previous one times x, divided by n. Since x is a fixed point number,
             // multiplying by it requires dividing by ONE_20, but dividing by the non-fixed point n values does not.
 
-            term = ((term * x) / 1e20) / 2;
-            seriesSum += term;
+            assembly {
+                term := div(mul(term, x), 200000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 3;
-            seriesSum += term;
+                term := div(mul(term, x), 300000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 4;
-            seriesSum += term;
+                term := div(mul(term, x), 400000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 5;
-            seriesSum += term;
+                term := div(mul(term, x), 500000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 6;
-            seriesSum += term;
+                term := div(mul(term, x), 600000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 7;
-            seriesSum += term;
+                term := div(mul(term, x), 700000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 8;
-            seriesSum += term;
+                term := div(mul(term, x), 800000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 9;
-            seriesSum += term;
+                term := div(mul(term, x), 900000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 10;
-            seriesSum += term;
+                term := div(mul(term, x), 1000000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 11;
-            seriesSum += term;
+                term := div(mul(term, x), 1100000000000000000000)
+                seriesSum := add(seriesSum, term)
 
-            term = ((term * x) / 1e20) / 12;
-            seriesSum += term;
+                term := div(mul(term, x), 1200000000000000000000)
+                seriesSum := add(seriesSum, term)
+            }
 
             // 12 Taylor terms are sufficient for 18 decimal precision.
 
