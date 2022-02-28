@@ -224,12 +224,7 @@ library FixedPointMathLib {
         unchecked {
             require(x <= 130e18 && x >= -41e18, "INVALID_EXPONENT");
 
-            if (x < 0) {
-                // We only handle positive exponents: e^(-x) is computed as 1 / e^x. We can safely make x positive since it
-                // fits in the signed 256 bit range (as it is larger than MIN_NATURAL_EXPONENT).
-                // Fixed point division requires multiplying by ONE_18.
-                return 1e36 / exp(-x);
-            }
+            if (x < 0) return 1e36 / exp(-x);
 
             // First, we use the fact that e^(x+y) = e^x * e^y to decompose x into a sum of powers of two, which we call x_n,
             // where x_n == 2^(7 - n), and e^x_n = a_n has been precomputed. We choose the first x_n, x0, to equal 2^7
