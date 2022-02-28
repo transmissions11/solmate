@@ -228,7 +228,7 @@ library FixedPointMathLib {
                 // We only handle positive exponents: e^(-x) is computed as 1 / e^x. We can safely make x positive since it
                 // fits in the signed 256 bit range (as it is larger than MIN_NATURAL_EXPONENT).
                 // Fixed point division requires multiplying by ONE_18.
-                return ((1e36) / exp(-x));
+                return 1e36 / exp(-x);
             }
 
             // First, we use the fact that e^(x+y) = e^x * e^y to decompose x into a sum of powers of two, which we call x_n,
@@ -267,37 +267,47 @@ library FixedPointMathLib {
             // one. Recall that fixed point multiplication requires dividing by ONE_20.
             int256 product = 1e20;
 
-            if (x >= 3200000000000000000000) {
-                x -= 3200000000000000000000;
-                product = (product * 7896296018268069516100000000000000) / 1e20;
-            }
-            if (x >= 1600000000000000000000) {
-                x -= 1600000000000000000000;
-                product = (product * 888611052050787263676000000) / 1e20;
-            }
-            if (x >= 800000000000000000000) {
-                x -= 800000000000000000000;
-                product = (product * 2980957987041728274740004) / 1e20;
-            }
-            if (x >= 400000000000000000000) {
-                x -= 400000000000000000000;
-                product = (product * 5459815003314423907810) / 1e20;
-            }
-            if (x >= 200000000000000000000) {
-                x -= 200000000000000000000;
-                product = (product * 738905609893065022723) / 1e20;
-            }
-            if (x >= 100000000000000000000) {
-                x -= 100000000000000000000;
-                product = (product * 271828182845904523536) / 1e20;
-            }
-            if (x >= 50000000000000000000) {
-                x -= 50000000000000000000;
-                product = (product * 164872127070012814685) / 1e20;
-            }
-            if (x >= 25000000000000000000) {
-                x -= 25000000000000000000;
-                product = (product * 128402541668774148407) / 1e20;
+            assembly {
+                // TODO: we could check gte by doing the sub first??? thonk
+                if iszero(lt(x, 3200000000000000000000)) {
+                    x := sub(x, 3200000000000000000000)
+                    product := div(mul(product, 7896296018268069516100000000000000), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 1600000000000000000000)) {
+                    x := sub(x, 1600000000000000000000)
+                    product := div(mul(product, 888611052050787263676000000), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 800000000000000000000)) {
+                    x := sub(x, 800000000000000000000)
+                    product := div(mul(product, 2980957987041728274740004), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 400000000000000000000)) {
+                    x := sub(x, 400000000000000000000)
+                    product := div(mul(product, 5459815003314423907810), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 200000000000000000000)) {
+                    x := sub(x, 200000000000000000000)
+                    product := div(mul(product, 738905609893065022723), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 100000000000000000000)) {
+                    x := sub(x, 100000000000000000000)
+                    product := div(mul(product, 271828182845904523536), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 50000000000000000000)) {
+                    x := sub(x, 50000000000000000000)
+                    product := div(mul(product, 164872127070012814685), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 25000000000000000000)) {
+                    x := sub(x, 25000000000000000000)
+                    product := div(mul(product, 128402541668774148407), 100000000000000000000)
+                }
             }
 
             // Now we need to compute e^x, where x is small (in particular, it is smaller than x9). We use the Taylor series
