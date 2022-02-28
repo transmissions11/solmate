@@ -219,4 +219,141 @@ library FixedPointMathLib {
             }
         }
     }
+
+    function exp(int256 x) internal pure returns (uint256) {
+        unchecked {
+            require(x <= 130e18 && x >= -41e18, "INVALID_EXPONENT");
+
+            if (x < 0) {
+                // We only handle positive exponents: e^(-x) is computed as 1 / e^x. We can safely make x positive since it
+                // fits in the signed 256 bit range (as it is larger than MIN_NATURAL_EXPONENT).
+                // Fixed point division requires multiplying by ONE_18.
+                return ((1e36) / exp(-x));
+            }
+
+            // First, we use the fact that e^(x+y) = e^x * e^y to decompose x into a sum of powers of two, which we call x_n,
+            // where x_n == 2^(7 - n), and e^x_n = a_n has been precomputed. We choose the first x_n, x0, to equal 2^7
+            // because all larger powers are larger than MAX_NATURAL_EXPONENT, and therefore not present in the
+            // decomposition.
+            // At the end of this process we will have the product of all e^x_n = a_n that apply, and the remainder of this
+            // decomposition, which will be lower than the smallest x_n.
+            // exp(x) = k_0 * a_0 * k_1 * a_1 * ... + k_n * a_n * exp(remainder), where each k_n equals either 0 or 1.
+            // We mutate x by subtracting x_n, making it the remainder of the decomposition.
+
+            // The first two a_n (e^(2^7) and e^(2^6)) are too large if stored as 18 decimal numbers, and could cause
+            // intermediate overflows. Instead we store them as plain integers, with 0 decimals.
+            // Additionally, x0 + x1 is larger than MAX_NATURAL_EXPONENT, which means they will not both be present in the
+            // decomposition.
+
+            // For each x_n, we test if that term is present in the decomposition (if x is larger than it), and if so deduct
+            // it and compute the accumulated product.
+
+            int256 firstAN;
+            if (x >= 128000000000000000000) {
+                x -= 128000000000000000000;
+                firstAN = 38877084059945950922200000000000000000000000000000000000;
+            } else if (x >= 64000000000000000000) {
+                x -= 64000000000000000000;
+                firstAN = 6235149080811616882910000000;
+            } else {
+                firstAN = 1; // One with no decimal places
+            }
+
+            // We now transform x into a 20 decimal fixed point number, to have enhanced precision when computing the
+            // smaller terms.
+            x *= 100;
+
+            // `product` is the accumulated product of all a_n (except a0 and a1), which starts at 20 decimal fixed point
+            // one. Recall that fixed point multiplication requires dividing by ONE_20.
+            int256 product = 1e20;
+
+            if (x >= 3200000000000000000000) {
+                x -= 3200000000000000000000;
+                product = (product * 7896296018268069516100000000000000) / 1e20;
+            }
+            if (x >= 1600000000000000000000) {
+                x -= 1600000000000000000000;
+                product = (product * 888611052050787263676000000) / 1e20;
+            }
+            if (x >= 800000000000000000000) {
+                x -= 800000000000000000000;
+                product = (product * 2980957987041728274740004) / 1e20;
+            }
+            if (x >= 400000000000000000000) {
+                x -= 400000000000000000000;
+                product = (product * 5459815003314423907810) / 1e20;
+            }
+            if (x >= 200000000000000000000) {
+                x -= 200000000000000000000;
+                product = (product * 738905609893065022723) / 1e20;
+            }
+            if (x >= 100000000000000000000) {
+                x -= 100000000000000000000;
+                product = (product * 271828182845904523536) / 1e20;
+            }
+            if (x >= 50000000000000000000) {
+                x -= 50000000000000000000;
+                product = (product * 164872127070012814685) / 1e20;
+            }
+            if (x >= 25000000000000000000) {
+                x -= 25000000000000000000;
+                product = (product * 128402541668774148407) / 1e20;
+            }
+
+            // Now we need to compute e^x, where x is small (in particular, it is smaller than x9). We use the Taylor series
+            // expansion for e^x: 1 + x + (x^2 / 2!) + (x^3 / 3!) + ... + (x^n / n!).
+
+            int256 seriesSum = 1e20; // The initial one in the sum, with 20 decimal places.
+            int256 term; // Each term in the sum, where the nth term is (x^n / n!).
+
+            // The first term is simply x.
+            term = x;
+            seriesSum += term;
+
+            // Each term (x^n / n!) equals the previous one times x, divided by n. Since x is a fixed point number,
+            // multiplying by it requires dividing by ONE_20, but dividing by the non-fixed point n values does not.
+
+            term = ((term * x) / 1e20) / 2;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 3;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 4;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 5;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 6;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 7;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 8;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 9;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 10;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 11;
+            seriesSum += term;
+
+            term = ((term * x) / 1e20) / 12;
+            seriesSum += term;
+
+            // 12 Taylor terms are sufficient for 18 decimal precision.
+
+            // We now have the first a_n (with no decimals), and the product of all other a_n present, and the Taylor
+            // approximation of the exponentiation of the remainder (both with 20 decimals). All that remains is to multiply
+            // all three (one 20 decimal fixed point multiplication, dividing by ONE_20, and one integer multiplication),
+            // and then drop two digits to return an 18 decimal value.
+
+            return uint256((((product * seriesSum) / 1e20) * firstAN) / 100);
+        }
+    }
 }

@@ -6,6 +6,14 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 contract FixedPointMathLibTest is DSTestPlus {
+    function testExp() public {
+        uint256 exp = FixedPointMathLib.exp(-1e18);
+
+        assertEq(exp, 367879441171442321);
+    }
+
+    ////////////////////////////////////////////////////////////////
+
     function testMulWadDown() public {
         assertEq(FixedPointMathLib.mulWadDown(2.5e18, 0.5e18), 1.25e18);
         assertEq(FixedPointMathLib.mulWadDown(3e18, 1e18), 3e18);
