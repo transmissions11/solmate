@@ -106,45 +106,45 @@ library FixedPointMathLib {
             }
 
             // We'll use the Taylor series for e^x like 1 + x + (x^2 / 2!) + ... + (x^n / n!).
-            int256 sum = 1e20 + x; // The Taylor series begins with 1 + x.
             int256 term = x; // Will track each term in the series, beginning with x.
+            int256 sum = 1e20 + x; // The Taylor series begins with 1 + x.
 
             assembly {
-                term := div(mul(term, x), 200000000000000000000)
+                term := div(mul(term, x), 200000000000000000000) // Divided by 2e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 300000000000000000000)
+                term := div(mul(term, x), 300000000000000000000) // Divided by 3e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 400000000000000000000)
+                term := div(mul(term, x), 400000000000000000000) // Divided by 4e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 500000000000000000000)
+                term := div(mul(term, x), 500000000000000000000) // Divided by 5e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 600000000000000000000)
+                term := div(mul(term, x), 600000000000000000000) // Divided by 6e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 700000000000000000000)
+                term := div(mul(term, x), 700000000000000000000) // Divided by 7e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 800000000000000000000)
+                term := div(mul(term, x), 800000000000000000000) // Divided by 8e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 900000000000000000000)
+                term := div(mul(term, x), 900000000000000000000) // Divided by 9e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 1000000000000000000000)
+                term := div(mul(term, x), 1000000000000000000000) // Divided by 10e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 1100000000000000000000)
+                term := div(mul(term, x), 1100000000000000000000) // Divided by 11e20.
                 sum := add(sum, term)
 
-                term := div(mul(term, x), 1200000000000000000000)
+                term := div(mul(term, x), 1200000000000000000000) // Divided by 12e20.
                 sum := add(sum, term)
             }
 
-            return uint256((((product * sum) / 1e20) * firstAN) / 100);
+            return uint256((((product * sum) / 1e20) * firstAN) / 100); // Divided by 100 to scale back to 18 decimals.
         }
     }
 
