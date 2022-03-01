@@ -222,7 +222,11 @@ library FixedPointMathLib {
 
     function exp(int256 x) internal pure returns (uint256) {
         unchecked {
-            require(x <= 130e18 && x >= -41e18, "INVALID_EXPONENT");
+            assembly {
+                if or(sgt(x, 130000000000000000000), slt(x, sub(0, 41000000000000000000))) {
+                    revert(0, 0)
+                }
+            }
 
             if (x < 0) return 1e36 / exp(-x);
 
