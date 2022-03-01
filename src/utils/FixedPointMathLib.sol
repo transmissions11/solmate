@@ -27,6 +27,127 @@ library FixedPointMathLib {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
 
+    function expWad(int256 x) internal pure returns (uint256 z) {
+        unchecked {
+            assembly {
+                // Revert if the exponent x is greater than 130e18 or less than -41e18.
+                if or(sgt(x, 130000000000000000000), slt(x, sub(0, 41000000000000000000))) {
+                    revert(0, 0)
+                }
+            }
+
+            if (x < 0) {
+                z = expWad(-x); // Compute exp for x as a positive.
+
+                assembly {
+                    // Divide it by 1e36, to get the inverse of the result.
+                    z := div(1000000000000000000000000000000000000, z)
+                }
+
+                return z;
+            }
+
+            int256 firstAN = 1;
+            if (x >= 128000000000000000000) {
+                x -= 128000000000000000000; // 2ˆ7 scaled by 1e18.
+
+                firstAN = 38877084059945950922200000000000000000000000000000000000; // eˆ12800000000000000000 unscaled.
+            } else if (x >= 64000000000000000000) {
+                x -= 64000000000000000000; // 2^6 scaled by 1e18.
+
+                firstAN = 6235149080811616882910000000; // eˆ64000000000000000000 unscaled.
+            }
+
+            x *= 100; // Scale x to 20 decimals for extra precision.
+
+            int256 product = 1e20;
+
+            assembly {
+                // TODO: we could check gte by doing the sub first??? thonk
+                if iszero(lt(x, 3200000000000000000000)) {
+                    x := sub(x, 3200000000000000000000)
+                    product := div(mul(product, 7896296018268069516100000000000000), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 1600000000000000000000)) {
+                    x := sub(x, 1600000000000000000000)
+                    product := div(mul(product, 888611052050787263676000000), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 800000000000000000000)) {
+                    x := sub(x, 800000000000000000000)
+                    product := div(mul(product, 2980957987041728274740004), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 400000000000000000000)) {
+                    x := sub(x, 400000000000000000000)
+                    product := div(mul(product, 5459815003314423907810), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 200000000000000000000)) {
+                    x := sub(x, 200000000000000000000)
+                    product := div(mul(product, 738905609893065022723), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 100000000000000000000)) {
+                    x := sub(x, 100000000000000000000)
+                    product := div(mul(product, 271828182845904523536), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 50000000000000000000)) {
+                    x := sub(x, 50000000000000000000)
+                    product := div(mul(product, 164872127070012814685), 100000000000000000000)
+                }
+
+                if iszero(lt(x, 25000000000000000000)) {
+                    x := sub(x, 25000000000000000000)
+                    product := div(mul(product, 128402541668774148407), 100000000000000000000)
+                }
+            }
+
+            // We'll use the Taylor series for e^x like 1 + x + (x^2 / 2!) + ... + (x^n / n!).
+            int256 sum = 1e20 + x; // The Taylor series begins with 1 + x.
+            int256 term = x; // Will track each term in the series, beginning with x.
+
+            assembly {
+                term := div(mul(term, x), 200000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 300000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 400000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 500000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 600000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 700000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 800000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 900000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 1000000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 1100000000000000000000)
+                sum := add(sum, term)
+
+                term := div(mul(term, x), 1200000000000000000000)
+                sum := add(sum, term)
+            }
+
+            return uint256((((product * sum) / 1e20) * firstAN) / 100);
+        }
+    }
+
     /*///////////////////////////////////////////////////////////////
                     LOW LEVEL FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
@@ -217,122 +338,6 @@ library FixedPointMathLib {
             if lt(zRoundDown, z) {
                 z := zRoundDown
             }
-        }
-    }
-
-    function exp(int256 x) internal pure returns (uint256 z) {
-        unchecked {
-            assembly {
-                if or(sgt(x, 130000000000000000000), slt(x, sub(0, 41000000000000000000))) {
-                    revert(0, 0)
-                }
-            }
-
-            if (x < 0) {
-                z = exp(-x);
-
-                assembly {
-                    z := div(1000000000000000000000000000000000000, z)
-                }
-
-                return z;
-            }
-
-            int256 firstAN = 1;
-            if (x >= 128000000000000000000) {
-                x -= 128000000000000000000;
-                firstAN = 38877084059945950922200000000000000000000000000000000000;
-            } else if (x >= 64000000000000000000) {
-                x -= 64000000000000000000;
-                firstAN = 6235149080811616882910000000;
-            }
-
-            x *= 100;
-
-            int256 product = 1e20;
-
-            assembly {
-                // TODO: we could check gte by doing the sub first??? thonk
-                if iszero(lt(x, 3200000000000000000000)) {
-                    x := sub(x, 3200000000000000000000)
-                    product := div(mul(product, 7896296018268069516100000000000000), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 1600000000000000000000)) {
-                    x := sub(x, 1600000000000000000000)
-                    product := div(mul(product, 888611052050787263676000000), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 800000000000000000000)) {
-                    x := sub(x, 800000000000000000000)
-                    product := div(mul(product, 2980957987041728274740004), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 400000000000000000000)) {
-                    x := sub(x, 400000000000000000000)
-                    product := div(mul(product, 5459815003314423907810), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 200000000000000000000)) {
-                    x := sub(x, 200000000000000000000)
-                    product := div(mul(product, 738905609893065022723), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 100000000000000000000)) {
-                    x := sub(x, 100000000000000000000)
-                    product := div(mul(product, 271828182845904523536), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 50000000000000000000)) {
-                    x := sub(x, 50000000000000000000)
-                    product := div(mul(product, 164872127070012814685), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 25000000000000000000)) {
-                    x := sub(x, 25000000000000000000)
-                    product := div(mul(product, 128402541668774148407), 100000000000000000000)
-                }
-            }
-
-            int256 seriesSum = 1e20 + x;
-            int256 term = x;
-
-            assembly {
-                term := div(mul(term, x), 200000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 300000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 400000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 500000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 600000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 700000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 800000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 900000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 1000000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 1100000000000000000000)
-                seriesSum := add(seriesSum, term)
-
-                term := div(mul(term, x), 1200000000000000000000)
-                seriesSum := add(seriesSum, term)
-            }
-
-            return uint256((((product * seriesSum) / 1e20) * firstAN) / 100);
         }
     }
 }
