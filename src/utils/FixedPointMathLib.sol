@@ -61,7 +61,7 @@ library FixedPointMathLib {
 
             x *= 100; // Scale x to 20 decimals for extra precision.
 
-            int256 product = 1e20; // Stores a 20 decimal fixed point number.
+            uint256 product = 1e20; // Stores a 20 decimal fixed point number.
 
             assembly {
                 if iszero(lt(x, 3200000000000000000000)) {
@@ -122,8 +122,8 @@ library FixedPointMathLib {
             }
 
             // We'll use the Taylor series for e^x like 1 + x + (x^2 / 2!) + ... + (x^n / n!).
-            int256 term = x; // Will track each term in the series, beginning with x.
-            int256 sum = 1e20 + x; // The Taylor series begins with 1 + x.
+            uint256 term = uint256(x); // Will track each term in the series, beginning with x.
+            uint256 sum = 1e20 + term; // The Taylor series begins with 1 plus the first term, x.
 
             assembly {
                 term := div(mul(term, x), 200000000000000000000) // Divided by 2e20.
@@ -160,7 +160,7 @@ library FixedPointMathLib {
                 sum := add(sum, term)
             }
 
-            return ((uint256(product * sum) / 1e20) * z) / 100; // Divided by 100 to scale back to 18 decimals.
+            return (((product * sum) / 1e20) * z) / 100; // Divided by 100 to scale back to 18 decimals.
         }
     }
 
