@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
-/// @author Inspired by USM (https://github.com/usmfum/USM/blob/master/contracts/WadMath.sol)
+/// @author Inspired by Balancer (https://github.com/balancer-labs/balancer-v2-monorepo/tree/master/pkg/solidity-utils/contracts/math)
 library FixedPointMathLib {
     /*///////////////////////////////////////////////////////////////
                     SIMPLIFIED FIXED POINT OPERATIONS
@@ -47,60 +47,76 @@ library FixedPointMathLib {
                 return z;
             }
 
-            int256 firstAN = 1;
+            z = 1; // 1 unscaled. Will get overridden if x is large.
+
             if (x >= 128000000000000000000) {
                 x -= 128000000000000000000; // 2ˆ7 scaled by 1e18.
 
-                firstAN = 38877084059945950922200000000000000000000000000000000000; // eˆ12800000000000000000 unscaled.
+                z = 38877084059945950922200000000000000000000000000000000000; // eˆ12800000000000000000 unscaled.
             } else if (x >= 64000000000000000000) {
                 x -= 64000000000000000000; // 2^6 scaled by 1e18.
 
-                firstAN = 6235149080811616882910000000; // eˆ64000000000000000000 unscaled.
+                z = 6235149080811616882910000000; // eˆ64000000000000000000 unscaled.
             }
 
             x *= 100; // Scale x to 20 decimals for extra precision.
 
-            int256 product = 1e20;
+            int256 product = 1e20; // Stores a 20 decimal fixed point number.
 
             assembly {
-                // TODO: we could check gte by doing the sub first??? thonk
                 if iszero(lt(x, 3200000000000000000000)) {
-                    x := sub(x, 3200000000000000000000)
+                    x := sub(x, 3200000000000000000000) // 2ˆ5 scaled by 1e18.
+
+                    // Multiplied by eˆ3200000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 7896296018268069516100000000000000), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 1600000000000000000000)) {
-                    x := sub(x, 1600000000000000000000)
+                    x := sub(x, 1600000000000000000000) // 2ˆ4 scaled by 1e18.
+
+                    // Multiplied by eˆ16000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 888611052050787263676000000), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 800000000000000000000)) {
-                    x := sub(x, 800000000000000000000)
+                    x := sub(x, 800000000000000000000) // 2ˆ3 scaled by 1e18.
+
+                    // Multiplied by eˆ8000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 2980957987041728274740004), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 400000000000000000000)) {
-                    x := sub(x, 400000000000000000000)
+                    x := sub(x, 400000000000000000000) // 2ˆ2 scaled by 1e18.
+
+                    // Multiplied by eˆ4000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 5459815003314423907810), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 200000000000000000000)) {
-                    x := sub(x, 200000000000000000000)
+                    x := sub(x, 200000000000000000000) // 2ˆ1 scaled by 1e18.
+
+                    // Multiplied by eˆ2000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 738905609893065022723), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 100000000000000000000)) {
-                    x := sub(x, 100000000000000000000)
+                    x := sub(x, 100000000000000000000) // 2ˆ0 scaled by 1e18.
+
+                    // Multiplied by eˆ1000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 271828182845904523536), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 50000000000000000000)) {
-                    x := sub(x, 50000000000000000000)
+                    x := sub(x, 50000000000000000000) // 2ˆ-1 scaled by 1e18.
+
+                    // Multiplied by eˆ5000000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 164872127070012814685), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 25000000000000000000)) {
-                    x := sub(x, 25000000000000000000)
+                    x := sub(x, 25000000000000000000) // 2ˆ-2 scaled by 1e18.
+
+                    // Multiplied by eˆ250000000000000000 scaled by 1e20 and divided by 1e20.
                     product := div(mul(product, 128402541668774148407), 100000000000000000000)
                 }
             }
@@ -144,7 +160,7 @@ library FixedPointMathLib {
                 sum := add(sum, term)
             }
 
-            return uint256((((product * sum) / 1e20) * firstAN) / 100); // Divided by 100 to scale back to 18 decimals.
+            return ((uint256(product * sum) / 1e20) * z) / 100; // Divided by 100 to scale back to 18 decimals.
         }
     }
 
