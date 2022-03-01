@@ -44,10 +44,10 @@ library FixedPointMathLib {
                     z := div(1000000000000000000000000000000000000, z)
                 }
 
-                return z;
+                return z; // Beyond this if statement we know x is positive.
             }
 
-            z = 1; // 1 unscaled. Will get overridden if x is large.
+            z = 1; // 1 unscaled. Will get overridden below if x is large.
 
             if (x >= 128000000000000000000) {
                 x -= 128000000000000000000; // 2ˆ7 scaled by 1e18.
