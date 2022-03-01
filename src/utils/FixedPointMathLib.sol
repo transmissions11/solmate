@@ -220,7 +220,7 @@ library FixedPointMathLib {
         }
     }
 
-    function exp(int256 x) internal pure returns (uint256) {
+    function exp(int256 x) internal pure returns (uint256 z) {
         unchecked {
             assembly {
                 if or(sgt(x, 130000000000000000000), slt(x, sub(0, 41000000000000000000))) {
@@ -228,7 +228,15 @@ library FixedPointMathLib {
                 }
             }
 
-            if (x < 0) return 1e36 / exp(-x);
+            if (x < 0) {
+                z = exp(-x);
+
+                assembly {
+                    z := div(1000000000000000000000000000000000000, z)
+                }
+
+                return z;
+            }
 
             int256 firstAN = 1;
             if (x >= 128000000000000000000) {
