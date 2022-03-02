@@ -100,14 +100,7 @@ abstract contract ERC721 {
         address to,
         uint256 id
     ) public virtual {
-        transferFrom(from, to, id);
-
-        require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
-            "UNSAFE_RECIPIENT"
-        );
+        safeTransferFrom(from, to, id, "");
     }
 
     function safeTransferFrom(
@@ -178,14 +171,7 @@ abstract contract ERC721 {
     //////////////////////////////////////////////////////////////*/
 
     function _safeMint(address to, uint256 id) internal virtual {
-        _mint(to, id);
-
-        require(
-            to.code.length == 0 ||
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
-            "UNSAFE_RECIPIENT"
-        );
+        _safeMint(to, id, "");
     }
 
     function _safeMint(
