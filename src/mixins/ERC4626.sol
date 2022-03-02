@@ -18,7 +18,7 @@ abstract contract ERC4626 is ERC20 {
 
     event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
-    event Withdraw(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
+    event Withdraw(address indexed caller, address indexed receiver, address indexed owner, uint256 assets, uint256 shares);
 
     /*///////////////////////////////////////////////////////////////
                                IMMUTABLES
@@ -88,7 +88,7 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(owner, shares);
 
-        emit Withdraw(owner, receiver, assets, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
         ERC20(asset).safeTransfer(receiver, assets);
     }
@@ -111,7 +111,7 @@ abstract contract ERC4626 is ERC20 {
 
         _burn(owner, shares);
 
-        emit Withdraw(owner, receiver, assets, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
         ERC20(asset).safeTransfer(receiver, assets);
     }
