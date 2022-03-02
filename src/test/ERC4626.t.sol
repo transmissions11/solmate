@@ -13,7 +13,7 @@ contract ERC4626Test is DSTestPlus {
 
     function setUp() public {
         underlying = new MockERC20("Mock Token", "TKN", 18);
-        vault = new MockERC4626(underlying, "Mock Token Vault", "vwTKN");
+        vault = new MockERC4626(address(underlying), "Mock Token Vault", "vwTKN");
     }
 
     function invariantMetadata() public {
@@ -23,7 +23,7 @@ contract ERC4626Test is DSTestPlus {
     }
 
     function invariantAssetsPerShare() public {
-        assertGe(vault.assetsPerShare(), 1e18);
+        assertGe(vault.convertToAssets(1e18), 1e18);
     }
 
     function testMetaData() public {
@@ -55,7 +55,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), aliceShareAmount);
         assertEq(vault.totalAssets(), aliceUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
-        assertEq(vault.assetsOf(address(alice)), aliceUnderlyingAmount);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), aliceUnderlyingAmount);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
         alice.withdraw(aliceUnderlyingAmount, address(alice), address(alice));
@@ -63,7 +63,7 @@ contract ERC4626Test is DSTestPlus {
 
         assertEq(vault.totalAssets(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
-        assertEq(vault.assetsOf(address(alice)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 0);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
     }
 
@@ -90,7 +90,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), aliceShareAmount);
         assertEq(vault.totalAssets(), aliceUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), aliceUnderlyingAmount);
-        assertEq(vault.assetsOf(address(alice)), aliceUnderlyingAmount);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), aliceUnderlyingAmount);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal - aliceUnderlyingAmount);
 
         alice.redeem(aliceShareAmount, address(alice), address(alice));
@@ -98,7 +98,7 @@ contract ERC4626Test is DSTestPlus {
 
         assertEq(vault.totalAssets(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
-        assertEq(vault.assetsOf(address(alice)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 0);
         assertEq(underlying.balanceOf(address(alice)), alicePreDepositBal);
     }
 
@@ -177,7 +177,7 @@ contract ERC4626Test is DSTestPlus {
         // Expect to have received the requested mint amount.
         assertEq(aliceShareAmount, 2000);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
-        assertEq(vault.assetsOf(address(alice)), aliceUnderlyingAmount);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), aliceUnderlyingAmount);
 
         // Expect a 1:1 ratio before mutation.
         assertEq(aliceUnderlyingAmount, 2000);
@@ -194,7 +194,7 @@ contract ERC4626Test is DSTestPlus {
         // Expect to have received the requested underlying amount.
         assertEq(bobUnderlyingAmount, 4000);
         assertEq(vault.balanceOf(address(bob)), bobShareAmount);
-        assertEq(vault.assetsOf(address(bob)), bobUnderlyingAmount);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), bobUnderlyingAmount);
 
         // Expect a 1:1 ratio before mutation.
         assertEq(bobShareAmount, bobUnderlyingAmount);
@@ -217,17 +217,17 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), preMutationShareBal);
         assertEq(vault.totalAssets(), preMutationBal + mutationUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
-        assertEq(vault.assetsOf(address(alice)), aliceUnderlyingAmount + (mutationUnderlyingAmount / 3) * 1);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), aliceUnderlyingAmount + (mutationUnderlyingAmount / 3) * 1);
         assertEq(vault.balanceOf(address(bob)), bobShareAmount);
-        assertEq(vault.assetsOf(address(bob)), bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2);
 
         // 4. Alice deposits 2000 tokens (mints 1333 shares)
         alice.deposit(2000, address(alice));
         assertEq(vault.totalSupply(), 7333);
         assertEq(vault.balanceOf(address(alice)), 3333);
-        assertEq(vault.assetsOf(address(alice)), 4999);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 4999);
         assertEq(vault.balanceOf(address(bob)), 4000);
-        assertEq(vault.assetsOf(address(bob)), 6000);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 6000);
 
         // 5. Bob mints 2000 shares (costs 3001 assets)
         // NOTE: Bob's assets spent got rounded up
@@ -235,9 +235,9 @@ contract ERC4626Test is DSTestPlus {
         bob.mint(2000, address(bob));
         assertEq(vault.totalSupply(), 9333);
         assertEq(vault.balanceOf(address(alice)), 3333);
-        assertEq(vault.assetsOf(address(alice)), 5000);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 5000);
         assertEq(vault.balanceOf(address(bob)), 6000);
-        assertEq(vault.assetsOf(address(bob)), 9000);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 9000);
 
         // Sanity checks:
         // Alice and bob should have spent all their tokens now
@@ -250,8 +250,8 @@ contract ERC4626Test is DSTestPlus {
         // NOTE: Vault holds 17001 tokens, but sum of assetsOf() is 17000.
         underlying.mint(address(vault), mutationUnderlyingAmount);
         assertEq(vault.totalAssets(), 17001);
-        assertEq(vault.assetsOf(address(alice)), 6071);
-        assertEq(vault.assetsOf(address(bob)), 10929);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 6071);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 10929);
 
         // 7. Alice redeem 1333 shares (2428 assets)
         alice.redeem(1333, address(alice), address(alice));
@@ -259,9 +259,9 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), 8000);
         assertEq(vault.totalAssets(), 14573);
         assertEq(vault.balanceOf(address(alice)), 2000);
-        assertEq(vault.assetsOf(address(alice)), 3643);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 3643);
         assertEq(vault.balanceOf(address(bob)), 6000);
-        assertEq(vault.assetsOf(address(bob)), 10929);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 10929);
 
         // 8. Bob withdraws 2929 assets (1608 shares)
         bob.withdraw(2929, address(bob), address(bob));
@@ -269,9 +269,9 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), 6392);
         assertEq(vault.totalAssets(), 11644);
         assertEq(vault.balanceOf(address(alice)), 2000);
-        assertEq(vault.assetsOf(address(alice)), 3643);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 3643);
         assertEq(vault.balanceOf(address(bob)), 4392);
-        assertEq(vault.assetsOf(address(bob)), 8000);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 8000);
 
         // 9. Alice withdraws 3643 assets (2000 shares)
         // NOTE: Bob's assets have been rounded back up
@@ -280,9 +280,9 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), 4392);
         assertEq(vault.totalAssets(), 8001);
         assertEq(vault.balanceOf(address(alice)), 0);
-        assertEq(vault.assetsOf(address(alice)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 0);
         assertEq(vault.balanceOf(address(bob)), 4392);
-        assertEq(vault.assetsOf(address(bob)), 8001);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 8001);
 
         // 10. Bob redeem 4392 shares (8001 tokens)
         bob.redeem(4392, address(bob), address(bob));
@@ -290,9 +290,9 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalAssets(), 0);
         assertEq(vault.balanceOf(address(alice)), 0);
-        assertEq(vault.assetsOf(address(alice)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), 0);
         assertEq(vault.balanceOf(address(bob)), 0);
-        assertEq(vault.assetsOf(address(bob)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), 0);
 
         // Sanity check
         assertEq(underlying.balanceOf(address(vault)), 0);
@@ -348,7 +348,7 @@ contract ERC4626Test is DSTestPlus {
         vault.mint(0, address(this));
 
         assertEq(vault.balanceOf(address(this)), 0);
-        assertEq(vault.assetsOf(address(this)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(this))), 0);
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalAssets(), 0);
     }
@@ -361,7 +361,7 @@ contract ERC4626Test is DSTestPlus {
         vault.withdraw(0, address(this), address(this));
 
         assertEq(vault.balanceOf(address(this)), 0);
-        assertEq(vault.assetsOf(address(this)), 0);
+        assertEq(vault.convertToAssets(vault.balanceOf(address(this))), 0);
         assertEq(vault.totalSupply(), 0);
         assertEq(vault.totalAssets(), 0);
     }
