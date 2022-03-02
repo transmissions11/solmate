@@ -30,8 +30,8 @@ library FixedPointMathLib {
     function expWad(int256 x) internal pure returns (uint256 z) {
         unchecked {
             assembly {
-                // Revert if the exponent x is greater than 130e18 or less than -41e18.
-                if or(sgt(x, 130000000000000000000), slt(x, sub(0, 41000000000000000000))) {
+                // Revert if the exponent x is greater than 130e18.
+                if sgt(x, 130000000000000000000) {
                     revert(0, 0)
                 }
             }
