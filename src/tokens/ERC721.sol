@@ -114,7 +114,7 @@ abstract contract ERC721 {
         address from,
         address to,
         uint256 id,
-        bytes memory data
+        bytes calldata data
     ) public virtual {
         transferFrom(from, to, id);
 
@@ -191,7 +191,7 @@ abstract contract ERC721 {
     function _safeMint(
         address to,
         uint256 id,
-        bytes memory data
+        bytes calldata data
     ) internal virtual {
         _mint(to, id);
 
