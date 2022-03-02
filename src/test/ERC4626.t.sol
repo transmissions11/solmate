@@ -238,7 +238,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.assetsOf(address(alice)), 5000);
         assertEq(vault.balanceOf(address(bob)), 6000);
         assertEq(vault.assetsOf(address(bob)), 9000);
-        
+
         // Sanity checks:
         // Alice and bob should have spent all their tokens now
         assertEq(underlying.balanceOf(address(alice)), 0);
