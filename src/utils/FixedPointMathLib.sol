@@ -31,7 +31,7 @@ library FixedPointMathLib {
         unchecked {
             assembly {
                 // Revert if the exponent x is greater than 130e18.
-                if sgt(x, 130000000000000000000) {
+                if iszero(slt(x, 130000000000000000001)) {
                     revert(0, 0)
                 }
             }
