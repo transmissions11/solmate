@@ -47,120 +47,124 @@ library FixedPointMathLib {
                 return z; // Beyond this if statement we know x is positive.
             }
 
-            z = 1; // 1 unscaled. Will get overridden below if x is large.
+            z = 1; // Will multiply the result by this at the end. Default to 1 as a no-op, may be increased below.
 
             if (x >= 128000000000000000000) {
                 x -= 128000000000000000000; // 2ˆ7 scaled by 1e18.
 
-                z = 38877084059945950922200000000000000000000000000000000000; // eˆ12800000000000000000 unscaled.
+                // Because eˆ12800000000000000000 exp'd is too large to fit in 20 decimals, we'll store it unscaled.
+                z = 38877084059945950922200000000000000000000000000000000000; // We'll multiply by this at the end.
             } else if (x >= 64000000000000000000) {
                 x -= 64000000000000000000; // 2^6 scaled by 1e18.
 
-                z = 6235149080811616882910000000; // eˆ64000000000000000000 unscaled.
+                // Because eˆ64000000000000000000 exp'd is too large to fit in 20 decimals, we'll store it unscaled.
+                z = 6235149080811616882910000000; // We'll multiply by this at the end, assuming x is large enough.
             }
 
             x *= 100; // Scale x to 20 decimals for extra precision.
 
-            uint256 product = 1e20; // Stores a 20 decimal fixed point number.
+            uint256 precomputed = 1e20; // Will store the product of precomputed powers of 2 (which almost add up to x) exp'd.
 
             assembly {
                 if iszero(lt(x, 3200000000000000000000)) {
                     x := sub(x, 3200000000000000000000) // 2ˆ5 scaled by 1e18.
 
                     // Multiplied by eˆ3200000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 7896296018268069516100000000000000), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 7896296018268069516100000000000000), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 1600000000000000000000)) {
                     x := sub(x, 1600000000000000000000) // 2ˆ4 scaled by 1e18.
 
                     // Multiplied by eˆ16000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 888611052050787263676000000), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 888611052050787263676000000), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 800000000000000000000)) {
                     x := sub(x, 800000000000000000000) // 2ˆ3 scaled by 1e18.
 
                     // Multiplied by eˆ8000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 2980957987041728274740004), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 2980957987041728274740004), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 400000000000000000000)) {
                     x := sub(x, 400000000000000000000) // 2ˆ2 scaled by 1e18.
 
                     // Multiplied by eˆ4000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 5459815003314423907810), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 5459815003314423907810), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 200000000000000000000)) {
                     x := sub(x, 200000000000000000000) // 2ˆ1 scaled by 1e18.
 
                     // Multiplied by eˆ2000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 738905609893065022723), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 738905609893065022723), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 100000000000000000000)) {
                     x := sub(x, 100000000000000000000) // 2ˆ0 scaled by 1e18.
 
                     // Multiplied by eˆ1000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 271828182845904523536), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 271828182845904523536), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 50000000000000000000)) {
                     x := sub(x, 50000000000000000000) // 2ˆ-1 scaled by 1e18.
 
                     // Multiplied by eˆ5000000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 164872127070012814685), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 164872127070012814685), 100000000000000000000)
                 }
 
                 if iszero(lt(x, 25000000000000000000)) {
                     x := sub(x, 25000000000000000000) // 2ˆ-2 scaled by 1e18.
 
                     // Multiplied by eˆ250000000000000000 scaled by 1e20 and divided by 1e20.
-                    product := div(mul(product, 128402541668774148407), 100000000000000000000)
+                    precomputed := div(mul(precomputed, 128402541668774148407), 100000000000000000000)
                 }
             }
 
-            // We'll use the Taylor series for e^x like 1 + x + (x^2 / 2!) + ... + (x^n / n!).
-            uint256 term = uint256(x); // Will track each term in the series, beginning with x.
-            uint256 sum = 1e20 + term; // The Taylor series begins with 1 plus the first term, x.
+            // We'll be using the Taylor series for e^x which looks like: 1 + x + (x^2 / 2!) + ... + (x^n / n!)
+            // to approximate the exp of the remaining value x not covered by the precomputed product above.
+            uint256 term = uint256(x); // Will track each term in the Taylor series, beginning with x.
+            uint256 series = 1e20 + term; // The Taylor series begins with 1 plus the first term, x.
 
             assembly {
-                term := div(mul(term, x), 200000000000000000000) // Divided by 2e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 200000000000000000000) // Equal to dividing x^2 by 2e20 as the first term was just x.
+                series := add(series, term)
 
-                term := div(mul(term, x), 300000000000000000000) // Divided by 3e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 300000000000000000000) // Equal to dividing x^3 by 6e20 (3!) as the last term was x divided by 2e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 400000000000000000000) // Divided by 4e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 400000000000000000000) // Equal to dividing x^4 by 24e20 (4!) as the last term was x divided by 6e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 500000000000000000000) // Divided by 5e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 500000000000000000000) // Equal to dividing x^5 by 120e20 (5!) as the last term was x divided by 24e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 600000000000000000000) // Divided by 6e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 600000000000000000000) // Equal to dividing x^6 by 720e20 (6!) as the last term was x divided by 120e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 700000000000000000000) // Divided by 7e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 700000000000000000000) // Equal to dividing x^7 by 5040e20 (7!) as the last term was x divided by 720e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 800000000000000000000) // Divided by 8e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 800000000000000000000) // Equal to dividing x^8 by 40320e20 (8!) as the last term was x divided by 5040e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 900000000000000000000) // Divided by 9e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 900000000000000000000) // Equal to dividing x^9 by 362880e20 (9!) as the last term was x divided by 40320e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 1000000000000000000000) // Divided by 10e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 1000000000000000000000) // Equal to dividing x^10 by 3628800e20 (10!) as the last term was x divided by 362880e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 1100000000000000000000) // Divided by 11e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 1100000000000000000000) // Equal to dividing x^11 by 39916800e20 (11!) as the last term was x divided by 3628800e20.
+                series := add(series, term)
 
-                term := div(mul(term, x), 1200000000000000000000) // Divided by 12e20.
-                sum := add(sum, term)
+                term := div(mul(term, x), 1200000000000000000000) // Equal to dividing x^12 by 479001600e20 (12!) as the last term was x divided by 39916800e20.
+                series := add(series, term)
             }
 
-            return (((product * sum) / 1e20) * z) / 100; // Divided by 100 to scale back to 18 decimals.
+            // Since e^x * e^y equals e^(x+y) we multiply our Taylor series and precomputed exp'd powers of 2 to get the final result scaled by 1e20.
+            return (((series * precomputed) / 1e20) * z) / 100; // We divide the final result by 100 to scale it back down to 18 decimals of precision.
         }
     }
 
