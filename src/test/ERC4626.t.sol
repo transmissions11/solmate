@@ -178,6 +178,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(aliceShareAmount, 2000);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
         assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), aliceUnderlyingAmount);
+        assertEq(vault.convertToShares(aliceUnderlyingAmount), vault.balanceOf(address(alice)));
 
         // Expect a 1:1 ratio before mutation.
         assertEq(aliceUnderlyingAmount, 2000);
@@ -195,6 +196,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(bobUnderlyingAmount, 4000);
         assertEq(vault.balanceOf(address(bob)), bobShareAmount);
         assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), bobUnderlyingAmount);
+        assertEq(vault.convertToShares(bobUnderlyingAmount), vault.balanceOf(address(bob)));
 
         // Expect a 1:1 ratio before mutation.
         assertEq(bobShareAmount, bobUnderlyingAmount);
