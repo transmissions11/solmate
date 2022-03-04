@@ -1373,6 +1373,8 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
 
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
 
+        if (minLength == 0) revert();
+
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);
         uint256[] memory normalizedTransferAmounts = new uint256[](minLength);
@@ -1713,6 +1715,8 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData
     ) public {
         uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
+
+        if (minLength == 0) revert();
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);

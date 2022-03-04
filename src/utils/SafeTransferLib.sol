@@ -7,6 +7,7 @@ import {ERC20} from "../tokens/ERC20.sol";
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SafeTransferLib.sol)
 /// @author Modified from Gnosis (https://github.com/gnosis/gp-v2-contracts/blob/main/src/contracts/libraries/GPv2SafeERC20.sol)
 /// @dev Use with caution! Some functions in this library knowingly create dirty bits at the destination of the free memory pointer.
+/// @dev Note that none of the functions in this library check that a token has code at all! That responsibility is delegated to the caller.
 library SafeTransferLib {
     /*///////////////////////////////////////////////////////////////
                             ETH OPERATIONS
@@ -107,22 +108,19 @@ library SafeTransferLib {
 
     function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {
         assembly {
-            // Get how many bytes the call returned.
-            let returnDataSize := returndatasize()
-
             // If the call reverted:
             if iszero(callStatus) {
                 // Copy the revert message into memory.
-                returndatacopy(0, 0, returnDataSize)
+                returndatacopy(0, 0, returndatasize())
 
                 // Revert with the same message.
-                revert(0, returnDataSize)
+                revert(0, returndatasize())
             }
 
-            switch returnDataSize
+            switch returndatasize()
             case 32 {
                 // Copy the return data into memory.
-                returndatacopy(0, 0, returnDataSize)
+                returndatacopy(0, 0, returndatasize())
 
                 // Set success to whether it returned true.
                 success := iszero(iszero(mload(0)))
@@ -132,7 +130,7 @@ library SafeTransferLib {
                 success := 1
             }
             default {
-                // It returned some malformed input.
+                // It returned some malformed output.
                 success := 0
             }
         }
