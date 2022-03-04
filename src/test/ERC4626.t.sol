@@ -13,7 +13,7 @@ contract ERC4626Test is DSTestPlus {
 
     function setUp() public {
         underlying = new MockERC20("Mock Token", "TKN", 18);
-        vault = new MockERC4626(address(underlying), "Mock Token Vault", "vwTKN");
+        vault = new MockERC4626(underlying, "Mock Token Vault", "vwTKN");
     }
 
     function invariantMetadata() public {
@@ -22,14 +22,11 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
-    function invariantAssetsPerShare() public {
-        assertGe(vault.convertToAssets(1e18), 1e18);
-    }
-
-    function testMetaData() public {
-        assertEq(vault.name(), "Mock Token Vault");
-        assertEq(vault.symbol(), "vwTKN");
-        assertEq(vault.decimals(), 18);
+    function testMetadata(string calldata name, string calldata symbol) public {
+        MockERC4626 vlt = new MockERC4626(underlying, name, symbol);
+        assertEq(vlt.name(), name);
+        assertEq(vlt.symbol(), symbol);
+        assertEq(address(vlt.asset()), address(underlying));
     }
 
     function testSingleDepositWithdraw(uint128 amount) public {
@@ -127,7 +124,7 @@ contract ERC4626Test is DSTestPlus {
         // |--------------|---------|----------|---------|----------|
         // | 5. Bob mints 2000 shares (costs 3001 assets)           |
         // |    NOTE: Bob's assets spent got rounded up             |
-        // |    NOTE: Alices's vault assets got rounded up          |
+        // |    NOTE: Alice's vault assets got rounded up           |
         // |--------------|---------|----------|---------|----------|
         // |         9333 |    3333 |     5000 |    6000 |     9000 |
         // |--------------|---------|----------|---------|----------|
@@ -219,9 +216,15 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.totalSupply(), preMutationShareBal);
         assertEq(vault.totalAssets(), preMutationBal + mutationUnderlyingAmount);
         assertEq(vault.balanceOf(address(alice)), aliceShareAmount);
-        assertEq(vault.convertToAssets(vault.balanceOf(address(alice))), aliceUnderlyingAmount + (mutationUnderlyingAmount / 3) * 1);
+        assertEq(
+            vault.convertToAssets(vault.balanceOf(address(alice))),
+            aliceUnderlyingAmount + (mutationUnderlyingAmount / 3) * 1
+        );
         assertEq(vault.balanceOf(address(bob)), bobShareAmount);
-        assertEq(vault.convertToAssets(vault.balanceOf(address(bob))), bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2);
+        assertEq(
+            vault.convertToAssets(vault.balanceOf(address(bob))),
+            bobUnderlyingAmount + (mutationUnderlyingAmount / 3) * 2
+        );
 
         // 4. Alice deposits 2000 tokens (mints 1333 shares)
         alice.deposit(2000, address(alice));

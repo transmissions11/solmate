@@ -18,26 +18,26 @@ abstract contract ERC4626 is ERC20 {
 
     event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
-    event Withdraw(address indexed caller, address indexed receiver, address indexed owner, uint256 assets, uint256 shares);
+    event Withdraw(
+        address indexed caller,
+        address indexed receiver,
+        address indexed owner,
+        uint256 assets,
+        uint256 shares
+    );
 
     /*///////////////////////////////////////////////////////////////
                                IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
-    address public immutable asset;
-
-    uint256 internal immutable ONE;
+    ERC20 public immutable asset;
 
     constructor(
-        address _asset,
+        ERC20 _asset,
         string memory _name,
         string memory _symbol
-    ) ERC20(_name, _symbol, ERC20(_asset).decimals()) {
+    ) ERC20(_name, _symbol, _asset.decimals()) {
         asset = _asset;
-
-        unchecked {
-            ONE = 10**decimals; // >77 decimals is unlikely.
-        }
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ abstract contract ERC4626 is ERC20 {
         require((shares = previewDeposit(assets)) != 0, "ZERO_SHARES");
 
         // Need to transfer before minting or ERC777s could reenter.
-        ERC20(asset).safeTransferFrom(msg.sender, address(this), assets);
+        asset.safeTransferFrom(msg.sender, address(this), assets);
 
         _mint(receiver, shares);
 
@@ -62,7 +62,7 @@ abstract contract ERC4626 is ERC20 {
         assets = previewMint(shares); // No need to check for rounding error, previewMint rounds up.
 
         // Need to transfer before minting or ERC777s could reenter.
-        ERC20(asset).safeTransferFrom(msg.sender, address(this), assets);
+        asset.safeTransferFrom(msg.sender, address(this), assets);
 
         _mint(receiver, shares);
 
@@ -90,7 +90,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        ERC20(asset).safeTransfer(receiver, assets);
+        asset.safeTransfer(receiver, assets);
     }
 
     function redeem(
@@ -113,7 +113,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        ERC20(asset).safeTransfer(receiver, assets);
+        asset.safeTransfer(receiver, assets);
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -122,40 +122,36 @@ abstract contract ERC4626 is ERC20 {
 
     function totalAssets() public view virtual returns (uint256);
 
-    function convertToShares(uint256 assets) public view returns (uint256 shares) {
-        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
-
-        return shares = supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
-    }
-
-    function convertToAssets(uint256 shares) public view returns (uint256 assets) {
-        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
-
-        return assets = supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
-    }
-
-    function previewDeposit(uint256 assets) public virtual returns (uint256) {
+    function convertToShares(uint256 assets) public view returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
     }
 
-    function previewMint(uint256 shares) public virtual returns (uint256) {
+    function convertToAssets(uint256 shares) public view returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
+    }
+
+    function previewDeposit(uint256 assets) public view virtual returns (uint256) {
+        return convertToShares(assets);
+    }
+
+    function previewMint(uint256 shares) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? shares : shares.mulDivUp(totalAssets(), supply);
     }
 
-    function previewWithdraw(uint256 assets) public virtual returns (uint256) {
+    function previewWithdraw(uint256 assets) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? assets : assets.mulDivUp(supply, totalAssets());
     }
 
-    function previewRedeem(uint256 shares) public virtual returns (uint256) {
-        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
-
-        return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
+    function previewRedeem(uint256 shares) public view virtual returns (uint256) {
+        return convertToAssets(shares);
     }
 
     /*///////////////////////////////////////////////////////////////

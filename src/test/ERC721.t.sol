@@ -66,11 +66,6 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.symbol(), "TKN");
     }
 
-    function testMetadata() public {
-        assertEq(token.name(), "Token");
-        assertEq(token.symbol(), "TKN");
-    }
-
     function testMint() public {
         token.mint(address(0xBEEF), 1337);
 

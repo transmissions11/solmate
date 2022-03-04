@@ -9,7 +9,7 @@ contract MockERC4626 is ERC4626 {
     uint256 public afterDepositHookCalledCounter = 0;
 
     constructor(
-        address _underlying,
+        ERC20 _underlying,
         string memory _name,
         string memory _symbol
     ) ERC4626(_underlying, _name, _symbol) {}
