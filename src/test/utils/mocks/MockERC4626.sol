@@ -15,7 +15,7 @@ contract MockERC4626 is ERC4626 {
     ) ERC4626(_underlying, _name, _symbol) {}
 
     function totalAssets() public view override returns (uint256) {
-        return asset.balanceOf(address(this));
+        return ERC20(asset).balanceOf(address(this));
     }
 
     function beforeWithdraw(uint256, uint256) internal override {

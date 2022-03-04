@@ -23,12 +23,6 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.decimals(), 18);
     }
 
-    function testMetaData() public {
-        assertEq(token.name(), "Token");
-        assertEq(token.symbol(), "TKN");
-        assertEq(token.decimals(), 18);
-    }
-
     function testMint() public {
         token.mint(address(0xBEEF), 1e18);
 
@@ -207,7 +201,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
-    function testMetaData(
+    function testMetadata(
         string calldata name,
         string calldata symbol,
         uint8 decimals

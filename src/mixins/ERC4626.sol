@@ -7,7 +7,7 @@ import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 /// @notice Minimal ERC4646 tokenized Vault implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
-/// @dev Do not use in production! ERC-4626 is still in the review stage and is subject to change.
+/// @dev Do not use in production! ERC-4626 is still in the last call stage and is subject to change.
 abstract contract ERC4626 is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
@@ -16,9 +16,15 @@ abstract contract ERC4626 is ERC20 {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event Deposit(address indexed from, address indexed to, uint256 amount, uint256 shares);
+    event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
 
-    event Withdraw(address indexed from, address indexed to, uint256 amount, uint256 shares);
+    event Withdraw(
+        address indexed caller,
+        address indexed receiver,
+        address indexed owner,
+        uint256 assets,
+        uint256 shares
+    );
 
     /*///////////////////////////////////////////////////////////////
                                IMMUTABLES
@@ -26,92 +32,88 @@ abstract contract ERC4626 is ERC20 {
 
     ERC20 public immutable asset;
 
-    uint256 internal immutable ONE;
-
     constructor(
         ERC20 _asset,
         string memory _name,
         string memory _symbol
     ) ERC20(_name, _symbol, _asset.decimals()) {
         asset = _asset;
-
-        unchecked {
-            ONE = 10**decimals; // >77 decimals is unlikely.
-        }
     }
 
     /*///////////////////////////////////////////////////////////////
                         DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function deposit(uint256 amount, address to) public virtual returns (uint256 shares) {
+    function deposit(uint256 assets, address receiver) public virtual returns (uint256 shares) {
         // Check for rounding error since we round down in previewDeposit.
-        require((shares = previewDeposit(amount)) != 0, "ZERO_SHARES");
+        require((shares = previewDeposit(assets)) != 0, "ZERO_SHARES");
 
         // Need to transfer before minting or ERC777s could reenter.
-        asset.safeTransferFrom(msg.sender, address(this), amount);
+        asset.safeTransferFrom(msg.sender, address(this), assets);
 
-        _mint(to, shares);
+        _mint(receiver, shares);
 
-        emit Deposit(msg.sender, to, amount, shares);
+        emit Deposit(msg.sender, receiver, assets, shares);
 
-        afterDeposit(amount, shares);
+        afterDeposit(assets, shares);
     }
 
-    function mint(uint256 shares, address to) public virtual returns (uint256 amount) {
-        amount = previewMint(shares); // No need to check for rounding error, previewMint rounds up.
+    function mint(uint256 shares, address receiver) public virtual returns (uint256 assets) {
+        assets = previewMint(shares); // No need to check for rounding error, previewMint rounds up.
 
         // Need to transfer before minting or ERC777s could reenter.
-        asset.safeTransferFrom(msg.sender, address(this), amount);
+        asset.safeTransferFrom(msg.sender, address(this), assets);
 
-        _mint(to, shares);
+        _mint(receiver, shares);
 
-        emit Deposit(msg.sender, to, amount, shares);
+        emit Deposit(msg.sender, receiver, assets, shares);
 
-        afterDeposit(amount, shares);
+        afterDeposit(assets, shares);
     }
 
     function withdraw(
-        uint256 amount,
-        address to,
-        address from
+        uint256 assets,
+        address receiver,
+        address owner
     ) public virtual returns (uint256 shares) {
-        shares = previewWithdraw(amount); // No need to check for rounding error, previewWithdraw rounds up.
+        shares = previewWithdraw(assets); // No need to check for rounding error, previewWithdraw rounds up.
 
-        if (msg.sender != from) {
-            uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
+        if (msg.sender != owner) {
+            uint256 allowed = allowance[owner][msg.sender]; // Saves gas for limited approvals.
 
-            if (allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
+            if (allowed != type(uint256).max) allowance[owner][msg.sender] = allowed - shares;
         }
 
-        beforeWithdraw(amount, shares);
+        beforeWithdraw(assets, shares);
 
-        _burn(from, shares);
+        _burn(owner, shares);
 
-        emit Withdraw(from, to, amount, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        asset.safeTransfer(to, amount);
+        asset.safeTransfer(receiver, assets);
     }
 
     function redeem(
         uint256 shares,
-        address to,
-        address from
-    ) public virtual returns (uint256 amount) {
-        uint256 allowed = allowance[from][msg.sender]; // Saves gas for limited approvals.
+        address receiver,
+        address owner
+    ) public virtual returns (uint256 assets) {
+        if (msg.sender != owner) {
+            uint256 allowed = allowance[owner][msg.sender]; // Saves gas for limited approvals.
 
-        if (msg.sender != from && allowed != type(uint256).max) allowance[from][msg.sender] = allowed - shares;
+            if (allowed != type(uint256).max) allowance[owner][msg.sender] = allowed - shares;
+        }
 
         // Check for rounding error since we round down in previewRedeem.
-        require((amount = previewRedeem(shares)) != 0, "ZERO_ASSETS");
+        require((assets = previewRedeem(shares)) != 0, "ZERO_ASSETS");
 
-        beforeWithdraw(amount, shares);
+        beforeWithdraw(assets, shares);
 
-        _burn(from, shares);
+        _burn(owner, shares);
 
-        emit Withdraw(from, to, amount, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        asset.safeTransfer(to, amount);
+        asset.safeTransfer(receiver, assets);
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -120,18 +122,20 @@ abstract contract ERC4626 is ERC20 {
 
     function totalAssets() public view virtual returns (uint256);
 
-    function assetsOf(address user) public view virtual returns (uint256) {
-        return previewRedeem(balanceOf[user]);
-    }
-
-    function assetsPerShare() public view virtual returns (uint256) {
-        return previewRedeem(ONE);
-    }
-
-    function previewDeposit(uint256 amount) public view virtual returns (uint256) {
+    function convertToShares(uint256 assets) public view returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? amount : amount.mulDivDown(supply, totalAssets());
+        return supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
+    }
+
+    function convertToAssets(uint256 shares) public view returns (uint256) {
+        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
+
+        return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
+    }
+
+    function previewDeposit(uint256 assets) public view virtual returns (uint256) {
+        return convertToShares(assets);
     }
 
     function previewMint(uint256 shares) public view virtual returns (uint256) {
@@ -140,43 +144,41 @@ abstract contract ERC4626 is ERC20 {
         return supply == 0 ? shares : shares.mulDivUp(totalAssets(), supply);
     }
 
-    function previewWithdraw(uint256 amount) public view virtual returns (uint256) {
+    function previewWithdraw(uint256 assets) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
-        return supply == 0 ? amount : amount.mulDivUp(supply, totalAssets());
+        return supply == 0 ? assets : assets.mulDivUp(supply, totalAssets());
     }
 
     function previewRedeem(uint256 shares) public view virtual returns (uint256) {
-        uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
-
-        return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
+        return convertToAssets(shares);
     }
 
     /*///////////////////////////////////////////////////////////////
                      DEPOSIT/WITHDRAWAL LIMIT LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function maxDeposit(address) public virtual returns (uint256) {
+    function maxDeposit(address) public view virtual returns (uint256) {
         return type(uint256).max;
     }
 
-    function maxMint(address) public virtual returns (uint256) {
+    function maxMint(address) public view virtual returns (uint256) {
         return type(uint256).max;
     }
 
-    function maxWithdraw(address user) public virtual returns (uint256) {
-        return assetsOf(user);
+    function maxWithdraw(address owner) public view virtual returns (uint256) {
+        return convertToAssets(balanceOf[owner]);
     }
 
-    function maxRedeem(address user) public virtual returns (uint256) {
-        return balanceOf[user];
+    function maxRedeem(address owner) public view virtual returns (uint256) {
+        return balanceOf[owner];
     }
 
     /*///////////////////////////////////////////////////////////////
                          INTERNAL HOOKS LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function beforeWithdraw(uint256 amount, uint256 shares) internal virtual {}
+    function beforeWithdraw(uint256 assets, uint256 shares) internal virtual {}
 
-    function afterDeposit(uint256 amount, uint256 shares) internal virtual {}
+    function afterDeposit(uint256 assets, uint256 shares) internal virtual {}
 }
