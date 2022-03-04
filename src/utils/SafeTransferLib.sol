@@ -108,22 +108,19 @@ library SafeTransferLib {
 
     function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {
         assembly {
-            // Get how many bytes the call returned.
-            let returnDataSize := returndatasize()
-
             // If the call reverted:
             if iszero(callStatus) {
                 // Copy the revert message into memory.
-                returndatacopy(0, 0, returnDataSize)
+                returndatacopy(0, 0, returndatasize())
 
                 // Revert with the same message.
-                revert(0, returnDataSize)
+                revert(0, returndatasize())
             }
 
-            switch returnDataSize
+            switch returndatasize()
             case 32 {
                 // Copy the return data into memory.
-                returndatacopy(0, 0, returnDataSize)
+                returndatacopy(0, 0, returndatasize())
 
                 // Set success to whether it returned true.
                 success := iszero(iszero(mload(0)))
