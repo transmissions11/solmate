@@ -13,7 +13,6 @@ library MerkleProof {
 
             // exit early if proof is empty supplied
             if iszero(proofLength) {
-                isValid := 0
                 revert(0, 0)
             }
 
@@ -25,13 +24,13 @@ library MerkleProof {
             { data := add(data, 0x20) } {
                 switch iszero(gt(computedHash, data))
                 case 0 {
-                    mstore(add(p, 32), computedHash)
-                    mstore(add(p, 64), data)
+                    mstore(add(p, 0x00), computedHash)
+                    mstore(add(p, 0x20), data)
                     computedHash := keccak256(p, 64)
                 }
                 default {
-                    mstore(add(p, 32), data)
-                    mstore(add(p, 64), computedHash)
+                    mstore(add(p, 0x00), data)
+                    mstore(add(p, 0x20), computedHash)
                     computedHash := keccak256(p, 64)
                 }
             }
