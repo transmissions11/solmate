@@ -36,12 +36,4 @@ library MerkleProof {
             isValid := eq(computedHash, root)
         }
     }
-
-     function efficientHash(bytes32 a, bytes32 b) public pure returns (bytes32 value) {
-        assembly {
-            mstore(0x00, a)
-            mstore(0x20, b)
-            value := keccak256(0x00, 0x40)
-        }
-    }
 }
