@@ -117,21 +117,18 @@ library SafeTransferLib {
                 revert(0, returndatasize())
             }
 
-            switch returndatasize()
-            case 32 {
-                // Copy the return data into memory.
-                returndatacopy(0, 0, returndatasize())
+            // We assume success if it returned nothing.
+            success := iszero(returndatasize())
 
-                // Set success to whether it returned true.
-                success := iszero(iszero(mload(0)))
-            }
-            case 0 {
-                // There was no return data.
-                success := 1
-            }
-            default {
-                // It returned some malformed output.
-                success := 0
+            // If it returned 32 bytes or more data:
+            if iszero(lt(returndatasize(), 32)) {
+                // Copy only the first 32 bytes into scratch space.
+                returndatacopy(0, 0, 32)
+
+                // Set success to true if the first 32 bytes are non-zero.
+                // This will assume values other than 1 mean success, which
+                // matches the V1 ABI decoder's behavior, but diverges from V2.
+                success := mload(0)
             }
         }
     }
