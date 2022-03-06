@@ -287,7 +287,10 @@ contract SafeTransferLibTest is DSTestPlus {
         uint256 amount
     ) internal {
         forceApprove(token, from, address(this), amount);
-        SafeTransferLib.safeTransfer(ERC20(token), from, amount);
+
+        // We cast to MissingReturnToken here because it won't check
+        // that there was return data, which accommodates all tokens.
+        MissingReturnToken(token).transfer(from, amount);
 
         uint256 preBal = ERC20(token).balanceOf(to);
         SafeTransferLib.safeTransferFrom(ERC20(token), from, to, amount);

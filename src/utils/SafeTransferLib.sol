@@ -34,82 +34,28 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        bool callStatus;
+        bool success;
 
         assembly {
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
-            // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
-            mstore(add(freeMemoryPointer, 4), and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "from" argument.
-            mstore(add(freeMemoryPointer, 36), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
-            mstore(add(freeMemoryPointer, 68), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
+            // Write the abi-encoded calldata into memory, beginning with the function selector.
+            mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000)
+            mstore(add(freeMemoryPointer, 4), from) // Mask and append the "from" argument.
+            mstore(add(freeMemoryPointer, 36), to) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 68), amount) // Append the "amount" argument.
+
+            // We fill the scratch space with junk to ensure if the call returns less than 32 bytes, we can tell without branching.
+            mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
             // We use 100 because the calldata length is 4 + 32 * 3.
-            callStatus := call(gas(), token, 0, freeMemoryPointer, 100, 0, 0)
-        }
+            // We'll copy up to 32 bytes of return data into the scratch space.
+            success := call(gas(), token, 0, freeMemoryPointer, 100, 0, 32)
 
-        require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FROM_FAILED");
-    }
-
-    function safeTransfer(
-        ERC20 token,
-        address to,
-        uint256 amount
-    ) internal {
-        bool callStatus;
-
-        assembly {
-            // Get a pointer to some free memory.
-            let freeMemoryPointer := mload(0x40)
-
-            // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
-            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
-            mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
-
-            // Call the token and store if it succeeded or not.
-            // We use 68 because the calldata length is 4 + 32 * 2.
-            callStatus := call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)
-        }
-
-        require(didLastOptionalReturnCallSucceed(callStatus), "TRANSFER_FAILED");
-    }
-
-    function safeApprove(
-        ERC20 token,
-        address to,
-        uint256 amount
-    ) internal {
-        bool callStatus;
-
-        assembly {
-            // Get a pointer to some free memory.
-            let freeMemoryPointer := mload(0x40)
-
-            // Write the abi-encoded calldata to memory piece by piece:
-            mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000) // Begin with the function selector.
-            mstore(add(freeMemoryPointer, 4), and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Mask and append the "to" argument.
-            mstore(add(freeMemoryPointer, 36), amount) // Finally append the "amount" argument. No mask as it's a full 32 byte value.
-
-            // Call the token and store if it succeeded or not.
-            // We use 68 because the calldata length is 4 + 32 * 2.
-            callStatus := call(gas(), token, 0, freeMemoryPointer, 68, 0, 0)
-        }
-
-        require(didLastOptionalReturnCallSucceed(callStatus), "APPROVE_FAILED");
-    }
-
-    /*///////////////////////////////////////////////////////////////
-                         INTERNAL HELPER LOGIC
-    //////////////////////////////////////////////////////////////*/
-
-    function didLastOptionalReturnCallSucceed(bool callStatus) private pure returns (bool success) {
-        assembly {
             // If the call reverted:
-            if iszero(callStatus) {
+            if iszero(success) {
                 // Copy the revert message into memory.
                 returndatacopy(0, 0, returndatasize())
 
@@ -117,19 +63,93 @@ library SafeTransferLib {
                 revert(0, returndatasize())
             }
 
-            // We assume success if it returned nothing.
-            success := iszero(returndatasize())
-
-            // If it returned 32 bytes or more data:
-            if iszero(lt(returndatasize(), 32)) {
-                // Copy only the first 32 bytes into scratch space.
-                returndatacopy(0, 0, 32)
-
-                // Set success to true if the first 32 bytes are non-zero.
-                // This will assume values other than 1 mean success, which
-                // matches the V1 ABI decoder's behavior, but diverges from V2.
-                success := mload(0)
-            }
+            // Set success to whether the call returned 1, except if it
+            // had no return data, in which case we assume it succeeded.
+            success := add(iszero(returndatasize()), eq(mload(0), 1))
         }
+
+        require(success, "TRANSFER_FROM_FAILED");
+    }
+
+    function safeTransfer(
+        ERC20 token,
+        address to,
+        uint256 amount
+    ) internal {
+        bool success;
+
+        assembly {
+            // Get a pointer to some free memory.
+            let freeMemoryPointer := mload(0x40)
+
+            // Write the abi-encoded calldata into memory, beginning with the function selector.
+            mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000)
+            mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
+
+            // We fill the scratch space with junk to ensure if the call returns less than 32 bytes, we can tell without branching.
+            mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+
+            // Call the token and store if it succeeded or not.
+            // We use 68 because the calldata length is 4 + 32 * 2.
+            // We'll copy up to 32 bytes of return data into the scratch space.
+            success := call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
+
+            // If the call reverted:
+            if iszero(success) {
+                // Copy the revert message into memory.
+                returndatacopy(0, 0, returndatasize())
+
+                // Revert with the same message.
+                revert(0, returndatasize())
+            }
+
+            // Set success to whether the call returned 1, except if it
+            // had no return data, in which case we assume it succeeded.
+            success := add(iszero(returndatasize()), eq(mload(0), 1))
+        }
+
+        require(success, "TRANSFER_FAILED");
+    }
+
+    function safeApprove(
+        ERC20 token,
+        address to,
+        uint256 amount
+    ) internal {
+        bool success;
+
+        assembly {
+            // Get a pointer to some free memory.
+            let freeMemoryPointer := mload(0x40)
+
+            // Write the abi-encoded calldata into memory, beginning with the function selector.
+            mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000)
+            mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
+
+            // We fill the scratch space with junk to ensure if the call returns less than 32 bytes, we can tell without branching.
+            mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
+
+            // Call the token and store if it succeeded or not.
+            // We use 68 because the calldata length is 4 + 32 * 2.
+            // We'll copy up to 32 bytes of return data into the scratch space.
+            success := call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
+
+            // If the call reverted:
+            if iszero(success) {
+                // Copy the revert message into memory.
+                returndatacopy(0, 0, returndatasize())
+
+                // Revert with the same message.
+                revert(0, returndatasize())
+            }
+
+            // Set success to whether the call returned 1, except if it
+            // had no return data, in which case we assume it succeeded.
+            success := add(iszero(returndatasize()), eq(mload(0), 1))
+        }
+
+        require(success, "APPROVE_FAILED");
     }
 }
