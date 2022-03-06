@@ -46,7 +46,7 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 36), to) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Append the "amount" argument.
 
-            // Fill up the scratch space so if the call <32 bytes, we can tell without branching.
+            // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
             mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
@@ -81,7 +81,7 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            // Fill up the scratch space so if the call <32 bytes, we can tell without branching.
+            // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
             mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
@@ -116,7 +116,7 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            // Fill up the scratch space so if the call <32 bytes, we can tell without branching.
+            // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
             mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
