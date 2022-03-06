@@ -88,7 +88,7 @@ abstract contract ERC1155 {
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i; i < idsLength; ) {
             uint256 id = ids[i];
             uint256 amount = amounts[i];
 
@@ -98,7 +98,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
@@ -125,11 +125,13 @@ abstract contract ERC1155 {
 
         balances = new uint256[](ownersLength);
 
-        // Unchecked because the only math done is incrementing
-        // the array index counter which cannot possibly overflow.
-        unchecked {
-            for (uint256 i = 0; i < ownersLength; i++) {
-                balances[i] = balanceOf[owners[i]][ids[i]];
+        for (uint256 i; i < ownersLength; ) {
+            balances[i] = balanceOf[owners[i]][ids[i]];
+                
+            // Unchecked because the only math done is incrementing
+            // the array index counter which cannot possibly overflow.
+            unchecked {
+                ++i;
             }
         }
     }
@@ -178,13 +180,13 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i; i < idsLength; ) {
             balanceOf[to][ids[i]] += amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
@@ -208,13 +210,13 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i; i < idsLength; ) {
             balanceOf[from][ids[i]] -= amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
