@@ -5,7 +5,7 @@ import {ERC20} from "../tokens/ERC20.sol";
 import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
-/// @notice Minimal ERC4646 tokenized Vault implementation.
+/// @notice Minimal ERC4626 tokenized Vault implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
 /// @dev Do not use in production! ERC-4626 is still in the last call stage and is subject to change.
 abstract contract ERC4626 is ERC20 {
