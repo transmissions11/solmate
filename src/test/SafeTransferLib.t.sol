@@ -93,7 +93,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(reverting), address(0xBEEF), 1e18);
     }
 
-    function testFailTransferWithTooLittleReturn() public {
+    function testFailTransferWithReturnsTooLittle() public {
         verifySafeTransfer(address(returnsTooLittle), address(0xBEEF), 1e18);
     }
 
@@ -105,7 +105,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(reverting), address(0xFEED), address(0xBEEF), 1e18);
     }
 
-    function testFailTransferFromWithTooLittleReturn() public {
+    function testFailTransferFromWithReturnsTooLittle() public {
         verifySafeTransferFrom(address(returnsTooLittle), address(0xFEED), address(0xBEEF), 1e18);
     }
 
@@ -117,7 +117,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(reverting), address(0xBEEF), 1e18);
     }
 
-    function testFailApproveWithTooLittleReturn() public {
+    function testFailApproveWithReturnsTooLittle() public {
         verifySafeApprove(address(returnsTooLittle), address(0xBEEF), 1e18);
     }
 
@@ -220,7 +220,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(reverting), to, amount);
     }
 
-    function testFailTransferWithTooLittleReturn(address to, uint256 amount) public {
+    function testFailTransferWithReturnsTooLittle(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsTooLittle), to, amount);
     }
 
@@ -240,7 +240,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(reverting), from, to, amount);
     }
 
-    function testFailTransferFromWithTooLittleReturn(
+    function testFailTransferFromWithReturnsTooLittle(
         address from,
         address to,
         uint256 amount
@@ -256,7 +256,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(reverting), to, amount);
     }
 
-    function testFailApproveWithTooLittleReturn(address to, uint256 amount) public {
+    function testFailApproveWithReturnsTooLittle(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTooLittle), to, amount);
     }
 
