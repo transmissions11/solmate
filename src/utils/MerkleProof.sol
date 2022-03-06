@@ -11,30 +11,37 @@ library MerkleProof {
             let computedHash := leaf
             let proofLength := mload(proof)
 
-            // exit early if proof is empty supplied
+            // exit early if empty proof is supplied
             if iszero(proofLength) {
                 revert(0, 0)
             }
 
+            // get first value for loop
             let data := add(proof, 0x20)
-            let p := mload(0x40)
-            mstore(0x40, add(p, 64))
             for {let end := add(data, mul(proofLength, 0x20))}
-            lt(data, end) 
+            lt(data, end)
             { data := add(data, 0x20) } {
                 switch iszero(gt(computedHash, data))
                 case 0 {
-                    mstore(add(p, 0x00), computedHash)
-                    mstore(add(p, 0x20), data)
-                    computedHash := keccak256(p, 64)
+                    mstore(0x00, computedHash)
+                    mstore(0x20, data)
+                    computedHash := keccak256(0x00, 0x40)
                 }
                 default {
-                    mstore(add(p, 0x00), data)
-                    mstore(add(p, 0x20), computedHash)
-                    computedHash := keccak256(p, 64)
+                    mstore(0x00, data)
+                    mstore(0x20, computedHash)
+                    computedHash := keccak256(0x00, 0x40)
                 }
             }
             isValid := eq(computedHash, root)
+        }
+    }
+
+     function efficientHash(bytes32 a, bytes32 b) public pure returns (bytes32 value) {
+        assembly {
+            mstore(0x00, a)
+            mstore(0x20, b)
+            value := keccak256(0x00, 0x40)
         }
     }
 }
