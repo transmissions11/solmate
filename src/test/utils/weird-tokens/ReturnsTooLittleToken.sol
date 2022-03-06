@@ -49,7 +49,7 @@ contract ReturnsTooLittleToken {
         emit Approval(msg.sender, spender, amount);
 
         assembly {
-            mstore(0, 1)
+            mstore(0, 0x0100000000000000000000000000000000000000000000000000000000000000)
             return(0, 8)
         }
     }
@@ -66,7 +66,7 @@ contract ReturnsTooLittleToken {
         emit Transfer(msg.sender, to, amount);
 
         assembly {
-            mstore(0, 1)
+            mstore(0, 0x0100000000000000000000000000000000000000000000000000000000000000)
             return(0, 8)
         }
     }
@@ -91,7 +91,7 @@ contract ReturnsTooLittleToken {
         emit Transfer(from, to, amount);
 
         assembly {
-            mstore(0, 1)
+            mstore(0, 0x0100000000000000000000000000000000000000000000000000000000000000)
             return(0, 8)
         }
     }

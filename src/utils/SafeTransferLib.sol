@@ -46,26 +46,20 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 36), to) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Append the "amount" argument.
 
-            // We fill the scratch space with junk to ensure if the call returns less than 32 bytes, we can tell without branching.
+            // Fill up the scratch space so if the call <32 bytes, we can tell without branching.
             mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
             // We use 100 because the calldata length is 4 + 32 * 3.
-            // We'll copy up to 32 bytes of return data into the scratch space.
+            // We'll copy up to 32 bytes of return data into the scratch space,
+            // if it returns <32 bytes at least a portion of the junk will remain.
             success := call(gas(), token, 0, freeMemoryPointer, 100, 0, 32)
 
-            // If the call reverted:
-            if iszero(success) {
-                // Copy the revert message into memory.
-                returndatacopy(0, 0, returndatasize())
-
-                // Revert with the same message.
-                revert(0, returndatasize())
-            }
-
             // Set success to whether the call returned 1, except if it
-            // had no return data, in which case we assume it succeeded.
-            success := add(iszero(returndatasize()), eq(mload(0), 1))
+            // had no return data, in which case we assume it succeeded,
+            // or if it reverted, in which case we multiply everything by
+            // 0, setting success to zero which will decode as false below.
+            success := mul(add(iszero(returndatasize()), eq(mload(0), 1)), success)
         }
 
         require(success, "TRANSFER_FROM_FAILED");
@@ -87,26 +81,20 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            // We fill the scratch space with junk to ensure if the call returns less than 32 bytes, we can tell without branching.
+            // Fill up the scratch space so if the call <32 bytes, we can tell without branching.
             mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
             // We use 68 because the calldata length is 4 + 32 * 2.
-            // We'll copy up to 32 bytes of return data into the scratch space.
+            // We'll copy up to 32 bytes of return data into the scratch space,
+            // if it returns <32 bytes at least a portion of the junk will remain.
             success := call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
 
-            // If the call reverted:
-            if iszero(success) {
-                // Copy the revert message into memory.
-                returndatacopy(0, 0, returndatasize())
-
-                // Revert with the same message.
-                revert(0, returndatasize())
-            }
-
             // Set success to whether the call returned 1, except if it
-            // had no return data, in which case we assume it succeeded.
-            success := add(iszero(returndatasize()), eq(mload(0), 1))
+            // had no return data, in which case we assume it succeeded,
+            // or if it reverted, in which case we multiply everything by
+            // 0, setting success to zero which will decode as false below.
+            success := mul(add(iszero(returndatasize()), eq(mload(0), 1)), success)
         }
 
         require(success, "TRANSFER_FAILED");
@@ -128,26 +116,20 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            // We fill the scratch space with junk to ensure if the call returns less than 32 bytes, we can tell without branching.
+            // Fill up the scratch space so if the call <32 bytes, we can tell without branching.
             mstore(0, 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)
 
             // Call the token and store if it succeeded or not.
             // We use 68 because the calldata length is 4 + 32 * 2.
-            // We'll copy up to 32 bytes of return data into the scratch space.
+            // We'll copy up to 32 bytes of return data into the scratch space,
+            // if it returns <32 bytes at least a portion of the junk will remain.
             success := call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
 
-            // If the call reverted:
-            if iszero(success) {
-                // Copy the revert message into memory.
-                returndatacopy(0, 0, returndatasize())
-
-                // Revert with the same message.
-                revert(0, returndatasize())
-            }
-
             // Set success to whether the call returned 1, except if it
-            // had no return data, in which case we assume it succeeded.
-            success := add(iszero(returndatasize()), eq(mload(0), 1))
+            // had no return data, in which case we assume it succeeded,
+            // or if it reverted, in which case we multiply everything by
+            // 0, setting success to zero which will decode as false below.
+            success := mul(add(iszero(returndatasize()), eq(mload(0), 1)), success)
         }
 
         require(success, "APPROVE_FAILED");
