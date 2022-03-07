@@ -12,20 +12,13 @@ library MerkleProof {
     ) internal pure returns (bool isValid) {
         assembly {
             let computedHash := leaf
-            // The first slot of a dynamically sized array stores the array length.
-            let proofLength := mload(proof)
-
-            // Exit early if an empty proof is supplied.
-            if iszero(proofLength) {
-                revert(0, 0)
-            }
 
             // Get the memory start location of the first element in the proof array.
             let data := add(proof, 0x20)
 
             // Iterate over proof elements to compute root hash.
             for {
-                let end := add(data, mul(proofLength, 0x20))
+                let end := add(data, mul(mload(proof), 0x20))
             } lt(data, end) {
                 data := add(data, 0x20)
             } {
