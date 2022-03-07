@@ -13,14 +13,14 @@ library SafeTransferLib {
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
-        bool callStatus;
+        bool success;
 
         assembly {
             // Transfer the ETH and store if it succeeded or not.
-            callStatus := call(gas(), to, amount, 0, 0, 0, 0)
+            success := call(gas(), to, amount, 0, 0, 0, 0)
         }
 
-        require(callStatus, "ETH_TRANSFER_FAILED");
+        require(success, "ETH_TRANSFER_FAILED");
     }
 
     /*///////////////////////////////////////////////////////////////
@@ -41,8 +41,8 @@ library SafeTransferLib {
 
             // Write the abi-encoded calldata into memory, beginning with the function selector.
             mstore(freeMemoryPointer, 0x23b872dd00000000000000000000000000000000000000000000000000000000)
-            mstore(add(freeMemoryPointer, 4), from) // Mask and append the "from" argument.
-            mstore(add(freeMemoryPointer, 36), to) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 4), from) // Append the "from" argument.
+            mstore(add(freeMemoryPointer, 36), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Append the "amount" argument.
 
             // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
@@ -77,7 +77,7 @@ library SafeTransferLib {
 
             // Write the abi-encoded calldata into memory, beginning with the function selector.
             mstore(freeMemoryPointer, 0xa9059cbb00000000000000000000000000000000000000000000000000000000)
-            mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 4), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
             // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
@@ -112,7 +112,7 @@ library SafeTransferLib {
 
             // Write the abi-encoded calldata into memory, beginning with the function selector.
             mstore(freeMemoryPointer, 0x095ea7b300000000000000000000000000000000000000000000000000000000)
-            mstore(add(freeMemoryPointer, 4), to) // Mask and append the "to" argument.
+            mstore(add(freeMemoryPointer, 4), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
             // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
