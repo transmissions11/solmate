@@ -4,7 +4,6 @@ pragma solidity 0.8.10;
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
 import {MerkleProof} from "../utils/MerkleProof.sol";
-import {MerkleProofOZ} from "../utils/MerkleProof_OZ.sol";
 
 contract MerkleProofTest is DSTestPlus {
     function testVerifyEmptyMerkleProofSuppliedLeafAndRootSame() public {
@@ -40,4 +39,6 @@ contract MerkleProofTest is DSTestPlus {
         bytes32 leaf = 0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb;
         assertBoolEq(MerkleProof.verify(proof, root, leaf), false);
     }
+
+
 }
