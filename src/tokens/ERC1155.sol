@@ -102,7 +102,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
@@ -132,7 +132,7 @@ abstract contract ERC1155 {
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            for (uint256 i = 0; i < ownersLength; i++) {
+            for (uint256 i = 0; i < ownersLength; ++i) {
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
@@ -188,7 +188,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
@@ -218,7 +218,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
