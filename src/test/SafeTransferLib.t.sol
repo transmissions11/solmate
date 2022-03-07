@@ -6,6 +6,7 @@ import {RevertingToken} from "./utils/weird-tokens/RevertingToken.sol";
 import {ReturnsFalseToken} from "./utils/weird-tokens/ReturnsFalseToken.sol";
 import {MissingReturnToken} from "./utils/weird-tokens/MissingReturnToken.sol";
 import {ReturnsTooMuchToken} from "./utils/weird-tokens/ReturnsTooMuchToken.sol";
+import {ReturnsGarbageToken} from "./utils/weird-tokens/ReturnsGarbageToken.sol";
 import {ReturnsTooLittleToken} from "./utils/weird-tokens/ReturnsTooLittleToken.sol";
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -18,6 +19,7 @@ contract SafeTransferLibTest is DSTestPlus {
     ReturnsFalseToken returnsFalse;
     MissingReturnToken missingReturn;
     ReturnsTooMuchToken returnsTooMuch;
+    ReturnsGarbageToken returnsGarbage;
     ReturnsTooLittleToken returnsTooLittle;
 
     MockERC20 erc20;
@@ -27,6 +29,7 @@ contract SafeTransferLibTest is DSTestPlus {
         returnsFalse = new ReturnsFalseToken();
         missingReturn = new MissingReturnToken();
         returnsTooMuch = new ReturnsTooMuchToken();
+        returnsGarbage = new ReturnsGarbageToken();
         returnsTooLittle = new ReturnsTooLittleToken();
 
         erc20 = new MockERC20("StandardToken", "ST", 18);
@@ -133,6 +136,52 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTooMuch), to, amount);
     }
 
+    function testTransferWithGarbage(
+        address to,
+        uint256 amount,
+        bytes memory garbage
+    ) public {
+        if (
+            (garbage.length < 32 ||
+                (garbage[0] != 0 ||
+                    garbage[1] != 0 ||
+                    garbage[2] != 0 ||
+                    garbage[3] != 0 ||
+                    garbage[4] != 0 ||
+                    garbage[5] != 0 ||
+                    garbage[6] != 0 ||
+                    garbage[7] != 0 ||
+                    garbage[8] != 0 ||
+                    garbage[9] != 0 ||
+                    garbage[10] != 0 ||
+                    garbage[11] != 0 ||
+                    garbage[12] != 0 ||
+                    garbage[13] != 0 ||
+                    garbage[14] != 0 ||
+                    garbage[15] != 0 ||
+                    garbage[16] != 0 ||
+                    garbage[17] != 0 ||
+                    garbage[18] != 0 ||
+                    garbage[19] != 0 ||
+                    garbage[20] != 0 ||
+                    garbage[21] != 0 ||
+                    garbage[22] != 0 ||
+                    garbage[23] != 0 ||
+                    garbage[24] != 0 ||
+                    garbage[25] != 0 ||
+                    garbage[26] != 0 ||
+                    garbage[27] != 0 ||
+                    garbage[28] != 0 ||
+                    garbage[29] != 0 ||
+                    garbage[30] != 0 ||
+                    garbage[31] != bytes1(0x01))) && garbage.length != 0
+        ) return;
+
+        returnsGarbage.setGarbage(garbage);
+
+        verifySafeTransfer(address(returnsGarbage), to, amount);
+    }
+
     function testTransferWithNonContract(
         address nonContract,
         address to,
@@ -171,6 +220,53 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooMuch), from, to, amount);
     }
 
+    function testTransferFromWithGarbage(
+        address from,
+        address to,
+        uint256 amount,
+        bytes memory garbage
+    ) public {
+        if (
+            (garbage.length < 32 ||
+                (garbage[0] != 0 ||
+                    garbage[1] != 0 ||
+                    garbage[2] != 0 ||
+                    garbage[3] != 0 ||
+                    garbage[4] != 0 ||
+                    garbage[5] != 0 ||
+                    garbage[6] != 0 ||
+                    garbage[7] != 0 ||
+                    garbage[8] != 0 ||
+                    garbage[9] != 0 ||
+                    garbage[10] != 0 ||
+                    garbage[11] != 0 ||
+                    garbage[12] != 0 ||
+                    garbage[13] != 0 ||
+                    garbage[14] != 0 ||
+                    garbage[15] != 0 ||
+                    garbage[16] != 0 ||
+                    garbage[17] != 0 ||
+                    garbage[18] != 0 ||
+                    garbage[19] != 0 ||
+                    garbage[20] != 0 ||
+                    garbage[21] != 0 ||
+                    garbage[22] != 0 ||
+                    garbage[23] != 0 ||
+                    garbage[24] != 0 ||
+                    garbage[25] != 0 ||
+                    garbage[26] != 0 ||
+                    garbage[27] != 0 ||
+                    garbage[28] != 0 ||
+                    garbage[29] != 0 ||
+                    garbage[30] != 0 ||
+                    garbage[31] != bytes1(0x01))) && garbage.length != 0
+        ) return;
+
+        returnsGarbage.setGarbage(garbage);
+
+        verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
+    }
+
     function testTransferFromWithNonContract(
         address nonContract,
         address from,
@@ -192,6 +288,52 @@ contract SafeTransferLibTest is DSTestPlus {
 
     function testApproveWithReturnsTooMuch(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTooMuch), to, amount);
+    }
+
+    function testApproveWithGarbage(
+        address to,
+        uint256 amount,
+        bytes memory garbage
+    ) public {
+        if (
+            (garbage.length < 32 ||
+                (garbage[0] != 0 ||
+                    garbage[1] != 0 ||
+                    garbage[2] != 0 ||
+                    garbage[3] != 0 ||
+                    garbage[4] != 0 ||
+                    garbage[5] != 0 ||
+                    garbage[6] != 0 ||
+                    garbage[7] != 0 ||
+                    garbage[8] != 0 ||
+                    garbage[9] != 0 ||
+                    garbage[10] != 0 ||
+                    garbage[11] != 0 ||
+                    garbage[12] != 0 ||
+                    garbage[13] != 0 ||
+                    garbage[14] != 0 ||
+                    garbage[15] != 0 ||
+                    garbage[16] != 0 ||
+                    garbage[17] != 0 ||
+                    garbage[18] != 0 ||
+                    garbage[19] != 0 ||
+                    garbage[20] != 0 ||
+                    garbage[21] != 0 ||
+                    garbage[22] != 0 ||
+                    garbage[23] != 0 ||
+                    garbage[24] != 0 ||
+                    garbage[25] != 0 ||
+                    garbage[26] != 0 ||
+                    garbage[27] != 0 ||
+                    garbage[28] != 0 ||
+                    garbage[29] != 0 ||
+                    garbage[30] != 0 ||
+                    garbage[31] != bytes1(0x01))) && garbage.length != 0
+        ) return;
+
+        returnsGarbage.setGarbage(garbage);
+
+        verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
     function testApproveWithNonContract(
@@ -224,6 +366,18 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTooLittle), to, amount);
     }
 
+    function testFailTransferWithGarbage(
+        address to,
+        uint256 amount,
+        bytes memory garbage
+    ) public {
+        require(garbage.length != 0 && (garbage.length < 32 || garbage[31] != bytes1(0x01)));
+
+        returnsGarbage.setGarbage(garbage);
+
+        verifySafeTransfer(address(returnsGarbage), to, amount);
+    }
+
     function testFailTransferFromWithReturnsFalse(
         address from,
         address to,
@@ -248,6 +402,19 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooLittle), from, to, amount);
     }
 
+    function testFailTransferFromWithGarbage(
+        address from,
+        address to,
+        uint256 amount,
+        bytes memory garbage
+    ) public {
+        require(garbage.length != 0 && (garbage.length < 32 || garbage[31] != bytes1(0x01)));
+
+        returnsGarbage.setGarbage(garbage);
+
+        verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
+    }
+
     function testFailApproveWithReturnsFalse(address to, uint256 amount) public {
         verifySafeApprove(address(returnsFalse), to, amount);
     }
@@ -258,6 +425,18 @@ contract SafeTransferLibTest is DSTestPlus {
 
     function testFailApproveWithReturnsTooLittle(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTooLittle), to, amount);
+    }
+
+    function testFailApproveWithGarbage(
+        address to,
+        uint256 amount,
+        bytes memory garbage
+    ) public {
+        require(garbage.length != 0 && (garbage.length < 32 || garbage[31] != bytes1(0x01)));
+
+        returnsGarbage.setGarbage(garbage);
+
+        verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
     function testFailTransferETHToContractWithoutFallback(uint256 amount) public {
