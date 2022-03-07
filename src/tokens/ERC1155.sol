@@ -88,9 +88,13 @@ abstract contract ERC1155 {
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
+        // Storing these outside the loop saves ~15 gas per iteration.
+        uint256 id;
+        uint256 amount;
+
         for (uint256 i = 0; i < idsLength; ) {
-            uint256 id = ids[i];
-            uint256 amount = amounts[i];
+            id = ids[i];
+            amount = amounts[i];
 
             balanceOf[from][id] -= amount;
             balanceOf[to][id] += amount;
