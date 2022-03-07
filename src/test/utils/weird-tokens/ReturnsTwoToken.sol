@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-contract ReturnsTooLittleToken {
+contract ReturnsTwoToken {
     /*///////////////////////////////////////////////////////////////
                                   EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -14,9 +14,9 @@ contract ReturnsTooLittleToken {
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    string public constant name = "ReturnsTooLittleToken";
+    string public constant name = "ReturnsFalseToken";
 
-    string public constant symbol = "RTLT";
+    string public constant symbol = "RTT";
 
     uint8 public constant decimals = 18;
 
@@ -43,28 +43,19 @@ contract ReturnsTooLittleToken {
                               ERC20 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function approve(address, uint256) public virtual {
-        assembly {
-            mstore(0, 0x0100000000000000000000000000000000000000000000000000000000000000)
-            return(0, 8)
-        }
+    function approve(address, uint256) public virtual returns (uint256) {
+        return 2;
     }
 
-    function transfer(address, uint256) public virtual {
-        assembly {
-            mstore(0, 0x0100000000000000000000000000000000000000000000000000000000000000)
-            return(0, 8)
-        }
+    function transfer(address, uint256) public virtual returns (uint256) {
+        return 2;
     }
 
     function transferFrom(
         address,
         address,
         uint256
-    ) public virtual {
-        assembly {
-            mstore(0, 0x0100000000000000000000000000000000000000000000000000000000000000)
-            return(0, 8)
-        }
+    ) public virtual returns (uint256) {
+        return 2;
     }
 }

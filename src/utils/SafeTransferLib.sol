@@ -47,20 +47,17 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 36), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Append the "amount" argument.
 
-            // Fill up the scratch space so it's easy to tell if the call returns <32 bytes.
-            mstore(0, 0x0000000000000000000000000000000000000000000000000000000000000000)
-
-            // Call the token and store if it succeeded or not.
-            // We use 100 because the calldata length is 4 + 32 * 3.
-            // We'll copy up to 32 bytes of return data into the scratch space,
-            // if it returns <32 bytes at least a portion of the junk will remain.
-            success := call(gas(), token, 0, freeMemoryPointer, 100, 0, 32)
-
-            // Set success to whether the call returned 1, except if it
-            // had no return data, in which case we assume it succeeded,
-            // or if it reverted, in which case we multiply everything by
-            // 0, setting success to zero which will decode as false below.
-            success := mul(add(iszero(returndatasize()), eq(mload(0), 1)), success)
+            success := mul(
+                // Set success to whether the call returned 1, except if it had no return
+                // data, in which case we force it to succeed by adding 1, or if it reverted,
+                // in which case the multiplication by the call's status above will zero it out.
+                add(mul(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                // We use 100 because the length of our calldata totals up like so: 4 + 32 * 3.
+                // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
+                // Counterintuitively, this call must be positioned second to the addition in the
+                // order of operations or else returndatasize() will be zero during the computation.
+                call(gas(), token, 0, freeMemoryPointer, 100, 0, 32)
+            )
         }
 
         require(success, "TRANSFER_FROM_FAILED");
@@ -82,13 +79,15 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            // Call the token and store if it succeeded or not.
-            // We use 68 because the calldata length is 4 + 32 * 2.
-            // We'll copy up to 32 bytes of return data into the scratch space,
-            // if it returns <32 bytes at least a portion of the junk will remain.
-
             success := mul(
+                // Set success to whether the call returned 1, except if it had no return
+                // data, in which case we force it to succeed by adding 1, or if it reverted,
+                // in which case the multiplication by the call's status above will zero it out.
                 add(mul(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.
+                // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
+                // Counterintuitively, this call must be positioned second to the addition in the
+                // order of operations or else returndatasize() will be zero during the computation.
                 call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
             )
         }
@@ -112,17 +111,17 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            // Call the token and store if it succeeded or not.
-            // We use 68 because the calldata length is 4 + 32 * 2.
-            // We'll copy up to 32 bytes of return data into the scratch space,
-            // if it returns <32 bytes at least a portion of the junk will remain.
-            success := call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
-
-            // Set success to whether the call returned 1, except if it
-            // had no return data, in which case we assume it succeeded,
-            // or if it reverted, in which case we multiply everything by
-            // 0, setting success to zero which will decode as false below.
-            success := mul(add(iszero(returndatasize()), eq(mload(0), 1)), success)
+            success := mul(
+                // Set success to whether the call returned 1, except if it had no return
+                // data, in which case we force it to succeed by adding 1, or if it reverted,
+                // in which case the multiplication by the call's status above will zero it out.
+                add(mul(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.
+                // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
+                // Counterintuitively, this call must be positioned second to the addition in the
+                // order of operations or else returndatasize() will be zero during the computation.
+                call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
+            )
         }
 
         require(success, "APPROVE_FAILED");

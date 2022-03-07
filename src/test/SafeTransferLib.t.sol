@@ -3,6 +3,7 @@ pragma solidity 0.8.10;
 
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {RevertingToken} from "./utils/weird-tokens/RevertingToken.sol";
+import {ReturnsTwoToken} from "./utils/weird-tokens/ReturnsTwoToken.sol";
 import {ReturnsFalseToken} from "./utils/weird-tokens/ReturnsFalseToken.sol";
 import {MissingReturnToken} from "./utils/weird-tokens/MissingReturnToken.sol";
 import {ReturnsTooMuchToken} from "./utils/weird-tokens/ReturnsTooMuchToken.sol";
@@ -16,6 +17,7 @@ import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
 
 contract SafeTransferLibTest is DSTestPlus {
     RevertingToken reverting;
+    ReturnsTwoToken returnsTwo;
     ReturnsFalseToken returnsFalse;
     MissingReturnToken missingReturn;
     ReturnsTooMuchToken returnsTooMuch;
@@ -26,6 +28,7 @@ contract SafeTransferLibTest is DSTestPlus {
 
     function setUp() public {
         reverting = new RevertingToken();
+        returnsTwo = new ReturnsTwoToken();
         returnsFalse = new ReturnsFalseToken();
         missingReturn = new MissingReturnToken();
         returnsTooMuch = new ReturnsTooMuchToken();
@@ -366,6 +369,10 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTooLittle), to, amount);
     }
 
+    function testFailTransferWithReturnsTwo(address to, uint256 amount) public {
+        verifySafeTransfer(address(returnsTwo), to, amount);
+    }
+
     function testFailTransferWithGarbage(
         address to,
         uint256 amount,
@@ -402,6 +409,14 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooLittle), from, to, amount);
     }
 
+    function testFailTransferFromWithReturnsTwo(
+        address from,
+        address to,
+        uint256 amount
+    ) public {
+        verifySafeTransferFrom(address(returnsTwo), from, to, amount);
+    }
+
     function testFailTransferFromWithGarbage(
         address from,
         address to,
@@ -425,6 +440,10 @@ contract SafeTransferLibTest is DSTestPlus {
 
     function testFailApproveWithReturnsTooLittle(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTooLittle), to, amount);
+    }
+
+    function testFailApproveWithReturnsTwo(address to, uint256 amount) public {
+        verifySafeApprove(address(returnsTwo), to, amount);
     }
 
     function testFailApproveWithGarbage(
