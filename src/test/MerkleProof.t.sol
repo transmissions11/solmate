@@ -6,7 +6,6 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MerkleProof} from "../utils/MerkleProof.sol";
 
 contract MerkleProofTest is DSTestPlus {
-
     function testFailVerifyEmptyMerkleProofSupplied() public pure {
         bytes32[] memory proof;
         MerkleProof.verify(proof, 0x00, 0x00);

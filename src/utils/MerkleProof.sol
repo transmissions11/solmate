@@ -10,7 +10,7 @@ library MerkleProof {
         bytes32 root,
         bytes32 leaf
     ) internal pure returns (bool isValid) {
-         assembly {
+        assembly {
             let computedHash := leaf
             // The first slot of a dynamically sized array stores the array length.
             let proofLength := mload(proof)
@@ -24,9 +24,11 @@ library MerkleProof {
             let data := add(proof, 0x20)
 
             // Iterate over proof elements to compute root hash.
-            for {let end := add(data, mul(proofLength, 0x20))}
-            lt(data, end)
-            { data := add(data, 0x20) } {
+            for {
+                let end := add(data, mul(proofLength, 0x20))
+            } lt(data, end) {
+                data := add(data, 0x20)
+            } {
                 let loadedData := mload(data)
                 switch gt(computedHash, loadedData)
                 case 0 {
