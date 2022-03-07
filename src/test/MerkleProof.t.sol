@@ -13,8 +13,8 @@ contract MerkleProofTest is DSTestPlus {
     }
 
     function testValidProofSupplied() public {
-        // merkle tree created from leaves ['a', 'b', 'c']
-        // leaf is 'a'
+        // Merkle tree created from leaves ['a', 'b', 'c'].
+        // Leaf is 'a'.
         bytes32[] memory proof = new bytes32[](2);
         proof[0] = 0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510;
         proof[1] = 0x0b42b6393c1f53060fe3ddbfcd7aadcca894465a5a438f69c87d790b2299b9b2;
@@ -24,9 +24,9 @@ contract MerkleProofTest is DSTestPlus {
     }
 
     function testVerifyInvalidProofSupplied() public {
-        // merkle tree created from leaves ['a', 'b', 'c']
-        // leaf is 'a'
-        // proof is same as testValidProofSupplied but last byte of first element is modified
+        // Merkle tree created from leaves ['a', 'b', 'c'].
+        // Leaf is 'a'.
+        // Proof is same as testValidProofSupplied but last byte of first element is modified.
         bytes32[] memory proof = new bytes32[](2);
         proof[0] = 0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5511;
         proof[1] = 0x0b42b6393c1f53060fe3ddbfcd7aadcca894465a5a438f69c87d790b2299b9b2;
