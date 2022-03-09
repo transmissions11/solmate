@@ -91,6 +91,9 @@ contract SSTORE2Test is DSTestPlus {
     }
 
     function testFailReadInvalidPointer(address pointer) public view {
+        // restrict against any contract deployed by forge/dapptools
+        if (pointer == address(0x000000000000000000636F6e736F6c652e6c6f67) || pointer == address(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D)) revert();
+        
         SSTORE2.read(pointer);
     }
 
