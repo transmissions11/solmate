@@ -47,11 +47,10 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 36), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 68), amount) // Append the "amount" argument.
 
-            success := mul(
-                // Set success to whether the call returned 1, except if it had no return
-                // data, in which case we force it to succeed by adding 1, or if it reverted,
-                // in which case the multiplication by the call's status above will zero it out.
-                add(mul(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+            success := and(
+                // Set success to whether the call reverted, if not we check it either
+                // returned exactly 1 (not just any non-zero data), or had no return data.
+                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
                 // We use 100 because the length of our calldata totals up like so: 4 + 32 * 3.
                 // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
                 // Counterintuitively, this call must be positioned second to the addition in the
@@ -79,11 +78,10 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            success := mul(
-                // Set success to whether the call returned 1, except if it had no return
-                // data, in which case we force it to succeed by adding 1, or if it reverted,
-                // in which case the multiplication by the call's status above will zero it out.
-                add(mul(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+            success := and(
+                // Set success to whether the call reverted, if not we check it either
+                // returned exactly 1 (not just any non-zero data), or had no return data.
+                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
                 // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.
                 // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
                 // Counterintuitively, this call must be positioned second to the addition in the
@@ -111,11 +109,10 @@ library SafeTransferLib {
             mstore(add(freeMemoryPointer, 4), to) // Append the "to" argument.
             mstore(add(freeMemoryPointer, 36), amount) // Append the "amount" argument.
 
-            success := mul(
-                // Set success to whether the call returned 1, except if it had no return
-                // data, in which case we force it to succeed by adding 1, or if it reverted,
-                // in which case the multiplication by the call's status above will zero it out.
-                add(mul(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+            success := and(
+                // Set success to whether the call reverted, if not we check it either
+                // returned exactly 1 (not just any non-zero data), or had no return data.
+                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
                 // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.
                 // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
                 // Counterintuitively, this call must be positioned second to the addition in the
