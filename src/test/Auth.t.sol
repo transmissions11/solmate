@@ -146,6 +146,8 @@ contract AuthTest is DSTestPlus {
     }
 
     function testFailSetAuthorityAsNonOwner(address deadOwner, Authority newAuthority) public {
+        if (deadOwner == address(this)) deadOwner = address(0);
+        
         mockAuthChild.setOwner(deadOwner);
         mockAuthChild.setAuthority(newAuthority);
     }
