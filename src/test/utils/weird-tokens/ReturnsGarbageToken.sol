@@ -14,9 +14,9 @@ contract ReturnsGarbageToken {
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    string public constant name = "ReturnsTooLittleToken";
+    string public constant name = "ReturnsGarbageToken";
 
-    string public constant symbol = "RTLT";
+    string public constant symbol = "RGT";
 
     uint8 public constant decimals = 18;
 

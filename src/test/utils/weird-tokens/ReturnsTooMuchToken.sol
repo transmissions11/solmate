@@ -14,9 +14,9 @@ contract ReturnsTooMuchToken {
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    string public constant name = "ReturnsTooLittleToken";
+    string public constant name = "ReturnsTooMuchToken";
 
-    string public constant symbol = "RTLT";
+    string public constant symbol = "RTMT";
 
     uint8 public constant decimals = 18;
 
