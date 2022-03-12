@@ -18,14 +18,6 @@ contract MockERC4626 is ERC4626 {
         return ERC20(asset).balanceOf(address(this));
     }
 
-    function maxWithdraw(address owner) public view override returns (uint256) {
-        return convertToAssets(balanceOf[owner]);
-    }
-
-    function maxRedeem(address owner) public view override returns (uint256) {
-        return balanceOf[owner];
-    }
-
     function beforeWithdraw(uint256, uint256) internal override {
         beforeWithdrawHookCalledCounter++;
     }
