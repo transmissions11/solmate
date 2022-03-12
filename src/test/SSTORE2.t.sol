@@ -117,7 +117,7 @@ contract SSTORE2Test is DSTestPlus {
         uint256 startIndex,
         uint256 endIndex
     ) public {
-        endIndex = bound(endIndex, startIndex + 1, type(uint256).max);
+        endIndex = bound(endIndex, testBytes.length + 1, type(uint256).max);
 
         SSTORE2.read(SSTORE2.write(testBytes), startIndex, endIndex);
     }

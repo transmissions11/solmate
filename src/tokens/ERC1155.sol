@@ -88,9 +88,13 @@ abstract contract ERC1155 {
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
+        // Storing these outside the loop saves ~15 gas per iteration.
+        uint256 id;
+        uint256 amount;
+
         for (uint256 i = 0; i < idsLength; ) {
-            uint256 id = ids[i];
-            uint256 amount = amounts[i];
+            id = ids[i];
+            amount = amounts[i];
 
             balanceOf[from][id] -= amount;
             balanceOf[to][id] += amount;
@@ -98,7 +102,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
@@ -128,7 +132,7 @@ abstract contract ERC1155 {
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            for (uint256 i = 0; i < ownersLength; i++) {
+            for (uint256 i = 0; i < ownersLength; ++i) {
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
@@ -138,7 +142,7 @@ abstract contract ERC1155 {
                               ERC165 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function supportsInterface(bytes4 interfaceId) public pure virtual returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
             interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
             interfaceId == 0xd9b67a26 || // ERC165 Interface ID for ERC1155
@@ -184,7 +188,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
@@ -214,7 +218,7 @@ abstract contract ERC1155 {
             // An array can't have a total length
             // larger than the max uint256 value.
             unchecked {
-                i++;
+                ++i;
             }
         }
 
