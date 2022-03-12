@@ -166,13 +166,9 @@ abstract contract ERC4626 is ERC20 {
         return type(uint256).max;
     }
 
-    function maxWithdraw(address owner) public view virtual returns (uint256) {
-        return convertToAssets(balanceOf[owner]);
-    }
+    function maxWithdraw(address owner) public view virtual returns (uint256);
 
-    function maxRedeem(address owner) public view virtual returns (uint256) {
-        return balanceOf[owner];
-    }
+    function maxRedeem(address owner) public view virtual returns (uint256);
 
     /*///////////////////////////////////////////////////////////////
                          INTERNAL HOOKS LOGIC
