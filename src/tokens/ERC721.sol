@@ -159,7 +159,7 @@ abstract contract ERC721 {
     function _burn(uint256 id) internal virtual {
         address owner = ownerOf[id];
 
-        require(ownerOf[id] != address(0), "NOT_MINTED");
+        require(owner != address(0), "NOT_MINTED");
 
         // Ownership check above ensures no underflow.
         unchecked {
