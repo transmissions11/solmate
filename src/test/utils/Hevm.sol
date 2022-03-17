@@ -68,4 +68,6 @@ interface Hevm {
     function expectCall(address, bytes calldata) external;
 
     function getCode(string calldata) external returns (bytes memory);
+    
+    function label(address, string calldata) external;
 }
