@@ -22,7 +22,7 @@ library SafeCastLib {
 
         y = uint192(x);
     }
-    
+
     function safeCastTo160(uint256 x) internal pure returns (uint160 y) {
         require(x <= type(uint160).max);
 
