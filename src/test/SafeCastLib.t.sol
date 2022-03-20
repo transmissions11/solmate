@@ -141,55 +141,55 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo8(x), x);
     }
 
-    function testFailSafeCastTo248(uint256 x) public pure {
+    function testFailSafeCastTo248(uint256 x) public {
         x = bound(x, type(uint248).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo248(x);
     }
 
-    function testFailSafeCastTo224(uint256 x) public pure {
+    function testFailSafeCastTo224(uint256 x) public {
         x = bound(x, type(uint224).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo224(x);
     }
 
-    function testFailSafeCastTo192(uint256 x) public pure {
+    function testFailSafeCastTo192(uint256 x) public {
         x = bound(x, type(uint192).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo192(x);
     }
 
-    function testFailSafeCastTo160(uint256 x) public pure {
+    function testFailSafeCastTo160(uint256 x) public {
         x = bound(x, type(uint160).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo160(x);
     }
 
-    function testFailSafeCastTo128(uint256 x) public pure {
+    function testFailSafeCastTo128(uint256 x) public {
         x = bound(x, type(uint128).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo128(x);
     }
 
-    function testFailSafeCastTo96(uint256 x) public pure {
+    function testFailSafeCastTo96(uint256 x) public {
         x = bound(x, type(uint96).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo96(x);
     }
 
-    function testFailSafeCastTo64(uint256 x) public pure {
+    function testFailSafeCastTo64(uint256 x) public {
         x = bound(x, type(uint64).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo64(x);
     }
 
-    function testFailSafeCastTo32(uint256 x) public pure {
+    function testFailSafeCastTo32(uint256 x) public {
         x = bound(x, type(uint32).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo32(x);
     }
 
-    function testFailSafeCastTo8(uint256 x) public pure {
+    function testFailSafeCastTo8(uint256 x) public {
         x = bound(x, type(uint8).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo8(x);

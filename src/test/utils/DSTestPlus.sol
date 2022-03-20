@@ -117,7 +117,7 @@ contract DSTestPlus is DSTest {
         uint256 x,
         uint256 min,
         uint256 max
-    ) internal pure returns (uint256 result) {
+    ) internal returns (uint256 result) {
         require(max >= min, "MAX_LESS_THAN_MIN");
 
         uint256 size = max - min;
@@ -132,6 +132,8 @@ contract DSTestPlus is DSTest {
 
         // Account for decrementing x to make max inclusive.
         if (max == type(uint256).max && x != 0) result++;
+
+        emit log_named_uint("Bound Result", result);
     }
 
     function min3(
