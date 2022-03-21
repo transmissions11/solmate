@@ -27,144 +27,61 @@ library FixedPointMathLib {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
 
-    function expWad(int256 x) internal pure returns (uint256 z) {
+    function expWad(int256 x) internal pure returns (int256 r) {
         unchecked {
+            // When the result is < 0.5 we return zero. This happens when
+            // x <= floor(log(0.5e18) * 1e18) ~ -42e18
+            if (x <= -42139678854452767551) {
+                return 0;
+            }
+
+            // When the result is > (2**255 - 1) / 1e18 we can not represent it
+            // as an int256. This happens when x >= floor(log((2**255 -1) / 1e18) * 1e18) ~ 135.
+            if (x >= 135305999368893231589) {
+                revert("Overflow");
+            }
+
+            // x is now in the range (-42, 136) * 1e18. Convert to (-42, 136) * 2**96
+            // for more intermediate precision and a binary basis. This base conversion
+            // is a multiplication by 1e18 / 2**96 = 5**18 / 2**78.
+            x = (x << 78) / 5**18;
+
+            // Reduce range of x to (-½ ln 2, ½ ln 2) * 2**96 by factoring out powers of two
+            // such that exp(x) = exp(x') * 2**k, where k is an integer.
+            // Solving this gives k = round(x / log(2)) and x' = x - k * log(2).
+            int256 k = ((x << 96) / 54916777467707473351141471128 + 2**95) >> 96;
+            x = x - k * 54916777467707473351141471128;
+            // k is in the range [-61, 195].
+
+            // Evaluate using a (6, 7)-term rational approximation
+            // TODO: Make p monic and add merge the scale with the basis conversion.
+            // TODO: Use pre-processed polynomial evaluation.
+            int256 p =                477854134370404556630342282363;
+            p = (p * x >> 96) +     16718958074186125785429723300994;
+            p = (p * x >> 96) +    267406022731302253162841045679923;
+            p = (p * x >> 96) +   2405842938758026514885988413895746;
+            p = (p * x >> 96) +  12025579931005125156911976381633042;
+            p = p * x         + (26449188498355588339771844097777124 << 96);
+            // We leave p in 2**192 basis so we don't need to scale it back up for the division.
+            int256 q = x      -      2855989394907223263936484059900;
+            q = (q * x >> 96) +     50020603652535783019961831881945;
+            q = (q * x >> 96) -    533845033583426703283633433725380;
+            q = (q * x >> 96) +   3604857256930695427073651918091429;
+            q = (q * x >> 96) -  14423608567350463180887372962807573;
+            q = (q * x >> 96) +  26449188498355588339934803723976023;
             assembly {
-                // Revert if the exponent x is greater than 130e18.
-                if iszero(slt(x, 130000000000000000001)) {
-                    revert(0, 0)
-                }
+                // Div in assembly because solidity adds a zero check despite the `unchecked`.
+                // The q polynomial is known not to have zeros in the domain. (All roots are complex)
+                // No scaling required because p is already 2**96 too large.
+                r := sdiv(p, q)
             }
+            // r should be in the range (0.6, 1.5) * 2**96.
 
-            if (x < 0) {
-                z = expWad(-x); // Compute exp for x as a positive.
-
-                assembly {
-                    // Divide it by 1e36, to get the inverse of the result.
-                    z := div(1000000000000000000000000000000000000, z)
-                }
-
-                return z; // Beyond this if statement we know x is positive.
-            }
-
-            z = 1; // Will multiply the result by this at the end. Default to 1 as a no-op, may be increased below.
-
-            if (x >= 128000000000000000000) {
-                x -= 128000000000000000000; // 2ˆ7 scaled by 1e18.
-
-                // Because eˆ12800000000000000000 exp'd is too large to fit in 20 decimals, we'll store it unscaled.
-                z = 38877084059945950922200000000000000000000000000000000000; // We'll multiply by this at the end.
-            } else if (x >= 64000000000000000000) {
-                x -= 64000000000000000000; // 2^6 scaled by 1e18.
-
-                // Because eˆ64000000000000000000 exp'd is too large to fit in 20 decimals, we'll store it unscaled.
-                z = 6235149080811616882910000000; // We'll multiply by this at the end, assuming x is large enough.
-            }
-
-            x *= 100; // Scale x to 20 decimals for extra precision.
-
-            uint256 precomputed = 1e20; // Will store the product of precomputed powers of 2 (which almost add up to x) exp'd.
-
-            assembly {
-                if iszero(lt(x, 3200000000000000000000)) {
-                    x := sub(x, 3200000000000000000000) // 2ˆ5 scaled by 1e18.
-
-                    // Multiplied by eˆ3200000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 7896296018268069516100000000000000), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 1600000000000000000000)) {
-                    x := sub(x, 1600000000000000000000) // 2ˆ4 scaled by 1e18.
-
-                    // Multiplied by eˆ16000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 888611052050787263676000000), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 800000000000000000000)) {
-                    x := sub(x, 800000000000000000000) // 2ˆ3 scaled by 1e18.
-
-                    // Multiplied by eˆ8000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 2980957987041728274740004), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 400000000000000000000)) {
-                    x := sub(x, 400000000000000000000) // 2ˆ2 scaled by 1e18.
-
-                    // Multiplied by eˆ4000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 5459815003314423907810), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 200000000000000000000)) {
-                    x := sub(x, 200000000000000000000) // 2ˆ1 scaled by 1e18.
-
-                    // Multiplied by eˆ2000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 738905609893065022723), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 100000000000000000000)) {
-                    x := sub(x, 100000000000000000000) // 2ˆ0 scaled by 1e18.
-
-                    // Multiplied by eˆ1000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 271828182845904523536), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 50000000000000000000)) {
-                    x := sub(x, 50000000000000000000) // 2ˆ-1 scaled by 1e18.
-
-                    // Multiplied by eˆ5000000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 164872127070012814685), 100000000000000000000)
-                }
-
-                if iszero(lt(x, 25000000000000000000)) {
-                    x := sub(x, 25000000000000000000) // 2ˆ-2 scaled by 1e18.
-
-                    // Multiplied by eˆ250000000000000000 scaled by 1e20 and divided by 1e20.
-                    precomputed := div(mul(precomputed, 128402541668774148407), 100000000000000000000)
-                }
-            }
-
-            // We'll be using the Taylor series for e^x which looks like: 1 + x + (x^2 / 2!) + ... + (x^n / n!)
-            // to approximate the exp of the remaining value x not covered by the precomputed product above.
-            uint256 term = uint256(x); // Will track each term in the Taylor series, beginning with x.
-            uint256 series = 1e20 + term; // The Taylor series begins with 1 plus the first term, x.
-
-            assembly {
-                term := div(mul(term, x), 200000000000000000000) // Equal to dividing x^2 by 2e20 as the first term was just x.
-                series := add(series, term)
-
-                term := div(mul(term, x), 300000000000000000000) // Equal to dividing x^3 by 6e20 (3!) as the last term was x divided by 2e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 400000000000000000000) // Equal to dividing x^4 by 24e20 (4!) as the last term was x divided by 6e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 500000000000000000000) // Equal to dividing x^5 by 120e20 (5!) as the last term was x divided by 24e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 600000000000000000000) // Equal to dividing x^6 by 720e20 (6!) as the last term was x divided by 120e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 700000000000000000000) // Equal to dividing x^7 by 5040e20 (7!) as the last term was x divided by 720e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 800000000000000000000) // Equal to dividing x^8 by 40320e20 (8!) as the last term was x divided by 5040e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 900000000000000000000) // Equal to dividing x^9 by 362880e20 (9!) as the last term was x divided by 40320e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 1000000000000000000000) // Equal to dividing x^10 by 3628800e20 (10!) as the last term was x divided by 362880e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 1100000000000000000000) // Equal to dividing x^11 by 39916800e20 (11!) as the last term was x divided by 3628800e20.
-                series := add(series, term)
-
-                term := div(mul(term, x), 1200000000000000000000) // Equal to dividing x^12 by 479001600e20 (12!) as the last term was x divided by 39916800e20.
-                series := add(series, term)
-            }
-
-            // Since e^x * e^y equals e^(x+y) we multiply our Taylor series and precomputed exp'd powers of 2 to get the final result scaled by 1e20.
-            return (((series * precomputed) / 1e20) * z) / 100; // We divide the final result by 100 to scale it back down to 18 decimals of precision.
+            // We now need to multiply r by 2**k and convert it back to base 1e18.
+            // Base conversion is a multiplication by 1e18 / 2**96 = 5**18 / 2**78.
+            // We do an extra shift left of 117 so the right shift is always by
+            // a positive amount.
+            r = (r * (5**18 << 117)) >> uint256((117 + 78) - k);
         }
     }
 
