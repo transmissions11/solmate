@@ -44,8 +44,8 @@ interface Hevm {
     function expectEmit(bool,bool,bool,bool) external;
     /// @notice Mocks a call to an address, returning specified data.
     /// @notice Calldata can either be strict or a partial match, e.g. if you only
-    /// @notice pass a Solidity selector to the expected calldata, then the entire Solidity
-    /// @notice function will be mocked.
+    /// pass a Solidity selector to the expected calldata, then the entire Solidity
+    /// function will be mocked.
     function mockCall(address,bytes calldata,bytes calldata) external;
     /// @notice Clears all mocked calls
     function clearMockedCalls() external;
