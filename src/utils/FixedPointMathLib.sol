@@ -54,14 +54,13 @@ library FixedPointMathLib {
             // k is in the range [-61, 195].
 
             // Evaluate using a (6, 7)-term rational approximation
-            // TODO: Make p monic and add merge the scale with the basis conversion.
             // TODO: Use pre-processed polynomial evaluation.
-            int256 p =                477854134370404556630342282363;
-            p = (p * x >> 96) +     16718958074186125785429723300994;
-            p = (p * x >> 96) +    267406022731302253162841045679923;
-            p = (p * x >> 96) +   2405842938758026514885988413895746;
-            p = (p * x >> 96) +  12025579931005125156911976381633042;
-            p = p * x         + (26449188498355588339771844097777124 << 96);
+            // p is made monic, we will multiply by a scale factor later
+            int256 p = x      +     2772001395605857295435445496992;
+            p = (p * x >> 96) +    44335888930127919016834873520032;
+            p = (p * x >> 96) +   398888492587501845352592340339721;
+            p = (p * x >> 96) +  1993839819670624470859228494792842;
+            p = p * x         + (4385272521454847904632057985693276 << 96);
             // We leave p in 2**192 basis so we don't need to scale it back up for the division.
             int256 q = x      -      2855989394907223263936484059900;
             q = (q * x >> 96) +     50020603652535783019961831881945;
@@ -75,13 +74,15 @@ library FixedPointMathLib {
                 // No scaling required because p is already 2**96 too large.
                 r := sdiv(p, q)
             }
-            // r should be in the range (0.6, 1.5) * 2**96.
+            // r should be in the range (0.09, 0.25) * 2**96.
 
-            // We now need to multiply r by 2**k and convert it back to base 1e18.
-            // Base conversion is a multiplication by 1e18 / 2**96 = 5**18 / 2**78.
-            // We do an extra shift left of 117 so the right shift is always by
-            // a positive amount.
-            r = (r * (5**18 << 117)) >> uint256((117 + 78) - k);
+            // We now need to multiply r by 
+            //  * the scale factor s = ~6.031367120...,
+            //  * the 2**k factor from the range reduction, and
+            //  * the 1e18 / 2**96 factor for base converison.
+            // We do all of this at once, with an intermediate result in 2**213 basis
+            // so the final right shift is always by a positive amount.
+            r = (r * 3822833074963236453042738258902158003155416615667) >> uint256(195 - k);
         }
     }
 
