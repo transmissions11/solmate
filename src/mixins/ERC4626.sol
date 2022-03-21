@@ -54,7 +54,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Deposit(msg.sender, receiver, assets, shares);
 
-        afterDeposit(assets, shares);
+        _afterDeposit(assets, shares);
     }
 
     function mint(uint256 shares, address receiver) public virtual returns (uint256 assets) {
@@ -67,7 +67,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Deposit(msg.sender, receiver, assets, shares);
 
-        afterDeposit(assets, shares);
+        _afterDeposit(assets, shares);
     }
 
     function withdraw(
@@ -83,7 +83,7 @@ abstract contract ERC4626 is ERC20 {
             if (allowed != type(uint256).max) allowance[owner][msg.sender] = allowed - shares;
         }
 
-        beforeWithdraw(assets, shares);
+        _beforeWithdraw(assets, shares);
 
         _burn(owner, shares);
 
@@ -106,7 +106,7 @@ abstract contract ERC4626 is ERC20 {
         // Check for rounding error since we round down in previewRedeem.
         require((assets = previewRedeem(shares)) != 0, "ZERO_ASSETS");
 
-        beforeWithdraw(assets, shares);
+        _beforeWithdraw(assets, shares);
 
         _burn(owner, shares);
 
@@ -177,7 +177,7 @@ abstract contract ERC4626 is ERC20 {
                          INTERNAL HOOKS LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function beforeWithdraw(uint256 assets, uint256 shares) internal virtual {}
+    function _beforeWithdraw(uint256 assets, uint256 shares) internal virtual {}
 
-    function afterDeposit(uint256 assets, uint256 shares) internal virtual {}
+    function _afterDeposit(uint256 assets, uint256 shares) internal virtual {}
 }

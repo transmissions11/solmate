@@ -22,12 +22,12 @@ abstract contract Auth {
     }
 
     modifier requiresAuth() {
-        require(isAuthorized(msg.sender, msg.sig), "UNAUTHORIZED");
+        require(_isAuthorized(msg.sender, msg.sig), "UNAUTHORIZED");
 
         _;
     }
 
-    function isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
+    function _isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
         Authority auth = authority; // Memoizing authority saves us a warm SLOAD, around 100 gas.
 
         // Checking if the caller is the owner only after calling the authority saves gas in most cases, but be
