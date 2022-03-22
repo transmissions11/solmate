@@ -68,8 +68,8 @@ contract DSTestPlus is DSTest {
 
         if (delta > maxDelta) {
             emit log("Error: a ~= b not satisfied [uint]");
-            emit log_named_uint("  Expected", a);
-            emit log_named_uint("    Actual", b);
+            emit log_named_uint("  Expected", b);
+            emit log_named_uint("    Actual", a);
             emit log_named_uint(" Max Delta", maxDelta);
             emit log_named_uint("     Delta", delta);
             fail();
@@ -88,8 +88,8 @@ contract DSTestPlus is DSTest {
 
         if (percentDelta > maxPercentDelta) {
             emit log("Error: a ~= b not satisfied [uint]");
-            emit log_named_uint("    Expected", a);
-            emit log_named_uint("      Actual", b);
+            emit log_named_uint("    Expected", b);
+            emit log_named_uint("      Actual", a);
             emit log_named_uint(" Max % Delta", maxPercentDelta);
             emit log_named_uint("     % Delta", percentDelta);
             fail();
@@ -117,7 +117,7 @@ contract DSTestPlus is DSTest {
         uint256 x,
         uint256 min,
         uint256 max
-    ) internal pure returns (uint256 result) {
+    ) internal returns (uint256 result) {
         require(max >= min, "MAX_LESS_THAN_MIN");
 
         uint256 size = max - min;
@@ -132,6 +132,8 @@ contract DSTestPlus is DSTest {
 
         // Account for decrementing x to make max inclusive.
         if (max == type(uint256).max && x != 0) result++;
+
+        emit log_named_uint("Bound Result", result);
     }
 
     function min3(

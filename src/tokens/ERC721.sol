@@ -76,7 +76,7 @@ abstract contract ERC721 {
         require(to != address(0), "INVALID_RECIPIENT");
 
         require(
-            msg.sender == from || msg.sender == getApproved[id] || isApprovedForAll[from][msg.sender],
+            msg.sender == from || isApprovedForAll[from][msg.sender] || msg.sender == getApproved[id],
             "NOT_AUTHORIZED"
         );
 
@@ -130,7 +130,7 @@ abstract contract ERC721 {
                               ERC165 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function supportsInterface(bytes4 interfaceId) public pure virtual returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
             interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
             interfaceId == 0x80ac58cd || // ERC165 Interface ID for ERC721
@@ -159,7 +159,7 @@ abstract contract ERC721 {
     function _burn(uint256 id) internal virtual {
         address owner = ownerOf[id];
 
-        require(ownerOf[id] != address(0), "NOT_MINTED");
+        require(owner != address(0), "NOT_MINTED");
 
         // Ownership check above ensures no underflow.
         unchecked {

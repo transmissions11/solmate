@@ -91,6 +91,8 @@ contract SSTORE2Test is DSTestPlus {
     }
 
     function testFailReadInvalidPointer(address pointer) public view {
+        if (pointer.code.length != 0) revert();
+
         SSTORE2.read(pointer);
     }
 

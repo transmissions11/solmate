@@ -66,11 +66,6 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.symbol(), "TKN");
     }
 
-    function testMetadata() public {
-        assertEq(token.name(), "Token");
-        assertEq(token.symbol(), "TKN");
-    }
-
     function testMint() public {
         token.mint(address(0xBEEF), 1337);
 
@@ -591,8 +586,7 @@ contract ERC721Test is DSTestPlus {
         uint256 id,
         address to
     ) public {
-        if (owner == address(0)) to = address(0xBEEF);
-        if (owner == address(this)) return;
+        if (owner == address(0) || owner == address(this)) to = address(0xBEEF);
 
         token.mint(owner, id);
 
