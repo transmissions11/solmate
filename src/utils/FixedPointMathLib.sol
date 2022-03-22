@@ -50,9 +50,8 @@ library FixedPointMathLib {
 
             // k is in the range [-61, 195].
 
-            // Evaluate using a (6, 7)-term rational approximation
-            // TODO: Use pre-processed polynomial evaluation.
-            // p is made monic, we will multiply by a scale factor later
+            // Evaluate using a (6, 7)-term rational approximation.
+            // p is made monic, we will multiply by a scale factor later.
             int256 p = x + 2772001395605857295435445496992;
             p = ((p * x) >> 96) + 44335888930127919016834873520032;
             p = ((p * x) >> 96) + 398888492587501845352592340339721;
