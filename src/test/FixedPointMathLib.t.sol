@@ -13,11 +13,17 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.expWadDown(-2e18), 135335283236612691);
         assertEq(FixedPointMathLib.expWadDown(-1e18), 367879441171442321);
 
+        assertEq(FixedPointMathLib.expWadDown(-0.5e18), 606530659712633423);
+        assertEq(FixedPointMathLib.expWadDown(-0.3e18), 740818220681717866);
+
         assertEq(
             FixedPointMathLib.expWadDown(0),
             999999999999999999
-            // True value: 1000000000000000000
+            // True value: 1000000000000000000 (off by 1 wei)
         );
+
+        assertEq(FixedPointMathLib.expWadDown(0.3e18), 1349858807576003103);
+        assertEq(FixedPointMathLib.expWadDown(0.5e18), 1648721270700128146);
 
         assertEq(FixedPointMathLib.expWadDown(1e18), 2718281828459045235);
         assertEq(FixedPointMathLib.expWadDown(2e18), 7389056098930650227);
