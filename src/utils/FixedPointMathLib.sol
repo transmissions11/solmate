@@ -51,34 +51,33 @@ library FixedPointMathLib {
             // k is in the range [-61, 195].
 
             // Evaluate using a (6, 7)-term rational approximation.
-            // p is made monic, we will multiply by a scale factor later.
-            int256 p = x + 2772001395605857295435445496992;
-            p = ((p * x) >> 96) + 44335888930127919016834873520032;
-            p = ((p * x) >> 96) + 398888492587501845352592340339721;
-            p = ((p * x) >> 96) + 1993839819670624470859228494792842;
+            // p is made monic, we'll multiply by a scale factor later.
+            int256 y = x + 1346386616545796478920950773328;
+            y = ((y * x) >> 96) + 57155421227552351082224309758442;
+            int256 p = y + x - 94201549194550492254356042504812;
+            p = ((p * y) >> 96) + 28719021644029726153956944680412240;
             p = p * x + (4385272521454847904632057985693276 << 96);
 
             // We leave p in 2**192 basis so we don't need to scale it back up for the division.
-            // Evaluate using using Knuth's scheme from p. 491.
-            int256 z = x + 750530180792738023273180420736;
-            z = ((z * x) >> 96) + 32788456221302202726307501949080;
-            int256 w = x - 2218138959503481824038194425854;
-            w = ((w * z) >> 96) + 892943633302991980437332862907700;
-            int256 q = z + w - 78174809823045304726920794422040;
-            q = ((q * w) >> 96) + 4203224763890128580604056984195872;
+            int256 q = x - 2855989394907223263936484059900;
+            q = ((q * x) >> 96) + 50020603652535783019961831881945;
+            q = ((q * x) >> 96) - 533845033583426703283633433725380;
+            q = ((q * x) >> 96) + 3604857256930695427073651918091429;
+            q = ((q * x) >> 96) - 14423608567350463180887372962807573;
+            q = ((q * x) >> 96) + 26449188498355588339934803723976023;
 
             assembly {
                 // Div in assembly because solidity adds a zero check despite the `unchecked`.
-                // The q polynomial is known not to have zeros in the domain. (All roots are complex)
-                // No scaling required because p is already 2**96 too large.
+                // The q polynomial won't have zeros in the domain as all its roots are complex.
+                // No scaling is necessary because p is already 2**96 too large.
                 r := sdiv(p, q)
             }
 
             // r should be in the range (0.09, 0.25) * 2**96.
 
             // We now need to multiply r by:
-            // - the scale factor s = ~6.031367120,
-            // - the 2**k factor from the range reduction
+            // - the scale factor s = ~6.031367120.
+            // - the 2**k factor from the range reduction.
             // - the 1e18 / 2**96 factor for base conversion.
             // We do this all at once, with an intermediate result in 2**213
             // basis, so the final right shift is always by a positive amount.
