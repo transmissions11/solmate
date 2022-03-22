@@ -91,12 +91,14 @@ contract SSTORE2Test is DSTestPlus {
     }
 
     function testFailReadInvalidPointer(address pointer) public view {
-        if (pointer.code.length != 0) revert();
+        if (pointer.code.length > 0) revert();
 
         SSTORE2.read(pointer);
     }
 
     function testFailReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public view {
+        if (pointer.code.length > 0) revert();
+
         SSTORE2.read(pointer, startIndex);
     }
 
@@ -105,6 +107,8 @@ contract SSTORE2Test is DSTestPlus {
         uint256 startIndex,
         uint256 endIndex
     ) public view {
+        if (pointer.code.length > 0) revert();
+
         SSTORE2.read(pointer, startIndex, endIndex);
     }
 
