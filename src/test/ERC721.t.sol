@@ -586,7 +586,7 @@ contract ERC721Test is DSTestPlus {
         uint256 id,
         address to
     ) public {
-        if (owner == address(0) || owner == address(this)) to = address(0xBEEF);
+        if (owner == address(0) || owner == address(this)) owner = address(0xBEEF);
 
         token.mint(owner, id);
 
@@ -626,7 +626,7 @@ contract ERC721Test is DSTestPlus {
         address to,
         uint256 id
     ) public {
-        if (from == address(0)) to = address(0xBEEF);
+        if (from == address(this)) from = address(0xBEEF);
 
         token.mint(from, id);
 
