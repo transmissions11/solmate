@@ -6,11 +6,47 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 contract FixedPointMathLibTest is DSTestPlus {
-    function testExp() public {
-        assertEq(FixedPointMathLib.expWad(-1e18), 367879441171442321);
-    }
+    function testExpWadDown() public {
+        assertEq(FixedPointMathLib.expWadDown(-42139678854452767551), 0);
 
-    ////////////////////////////////////////////////////////////////
+        assertEq(FixedPointMathLib.expWadDown(-3e18), 49787068367863942);
+        assertEq(FixedPointMathLib.expWadDown(-2e18), 135335283236612691);
+        assertEq(FixedPointMathLib.expWadDown(-1e18), 367879441171442321);
+
+        assertEq(
+            FixedPointMathLib.expWadDown(0),
+            999999999999999999
+            // True value: 1000000000000000000
+        );
+
+        assertEq(FixedPointMathLib.expWadDown(1e18), 2718281828459045235);
+        assertEq(FixedPointMathLib.expWadDown(2e18), 7389056098930650227);
+        assertEq(FixedPointMathLib.expWadDown(3e18), 20085536923187667740);
+
+        assertEq(
+            FixedPointMathLib.expWadDown(10e18),
+            22026465794806716516_861
+            // True value: 22026465794806716516_957 (21 digits of precision)
+        );
+
+        assertEq(
+            FixedPointMathLib.expWadDown(50e18),
+            5184705528587072464_117909654408922782335
+            // True value: 5184705528587072464_087453322933485384827 (19 digits of precision)
+        );
+
+        assertEq(
+            FixedPointMathLib.expWadDown(100e18),
+            2688117141816135448_3982463551405023462056137701762092799015183
+            // True value: 2688117141816135448_4126255515800135873611118773741922415191608 (20 digits of precision)
+        );
+
+        assertEq(
+            FixedPointMathLib.expWadDown(135305999368893231588),
+            578960446186580976498_09650847705537384645150747719143657509713249170749644355
+            // True value: 578960446186580976498_16762928942336782129491980154662247847962410455084893091 (21 digits of precision)
+        );
+    }
 
     function testMulWadDown() public {
         assertEq(FixedPointMathLib.mulWadDown(2.5e18, 0.5e18), 1.25e18);
