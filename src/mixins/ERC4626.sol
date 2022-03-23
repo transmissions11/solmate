@@ -5,8 +5,14 @@ import {ERC20} from "../tokens/ERC20.sol";
 import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
-/// @notice Minimal ERC4626 tokenized Vault implementation.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
+/** 
+  @notice Minimal ERC4626 tokenized Vault implementation.
+  @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
+  
+  SECURITY NOTES:
+    1. Deploying vaults without seeding liquidity can lead to share price manipulation attacks. Ensure that some shares are burned or locked, or otherwise verify price manipulation is not possible.
+    2. There are no re-entrancy checks in the vault by default. Malicious tokens or hooks can lead to security vulnerabilities.
+*/
 abstract contract ERC4626 is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
