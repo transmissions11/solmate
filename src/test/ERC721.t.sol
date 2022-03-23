@@ -407,7 +407,7 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testTransferFrom(uint256 id, address to) public {
-        if (to == address(0)) to = address(0xBEEF);
+        if (to == address(0) || to == address(this)) to = address(0xBEEF);
 
         ERC721User from = new ERC721User(token);
 
@@ -424,7 +424,7 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testTransferFromSelf(uint256 id, address to) public {
-        if (to == address(0)) to = address(0xBEEF);
+        if (to == address(0) || to == address(this)) to = address(0xBEEF);
 
         token.mint(address(this), id);
 
