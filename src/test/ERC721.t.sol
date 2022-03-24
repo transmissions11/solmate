@@ -437,7 +437,7 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testTransferFromApproveAll(uint256 id, address to) public {
-        if (to == address(0)) to = address(0xBEEF);
+        if (to == address(0) || to == address(this)) to = address(0xBEEF);
 
         ERC721User from = new ERC721User(token);
 
@@ -454,7 +454,7 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testSafeTransferFromToEOA(uint256 id, address to) public {
-        if (to == address(0)) to = address(0xBEEF);
+        if (to == address(0) || to == address(this)) to = address(0xBEEF);
 
         if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
 
