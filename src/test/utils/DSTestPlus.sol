@@ -15,6 +15,26 @@ contract DSTestPlus is DSTest {
     string private checkpointLabel;
     uint256 private checkpointGasLeft = 1; // Start the slot warm.
 
+    // brutalizes memory with "temporary" values - good for testing
+    // memory safety in fuzz tests. Explicitly doesn't update
+    // the free memory pointer to simulate compiler generate
+    // temporary values
+    modifier brutalizeMemory(bytes memory brutalizeWith) {
+        /// @solidity memory-safe-assembly
+        assembly {
+            pop(
+                staticcall(
+                    gas(), // pass gas
+                    0x04,  // call identity precompile address 
+                    brutalizeWith,  // arg offset == pointer to self
+                    mload(brutalizeWith),  // arg size: length of random bytes
+                    mload(0x40), // set return buffer to free mem ptr
+                    mload(brutalizeWith)   // identity just returns the bytes of the input so equal to argsize 
+                )
+            )
+        }
+    }
+
     function startMeasuringGas(string memory label) internal virtual {
         checkpointLabel = label;
 
