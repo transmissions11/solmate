@@ -33,6 +33,8 @@ contract DSTestPlus is DSTest {
                 )
             )
         }
+        
+        _;
     }
 
     function startMeasuringGas(string memory label) internal virtual {
