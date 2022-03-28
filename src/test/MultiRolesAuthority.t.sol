@@ -156,7 +156,7 @@ contract MultiRolesAuthorityTest is DSTestPlus {
         assertFalse(multiRolesAuthority.canCall(address(0xBEEF), address(0xCAFE), 0xBEEFCAFE));
     }
 
-    function testSetRoles(address user, uint8 role) public {
+    function testFuzzSetRoles(address user, uint8 role) public {
         assertFalse(multiRolesAuthority.doesUserHaveRole(user, role));
 
         multiRolesAuthority.setUserRole(user, role, true);
@@ -166,7 +166,7 @@ contract MultiRolesAuthorityTest is DSTestPlus {
         assertFalse(multiRolesAuthority.doesUserHaveRole(user, role));
     }
 
-    function testSetRoleCapabilities(uint8 role, bytes4 functionSig) public {
+    function testFuzzSetRoleCapabilities(uint8 role, bytes4 functionSig) public {
         assertFalse(multiRolesAuthority.doesRoleHaveCapability(role, functionSig));
 
         multiRolesAuthority.setRoleCapability(role, functionSig, true);
@@ -176,7 +176,7 @@ contract MultiRolesAuthorityTest is DSTestPlus {
         assertFalse(multiRolesAuthority.doesRoleHaveCapability(role, functionSig));
     }
 
-    function testSetPublicCapabilities(bytes4 functionSig) public {
+    function testFuzzSetPublicCapabilities(bytes4 functionSig) public {
         assertFalse(multiRolesAuthority.isCapabilityPublic(functionSig));
 
         multiRolesAuthority.setPublicCapability(functionSig, true);
@@ -186,7 +186,7 @@ contract MultiRolesAuthorityTest is DSTestPlus {
         assertFalse(multiRolesAuthority.isCapabilityPublic(functionSig));
     }
 
-    function testSetTargetCustomAuthority(address user, Authority customAuthority) public {
+    function testFuzzSetTargetCustomAuthority(address user, Authority customAuthority) public {
         assertEq(address(multiRolesAuthority.getTargetCustomAuthority(user)), address(0));
 
         multiRolesAuthority.setTargetCustomAuthority(user, customAuthority);

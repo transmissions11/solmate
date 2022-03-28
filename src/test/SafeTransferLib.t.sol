@@ -127,15 +127,15 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTooLittle), address(0xBEEF), 1e18);
     }
 
-    function testTransferWithMissingReturn(address to, uint256 amount) public {
+    function testFuzzTransferWithMissingReturn(address to, uint256 amount) public {
         verifySafeTransfer(address(missingReturn), to, amount);
     }
 
-    function testTransferWithStandardERC20(address to, uint256 amount) public {
+    function testFuzzTransferWithStandardERC20(address to, uint256 amount) public {
         verifySafeTransfer(address(erc20), to, amount);
     }
 
-    function testTransferWithReturnsTooMuch(address to, uint256 amount) public {
+    function testFuzzTransferWithReturnsTooMuch(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsTooMuch), to, amount);
     }
 
@@ -281,15 +281,15 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferFrom(ERC20(nonContract), from, to, amount);
     }
 
-    function testApproveWithMissingReturn(address to, uint256 amount) public {
+    function testFuzzApproveWithMissingReturn(address to, uint256 amount) public {
         verifySafeApprove(address(missingReturn), to, amount);
     }
 
-    function testApproveWithStandardERC20(address to, uint256 amount) public {
+    function testFuzzApproveWithStandardERC20(address to, uint256 amount) public {
         verifySafeApprove(address(erc20), to, amount);
     }
 
-    function testApproveWithReturnsTooMuch(address to, uint256 amount) public {
+    function testFuzzApproveWithReturnsTooMuch(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTooMuch), to, amount);
     }
 
@@ -349,7 +349,7 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeApprove(ERC20(nonContract), to, amount);
     }
 
-    function testTransferETH(address recipient, uint256 amount) public {
+    function testFuzzTransferETH(address recipient, uint256 amount) public {
         if (recipient.code.length > 0 || uint256(uint160(recipient)) <= 18) return;
 
         amount = bound(amount, 0, address(this).balance);
@@ -357,19 +357,19 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferETH(recipient, amount);
     }
 
-    function testFailTransferWithReturnsFalse(address to, uint256 amount) public {
+    function testFailFuzzTransferWithReturnsFalse(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsFalse), to, amount);
     }
 
-    function testFailTransferWithReverting(address to, uint256 amount) public {
+    function testFailFuzzTransferWithReverting(address to, uint256 amount) public {
         verifySafeTransfer(address(reverting), to, amount);
     }
 
-    function testFailTransferWithReturnsTooLittle(address to, uint256 amount) public {
+    function testFailFuzzTransferWithReturnsTooLittle(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsTooLittle), to, amount);
     }
 
-    function testFailTransferWithReturnsTwo(address to, uint256 amount) public {
+    function testFailFuzzTransferWithReturnsTwo(address to, uint256 amount) public {
         verifySafeTransfer(address(returnsTwo), to, amount);
     }
 
@@ -430,19 +430,19 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
     }
 
-    function testFailApproveWithReturnsFalse(address to, uint256 amount) public {
+    function testFailFuzzApproveWithReturnsFalse(address to, uint256 amount) public {
         verifySafeApprove(address(returnsFalse), to, amount);
     }
 
-    function testFailApproveWithReverting(address to, uint256 amount) public {
+    function testFailFuzzApproveWithReverting(address to, uint256 amount) public {
         verifySafeApprove(address(reverting), to, amount);
     }
 
-    function testFailApproveWithReturnsTooLittle(address to, uint256 amount) public {
+    function testFailFuzzApproveWithReturnsTooLittle(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTooLittle), to, amount);
     }
 
-    function testFailApproveWithReturnsTwo(address to, uint256 amount) public {
+    function testFailFuzzApproveWithReturnsTwo(address to, uint256 amount) public {
         verifySafeApprove(address(returnsTwo), to, amount);
     }
 
@@ -458,7 +458,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
-    function testFailTransferETHToContractWithoutFallback(uint256 amount) public {
+    function testFailFuzzTransferETHToContractWithoutFallback(uint256 amount) public {
         SafeTransferLib.safeTransferETH(address(this), amount);
     }
 

@@ -58,7 +58,7 @@ contract CREATE3Test is DSTestPlus {
         assertEq(deployed.decimals(), decimals);
     }
 
-    function testFailDoubleDeploySameBytecode(bytes32 salt, bytes calldata bytecode) public {
+    function testFailFuzzDoubleDeploySameBytecode(bytes32 salt, bytes calldata bytecode) public {
         CREATE3.deploy(salt, bytecode, 0);
         CREATE3.deploy(salt, bytecode, 0);
     }

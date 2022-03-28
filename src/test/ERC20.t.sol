@@ -212,7 +212,7 @@ contract ERC20Test is DSTestPlus {
         assertEq(tkn.decimals(), decimals);
     }
 
-    function testMint(address from, uint256 amount) public {
+    function testFuzzMint(address from, uint256 amount) public {
         token.mint(from, amount);
 
         assertEq(token.totalSupply(), amount);
@@ -233,13 +233,13 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(from), mintAmount - burnAmount);
     }
 
-    function testApprove(address to, uint256 amount) public {
+    function testFuzzApprove(address to, uint256 amount) public {
         assertTrue(token.approve(to, amount));
 
         assertEq(token.allowance(address(this), to), amount);
     }
 
-    function testTransfer(address from, uint256 amount) public {
+    function testFuzzTransfer(address from, uint256 amount) public {
         token.mint(address(this), amount);
 
         assertTrue(token.transfer(from, amount));

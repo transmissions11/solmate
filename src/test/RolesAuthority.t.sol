@@ -74,7 +74,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.canCall(address(0xBEEF), address(0xCAFE), 0xBEEFCAFE));
     }
 
-    function testSetRoles(address user, uint8 role) public {
+    function testFuzzSetRoles(address user, uint8 role) public {
         assertFalse(rolesAuthority.doesUserHaveRole(user, role));
 
         rolesAuthority.setUserRole(user, role, true);
@@ -98,7 +98,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.doesRoleHaveCapability(role, target, functionSig));
     }
 
-    function testSetPublicCapabilities(address target, bytes4 functionSig) public {
+    function testFuzzSetPublicCapabilities(address target, bytes4 functionSig) public {
         assertFalse(rolesAuthority.isCapabilityPublic(target, functionSig));
 
         rolesAuthority.setPublicCapability(target, functionSig, true);

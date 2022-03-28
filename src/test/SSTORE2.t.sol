@@ -60,11 +60,11 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(SSTORE2.write(hex"11223344"), 41000, 42000);
     }
 
-    function testWriteRead(bytes calldata testBytes) public {
+    function testFuzzWriteRead(bytes calldata testBytes) public {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes)), testBytes);
     }
 
-    function testWriteReadCustomStartBound(bytes calldata testBytes, uint256 startIndex) public {
+    function testFuzzWriteReadCustomStartBound(bytes calldata testBytes, uint256 startIndex) public {
         if (testBytes.length == 0) return;
 
         startIndex = bound(startIndex, 0, testBytes.length);
@@ -90,13 +90,13 @@ contract SSTORE2Test is DSTestPlus {
         );
     }
 
-    function testFailReadInvalidPointer(address pointer) public view {
+    function testFailFuzzReadInvalidPointer(address pointer) public view {
         if (pointer.code.length > 0) revert();
 
         SSTORE2.read(pointer);
     }
 
-    function testFailReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public view {
+    function testFailFuzzReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public view {
         if (pointer.code.length > 0) revert();
 
         SSTORE2.read(pointer, startIndex);
@@ -112,7 +112,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(pointer, startIndex, endIndex);
     }
 
-    function testFailWriteReadCustomStartBoundOutOfRange(bytes calldata testBytes, uint256 startIndex) public {
+    function testFailFuzzWriteReadCustomStartBoundOutOfRange(bytes calldata testBytes, uint256 startIndex) public {
         startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max);
 
         SSTORE2.read(SSTORE2.write(testBytes), startIndex);

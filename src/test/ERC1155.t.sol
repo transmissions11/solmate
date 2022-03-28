@@ -996,7 +996,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testApproveAll(address to, bool approved) public {
+    function testFuzzApproveAll(address to, bool approved) public {
         token.setApprovalForAll(to, approved);
 
         assertBoolEq(token.isApprovedForAll(address(this), to), approved);
