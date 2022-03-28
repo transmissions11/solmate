@@ -84,7 +84,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.doesUserHaveRole(user, role));
     }
 
-    function testSetRoleCapabilities(
+    function testFuzzSetRoleCapabilities(
         uint8 role,
         address target,
         bytes4 functionSig
@@ -108,7 +108,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.isCapabilityPublic(target, functionSig));
     }
 
-    function testCanCallWithAuthorizedRole(
+    function testFuzzCanCallWithAuthorizedRole(
         address user,
         uint8 role,
         address target,
@@ -132,7 +132,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.canCall(user, target, functionSig));
     }
 
-    function testCanCallPublicCapability(
+    function testFuzzCanCallPublicCapability(
         address user,
         address target,
         bytes4 functionSig

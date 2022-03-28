@@ -17,7 +17,7 @@ contract DSTestPlusTest is DSTestPlus {
         bound(5, 100, 10);
     }
 
-    function testBound(
+    function testFuzzBound(
         uint256 num,
         uint256 min,
         uint256 max
@@ -30,7 +30,7 @@ contract DSTestPlusTest is DSTestPlus {
         assertLe(bounded, max);
     }
 
-    function testFailBoundMinBiggerThanMax(
+    function testFailFuzzBoundMinBiggerThanMax(
         uint256 num,
         uint256 min,
         uint256 max

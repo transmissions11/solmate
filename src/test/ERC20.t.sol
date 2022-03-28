@@ -201,7 +201,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
-    function testMetadata(
+    function testFuzzMetadata(
         string calldata name,
         string calldata symbol,
         uint8 decimals
@@ -219,7 +219,7 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(from), amount);
     }
 
-    function testBurn(
+    function testFuzzBurn(
         address from,
         uint256 mintAmount,
         uint256 burnAmount
@@ -253,7 +253,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function testTransferFrom(
+    function testFuzzTransferFrom(
         address to,
         uint256 approval,
         uint256 amount
@@ -280,7 +280,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function testPermit(
+    function testFuzzPermit(
         uint248 privKey,
         address to,
         uint256 amount,
@@ -309,7 +309,7 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.nonces(owner), 1);
     }
 
-    function testFailBurnInsufficientBalance(
+    function testFailFuzzBurnInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 burnAmount
@@ -320,7 +320,7 @@ contract ERC20Test is DSTestPlus {
         token.burn(to, burnAmount);
     }
 
-    function testFailTransferInsufficientBalance(
+    function testFailFuzzTransferInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 sendAmount
@@ -331,7 +331,7 @@ contract ERC20Test is DSTestPlus {
         token.transfer(to, sendAmount);
     }
 
-    function testFailTransferFromInsufficientAllowance(
+    function testFailFuzzTransferFromInsufficientAllowance(
         address to,
         uint256 approval,
         uint256 amount
@@ -345,7 +345,7 @@ contract ERC20Test is DSTestPlus {
         token.transferFrom(address(from), to, amount);
     }
 
-    function testFailTransferFromInsufficientBalance(
+    function testFailFuzzTransferFromInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 sendAmount
@@ -359,7 +359,7 @@ contract ERC20Test is DSTestPlus {
         token.transferFrom(address(from), to, sendAmount);
     }
 
-    function testFailPermitBadNonce(
+    function testFailFuzzPermitBadNonce(
         uint256 privateKey,
         address to,
         uint256 amount,
@@ -386,7 +386,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailPermitBadDeadline(
+    function testFailFuzzPermitBadDeadline(
         uint256 privateKey,
         address to,
         uint256 amount,
@@ -411,7 +411,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, to, amount, deadline + 1, v, r, s);
     }
 
-    function testFailPermitPastDeadline(
+    function testFailFuzzPermitPastDeadline(
         uint256 privateKey,
         address to,
         uint256 amount,
@@ -436,7 +436,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailPermitReplay(
+    function testFailFuzzPermitReplay(
         uint256 privateKey,
         address to,
         uint256 amount,

@@ -139,7 +139,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTooMuch), to, amount);
     }
 
-    function testTransferWithGarbage(
+    function testFuzzTransferWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage
@@ -185,7 +185,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsGarbage), to, amount);
     }
 
-    function testTransferWithNonContract(
+    function testFuzzTransferWithNonContract(
         address nonContract,
         address to,
         uint256 amount
@@ -199,7 +199,7 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferETH(address(this), 1e18);
     }
 
-    function testTransferFromWithMissingReturn(
+    function testFuzzTransferFromWithMissingReturn(
         address from,
         address to,
         uint256 amount
@@ -207,7 +207,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(missingReturn), from, to, amount);
     }
 
-    function testTransferFromWithStandardERC20(
+    function testFuzzTransferFromWithStandardERC20(
         address from,
         address to,
         uint256 amount
@@ -215,7 +215,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(erc20), from, to, amount);
     }
 
-    function testTransferFromWithReturnsTooMuch(
+    function testFuzzTransferFromWithReturnsTooMuch(
         address from,
         address to,
         uint256 amount
@@ -223,7 +223,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooMuch), from, to, amount);
     }
 
-    function testTransferFromWithGarbage(
+    function testFuzzTransferFromWithGarbage(
         address from,
         address to,
         uint256 amount,
@@ -270,7 +270,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
     }
 
-    function testTransferFromWithNonContract(
+    function testFuzzTransferFromWithNonContract(
         address nonContract,
         address from,
         address to,
@@ -293,7 +293,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTooMuch), to, amount);
     }
 
-    function testApproveWithGarbage(
+    function testFuzzApproveWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage
@@ -339,7 +339,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
-    function testApproveWithNonContract(
+    function testFuzzApproveWithNonContract(
         address nonContract,
         address to,
         uint256 amount
@@ -373,7 +373,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTwo), to, amount);
     }
 
-    function testFailTransferWithGarbage(
+    function testFailFuzzTransferWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage
@@ -385,7 +385,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsGarbage), to, amount);
     }
 
-    function testFailTransferFromWithReturnsFalse(
+    function testFailFuzzTransferFromWithReturnsFalse(
         address from,
         address to,
         uint256 amount
@@ -393,7 +393,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsFalse), from, to, amount);
     }
 
-    function testFailTransferFromWithReverting(
+    function testFailFuzzTransferFromWithReverting(
         address from,
         address to,
         uint256 amount
@@ -401,7 +401,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(reverting), from, to, amount);
     }
 
-    function testFailTransferFromWithReturnsTooLittle(
+    function testFailFuzzTransferFromWithReturnsTooLittle(
         address from,
         address to,
         uint256 amount
@@ -409,7 +409,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooLittle), from, to, amount);
     }
 
-    function testFailTransferFromWithReturnsTwo(
+    function testFailFuzzTransferFromWithReturnsTwo(
         address from,
         address to,
         uint256 amount
@@ -417,7 +417,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTwo), from, to, amount);
     }
 
-    function testFailTransferFromWithGarbage(
+    function testFailFuzzTransferFromWithGarbage(
         address from,
         address to,
         uint256 amount,
@@ -446,7 +446,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTwo), to, amount);
     }
 
-    function testFailApproveWithGarbage(
+    function testFailFuzzApproveWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage

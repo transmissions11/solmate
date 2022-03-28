@@ -72,7 +72,7 @@ contract SSTORE2Test is DSTestPlus {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes), startIndex), bytes(testBytes[startIndex:]));
     }
 
-    function testWriteReadCustomBounds(
+    function testFuzzWriteReadCustomBounds(
         bytes calldata testBytes,
         uint256 startIndex,
         uint256 endIndex
@@ -102,7 +102,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(pointer, startIndex);
     }
 
-    function testFailReadInvalidPointerCustomBounds(
+    function testFailFuzzReadInvalidPointerCustomBounds(
         address pointer,
         uint256 startIndex,
         uint256 endIndex
@@ -118,7 +118,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(SSTORE2.write(testBytes), startIndex);
     }
 
-    function testFailWriteReadCustomBoundsOutOfRange(
+    function testFailFuzzWriteReadCustomBoundsOutOfRange(
         bytes calldata testBytes,
         uint256 startIndex,
         uint256 endIndex

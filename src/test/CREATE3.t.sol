@@ -41,7 +41,7 @@ contract CREATE3Test is DSTestPlus {
         CREATE3.deploy(salt, type(MockAuthChild).creationCode, 0);
     }
 
-    function testDeployERC20(
+    function testFuzzDeployERC20(
         bytes32 salt,
         string calldata name,
         string calldata symbol,
@@ -63,7 +63,7 @@ contract CREATE3Test is DSTestPlus {
         CREATE3.deploy(salt, bytecode, 0);
     }
 
-    function testFailDoubleDeployDifferentBytecode(
+    function testFailFuzzDoubleDeployDifferentBytecode(
         bytes32 salt,
         bytes calldata bytecode1,
         bytes calldata bytecode2

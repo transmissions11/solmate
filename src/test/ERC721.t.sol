@@ -581,7 +581,7 @@ contract ERC721Test is DSTestPlus {
         token.approve(to, id);
     }
 
-    function testFailApproveUnAuthorized(
+    function testFailFuzzApproveUnAuthorized(
         address owner,
         uint256 id,
         address to
@@ -593,7 +593,7 @@ contract ERC721Test is DSTestPlus {
         token.approve(to, id);
     }
 
-    function testFailTransferFromUnOwned(
+    function testFailFuzzTransferFromUnOwned(
         address from,
         address to,
         uint256 id
@@ -601,7 +601,7 @@ contract ERC721Test is DSTestPlus {
         token.transferFrom(from, to, id);
     }
 
-    function testFailTransferFromWrongFrom(
+    function testFailFuzzTransferFromWrongFrom(
         address owner,
         address from,
         address to,
@@ -621,7 +621,7 @@ contract ERC721Test is DSTestPlus {
         token.transferFrom(address(this), address(0), id);
     }
 
-    function testFailTransferFromNotOwner(
+    function testFailFuzzTransferFromNotOwner(
         address from,
         address to,
         uint256 id

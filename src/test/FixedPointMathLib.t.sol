@@ -203,7 +203,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.divWadUp(x, 0);
     }
 
-    function testMulDivDown(
+    function testFuzzMulDivDown(
         uint256 x,
         uint256 y,
         uint256 denominator
@@ -216,7 +216,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.mulDivDown(x, y, denominator), (x * y) / denominator);
     }
 
-    function testFailMulDivDownOverflow(
+    function testFailFuzzMulDivDownOverflow(
         uint256 x,
         uint256 y,
         uint256 denominator
@@ -233,7 +233,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.mulDivDown(x, y, 0);
     }
 
-    function testMulDivUp(
+    function testFuzzMulDivUp(
         uint256 x,
         uint256 y,
         uint256 denominator
@@ -246,7 +246,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.mulDivUp(x, y, denominator), x * y == 0 ? 0 : (x * y - 1) / denominator + 1);
     }
 
-    function testFailMulDivUpOverflow(
+    function testFailFuzzMulDivUpOverflow(
         uint256 x,
         uint256 y,
         uint256 denominator
