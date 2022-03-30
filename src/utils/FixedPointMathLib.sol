@@ -27,6 +27,7 @@ library FixedPointMathLib {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
 
+    // TODO: confirm this actually rounds down.
     function expWadDown(int256 x) internal pure returns (int256 r) {
         unchecked {
             // When the result is < 0.5 we return zero. This happens when
