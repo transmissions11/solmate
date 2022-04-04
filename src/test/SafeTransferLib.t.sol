@@ -350,7 +350,8 @@ contract SafeTransferLibTest is DSTestPlus {
     }
 
     function testTransferETH(address recipient, uint256 amount) public {
-        if (recipient.code.length > 0 || uint256(uint160(recipient)) <= 18) return;
+        // Transferring to msg.sender can fail because it's possible to overflow their ETH balance as it begins non-zero.
+        if (recipient.code.length > 0 || uint256(uint160(recipient)) <= 18 || recipient == msg.sender) return;
 
         amount = bound(amount, 0, address(this).balance);
 
