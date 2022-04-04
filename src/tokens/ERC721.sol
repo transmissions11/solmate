@@ -105,7 +105,7 @@ abstract contract ERC721 {
         if (to.code.length != 0) {
             require(
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
+                    ERC721TokenReceiver.onERC721Received.selector,
                 "UNSAFE_RECIPIENT"
             );
         }
@@ -122,7 +122,7 @@ abstract contract ERC721 {
         if (to.code.length != 0) {
             require(
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) ==
-                ERC721TokenReceiver.onERC721Received.selector,
+                    ERC721TokenReceiver.onERC721Received.selector,
                 "UNSAFE_RECIPIENT"
             );
         }
@@ -185,7 +185,7 @@ abstract contract ERC721 {
         if (to.code.length != 0) {
             require(
                 ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") ==
-                ERC721TokenReceiver.onERC721Received.selector,
+                    ERC721TokenReceiver.onERC721Received.selector,
                 "UNSAFE_RECIPIENT"
             );
         }
