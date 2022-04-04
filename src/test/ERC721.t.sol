@@ -454,11 +454,11 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testSafeTransferFromToEOA(uint256 id, address to) public {
+        ERC721User from = new ERC721User(token);
+
         if (to == address(0) || to == address(this)) to = address(0xBEEF);
 
         if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
-
-        ERC721User from = new ERC721User(token);
 
         token.mint(address(from), id);
 
