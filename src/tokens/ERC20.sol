@@ -85,13 +85,13 @@ abstract contract ERC20 {
             // currentBalance = balanceOf[msg.sender]
             let currentBalance := sload(balanceSlot)
 
-            // balanceOf[msg.sender] = currentBalance - amount
-            sstore(balanceSlot, sub(currentBalance, amount))
-
             // if (amount > currentBalance) revert();
             if gt(amount, currentBalance) {
                 revert(0, 0)
             }
+
+            // balanceOf[msg.sender] = currentBalance - amount
+            sstore(balanceSlot, sub(currentBalance, amount))
         }
 
         // Cannot overflow because the sum of all user
