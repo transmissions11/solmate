@@ -74,7 +74,26 @@ abstract contract ERC20 {
     }
 
     function transfer(address to, uint256 amount) public virtual returns (bool) {
-        balanceOf[msg.sender] -= amount;
+        // update balance in assembly: saves 56 gas
+        assembly {
+            // get the storage pointer for balanceOf[msg.sender]
+            // storage pointer == keccak256(msg.sender . balanceOf_slot)
+            mstore(0x00, caller())
+            mstore(0x20, balanceOf.slot)
+            let balanceSlot := keccak256(0x00, 0x40)
+
+            // currentBalance = balanceOf[msg.sender]
+            let currentBalance := sload(balanceSlot)
+
+            // balanceOf[msg.sender] = currentBalance - amount
+            sstore(balanceSlot, sub(currentBalance, amount))
+
+            // if (amount > currentBalance) revert();
+            if gt(amount, currentBalance) {
+                mstore(0x00, 0x00)
+                revert(0, 0x01)
+            }
+        }
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
