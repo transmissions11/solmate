@@ -90,8 +90,7 @@ abstract contract ERC20 {
 
             // if (amount > currentBalance) revert();
             if gt(amount, currentBalance) {
-                mstore(0x00, 0x00)
-                revert(0, 0x01)
+                revert(0, 0)
             }
         }
 
