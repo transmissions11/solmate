@@ -9,34 +9,24 @@ contract MockERC1155B is ERC1155B {
     function mint(
         address to,
         uint256 id,
-        uint256 amount,
         bytes memory data
     ) public virtual {
-        _mint(to, id, amount, data);
+        _mint(to, id, data);
     }
 
     function batchMint(
         address to,
         uint256[] memory ids,
-        uint256[] memory amounts,
         bytes memory data
     ) public virtual {
-        _batchMint(to, ids, amounts, data);
+        _batchMint(to, ids, data);
     }
 
-    function burn(
-        address from,
-        uint256 id,
-        uint256 amount
-    ) public virtual {
-        _burn(from, id, amount);
+    function burn(address from, uint256 id) public virtual {
+        _burn(from, id);
     }
 
-    function batchBurn(
-        address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) public virtual {
-        _batchBurn(from, ids, amounts);
+    function batchBurn(address from, uint256[] memory ids) public virtual {
+        _batchBurn(from, ids);
     }
 }

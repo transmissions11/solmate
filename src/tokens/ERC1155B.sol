@@ -171,23 +171,19 @@ abstract contract ERC1155B {
     function _mint(
         address to,
         uint256 id,
-        uint256 amount,
         bytes memory data
     ) internal virtual {
         // Minting twice would effectively be a force transfer.
         require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
-        // The ERC1155 spec allows transferring
-        // 0, but that shouldn't change ownership.
-        if (amount == 1) ownerOf[id] = to;
-        else require(amount == 0, "INVALID_AMOUNT");
+        ownerOf[id] = to;
 
-        emit TransferSingle(msg.sender, address(0), to, id, amount);
+        emit TransferSingle(msg.sender, address(0), to, id, 1);
 
         require(
             to.code.length == 0
                 ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
+                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, 1, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
             "UNSAFE_RECIPIENT"
         );
@@ -196,28 +192,25 @@ abstract contract ERC1155B {
     function _batchMint(
         address to,
         uint256[] memory ids,
-        uint256[] memory amounts,
         bytes memory data
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        require(idsLength == amounts.length, "LENGTH_MISMATCH");
+        // Generate an amounts array locally to use in the event below.
+        uint256[] memory amounts = new uint256[](idsLength);
 
-        // Storing these outside the loop saves ~15 gas per iteration.
+        // Storing this outside the loop saves ~7 gas per iteration.
         uint256 id;
-        uint256 amount;
 
         for (uint256 i = 0; i < idsLength; ) {
             id = ids[i];
-            amount = amounts[i];
 
             // Minting twice would effectively be a force transfer.
             require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
-            // The ERC1155 spec allows transferring
-            // 0, but that shouldn't change ownership.
-            if (amount == 1) ownerOf[id] = to;
-            else require(amount == 0, "INVALID_AMOUNT");
+            ownerOf[id] = to;
+
+            amounts[i] = 1;
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -237,30 +230,28 @@ abstract contract ERC1155B {
         );
     }
 
-    function _batchBurn(
-        address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) internal virtual {
+    function _batchBurn(address from, uint256[] memory ids) internal virtual {
+        // Burning unminted tokens makes no sense.
+        require(from != address(0), "INVALID_FROM");
+
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        require(idsLength == amounts.length, "LENGTH_MISMATCH");
+        // Generate an amounts array locally to use in the event below.
+        uint256[] memory amounts = new uint256[](idsLength);
 
-        // Storing these outside the loop saves ~15 gas per iteration.
-        uint256 id;
-        uint256 amount;
+        // Storing this outside the loop saves ~7 gas per iteration.
+        uint256 id; // TODO: does it still save if just one?
 
         for (uint256 i = 0; i < idsLength; ) {
             id = ids[i];
-            amount = amounts[i];
 
-            // Burning an unminted token could break assumptions.
-            require(ownerOf[id] != address(0), "NOT_MINTED");
+            address owner = ownerOf[id];
 
-            // The ERC1155 spec allows burning 0,
-            // but that shouldn't change ownership.
-            if (amount == 1) ownerOf[id] = address(0);
-            else require(amount == 0, "INVALID_AMOUNT");
+            require(owner == from, "WRONG_FROM");
+
+            ownerOf[id] = address(0);
+
+            amounts[i] = 1;
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -272,19 +263,17 @@ abstract contract ERC1155B {
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
 
-    function _burn(
-        address from,
-        uint256 id,
-        uint256 amount
-    ) internal virtual {
-        // Burning an unminted token could break assumptions.
-        require(ownerOf[id] != address(0), "NOT_MINTED");
+    function _burn(address from, uint256 id) internal virtual {
+        // Burning unminted tokens makes no sense.
+        require(from != address(0), "INVALID_FROM");
 
-        // The ERC1155 spec allows burning 0,
-        // but that shouldn't change ownership.
-        if (amount == 1) ownerOf[id] = address(0);
-        else require(amount == 0, "INVALID_AMOUNT");
+        address owner = ownerOf[id];
 
-        emit TransferSingle(msg.sender, from, address(0), id, amount);
+        // Owner must match the from address.
+        require(owner == from);
+
+        ownerOf[id] = address(0);
+
+        emit TransferSingle(msg.sender, owner, address(0), id, 1);
     }
 }
