@@ -79,10 +79,10 @@ abstract contract ERC1155B {
 
         require(from == ownerOf[id], "WRONG_FROM"); // Can only transfer from the owner.
 
-        // The ERC1155 spec allows transferring
-        // 0, but that shouldn't change ownership.
-        if (amount == 1) ownerOf[id] = to;
-        else require(amount == 0, "INVALID_AMOUNT");
+        // Can only transfer 1 with ERC1155B.
+        require(amount == 1, "INVALID_AMOUNT");
+
+        ownerOf[id] = to;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -119,10 +119,10 @@ abstract contract ERC1155B {
             // Can only transfer from the owner.
             require(from == ownerOf[id], "WRONG_FROM");
 
-            // The ERC1155 spec allows transferring
-            // 0, but that shouldn't change ownership.
-            if (amount == 1) ownerOf[id] = to;
-            else require(amount == 0, "INVALID_AMOUNT");
+            // Can only transfer 1 with ERC1155B.
+            require(amount == 1, "INVALID_AMOUNT");
+
+            ownerOf[id] = to;
 
             // An array can't have a total length
             // larger than the max uint256 value.
