@@ -203,16 +203,21 @@ abstract contract ERC1155B {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
+        // Storing these outside the loop saves ~15 gas per iteration.
+        uint256 id;
+        uint256 amount;
+
         for (uint256 i = 0; i < idsLength; ) {
-            // TODO: does caching arrays pos save?
+            id = ids[i];
+            amount = amounts[i];
 
             // Minting twice would effectively be a force transfer.
-            require(ownerOf[ids[i]] == address(0), "ALREADY_MINTED");
+            require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
             // The ERC1155 spec allows transferring
             // 0, but that shouldn't change ownership.
-            if (amounts[i] == 1) ownerOf[ids[i]] = to;
-            else require(amounts[i] == 0, "INVALID_AMOUNT");
+            if (amount == 1) ownerOf[id] = to;
+            else require(amount == 0, "INVALID_AMOUNT");
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -241,16 +246,21 @@ abstract contract ERC1155B {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
+        // Storing these outside the loop saves ~15 gas per iteration.
+        uint256 id;
+        uint256 amount;
+
         for (uint256 i = 0; i < idsLength; ) {
-            // TODO: cache amounts?
+            id = ids[i];
+            amount = amounts[i];
 
             // Burning an unminted token could break assumptions.
-            require(ownerOf[ids[i]] != address(0), "NOT_MINTED");
+            require(ownerOf[id] != address(0), "NOT_MINTED");
 
             // The ERC1155 spec allows burning 0,
             // but that shouldn't change ownership.
-            if (amounts[i] == 1) ownerOf[ids[i]] = address(0);
-            else require(amounts[i] == 0, "INVALID_AMOUNT");
+            if (amount == 1) ownerOf[id] = address(0);
+            else require(amount == 0, "INVALID_AMOUNT");
 
             // An array can't have a total length
             // larger than the max uint256 value.
