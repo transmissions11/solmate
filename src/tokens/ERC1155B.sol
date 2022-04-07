@@ -240,7 +240,7 @@ abstract contract ERC1155B {
         uint256[] memory amounts = new uint256[](idsLength);
 
         // Storing this outside the loop saves ~7 gas per iteration.
-        uint256 id; // TODO: does it still save if just one?
+        uint256 id;
 
         for (uint256 i = 0; i < idsLength; ) {
             id = ids[i];
