@@ -269,8 +269,7 @@ abstract contract ERC1155B {
 
         address owner = ownerOf[id];
 
-        // Owner must match the from address.
-        require(owner == from);
+        require(owner == from, "WRONG_FROM");
 
         ownerOf[id] = address(0);
 
