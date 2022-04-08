@@ -263,13 +263,10 @@ abstract contract ERC1155B {
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
 
-    function _burn(address from, uint256 id) internal virtual {
-        // Burning unminted tokens makes no sense.
-        require(from != address(0), "INVALID_FROM");
-
+    function _burn(uint256 id) internal virtual {
         address owner = ownerOf[id];
 
-        require(owner == from, "WRONG_FROM");
+        require(owner != address(0), "NOT_MINTED");
 
         ownerOf[id] = address(0);
 

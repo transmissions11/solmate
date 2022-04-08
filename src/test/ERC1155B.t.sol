@@ -13,6 +13,7 @@ import {ERC1155TokenReceiver} from "../tokens/ERC1155.sol";
 // TODO: test ownerOf()
 // TODO: fuzz testing
 // TODO: test custom safe batch transfer
+// TODO: test cant burn unminted tokens
 
 contract ERC1155BRecipient is ERC1155TokenReceiver {
     address public operator;
@@ -195,7 +196,7 @@ contract ERC1155BTest is DSTestPlus, ERC1155TokenReceiver {
     function testBurn() public {
         token.mint(address(0xBEEF), 1337, "");
 
-        token.burn(address(0xBEEF), 1337);
+        token.burn(1337);
 
         assertEq(token.balanceOf(address(0xBEEF), 1337), 0);
     }
@@ -400,7 +401,7 @@ contract ERC1155BTest is DSTestPlus, ERC1155TokenReceiver {
     }
 
     function testFailBurnInsufficientBalance() public {
-        token.burn(address(0xBEEF), 1337);
+        token.burn(1337);
     }
 
     function testFailSafeTransferFromInsufficientBalance() public {
