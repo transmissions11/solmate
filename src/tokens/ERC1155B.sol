@@ -158,8 +158,7 @@ abstract contract ERC1155B {
         // the array index counter which cannot possibly overflow.
         unchecked {
             for (uint256 i = 0; i < ownersLength; ++i) {
-                // Balance is 1 if the id's owner matches, 0 otherwise.
-                balances[i] = ownerOf[ids[i]] == owners[i] ? 1 : 0;
+                balances[i] = balanceOf(owners[i], ids[i]);
             }
         }
     }
@@ -199,8 +198,7 @@ abstract contract ERC1155B {
         // Generate an amounts array locally to use in the event below.
         uint256[] memory amounts = new uint256[](idsLength);
 
-        // Storing this outside the loop saves ~7 gas per iteration.
-        uint256 id;
+        uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
         for (uint256 i = 0; i < idsLength; ) {
             id = ids[i];
@@ -239,8 +237,7 @@ abstract contract ERC1155B {
         // Generate an amounts array locally to use in the event below.
         uint256[] memory amounts = new uint256[](idsLength);
 
-        // Storing this outside the loop saves ~7 gas per iteration.
-        uint256 id;
+        uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
         for (uint256 i = 0; i < idsLength; ) {
             id = ids[i];
