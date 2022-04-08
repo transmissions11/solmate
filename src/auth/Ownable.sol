@@ -51,7 +51,7 @@ abstract contract Ownable {
         owner = msg.sender;
     }
 
-    function setOwner(address to, bool direct) public onlyOwner virtual {
+    function setOwner(address to, bool direct) public virtual onlyOwner {
         if (direct) {
             owner = to;
 
