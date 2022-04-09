@@ -7,12 +7,11 @@ import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
 /// @notice Minimal ERC4626 tokenized Vault implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/mixins/ERC4626.sol)
-/// @dev Do not use in production! ERC-4626 is still in the last call stage and is subject to change.
 abstract contract ERC4626 is ERC20 {
     using SafeTransferLib for ERC20;
     using FixedPointMathLib for uint256;
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
@@ -26,7 +25,7 @@ abstract contract ERC4626 is ERC20 {
         uint256 shares
     );
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                                IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
@@ -40,7 +39,7 @@ abstract contract ERC4626 is ERC20 {
         asset = _asset;
     }
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                         DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
@@ -116,19 +115,19 @@ abstract contract ERC4626 is ERC20 {
         asset.safeTransfer(receiver, assets);
     }
 
-    /*///////////////////////////////////////////////////////////////
-                           ACCOUNTING LOGIC
+    /*//////////////////////////////////////////////////////////////
+                            ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function totalAssets() public view virtual returns (uint256);
 
-    function convertToShares(uint256 assets) public view returns (uint256) {
+    function convertToShares(uint256 assets) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? assets : assets.mulDivDown(supply, totalAssets());
     }
 
-    function convertToAssets(uint256 shares) public view returns (uint256) {
+    function convertToAssets(uint256 shares) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
         return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
@@ -154,7 +153,7 @@ abstract contract ERC4626 is ERC20 {
         return convertToAssets(shares);
     }
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                      DEPOSIT/WITHDRAWAL LIMIT LOGIC
     //////////////////////////////////////////////////////////////*/
 
@@ -174,8 +173,8 @@ abstract contract ERC4626 is ERC20 {
         return balanceOf[owner];
     }
 
-    /*///////////////////////////////////////////////////////////////
-                         INTERNAL HOOKS LOGIC
+    /*//////////////////////////////////////////////////////////////
+                          INTERNAL HOOKS LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function beforeWithdraw(uint256 assets, uint256 shares) internal virtual {}

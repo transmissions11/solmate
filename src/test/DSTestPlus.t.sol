@@ -13,7 +13,7 @@ contract DSTestPlusTest is DSTestPlus {
         assertEq(bound(9999, 1337, 6666), 4669);
     }
 
-    function testFailBoundMinBiggerThanMax() public pure {
+    function testFailBoundMinBiggerThanMax() public {
         bound(5, 100, 10);
     }
 
@@ -34,7 +34,7 @@ contract DSTestPlusTest is DSTestPlus {
         uint256 num,
         uint256 min,
         uint256 max
-    ) public pure {
+    ) public {
         if (max == min) {
             unchecked {
                 min++; // Overflow is handled below.

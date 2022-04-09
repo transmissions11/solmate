@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity 0.8.10;
+pragma solidity >=0.8.0;
 
 import {Auth, Authority} from "../Auth.sol";
 
 /// @notice Flexible and target agnostic role based Authority that supports up to 256 roles.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/MultiRolesAuthority.sol)
 contract MultiRolesAuthority is Auth, Authority {
-    /*///////////////////////////////////////////////////////////////
-                                  EVENTS
+    /*//////////////////////////////////////////////////////////////
+                                 EVENTS
     //////////////////////////////////////////////////////////////*/
 
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
@@ -18,19 +18,19 @@ contract MultiRolesAuthority is Auth, Authority {
 
     event TargetCustomAuthorityUpdated(address indexed target, Authority indexed authority);
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
 
-    /*///////////////////////////////////////////////////////////////
-                       CUSTOM TARGET AUTHORITY STORAGE
+    /*//////////////////////////////////////////////////////////////
+                     CUSTOM TARGET AUTHORITY STORAGE
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => Authority) public getTargetCustomAuthority;
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                             ROLE/USER STORAGE
     //////////////////////////////////////////////////////////////*/
 
@@ -48,8 +48,8 @@ contract MultiRolesAuthority is Auth, Authority {
         return (uint256(getRolesWithCapability[functionSig]) >> role) & 1 != 0;
     }
 
-    /*///////////////////////////////////////////////////////////////
-                          AUTHORIZATION LOGIC
+    /*//////////////////////////////////////////////////////////////
+                           AUTHORIZATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function canCall(
@@ -75,7 +75,7 @@ contract MultiRolesAuthority is Auth, Authority {
         emit TargetCustomAuthorityUpdated(target, customAuthority);
     }
 
-    /*///////////////////////////////////////////////////////////////
+    /*//////////////////////////////////////////////////////////////
                   PUBLIC CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
@@ -85,8 +85,8 @@ contract MultiRolesAuthority is Auth, Authority {
         emit PublicCapabilityUpdated(functionSig, enabled);
     }
 
-    /*///////////////////////////////////////////////////////////////
-                      USER ROLE ASSIGNMENT LOGIC
+    /*//////////////////////////////////////////////////////////////
+                       USER ROLE ASSIGNMENT LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function setUserRole(
@@ -103,8 +103,8 @@ contract MultiRolesAuthority is Auth, Authority {
         emit UserRoleUpdated(user, role, enabled);
     }
 
-    /*///////////////////////////////////////////////////////////////
-                  ROLE CAPABILITY CONFIGURATION LOGIC
+    /*//////////////////////////////////////////////////////////////
+                   ROLE CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function setRoleCapability(
