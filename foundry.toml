@@ -2,4 +2,4 @@
 optimizer_runs = 1000000
 
 [intense]
-fuzz_runs = 100000
+fuzz_runs = 10000
