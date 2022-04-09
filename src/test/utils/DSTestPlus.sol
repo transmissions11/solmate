@@ -81,6 +81,8 @@ contract DSTestPlus is DSTest {
         uint256 b,
         uint256 maxPercentDelta
     ) internal virtual {
+        // Should always pass. Catches case where both a and b are zero.
+        if(a == b) return;
         uint256 delta = a > b ? a - b : b - a;
         uint256 abs = a > b ? a : b;
 
