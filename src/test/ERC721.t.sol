@@ -78,7 +78,9 @@ contract ERC721Test is DSTestPlus {
         token.burn(1337);
 
         assertEq(token.balanceOf(address(0xBEEF)), 0);
-        assertEq(token.ownerOf(1337), address(0));
+
+        hevm.expectRevert("NOT_MINTED");
+        token.ownerOf(1337);
     }
 
     function testApprove() public {
@@ -97,8 +99,10 @@ contract ERC721Test is DSTestPlus {
         token.burn(1337);
 
         assertEq(token.balanceOf(address(this)), 0);
-        assertEq(token.ownerOf(1337), address(0));
         assertEq(token.getApproved(1337), address(0));
+
+        hevm.expectRevert("NOT_MINTED");
+        token.ownerOf(1337);
     }
 
     function testApproveAll() public {
@@ -352,6 +356,14 @@ contract ERC721Test is DSTestPlus {
         token.safeMint(address(new WrongReturnDataERC721Recipient()), 1337, "testing 123");
     }
 
+    function testFailBalanceOfZeroAddress() public view {
+        token.balanceOf(address(0));
+    }
+
+    function testFailOwnerOfUnminted() public view {
+        token.ownerOf(1337);
+    }
+
     function testMetadata(string memory name, string memory symbol) public {
         MockERC721 tkn = new MockERC721(name, symbol);
 
@@ -375,7 +387,9 @@ contract ERC721Test is DSTestPlus {
         token.burn(id);
 
         assertEq(token.balanceOf(to), 0);
-        assertEq(token.ownerOf(id), address(0));
+
+        hevm.expectRevert("NOT_MINTED");
+        token.ownerOf(id);
     }
 
     function testApprove(address to, uint256 id) public {
@@ -396,8 +410,10 @@ contract ERC721Test is DSTestPlus {
         token.burn(id);
 
         assertEq(token.balanceOf(address(this)), 0);
-        assertEq(token.ownerOf(id), address(0));
         assertEq(token.getApproved(id), address(0));
+
+        hevm.expectRevert("NOT_MINTED");
+        token.ownerOf(id);
     }
 
     function testApproveAll(address to, bool approved) public {
@@ -693,5 +709,9 @@ contract ERC721Test is DSTestPlus {
 
     function testFailSafeMintToERC721RecipientWithWrongReturnDataWithData(uint256 id, bytes calldata data) public {
         token.safeMint(address(new WrongReturnDataERC721Recipient()), id, data);
+    }
+
+    function testFailOwnerOfUnminted(uint256 id) public view {
+        token.ownerOf(id);
     }
 }

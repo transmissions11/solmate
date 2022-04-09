@@ -3,7 +3,6 @@ pragma solidity >=0.8.0;
 
 /// @notice Modern, minimalist, and gas efficient ERC-721 implementation.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
-/// @dev Note that balanceOf does not revert if passed the zero address, in defiance of the ERC.
 abstract contract ERC721 {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -26,12 +25,26 @@ abstract contract ERC721 {
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
-                             ERC721 STORAGE
+                      ERC721 BALANCE/OWNER STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => uint256) public balanceOf;
+    mapping(address => uint256) internal _balanceOf;
 
-    mapping(uint256 => address) public ownerOf;
+    mapping(uint256 => address) internal _ownerOf;
+
+    function balanceOf(address owner) public view returns (uint256) {
+        require(owner != address(0), "ZERO_ADDRESS");
+
+        return _balanceOf[owner];
+    }
+
+    function ownerOf(uint256 id) public view returns (address owner) {
+        require((owner = _ownerOf[id]) != address(0), "NOT_MINTED");
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                         ERC721 APPROVAL STORAGE
+    //////////////////////////////////////////////////////////////*/
 
     mapping(uint256 => address) public getApproved;
 
@@ -51,7 +64,7 @@ abstract contract ERC721 {
     //////////////////////////////////////////////////////////////*/
 
     function approve(address spender, uint256 id) public virtual {
-        address owner = ownerOf[id];
+        address owner = _ownerOf[id];
 
         require(msg.sender == owner || isApprovedForAll[owner][msg.sender], "NOT_AUTHORIZED");
 
@@ -71,7 +84,7 @@ abstract contract ERC721 {
         address to,
         uint256 id
     ) public virtual {
-        require(from == ownerOf[id], "WRONG_FROM");
+        require(from == _ownerOf[id], "WRONG_FROM");
 
         require(to != address(0), "INVALID_RECIPIENT");
 
@@ -83,12 +96,12 @@ abstract contract ERC721 {
         // Underflow of the sender's balance is impossible because we check for
         // ownership above and the recipient's balance can't realistically overflow.
         unchecked {
-            balanceOf[from]--;
+            _balanceOf[from]--;
 
-            balanceOf[to]++;
+            _balanceOf[to]++;
         }
 
-        ownerOf[id] = to;
+        _ownerOf[id] = to;
 
         delete getApproved[id];
 
@@ -144,29 +157,29 @@ abstract contract ERC721 {
     function _mint(address to, uint256 id) internal virtual {
         require(to != address(0), "INVALID_RECIPIENT");
 
-        require(ownerOf[id] == address(0), "ALREADY_MINTED");
+        require(_ownerOf[id] == address(0), "ALREADY_MINTED");
 
         // Counter overflow is incredibly unrealistic.
         unchecked {
-            balanceOf[to]++;
+            _balanceOf[to]++;
         }
 
-        ownerOf[id] = to;
+        _ownerOf[id] = to;
 
         emit Transfer(address(0), to, id);
     }
 
     function _burn(uint256 id) internal virtual {
-        address owner = ownerOf[id];
+        address owner = _ownerOf[id];
 
         require(owner != address(0), "NOT_MINTED");
 
         // Ownership check above ensures no underflow.
         unchecked {
-            balanceOf[owner]--;
+            _balanceOf[owner]--;
         }
 
-        delete ownerOf[id];
+        delete _ownerOf[id];
 
         delete getApproved[id];
 
