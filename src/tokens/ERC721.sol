@@ -28,18 +28,18 @@ abstract contract ERC721 {
                       ERC721 BALANCE/OWNER STORAGE
     //////////////////////////////////////////////////////////////*/
 
+    mapping(uint256 => address) internal _ownerOf;
+
     mapping(address => uint256) internal _balanceOf;
 
-    mapping(uint256 => address) internal _ownerOf;
+    function ownerOf(uint256 id) public view returns (address owner) {
+        require((owner = _ownerOf[id]) != address(0), "NOT_MINTED");
+    }
 
     function balanceOf(address owner) public view returns (uint256) {
         require(owner != address(0), "ZERO_ADDRESS");
 
         return _balanceOf[owner];
-    }
-
-    function ownerOf(uint256 id) public view returns (address owner) {
-        require((owner = _ownerOf[id]) != address(0), "NOT_MINTED");
     }
 
     /*//////////////////////////////////////////////////////////////
