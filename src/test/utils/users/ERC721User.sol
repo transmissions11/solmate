@@ -10,15 +10,6 @@ contract ERC721User is ERC721TokenReceiver {
         token = _token;
     }
 
-    function onERC721Received(
-        address,
-        address,
-        uint256,
-        bytes calldata
-    ) public virtual override returns (bytes4) {
-        return ERC721TokenReceiver.onERC721Received.selector;
-    }
-
     function approve(address spender, uint256 tokenId) public virtual {
         token.approve(spender, tokenId);
     }

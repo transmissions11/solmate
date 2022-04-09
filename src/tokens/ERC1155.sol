@@ -238,20 +238,24 @@ abstract contract ERC1155 {
 
 /// @notice A generic interface for a contract which properly accepts ERC1155 tokens.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155.sol)
-interface ERC1155TokenReceiver {
+abstract contract ERC1155TokenReceiver {
     function onERC1155Received(
-        address operator,
-        address from,
-        uint256 id,
-        uint256 amount,
-        bytes calldata data
-    ) external returns (bytes4);
+        address,
+        address,
+        uint256,
+        uint256,
+        bytes calldata
+    ) external virtual returns (bytes4) {
+        return ERC1155TokenReceiver.onERC1155Received.selector;
+    }
 
     function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata amounts,
-        bytes calldata data
-    ) external returns (bytes4);
+        address,
+        address,
+        uint256[] calldata,
+        uint256[] calldata,
+        bytes calldata
+    ) external virtual returns (bytes4) {
+        return ERC1155TokenReceiver.onERC1155BatchReceived.selector;
+    }
 }

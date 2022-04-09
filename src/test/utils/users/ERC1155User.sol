@@ -10,26 +10,6 @@ contract ERC1155User is ERC1155TokenReceiver {
         token = _token;
     }
 
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes calldata
-    ) external virtual override returns (bytes4) {
-        return ERC1155TokenReceiver.onERC1155Received.selector;
-    }
-
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] calldata,
-        uint256[] calldata,
-        bytes calldata
-    ) external virtual override returns (bytes4) {
-        return ERC1155TokenReceiver.onERC1155BatchReceived.selector;
-    }
-
     function setApprovalForAll(address operator, bool approved) public virtual {
         token.setApprovalForAll(operator, approved);
     }
