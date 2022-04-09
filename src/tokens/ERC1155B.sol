@@ -112,22 +112,20 @@ abstract contract ERC1155B {
         uint256 id;
         uint256 amount;
 
-        for (uint256 i = 0; i < idsLength; ) {
-            id = ids[i];
-            amount = amounts[i];
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < idsLength; i++) {
+                id = ids[i];
+                amount = amounts[i];
 
-            // Can only transfer from the owner.
-            require(from == ownerOf[id], "WRONG_FROM");
+                // Can only transfer from the owner.
+                require(from == ownerOf[id], "WRONG_FROM");
 
-            // Can only transfer 1 with ERC1155B.
-            require(amount == 1, "INVALID_AMOUNT");
+                // Can only transfer 1 with ERC1155B.
+                require(amount == 1, "INVALID_AMOUNT");
 
-            ownerOf[id] = to;
-
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                ++i;
+                ownerOf[id] = to;
             }
         }
 
@@ -200,20 +198,18 @@ abstract contract ERC1155B {
 
         uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
-        for (uint256 i = 0; i < idsLength; ) {
-            id = ids[i];
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < idsLength; ++i) {
+                id = ids[i];
 
-            // Minting twice would effectively be a force transfer.
-            require(ownerOf[id] == address(0), "ALREADY_MINTED");
+                // Minting twice would effectively be a force transfer.
+                require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
-            ownerOf[id] = to;
+                ownerOf[id] = to;
 
-            amounts[i] = 1;
-
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                ++i;
+                amounts[i] = 1;
             }
         }
 
@@ -239,21 +235,19 @@ abstract contract ERC1155B {
 
         uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
-        for (uint256 i = 0; i < idsLength; ) {
-            id = ids[i];
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < idsLength; ++i) {
+                id = ids[i];
 
-            address owner = ownerOf[id];
+                address owner = ownerOf[id];
 
-            require(owner == from, "WRONG_FROM");
+                require(owner == from, "WRONG_FROM");
 
-            ownerOf[id] = address(0);
+                ownerOf[id] = address(0);
 
-            amounts[i] = 1;
-
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                ++i;
+                amounts[i] = 1;
             }
         }
 
