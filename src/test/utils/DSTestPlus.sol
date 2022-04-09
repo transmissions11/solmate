@@ -79,9 +79,9 @@ contract DSTestPlus is DSTest {
     function assertRelApproxEq(
         uint256 a,
         uint256 b,
-        uint256 maxPercentDelta // An 18 decimal fixed point number.
+        uint256 maxPercentDelta // An 18 decimal fixed point number, where 1e18 == 100%
     ) internal virtual {
-        if (b == 0) assertEq(a, b); // If the expected is 0, actual must be too.
+        if (b == 0) return assertEq(a, b); // If the expected is 0, actual must be too.
 
         uint256 percentDelta = ((a > b ? a - b : b - a) * 1e18) / b;
 

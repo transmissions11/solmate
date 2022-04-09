@@ -17,6 +17,11 @@ contract DSTestPlusTest is DSTestPlus {
         bound(5, 100, 10);
     }
 
+    function testRelApproxEqBothZeroesPasses() public {
+        assertRelApproxEq(0, 0, 1e18);
+        assertRelApproxEq(0, 0, 0);
+    }
+
     function testBound(
         uint256 num,
         uint256 min,
@@ -44,10 +49,5 @@ contract DSTestPlusTest is DSTestPlus {
         if (max > min) (min, max) = (max, min);
 
         bound(num, min, max);
-    }
-
-    function testRelApproxEqBothZeroesPasses() public {
-        assertRelApproxEq(0, 0, 1e18);
-        assertRelApproxEq(0, 0, 0);
     }
 }
