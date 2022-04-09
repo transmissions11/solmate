@@ -114,7 +114,7 @@ abstract contract ERC721 {
         address from,
         address to,
         uint256 id,
-        bytes memory data
+        bytes calldata data
     ) public virtual {
         transferFrom(from, to, id);
 
