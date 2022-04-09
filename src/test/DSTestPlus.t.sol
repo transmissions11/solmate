@@ -46,7 +46,8 @@ contract DSTestPlusTest is DSTestPlus {
         bound(num, min, max);
     }
 
-    function testPassRelApproxEqBothZeroes() public {
+    function testRelApproxEqBothZeroesPasses() public {
         assertRelApproxEq(0, 0, 1e18);
+        assertRelApproxEq(0, 0, 0);
     }
 }
