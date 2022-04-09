@@ -23,4 +23,4 @@ jobs:
         run: forge test
         env:
           # Only fuzz intensely if we're running this action on a push to main or for a PR going into main:
-          FOUNDRY_PROFILE: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && "intense" }}
+          FOUNDRY_PROFILE: ${{ (github.ref == 'refs/heads/main' || github.base_ref == 'main') && 'intense' }}
