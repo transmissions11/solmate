@@ -1,5 +1,6 @@
 [default]
 optimizer_runs = 1000000
+bytecode_hash = "none"
 
 [intense]
 fuzz_runs = 10000
