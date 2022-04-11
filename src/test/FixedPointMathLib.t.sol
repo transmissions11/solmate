@@ -119,16 +119,14 @@ contract FixedPointMathLibTest is DSTestPlus {
     }
 
     function testLnWadSmall() public {
-        // TODO: What causes the precision loss for very small inputs?
-
         // Actual: -41446531673892822312.3238461…
-        assertEq(FixedPointMathLib.lnWad(1), -41446531673896158722);
+        assertEq(FixedPointMathLib.lnWad(1), -41446531673892822313);
 
         // Actual: -37708862055609454006.40601608…
-        assertEq(FixedPointMathLib.lnWad(42), -37708862055609484714);
+        assertEq(FixedPointMathLib.lnWad(42), -37708862055609454007);
 
         // Actual: -32236191301916639576.251880365581…
-        assertEq(FixedPointMathLib.lnWad(1e4), -32236191301916640051);
+        assertEq(FixedPointMathLib.lnWad(1e4), -32236191301916639577);
 
         // Actual: -20723265836946411156.161923092…
         assertEq(FixedPointMathLib.lnWad(1e9), -20723265836946411157);
@@ -136,8 +134,7 @@ contract FixedPointMathLibTest is DSTestPlus {
 
     function testLnWadBig() public {
         // Actual: 135305999368893231589.070344787…
-        // TODO: This is broken. Inputs above 2**170 seem to overflow.
-        assertEq(FixedPointMathLib.lnWad(2**255 - 1), 105358261808867457588);
+        assertEq(FixedPointMathLib.lnWad(2**255 - 1), 135305999368893231589);
 
         // Actual: 76388489021297880288.605614463571…
         assertEq(FixedPointMathLib.lnWad(2**170), 76388489021297880288);
