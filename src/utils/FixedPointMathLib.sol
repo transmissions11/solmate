@@ -1,10 +1,17 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
+import {BitwiseLib} from "./BitwiseLib.sol";
+
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
 /// @author Inspired by USM (https://github.com/usmfum/USM/blob/master/contracts/WadMath.sol)
 library FixedPointMathLib {
+
+    error Overflow();
+
+    error LnNegativeUndefined();
+
     /*//////////////////////////////////////////////////////////////
                     SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
@@ -26,6 +33,67 @@ library FixedPointMathLib {
     function divWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
+
+    // Computes ln(x) in 1e18 fixed point.
+    // Reverts if x is negative or zero.
+    // @param x The number to compute ln(x) for.
+    // @returns Approximately ln(x / 1e18) * 1e18 if x is strictly positive,
+    //   reverts with `LnNegativeUndefined()` if x is negative, and with
+    //   `Overflow()` if x is zero.
+    // Consumes about 757 gas.
+    function lnWad(int256 x) internal returns (int256 r) { unchecked {
+        if (x < 0) revert LnNegativeUndefined();
+        if (x < 1) revert Overflow();
+
+        // Convert x to 2**96
+        x = (x << 78) / 5**18;
+
+        // Reduce range of x to (1, 2) * 2**96
+        // ln(2^k * x) = k * ln(2) + ln(x)
+        int256 k = int256(BitwiseLib.ilog2(uint256(x))) - 96;
+        if (k > 0) {
+            x >>= uint256(k);
+        } else {
+            x <<= uint256(-k);
+        }
+
+        // Evaluate using a (8, 8)-term rational approximation
+        // p is made monic, we will multiply by a scale factor later
+        int256 p = x      +     3273285459638523848632254066296;
+        p = (p * x >> 96) +    24828157081833163892658089445524;
+        p = (p * x >> 96) +    43456485725739037958740375743393;
+        p = (p * x >> 96) -    11111509109440967052023855526967;
+        p = (p * x >> 96) -    45023709667254063763336534515857;
+        p = (p * x >> 96) -    14706773417378608786704636184526;
+        p = p * x         -     (795164235651350426258249787498 << 96);
+        //emit log_named_int("p", p);
+        // We leave p in 2**192 basis so we don't need to scale it back up for the division.
+        // q is monic by convention
+        int256 q = x      +     5573035233440673466300451813936;
+        q = (q * x >> 96) +    71694874799317883764090561454958;
+        q = (q * x >> 96) +   283447036172924575727196451306956;
+        q = (q * x >> 96) +   401686690394027663651624208769553;
+        q = (q * x >> 96) +   204048457590392012362485061816622;
+        q = (q * x >> 96) +    31853899698501571402653359427138;
+        q = (q * x >> 96) +      909429971244387300277376558375;
+        //emit log_named_int("q", q);
+        assembly {
+            // Div in assembly because solidity adds a zero check despite the `unchecked`.
+            // The q polynomial is known not to have zeros in the domain. (All roots are complex)
+            // No scaling required because p is already 2**96 too large.
+            r := sdiv(p, q)
+        }
+        
+        // Multiply by scale factor
+        r = (r * 439668470185123797622540459591) >> 96;
+
+        // Add back powers of two
+        // r += k * ln(2) * 1e18
+        r += 54916777467707473351141471128 * k;
+
+        // Convert back to 1e18 basis
+        r = (r * 5**18) >> 78;
+    }}
 
     /*//////////////////////////////////////////////////////////////
                     LOW LEVEL FIXED POINT OPERATIONS
