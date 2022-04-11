@@ -39,7 +39,7 @@ library FixedPointMathLib {
     // @returns Approximately ln(x / 1e18) * 1e18 if x is strictly positive,
     //   reverts with `LnNegativeUndefined()` if x is negative, and with
     //   `Overflow()` if x is zero.
-    // Consumes about 698 gas.
+    // Consumes about 670 gas.
     function lnWad(int256 x) internal returns (int256 r) {
         unchecked {
             if (x < 1) {
@@ -55,11 +55,8 @@ library FixedPointMathLib {
             // Reduce range of x to (1, 2) * 2**96
             // ln(2^k * x) = k * ln(2) + ln(x)
             int256 k = int256(BitwiseLib.ilog2(uint256(x))) - 96;
-            if (k > 0) {
-                x >>= uint256(k);
-            } else {
-                x <<= uint256(-k);
-            }
+            x <<= uint256(159 - k);
+            x = int256(uint256(x) >> 159);
 
             // Evaluate using a (8, 8)-term rational approximation
             // p is made monic, we will multiply by a scale factor later
