@@ -3,7 +3,6 @@ pragma solidity >=0.8.0;
 
 /// @notice Bitwise library with operations for bit strings and integers.
 library BitwiseLib {
-
     // Integer log2
     // Closely related to count-leading-zeros.
     // See <https://en.wikipedia.org/wiki/Find_first_set>
