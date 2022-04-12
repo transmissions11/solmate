@@ -5,7 +5,6 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
-import {ERC20User} from "./utils/users/ERC20User.sol";
 
 contract ERC20Test is DSTestPlus {
     MockERC20 token;
@@ -55,34 +54,36 @@ contract ERC20Test is DSTestPlus {
     }
 
     function testTransferFrom() public {
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), 1e18);
+        token.mint(from, 1e18);
 
-        from.approve(address(this), 1e18);
+        hevm.prank(from);
+        token.approve(address(this), 1e18);
 
-        assertTrue(token.transferFrom(address(from), address(0xBEEF), 1e18));
+        assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
         assertEq(token.totalSupply(), 1e18);
 
-        assertEq(token.allowance(address(from), address(this)), 0);
+        assertEq(token.allowance(from, address(this)), 0);
 
-        assertEq(token.balanceOf(address(from)), 0);
+        assertEq(token.balanceOf(from), 0);
         assertEq(token.balanceOf(address(0xBEEF)), 1e18);
     }
 
     function testInfiniteApproveTransferFrom() public {
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), 1e18);
+        token.mint(from, 1e18);
 
-        from.approve(address(this), type(uint256).max);
+        hevm.prank(from);
+        token.approve(address(this), type(uint256).max);
 
-        assertTrue(token.transferFrom(address(from), address(0xBEEF), 1e18));
+        assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
         assertEq(token.totalSupply(), 1e18);
 
-        assertEq(token.allowance(address(from), address(this)), type(uint256).max);
+        assertEq(token.allowance(from, address(this)), type(uint256).max);
 
-        assertEq(token.balanceOf(address(from)), 0);
+        assertEq(token.balanceOf(from), 0);
         assertEq(token.balanceOf(address(0xBEEF)), 1e18);
     }
 
@@ -113,19 +114,25 @@ contract ERC20Test is DSTestPlus {
     }
 
     function testFailTransferFromInsufficientAllowance() public {
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), 1e18);
-        from.approve(address(this), 0.9e18);
-        token.transferFrom(address(from), address(0xBEEF), 1e18);
+        token.mint(from, 1e18);
+
+        hevm.prank(from);
+        token.approve(address(this), 0.9e18);
+
+        token.transferFrom(from, address(0xBEEF), 1e18);
     }
 
     function testFailTransferFromInsufficientBalance() public {
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), 0.9e18);
-        from.approve(address(this), 1e18);
-        token.transferFrom(address(from), address(0xBEEF), 1e18);
+        token.mint(from, 0.9e18);
+
+        hevm.prank(from);
+        token.approve(address(this), 1e18);
+
+        token.transferFrom(from, address(0xBEEF), 1e18);
     }
 
     function testFailPermitBadNonce() public {
@@ -224,7 +231,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 burnAmount
     ) public {
-        burnAmount = bound(burnAmount, 0, mintAmount);
+        hevm.assume(burnAmount < mintAmount);
 
         token.mint(from, mintAmount);
         token.burn(from, burnAmount);
@@ -258,24 +265,25 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        amount = bound(amount, 0, approval);
+        hevm.assume(amount < approval);
 
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), amount);
+        token.mint(from, amount);
 
-        from.approve(address(this), approval);
+        hevm.prank(from);
+        token.approve(address(this), approval);
 
-        assertTrue(token.transferFrom(address(from), to, amount));
+        assertTrue(token.transferFrom(from, to, amount));
         assertEq(token.totalSupply(), amount);
 
-        uint256 app = address(from) == address(this) || approval == type(uint256).max ? approval : approval - amount;
-        assertEq(token.allowance(address(from), address(this)), app);
+        uint256 app = from == address(this) || approval == type(uint256).max ? approval : approval - amount;
+        assertEq(token.allowance(from, address(this)), app);
 
-        if (address(from) == to) {
-            assertEq(token.balanceOf(address(from)), amount);
+        if (from == to) {
+            assertEq(token.balanceOf(from), amount);
         } else {
-            assertEq(token.balanceOf(address(from)), 0);
+            assertEq(token.balanceOf(from), 0);
             assertEq(token.balanceOf(to), amount);
         }
     }
@@ -314,7 +322,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 burnAmount
     ) public {
-        burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
+        hevm.assume(burnAmount >= mintAmount + 1 && burnAmount < type(uint256).max);
 
         token.mint(to, mintAmount);
         token.burn(to, burnAmount);
@@ -325,7 +333,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 sendAmount
     ) public {
-        sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
+        hevm.assume(sendAmount >= mintAmount + 1 && sendAmount < type(uint256).max);
 
         token.mint(address(this), mintAmount);
         token.transfer(to, sendAmount);
@@ -336,13 +344,16 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        amount = bound(amount, approval + 1, type(uint256).max);
+        hevm.assume(amount >= approval + 1 && amount < type(uint256).max);
 
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), amount);
-        from.approve(address(this), approval);
-        token.transferFrom(address(from), to, amount);
+        token.mint(from, amount);
+
+        hevm.prank(from);
+        token.approve(address(this), approval);
+
+        token.transferFrom(from, to, amount);
     }
 
     function testFailTransferFromInsufficientBalance(
@@ -350,13 +361,16 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 sendAmount
     ) public {
-        sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
+        hevm.assume(sendAmount >= mintAmount + 1 && sendAmount < type(uint256).max);
 
-        ERC20User from = new ERC20User(token);
+        address from = address(0xABCD);
 
-        token.mint(address(from), mintAmount);
-        from.approve(address(this), sendAmount);
-        token.transferFrom(address(from), to, sendAmount);
+        token.mint(from, mintAmount);
+
+        hevm.prank(from);
+        token.approve(address(this), sendAmount);
+
+        token.transferFrom(from, to, sendAmount);
     }
 
     function testFailPermitBadNonce(
@@ -417,7 +431,7 @@ contract ERC20Test is DSTestPlus {
         uint256 amount,
         uint256 deadline
     ) public {
-        deadline = bound(deadline, 0, block.timestamp - 1);
+        hevm.assume(deadline < block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
