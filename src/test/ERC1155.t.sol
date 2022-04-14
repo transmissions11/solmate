@@ -946,11 +946,11 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         uint256 burnAmount
     ) public {
-        hevm.assume(burnAmount < mintAmount);
-
         if (to == address(0)) to = address(0xBEEF);
 
         if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+
+        burnAmount = bound(burnAmount, 0, mintAmount);
 
         token.mint(to, id, mintAmount, mintData);
 
@@ -1014,11 +1014,11 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         address to,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount < mintAmount);
-
         if (to == address(0)) to = address(0xBEEF);
 
         if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         address from = address(0xABCD);
 
@@ -1040,11 +1040,11 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         uint256 transferAmount,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount < mintAmount);
-
         ERC1155Recipient to = new ERC1155Recipient();
 
         address from = address(0xABCD);
+
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         token.mint(from, id, mintAmount, mintData);
 
@@ -1070,11 +1070,11 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         address to,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount < mintAmount);
-
         if (to == address(0)) to = address(0xBEEF);
 
         if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         token.mint(address(this), id, mintAmount, mintData);
 
@@ -1263,7 +1263,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         uint256 burnAmount,
         bytes memory mintData
     ) public {
-        hevm.assume(burnAmount < type(uint256).max && burnAmount >= mintAmount + 1);
+        burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(to, id, mintAmount, mintData);
         token.burn(to, id, burnAmount);
@@ -1277,8 +1277,9 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount < type(uint256).max && transferAmount >= mintAmount + 1);
         address from = address(0xABCD);
+
+        transferAmount = bound(transferAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(from, id, mintAmount, mintData);
 
@@ -1296,7 +1297,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount < type(uint256).max && transferAmount >= mintAmount + 1);
+        transferAmount = bound(transferAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(address(this), id, mintAmount, mintData);
         token.safeTransferFrom(address(this), to, id, transferAmount, transferData);
@@ -1309,7 +1310,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount >= mintAmount + 1);
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         token.mint(address(this), id, mintAmount, mintData);
         token.safeTransferFrom(address(this), address(0), id, transferAmount, transferData);
@@ -1322,7 +1323,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount >= mintAmount + 1);
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         token.mint(address(this), id, mintAmount, mintData);
         token.safeTransferFrom(address(this), address(new NonERC1155Recipient()), id, transferAmount, transferData);
@@ -1335,7 +1336,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount >= mintAmount + 1);
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         token.mint(address(this), id, mintAmount, mintData);
         token.safeTransferFrom(
@@ -1354,7 +1355,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        hevm.assume(transferAmount >= mintAmount + 1);
+        transferAmount = bound(transferAmount, 0, mintAmount);
 
         token.mint(address(this), id, mintAmount, mintData);
         token.safeTransferFrom(

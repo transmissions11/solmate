@@ -231,7 +231,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 burnAmount
     ) public {
-        hevm.assume(burnAmount < mintAmount);
+        burnAmount = bound(burnAmount, 0, mintAmount);
 
         token.mint(from, mintAmount);
         token.burn(from, burnAmount);
@@ -265,7 +265,7 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        hevm.assume(amount < approval);
+        amount = bound(amount, 0, approval);
 
         address from = address(0xABCD);
 
@@ -322,7 +322,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 burnAmount
     ) public {
-        hevm.assume(burnAmount >= mintAmount + 1 && burnAmount < type(uint256).max);
+        burnAmount = bound(burnAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(to, mintAmount);
         token.burn(to, burnAmount);
@@ -333,7 +333,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 sendAmount
     ) public {
-        hevm.assume(sendAmount >= mintAmount + 1 && sendAmount < type(uint256).max);
+        sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         token.mint(address(this), mintAmount);
         token.transfer(to, sendAmount);
@@ -344,7 +344,7 @@ contract ERC20Test is DSTestPlus {
         uint256 approval,
         uint256 amount
     ) public {
-        hevm.assume(amount >= approval + 1 && amount < type(uint256).max);
+        amount = bound(amount, approval + 1, type(uint256).max);
 
         address from = address(0xABCD);
 
@@ -361,7 +361,7 @@ contract ERC20Test is DSTestPlus {
         uint256 mintAmount,
         uint256 sendAmount
     ) public {
-        hevm.assume(sendAmount >= mintAmount + 1 && sendAmount < type(uint256).max);
+        sendAmount = bound(sendAmount, mintAmount + 1, type(uint256).max);
 
         address from = address(0xABCD);
 
@@ -431,7 +431,7 @@ contract ERC20Test is DSTestPlus {
         uint256 amount,
         uint256 deadline
     ) public {
-        hevm.assume(deadline < block.timestamp - 1);
+        deadline = bound(deadline, 0, block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
         address owner = hevm.addr(privateKey);
