@@ -237,9 +237,7 @@ abstract contract ERC1155B {
             for (uint256 i = 0; i < idsLength; ++i) {
                 id = ids[i];
 
-                address owner = ownerOf[id];
-
-                require(owner == from, "WRONG_FROM");
+                require(ownerOf[id] == from, "WRONG_FROM");
 
                 ownerOf[id] = address(0);
 
