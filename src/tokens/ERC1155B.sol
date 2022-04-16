@@ -42,7 +42,7 @@ abstract contract ERC1155B {
 
     mapping(uint256 => address) public ownerOf;
 
-    function balanceOf(address owner, uint256 id) public view returns (uint256 bal) {
+    function balanceOf(address owner, uint256 id) public view virtual returns (uint256 bal) {
         address idOwner = ownerOf[id];
 
         assembly {
