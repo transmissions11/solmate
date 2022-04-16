@@ -1,4 +1,6 @@
 [default]
+solc = "0.8.10"
+bytecode_hash = "none"
 optimizer_runs = 1000000
 
 [intense]
