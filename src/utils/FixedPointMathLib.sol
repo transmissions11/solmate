@@ -198,7 +198,7 @@ library FixedPointMathLib {
             // Correctness can be checked exhaustively for x < 256, so we assume y >= 256.
             // Then z*sqrt(y) is within sqrt(257)/sqrt(256) of x, or about 20bps.
 
-            // The estimate sqrt(x) = (181/1024) * (x+1) is off by a factor of ~2.63 both when x=1
+            // The estimate sqrt(x) = (181/1024) * (x+1) is off by a factor of ~2.83 both when x=1
             // and when x = 256 or 1/256. In the worst case, this needs seven Babylonian iterations.
             z := shr(18, mul(z, add(y, 65536))) // A multiply is saved from the initial z := 181
 
