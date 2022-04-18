@@ -201,7 +201,7 @@ library FixedPointMathLib {
             // The estimate sqrt(x) = 0.75 * 0.25 * (x+1) is off by a factor of 2.67 when x=1
             // and off by a factor of 3 when x = 256 or 1/256.
             // In the worst case, this needs seven Babylonian iterations.
-            z := shr(12, mul(z, add(y, 65536)))  // A multiply by 3 is saved from the initial z := 3
+            z := shr(12, mul(z, add(y, 65536))) // A multiply by 3 is saved from the initial z := 3
 
             // Run the Babylonian method seven times. This should be enough given initial estimate.
             // Possibly with a quadratic/cubic polynomial above we could get 4-6.
