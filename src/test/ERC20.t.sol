@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
+import "forge-std/Test.sol";
 import {TestPlus} from "./utils/TestPlus.sol";
 import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
@@ -8,6 +9,9 @@ import {MockERC20} from "./utils/mocks/MockERC20.sol";
 
 contract ERC20Test is TestPlus {
     MockERC20 token;
+
+    event Transfer(address indexed from, address indexed to, uint256 amount);
+    event Approval(address indexed owner, address indexed spender, uint256 amount);
 
     bytes32 constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
@@ -23,6 +27,8 @@ contract ERC20Test is TestPlus {
     }
 
     function testMint() public {
+        vm.expectEmit(true, true, true, true);
+        emit Transfer(address(0), address(0xBEEF), 1e18);
         token.mint(address(0xBEEF), 1e18);
 
         assertEq(token.totalSupply(), 1e18);
@@ -31,6 +37,9 @@ contract ERC20Test is TestPlus {
 
     function testBurn() public {
         token.mint(address(0xBEEF), 1e18);
+
+        vm.expectEmit(true, true, true, true);
+        emit Transfer(address(0xBEEF), address(0), 0.9e18);
         token.burn(address(0xBEEF), 0.9e18);
 
         assertEq(token.totalSupply(), 1e18 - 0.9e18);
@@ -38,6 +47,8 @@ contract ERC20Test is TestPlus {
     }
 
     function testApprove() public {
+        vm.expectEmit(true, true, true, true);
+        emit Approval(address(this), address(0xBEEF), 1e18);
         assertTrue(token.approve(address(0xBEEF), 1e18));
 
         assertEq(token.allowance(address(this), address(0xBEEF)), 1e18);
@@ -46,6 +57,8 @@ contract ERC20Test is TestPlus {
     function testTransfer() public {
         token.mint(address(this), 1e18);
 
+        vm.expectEmit(true, true, true, true);
+        emit Transfer(address(this), address(0xBEEF), 1e18);
         assertTrue(token.transfer(address(0xBEEF), 1e18));
         assertEq(token.totalSupply(), 1e18);
 
@@ -61,6 +74,8 @@ contract ERC20Test is TestPlus {
         hoax(from);
         token.approve(address(this), 1e18);
 
+        vm.expectEmit(true, true, true, true);
+        emit Transfer(from, address(0xBEEF), 1e18);
         assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
         assertEq(token.totalSupply(), 1e18);
 
@@ -76,8 +91,12 @@ contract ERC20Test is TestPlus {
         token.mint(from, 1e18);
 
         hoax(from);
+        vm.expectEmit(true, true, true, true);
+        emit Approval(from, address(this), type(uint256).max);
         token.approve(address(this), type(uint256).max);
 
+        vm.expectEmit(true, true, true, true);
+        emit Transfer(from, address(0xBEEF), 1e18);
         assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
         assertEq(token.totalSupply(), 1e18);
 
@@ -102,18 +121,21 @@ contract ERC20Test is TestPlus {
             )
         );
 
+        vm.expectEmit(true, true, true, true);
+        emit Approval(owner, address(0xCAFE), 1e18);
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
 
         assertEq(token.allowance(owner, address(0xCAFE)), 1e18);
         assertEq(token.nonces(owner), 1);
     }
 
-    function testFailTransferInsufficientBalance() public {
+    function testTransferInsufficientBalance() public {
         token.mint(address(this), 0.9e18);
+        vm.expectRevert(stdError.arithmeticError);
         token.transfer(address(0xBEEF), 1e18);
     }
 
-    function testFailTransferFromInsufficientAllowance() public {
+    function testTransferFromInsufficientAllowance() public {
         address from = address(0xABCD);
 
         token.mint(from, 1e18);
@@ -121,10 +143,11 @@ contract ERC20Test is TestPlus {
         hoax(from);
         token.approve(address(this), 0.9e18);
 
+        vm.expectRevert(stdError.arithmeticError);
         token.transferFrom(from, address(0xBEEF), 1e18);
     }
 
-    function testFailTransferFromInsufficientBalance() public {
+    function testTransferFromInsufficientBalance() public {
         address from = address(0xABCD);
 
         token.mint(from, 0.9e18);
@@ -132,10 +155,11 @@ contract ERC20Test is TestPlus {
         hoax(from);
         token.approve(address(this), 1e18);
 
+        vm.expectRevert(stdError.arithmeticError);
         token.transferFrom(from, address(0xBEEF), 1e18);
     }
 
-    function testFailPermitBadNonce() public {
+    function testPermitBadNonce() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
@@ -150,10 +174,11 @@ contract ERC20Test is TestPlus {
             )
         );
 
+        vm.expectRevert("INVALID_SIGNER");
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
-    function testFailPermitBadDeadline() public {
+    function testPermitBadDeadline() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
@@ -168,19 +193,22 @@ contract ERC20Test is TestPlus {
             )
         );
 
+        vm.expectRevert("INVALID_SIGNER");
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp + 1, v, r, s);
     }
 
-    function testFailPermitPastDeadline() public {
+    function testPermitPastDeadline() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
+        bytes32 domain_separator = token.DOMAIN_SEPARATOR();
+        vm.expectRevert(stdError.arithmeticError);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
                     "\x19\x01",
-                    token.DOMAIN_SEPARATOR(),
+                    domain_separator,
                     keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp - 1))
                 )
             )
@@ -189,7 +217,7 @@ contract ERC20Test is TestPlus {
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp - 1, v, r, s);
     }
 
-    function testFailPermitReplay() public {
+    function testPermitReplay() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
 
@@ -205,6 +233,7 @@ contract ERC20Test is TestPlus {
         );
 
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
+        vm.expectRevert("INVALID_SIGNER");
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
