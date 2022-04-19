@@ -27,17 +27,19 @@ contract CREATE3Test is TestPlus {
         assertEq(deployed.decimals(), 18);
     }
 
-    function testFailDoubleDeploySameBytecode() public {
+    function testDoubleDeploySameBytecode() public {
         bytes32 salt = keccak256(bytes("Salty..."));
 
         CREATE3.deploy(salt, type(MockAuthChild).creationCode, 0);
+        vm.expectRevert("DEPLOYMENT_FAILED");
         CREATE3.deploy(salt, type(MockAuthChild).creationCode, 0);
     }
 
-    function testFailDoubleDeployDifferentBytecode() public {
+    function testDoubleDeployDifferentBytecode() public {
         bytes32 salt = keccak256(bytes("and sweet!"));
 
         CREATE3.deploy(salt, type(WETH).creationCode, 0);
+        vm.expectRevert("DEPLOYMENT_FAILED");
         CREATE3.deploy(salt, type(MockAuthChild).creationCode, 0);
     }
 
