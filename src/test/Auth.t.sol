@@ -60,46 +60,55 @@ contract AuthTest is TestPlus {
         mockAuthChild.setAuthority(new MockAuthority(true));
     }
 
-    function testFailSetOwnerAsNonOwner() public {
+    function testSetOwnerAsNonOwner() public {
         mockAuthChild.setOwner(address(0));
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.setOwner(address(0xBEEF));
     }
 
-    function testFailSetAuthorityAsNonOwner() public {
+    function testSetAuthorityAsNonOwner() public {
         mockAuthChild.setOwner(address(0));
+        // Fails since MockAuthChild uses Authority(address(0)) which can't call `canCall` function
+        vm.expectRevert();
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
-    function testFailCallFunctionAsNonOwner() public {
+    function testCallFunctionAsNonOwner() public {
         mockAuthChild.setOwner(address(0));
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.updateFlag();
     }
 
-    function testFailSetOwnerWithRestrictiveAuthority() public {
+    function testSetOwnerWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.setOwner(address(this));
     }
 
-    function testFailSetAuthorityWithRestrictiveAuthority() public {
+    function testSetAuthorityWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
+        vm.expectRevert();
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
-    function testFailCallFunctionWithRestrictiveAuthority() public {
+    function testCallFunctionWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.updateFlag();
     }
 
-    function testFailSetOwnerAsOwnerWithOutOfOrderAuthority() public {
+    function testSetOwnerAsOwnerWithOutOfOrderAuthority() public {
         mockAuthChild.setAuthority(new OutOfOrderAuthority());
+        vm.expectRevert("OUT_OF_ORDER");
         mockAuthChild.setOwner(address(0));
     }
 
-    function testFailCallFunctionAsOwnerWithOutOfOrderAuthority() public {
+    function testCallFunctionAsOwnerWithOutOfOrderAuthority() public {
         mockAuthChild.setAuthority(new OutOfOrderAuthority());
+        vm.expectRevert("OUT_OF_ORDER");
         mockAuthChild.updateFlag();
     }
 
@@ -137,55 +146,63 @@ contract AuthTest is TestPlus {
         mockAuthChild.updateFlag();
     }
 
-    function testFailSetOwnerAsNonOwner(address deadOwner, address newOwner) public {
+    function testSetOwnerAsNonOwner(address deadOwner, address newOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setOwner(deadOwner);
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.setOwner(newOwner);
     }
 
-    function testFailSetAuthorityAsNonOwner(address deadOwner, Authority newAuthority) public {
+    function testSetAuthorityAsNonOwner(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setOwner(deadOwner);
+        // Fails since MockAuthChild uses Authority(address(0)) which can't call `canCall` function
+        vm.expectRevert();
         mockAuthChild.setAuthority(newAuthority);
     }
 
-    function testFailCallFunctionAsNonOwner(address deadOwner) public {
+    function testCallFunctionAsNonOwner(address deadOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setOwner(deadOwner);
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.updateFlag();
     }
 
-    function testFailSetOwnerWithRestrictiveAuthority(address deadOwner, address newOwner) public {
+    function testSetOwnerWithRestrictiveAuthority(address deadOwner, address newOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.setOwner(newOwner);
     }
 
-    function testFailSetAuthorityWithRestrictiveAuthority(address deadOwner, Authority newAuthority) public {
+    function testSetAuthorityWithRestrictiveAuthority(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
+        vm.expectRevert();
         mockAuthChild.setAuthority(newAuthority);
     }
 
-    function testFailCallFunctionWithRestrictiveAuthority(address deadOwner) public {
+    function testCallFunctionWithRestrictiveAuthority(address deadOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.updateFlag();
     }
 
-    function testFailSetOwnerAsOwnerWithOutOfOrderAuthority(address deadOwner) public {
+    function testSetOwnerAsOwnerWithOutOfOrderAuthority(address deadOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new OutOfOrderAuthority());
+        vm.expectRevert("OUT_OF_ORDER");
         mockAuthChild.setOwner(deadOwner);
     }
 }
