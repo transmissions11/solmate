@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {TestPlus} from "./utils/TestPlus.sol";
 import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC721} from "./utils/mocks/MockERC721.sol";
@@ -53,7 +53,7 @@ contract WrongReturnDataERC721Recipient is ERC721TokenReceiver {
 
 contract NonERC721Recipient {}
 
-contract ERC721Test is DSTestPlus {
+contract ERC721Test is TestPlus {
     MockERC721 token;
 
     function setUp() public {
@@ -78,7 +78,7 @@ contract ERC721Test is DSTestPlus {
 
         assertEq(token.balanceOf(address(0xBEEF)), 0);
 
-        hevm.expectRevert("NOT_MINTED");
+        vm.expectRevert("NOT_MINTED");
         token.ownerOf(1337);
     }
 
@@ -100,7 +100,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.getApproved(1337), address(0));
 
-        hevm.expectRevert("NOT_MINTED");
+        vm.expectRevert("NOT_MINTED");
         token.ownerOf(1337);
     }
 
@@ -115,7 +115,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), 1337);
 
         token.transferFrom(from, address(0xBEEF), 1337);
@@ -142,7 +142,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.transferFrom(from, address(0xBEEF), 1337);
@@ -158,7 +158,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(0xBEEF), 1337);
@@ -175,7 +175,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), 1337);
@@ -197,7 +197,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, 1337);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), 1337, "testing 123");
@@ -392,7 +392,7 @@ contract ERC721Test is DSTestPlus {
 
         assertEq(token.balanceOf(to), 0);
 
-        hevm.expectRevert("NOT_MINTED");
+        vm.expectRevert("NOT_MINTED");
         token.ownerOf(id);
     }
 
@@ -416,7 +416,7 @@ contract ERC721Test is DSTestPlus {
         assertEq(token.balanceOf(address(this)), 0);
         assertEq(token.getApproved(id), address(0));
 
-        hevm.expectRevert("NOT_MINTED");
+        vm.expectRevert("NOT_MINTED");
         token.ownerOf(id);
     }
 
@@ -433,7 +433,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), id);
 
         token.transferFrom(from, to, id);
@@ -464,7 +464,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.transferFrom(from, to, id);
@@ -484,7 +484,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, to, id);
@@ -501,7 +501,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), id);
@@ -523,7 +523,7 @@ contract ERC721Test is DSTestPlus {
 
         token.mint(from, id);
 
-        hevm.prank(from);
+        hoax(from);
         token.setApprovalForAll(address(this), true);
 
         token.safeTransferFrom(from, address(recipient), id, data);

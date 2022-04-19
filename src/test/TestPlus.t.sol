@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {TestPlus} from "./utils/TestPlus.sol";
 
-contract DSTestPlusTest is DSTestPlus {
+contract TestPlusTest is TestPlus {
     function testBound() public {
         assertEq(bound(5, 0, 4), 0);
         assertEq(bound(0, 69, 69), 69);

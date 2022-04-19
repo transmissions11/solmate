@@ -1,15 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {DSTest} from "ds-test/test.sol";
-
-import {Hevm} from "./Hevm.sol";
+import "forge-std/Test.sol";
 
 /// @notice Extended testing framework for DappTools projects.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/test/utils/DSTestPlus.sol)
-contract DSTestPlus is DSTest {
-    Hevm internal constant hevm = Hevm(HEVM_ADDRESS);
-
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/test/utils/TestPlus.sol)
+contract TestPlus is Test {
     address internal constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
     string private checkpointLabel;

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {TestPlus} from "./utils/TestPlus.sol";
 
 import {SSTORE2} from "../utils/SSTORE2.sol";
 
-contract SSTORE2Test is DSTestPlus {
+contract SSTORE2Test is TestPlus {
     function testWriteRead() public {
         bytes memory testBytes = abi.encode("this is a test");
 

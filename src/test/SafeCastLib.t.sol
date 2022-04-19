@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {TestPlus} from "./utils/TestPlus.sol";
 
 import {SafeCastLib} from "../utils/SafeCastLib.sol";
 
-contract SafeCastLibTest is DSTestPlus {
+contract SafeCastLibTest is TestPlus {
     function testSafeCastTo248() public {
         assertEq(SafeCastLib.safeCastTo248(2.5e45), 2.5e45);
         assertEq(SafeCastLib.safeCastTo248(2.5e27), 2.5e27);

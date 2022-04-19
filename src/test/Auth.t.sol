@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 import {MockAuthority} from "./utils/mocks/MockAuthority.sol";
-
+import {TestPlus} from "./utils/TestPlus.sol";
 import {Authority} from "../auth/Auth.sol";
 
 contract OutOfOrderAuthority is Authority {
@@ -17,7 +16,7 @@ contract OutOfOrderAuthority is Authority {
     }
 }
 
-contract AuthTest is DSTestPlus {
+contract AuthTest is TestPlus {
     MockAuthChild mockAuthChild;
 
     function setUp() public {

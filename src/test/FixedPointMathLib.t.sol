@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {TestPlus} from "./utils/TestPlus.sol";
 
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
 
-contract FixedPointMathLibTest is DSTestPlus {
+contract FixedPointMathLibTest is TestPlus {
     function testMulWadDown() public {
         assertEq(FixedPointMathLib.mulWadDown(2.5e18, 0.5e18), 1.25e18);
         assertEq(FixedPointMathLib.mulWadDown(3e18, 1e18), 3e18);

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {TestPlus} from "./utils/TestPlus.sol";
 import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 
-contract ERC20Test is DSTestPlus {
+contract ERC20Test is TestPlus {
     MockERC20 token;
 
     bytes32 constant PERMIT_TYPEHASH =
@@ -58,7 +58,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 1e18);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), 1e18);
 
         assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
@@ -75,7 +75,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 1e18);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), type(uint256).max);
 
         assertTrue(token.transferFrom(from, address(0xBEEF), 1e18));
@@ -89,9 +89,9 @@ contract ERC20Test is DSTestPlus {
 
     function testPermit() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -118,7 +118,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 1e18);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), 0.9e18);
 
         token.transferFrom(from, address(0xBEEF), 1e18);
@@ -129,7 +129,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, 0.9e18);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), 1e18);
 
         token.transferFrom(from, address(0xBEEF), 1e18);
@@ -137,9 +137,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitBadNonce() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -155,9 +155,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitBadDeadline() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -173,9 +173,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitPastDeadline() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -191,9 +191,9 @@ contract ERC20Test is DSTestPlus {
 
     function testFailPermitReplay() public {
         uint256 privateKey = 0xBEEF;
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -271,7 +271,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, amount);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), approval);
 
         assertTrue(token.transferFrom(from, to, amount));
@@ -298,9 +298,9 @@ contract ERC20Test is DSTestPlus {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -350,7 +350,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, amount);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), approval);
 
         token.transferFrom(from, to, amount);
@@ -367,7 +367,7 @@ contract ERC20Test is DSTestPlus {
 
         token.mint(from, mintAmount);
 
-        hevm.prank(from);
+        hoax(from);
         token.approve(address(this), sendAmount);
 
         token.transferFrom(from, to, sendAmount);
@@ -384,9 +384,9 @@ contract ERC20Test is DSTestPlus {
         if (privateKey == 0) privateKey = 1;
         if (nonce == 0) nonce = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -409,9 +409,9 @@ contract ERC20Test is DSTestPlus {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -434,9 +434,9 @@ contract ERC20Test is DSTestPlus {
         deadline = bound(deadline, 0, block.timestamp - 1);
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -459,9 +459,9 @@ contract ERC20Test is DSTestPlus {
         if (deadline < block.timestamp) deadline = block.timestamp;
         if (privateKey == 0) privateKey = 1;
 
-        address owner = hevm.addr(privateKey);
+        address owner = vm.addr(privateKey);
 
-        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(
             privateKey,
             keccak256(
                 abi.encodePacked(
@@ -477,7 +477,7 @@ contract ERC20Test is DSTestPlus {
     }
 }
 
-contract ERC20Invariants is DSTestPlus, DSInvariantTest {
+contract ERC20Invariants is TestPlus, DSInvariantTest {
     BalanceSum balanceSum;
     MockERC20 token;
 
