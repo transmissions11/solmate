@@ -198,12 +198,15 @@ library FixedPointMathLib {
             // Correctness can be checked exhaustively for x < 256, so we assume y >= 256.
             // Then z*sqrt(y) is within sqrt(257)/sqrt(256) of sqrt(x), or about 20bps.
 
-            // The estimate sqrt(x) = (181/1024) * (x+1) is off by a factor of ~2.83 both when x=1
-            // and when x = 256 or 1/256. In the worst case, this needs seven Babylonian iterations.
+            // For s in the range [1/256, 256], the estimate f(s) = (181/1024) * (s+1)
+            // is in the range (1/2.84 * sqrt(s), 2.84 * sqrt(s)), with largest error when s=1
+            // and when s = 256 or 1/256. Since y is in [256, 256*2^16), let a = y/65536, so
+            // that a is in [1/256, 256). Then we can estimate sqrt(y) as
+            // sqrt(65536) * 181/1024 * (a + 1) = 181/4 * (y + 65536)/65536 = 181 * (y + 65536)/2^18
             // There is no overflow risk here since y < 2^136 after the first branch above.
             z := shr(18, mul(z, add(y, 65536))) // A multiply is saved from the initial z := 181
 
-            // Run the Babylonian method seven times. This should be enough given initial estimate.
+            // Given the worst case multiplicative error of 2.84 above, 7 iterations should be enough.
             // Possibly with a quadratic/cubic polynomial above we could get 4-6.
             z := shr(1, add(z, div(x, z)))
             z := shr(1, add(z, div(x, z)))
@@ -216,8 +219,7 @@ library FixedPointMathLib {
             // See https://en.wikipedia.org/wiki/Integer_square_root#Using_only_integer_division.
             // If x+1 is a perfect square, the Babylonian method cycles between
             // floor(sqrt(x)) and ceil(sqrt(x)). This check ensures we return floor.
-            // The solmate implementation assigns zRoundDown := div(x, z) first, but
-            // since this case is rare, we choose to save gas on the assignment and
+            // Since this case is rare, we choose to save gas on the assignment and
             // repeat division in the rare case.
             // If you don't care whether floor or ceil is returned, you can skip this.
             if lt(div(x, z), z) {
