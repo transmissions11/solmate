@@ -196,10 +196,11 @@ library FixedPointMathLib {
             // Now, z*z*y <= x < z*z*(y+1), and y <= 2^(16+8),
             // and either y >= 256, or x < 256.
             // Correctness can be checked exhaustively for x < 256, so we assume y >= 256.
-            // Then z*sqrt(y) is within sqrt(257)/sqrt(256) of x, or about 20bps.
+            // Then z*sqrt(y) is within sqrt(257)/sqrt(256) of sqrt(x), or about 20bps.
 
             // The estimate sqrt(x) = (181/1024) * (x+1) is off by a factor of ~2.83 both when x=1
             // and when x = 256 or 1/256. In the worst case, this needs seven Babylonian iterations.
+            // There is no overflow risk here since y < 2^136 after the first branch above.
             z := shr(18, mul(z, add(y, 65536))) // A multiply is saved from the initial z := 181
 
             // Run the Babylonian method seven times. This should be enough given initial estimate.
