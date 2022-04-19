@@ -13,7 +13,8 @@ contract TestPlusTest is TestPlus {
         assertEq(bound(9999, 1337, 6666), 4669);
     }
 
-    function testFailBoundMinBiggerThanMax() public {
+    function testBoundMinBiggerThanMax() public {
+        vm.expectRevert("MAX_LESS_THAN_MIN");
         bound(5, 100, 10);
     }
 
@@ -35,7 +36,7 @@ contract TestPlusTest is TestPlus {
         assertLe(bounded, max);
     }
 
-    function testFailBoundMinBiggerThanMax(
+    function testBoundMinBiggerThanMax(
         uint256 num,
         uint256 min,
         uint256 max
@@ -48,6 +49,7 @@ contract TestPlusTest is TestPlus {
 
         if (max > min) (min, max) = (max, min);
 
+        vm.expectRevert("MAX_LESS_THAN_MIN");
         bound(num, min, max);
     }
 }
