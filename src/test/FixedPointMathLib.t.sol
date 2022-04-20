@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
+import "forge-std/Test.sol";
+
 import {TestPlus} from "./utils/TestPlus.sol";
 
 import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
@@ -40,7 +42,8 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.divWadDown(0, 1e18), 0);
     }
 
-    function testFailDivWadDownZeroDenominator() public pure {
+    function testDivWadDownZeroDenominator() public {
+        vm.expectRevert();
         FixedPointMathLib.divWadDown(1e18, 0);
     }
 
@@ -54,7 +57,8 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.divWadUp(0, 1e18), 0);
     }
 
-    function testFailDivWadUpZeroDenominator() public pure {
+    function testDivWadUpZeroDenominator() public {
+        vm.expectRevert();
         FixedPointMathLib.divWadUp(1e18, 0);
     }
 
@@ -79,7 +83,8 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.mulDivDown(0, 0, 1e18), 0);
     }
 
-    function testFailMulDivDownZeroDenominator() public pure {
+    function testMulDivDownZeroDenominator() public {
+        vm.expectRevert();
         FixedPointMathLib.mulDivDown(1e18, 1e18, 0);
     }
 
@@ -104,7 +109,8 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.mulDivUp(0, 0, 1e18), 0);
     }
 
-    function testFailMulDivUpZeroDenominator() public pure {
+    function testMulDivUpZeroDenominator() public {
+        vm.expectRevert();
         FixedPointMathLib.mulDivUp(1e18, 1e18, 0);
     }
 
@@ -132,12 +138,13 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.mulWadDown(x, y), (x * y) / 1e18);
     }
 
-    function testFailMulWadDownOverflow(uint256 x, uint256 y) public pure {
+    function testMulWadDownOverflow(uint256 x, uint256 y) public {
         // Ignore cases where x * y does not overflow.
         unchecked {
-            if ((x * y) / x == y) revert();
+            if (x == 0 || (x * y) / x == y) return;
         }
 
+        vm.expectRevert();
         FixedPointMathLib.mulWadDown(x, y);
     }
 
@@ -150,12 +157,13 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.mulWadUp(x, y), x * y == 0 ? 0 : (x * y - 1) / 1e18 + 1);
     }
 
-    function testFailMulWadUpOverflow(uint256 x, uint256 y) public pure {
+    function testMulWadUpOverflow(uint256 x, uint256 y) public {
         // Ignore cases where x * y does not overflow.
         unchecked {
-            if ((x * y) / x == y) revert();
+            if (x == 0 || (x * y) / x == y) return;
         }
 
+        vm.expectRevert();
         FixedPointMathLib.mulWadUp(x, y);
     }
 
@@ -168,16 +176,18 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.divWadDown(x, y), (x * 1e18) / y);
     }
 
-    function testFailDivWadDownOverflow(uint256 x, uint256 y) public pure {
+    function testDivWadDownOverflow(uint256 x, uint256 y) public {
         // Ignore cases where x * WAD does not overflow or y is 0.
         unchecked {
-            if (y == 0 || (x * 1e18) / 1e18 == x) revert();
+            if (y == 0 || (x * 1e18) / 1e18 == x) return;
         }
 
+        vm.expectRevert();
         FixedPointMathLib.divWadDown(x, y);
     }
 
-    function testFailDivWadDownZeroDenominator(uint256 x) public pure {
+    function testDivWadDownZeroDenominator(uint256 x) public {
+        vm.expectRevert();
         FixedPointMathLib.divWadDown(x, 0);
     }
 
@@ -190,16 +200,18 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.divWadUp(x, y), x == 0 ? 0 : (x * 1e18 - 1) / y + 1);
     }
 
-    function testFailDivWadUpOverflow(uint256 x, uint256 y) public pure {
+    function testDivWadUpOverflow(uint256 x, uint256 y) public {
         // Ignore cases where x * WAD does not overflow or y is 0.
         unchecked {
-            if (y == 0 || (x * 1e18) / 1e18 == x) revert();
+            if (y == 0 || (x * 1e18) / 1e18 == x) return;
         }
 
+        vm.expectRevert();
         FixedPointMathLib.divWadUp(x, y);
     }
 
-    function testFailDivWadUpZeroDenominator(uint256 x) public pure {
+    function testDivWadUpZeroDenominator(uint256 x) public {
+        vm.expectRevert();
         FixedPointMathLib.divWadUp(x, 0);
     }
 
@@ -216,20 +228,28 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.mulDivDown(x, y, denominator), (x * y) / denominator);
     }
 
-    function testFailMulDivDownOverflow(
+    function testMulDivDownOverflow(
         uint256 x,
         uint256 y,
         uint256 denominator
-    ) public pure {
-        // Ignore cases where x * y does not overflow or denominator is 0.
+    ) public {
+        // If the denominator or x is 0, the call should revert
+        if (denominator == 0) {
+            vm.expectRevert();
+            FixedPointMathLib.mulDivDown(x, y, denominator);
+            return;
+        }
+        // Ignore cases where x * y does not overflow or x is 0.
         unchecked {
-            if (denominator == 0 || (x * y) / x == y) revert();
+            if (x == 0 || (x * y) / x == y) return;
         }
 
+        vm.expectRevert();
         FixedPointMathLib.mulDivDown(x, y, denominator);
     }
 
-    function testFailMulDivDownZeroDenominator(uint256 x, uint256 y) public pure {
+    function testMulDivDownZeroDenominator(uint256 x, uint256 y) public {
+        vm.expectRevert();
         FixedPointMathLib.mulDivDown(x, y, 0);
     }
 
@@ -246,20 +266,28 @@ contract FixedPointMathLibTest is TestPlus {
         assertEq(FixedPointMathLib.mulDivUp(x, y, denominator), x * y == 0 ? 0 : (x * y - 1) / denominator + 1);
     }
 
-    function testFailMulDivUpOverflow(
+    function testMulDivUpOverflow(
         uint256 x,
         uint256 y,
         uint256 denominator
-    ) public pure {
+    ) public {
+        // If the denominator or x is 0, the call should revert
+        if (denominator == 0) {
+            vm.expectRevert();
+            FixedPointMathLib.mulDivDown(x, y, denominator);
+            return;
+        }
         // Ignore cases where x * y does not overflow or denominator is 0.
         unchecked {
-            if (denominator == 0 || (x * y) / x == y) revert();
+            if (x == 0 || (x * y) / x == y) return;
         }
 
+        vm.expectRevert();
         FixedPointMathLib.mulDivUp(x, y, denominator);
     }
 
-    function testFailMulDivUpZeroDenominator(uint256 x, uint256 y) public pure {
+    function testMulDivUpZeroDenominator(uint256 x, uint256 y) public {
+        vm.expectRevert();
         FixedPointMathLib.mulDivUp(x, y, 0);
     }
 
