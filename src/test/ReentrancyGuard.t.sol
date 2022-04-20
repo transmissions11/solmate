@@ -38,16 +38,15 @@ contract ReentrancyGuardTest is TestPlus {
         assertEq(uint256(vm.load(address(riskyContract), 0)), 1);
     }
 
-    function testFailUnprotectedCall() public {
+    function testUnprotectedCall() public {
         riskyContract.unprotectedCall();
 
-        assertEq(riskyContract.enterTimes(), 1);
+        assertEq(riskyContract.enterTimes(), 2);
     }
 
     function testProtectedCall() public {
-        try riskyContract.protectedCall() {
-            fail("Reentrancy Guard Failed To Stop Attacker");
-        } catch {}
+        vm.expectRevert("REENTRANCY");
+        riskyContract.protectedCall();
     }
 
     function testNoReentrancy() public {
