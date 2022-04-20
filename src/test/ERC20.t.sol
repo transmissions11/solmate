@@ -71,7 +71,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, 1e18);
 
-        hoax(from);
+        vm.prank(from);
         token.approve(address(this), 1e18);
 
         vm.expectEmit(true, true, true, true);
@@ -90,7 +90,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, 1e18);
 
-        hoax(from);
+        vm.prank(from);
         vm.expectEmit(true, true, true, true);
         emit Approval(from, address(this), type(uint256).max);
         token.approve(address(this), type(uint256).max);
@@ -140,7 +140,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, 1e18);
 
-        hoax(from);
+        vm.prank(from);
         token.approve(address(this), 0.9e18);
 
         vm.expectRevert(stdError.arithmeticError);
@@ -152,7 +152,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, 0.9e18);
 
-        hoax(from);
+        vm.prank(from);
         token.approve(address(this), 1e18);
 
         vm.expectRevert(stdError.arithmeticError);
@@ -312,7 +312,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, amount);
 
-        hoax(from);
+        vm.prank(from);
         token.approve(address(this), approval);
 
         vm.expectEmit(true, true, true, true);
@@ -400,7 +400,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, amount);
 
-        hoax(from);
+        vm.prank(from);
         token.approve(address(this), approval);
 
         vm.expectRevert(stdError.arithmeticError);
@@ -419,7 +419,7 @@ contract ERC20Test is TestPlus {
 
         token.mint(from, mintAmount);
 
-        hoax(from);
+        vm.prank(from);
         token.approve(address(this), sendAmount);
 
         vm.expectRevert(stdError.arithmeticError);

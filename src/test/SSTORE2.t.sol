@@ -130,7 +130,7 @@ contract SSTORE2Test is TestPlus {
 
     function testWriteReadCustomStartBoundOutOfRange(bytes calldata testBytes, uint256 startIndex) public {
         if (testBytes.length == 0) return;
-        startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max -1);
+        startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max - 1);
 
         address pointer = SSTORE2.write(testBytes);
         vm.expectRevert(stdError.arithmeticError);

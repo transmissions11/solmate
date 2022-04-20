@@ -1412,13 +1412,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         token.mint(address(this), id, mintAmount, mintData);
         address recipient = address(new WrongReturnDataERC1155Recipient());
         vm.expectRevert("UNSAFE_RECIPIENT");
-        token.safeTransferFrom(
-            address(this),
-            recipient,
-            id,
-            transferAmount,
-            transferData
-        );
+        token.safeTransferFrom(address(this), recipient, id, transferAmount, transferData);
     }
 
     function testSafeBatchTransferInsufficientBalance(
@@ -1542,13 +1536,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         address recipient = address(new NonERC1155Recipient());
 
         vm.expectRevert();
-        token.safeBatchTransferFrom(
-            from,
-            recipient,
-            normalizedIds,
-            normalizedTransferAmounts,
-            transferData
-        );
+        token.safeBatchTransferFrom(from, recipient, normalizedIds, normalizedTransferAmounts, transferData);
     }
 
     function testFailSafeBatchTransferFromToRevertingERC1155Recipient(
@@ -1635,13 +1623,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         address recipient = address(new WrongReturnDataERC1155Recipient());
 
         vm.expectRevert("UNSAFE_RECIPIENT");
-        token.safeBatchTransferFrom(
-            from,
-            recipient,
-            normalizedIds,
-            normalizedTransferAmounts,
-            transferData
-        );
+        token.safeBatchTransferFrom(from, recipient, normalizedIds, normalizedTransferAmounts, transferData);
     }
 
     function testFailSafeBatchTransferFromWithArrayLengthMismatch(
@@ -1658,7 +1640,6 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
 
         if (ids.length <= transferAmounts.length) revert();
         if (ids.length != mintAmounts.length) revert();
-
 
         token.batchMint(from, ids, mintAmounts, mintData);
 
