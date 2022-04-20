@@ -131,6 +131,16 @@ contract TestPlus is Test {
         emit log_named_uint("Bound Result", result);
     }
 
+    function bound(
+        uint256[] memory vals,
+        uint256 min,
+        uint256 max
+    ) internal returns (uint256[] memory result) {
+        for (uint256 i = 0; i < vals.length; i++) {
+            result[i] = bound(vals[i], min, max);
+        }
+    }
+
     function min3(
         uint256 a,
         uint256 b,
