@@ -89,7 +89,7 @@ contract AuthTest is TestPlus {
     function testSetAuthorityWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(address(0));
-        vm.expectRevert();
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
@@ -185,7 +185,7 @@ contract AuthTest is TestPlus {
 
         mockAuthChild.setAuthority(new MockAuthority(false));
         mockAuthChild.setOwner(deadOwner);
-        vm.expectRevert();
+        vm.expectRevert("UNAUTHORIZED");
         mockAuthChild.setAuthority(newAuthority);
     }
 

@@ -115,9 +115,6 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     mapping(address => mapping(uint256 => uint256)) public userMintAmounts;
     mapping(address => mapping(uint256 => uint256)) public userTransferOrBurnAmounts;
 
-    // We need to make sure the ids are unique or we can overflow
-    mapping(uint256 => bool) public unique_ids;
-
     function setUp() public {
         token = new MockERC1155();
     }

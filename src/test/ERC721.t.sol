@@ -490,9 +490,9 @@ contract ERC721Test is TestPlus {
     }
 
     function testTransferFromApproveAll(uint256 id, address to) public {
-        if (to == address(0) || to == address(this)) to = address(0xBEEF);
-
         address from = address(0xABCD);
+        if (to == address(0) || to == address(this) || to == from) to = address(0xBEEF);
+
 
         token.mint(from, id);
 
