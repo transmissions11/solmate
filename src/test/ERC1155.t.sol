@@ -1134,7 +1134,6 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         vm.assume(uint256(uint160(to)) > 18);
         vm.assume(to.code.length == 0);
 
-
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
 
         uint256[] memory normalizedIds = new uint256[](minLength);

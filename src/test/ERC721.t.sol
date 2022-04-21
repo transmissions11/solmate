@@ -492,7 +492,6 @@ contract ERC721Test is TestPlus {
         address from = address(0xABCD);
         if (to == address(0) || to == address(this) || to == from) to = address(0xBEEF);
 
-
         token.mint(from, id);
 
         vm.prank(from);

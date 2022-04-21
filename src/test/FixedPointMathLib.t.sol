@@ -220,9 +220,12 @@ contract FixedPointMathLibTest is TestPlus {
         uint256 y,
         uint256 denominator
     ) public {
-        // Ignore cases where x * y overflows or denominator is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(denominator != 0);
+
+        // Ignore cases where x * y overflows (tested below).
         unchecked {
-            if (denominator == 0 || (x != 0 && (x * y) / x != y)) return;
+            if (x != 0 && (x * y) / x != y) return;
         }
 
         assertEq(FixedPointMathLib.mulDivDown(x, y, denominator), (x * y) / denominator);
@@ -255,9 +258,12 @@ contract FixedPointMathLibTest is TestPlus {
         uint256 y,
         uint256 denominator
     ) public {
-        // Ignore cases where x * y overflows or denominator is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(denominator != 0);
+
+        // Ignore cases where x * y overflows (tested below).
         unchecked {
-            if (denominator == 0 || (x != 0 && (x * y) / x != y)) return;
+            if (x != 0 && (x * y) / x != y) return;
         }
 
         assertEq(FixedPointMathLib.mulDivUp(x, y, denominator), x * y == 0 ? 0 : (x * y - 1) / denominator + 1);
@@ -268,13 +274,10 @@ contract FixedPointMathLibTest is TestPlus {
         uint256 y,
         uint256 denominator
     ) public {
-        // If the denominator or x is 0, the call should revert
-        if (denominator == 0) {
-            vm.expectRevert();
-            FixedPointMathLib.mulDivDown(x, y, denominator);
-            return;
-        }
-        // Ignore cases where x * y does not overflow or denominator is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(denominator != 0);
+
+        // Ignore cases where x * y does not overflow.
         unchecked {
             if (x == 0 || (x * y) / x == y) return;
         }
