@@ -139,9 +139,12 @@ contract FixedPointMathLibTest is TestPlus {
     }
 
     function testMulWadDownOverflow(uint256 x, uint256 y) public {
+        // x shouldn't be zero.
+        vm.assume(x != 0);
+
         // Ignore cases where x * y does not overflow.
         unchecked {
-            if (x == 0 || (x * y) / x == y) return;
+            if ((x * y) / x == y) return;
         }
 
         vm.expectRevert();
@@ -158,9 +161,12 @@ contract FixedPointMathLibTest is TestPlus {
     }
 
     function testMulWadUpOverflow(uint256 x, uint256 y) public {
+        // x shouldn't be zero.
+        vm.assume(x != 0);
+
         // Ignore cases where x * y does not overflow.
         unchecked {
-            if (x == 0 || (x * y) / x == y) return;
+            if ((x * y) / x == y) return;
         }
 
         vm.expectRevert();
@@ -168,18 +174,24 @@ contract FixedPointMathLibTest is TestPlus {
     }
 
     function testDivWadDown(uint256 x, uint256 y) public {
-        // Ignore cases where x * WAD overflows or y is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(y != 0);
+
+        // Ignore cases where x * WAD overflows.
         unchecked {
-            if (y == 0 || (x != 0 && (x * 1e18) / 1e18 != x)) return;
+            if (x != 0 && (x * 1e18) / 1e18 != x) return;
         }
 
         assertEq(FixedPointMathLib.divWadDown(x, y), (x * 1e18) / y);
     }
 
     function testDivWadDownOverflow(uint256 x, uint256 y) public {
-        // Ignore cases where x * WAD does not overflow or y is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(y != 0);
+
+        // Ignore cases where x * WAD does not overflow.
         unchecked {
-            if (y == 0 || (x * 1e18) / 1e18 == x) return;
+            if ((x * 1e18) / 1e18 == x) return;
         }
 
         vm.expectRevert();
@@ -192,18 +204,24 @@ contract FixedPointMathLibTest is TestPlus {
     }
 
     function testDivWadUp(uint256 x, uint256 y) public {
-        // Ignore cases where x * WAD overflows or y is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(y != 0);
+
+        // Ignore cases where x * WAD overflows.
         unchecked {
-            if (y == 0 || (x != 0 && (x * 1e18) / 1e18 != x)) return;
+            if (x != 0 && (x * 1e18) / 1e18 != x) return;
         }
 
         assertEq(FixedPointMathLib.divWadUp(x, y), x == 0 ? 0 : (x * 1e18 - 1) / y + 1);
     }
 
     function testDivWadUpOverflow(uint256 x, uint256 y) public {
-        // Ignore cases where x * WAD does not overflow or y is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(y != 0);
+
+        // Ignore cases where x * WAD does not overflow.
         unchecked {
-            if (y == 0 || (x * 1e18) / 1e18 == x) return;
+            if ((x * 1e18) / 1e18 == x) return;
         }
 
         vm.expectRevert();
