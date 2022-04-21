@@ -868,7 +868,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         token.mint(to, id, amount, mintData);
 
@@ -900,7 +901,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         uint256 minLength = min2(ids.length, amounts.length);
 
@@ -978,7 +980,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         burnAmount = bound(burnAmount, 0, mintAmount);
 
@@ -998,7 +1001,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
 
@@ -1046,7 +1050,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         transferAmount = bound(transferAmount, 0, mintAmount);
 
@@ -1102,7 +1107,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         transferAmount = bound(transferAmount, 0, mintAmount);
 
@@ -1124,7 +1130,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         address from = address(0xABCD);
 
@@ -1424,7 +1431,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
 
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
 
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
+
         if (to == address(0)) to = address(0xDEAD);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
@@ -1504,7 +1512,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         address from = address(0xABCD);
 
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);
@@ -1590,8 +1598,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         address from = address(0xABCD);
 
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
-
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);
@@ -1652,8 +1659,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         bytes memory mintData
     ) public {
         uint256 minLength = min2(ids.length, amounts.length);
-
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedAmounts = new uint256[](minLength);
@@ -1683,7 +1689,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         NonERC1155Recipient to = new NonERC1155Recipient();
 
         uint256 minLength = min2(ids.length, amounts.length);
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedAmounts = new uint256[](minLength);
@@ -1741,7 +1747,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         WrongReturnDataERC1155Recipient to = new WrongReturnDataERC1155Recipient();
 
         uint256 minLength = min2(ids.length, amounts.length);
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedAmounts = new uint256[](minLength);
@@ -1769,7 +1775,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         uint256[] memory amounts,
         bytes memory mintData
     ) public {
-        if (ids.length == amounts.length) return;
+        vm.assume(ids.length != amounts.length);
         if (to == address(0)) to = address(0xDEAD);
 
         vm.expectRevert("LENGTH_MISMATCH");
@@ -1785,7 +1791,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         uint256 minLength = min3(ids.length, mintAmounts.length, burnAmounts.length);
 
-        if (minLength == 0) return;
+        vm.assume(minLength != 0);
         if (to == address(0)) to = address(0xDEAD);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
@@ -1827,7 +1833,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     }
 
     function testBalanceOfBatchWithArrayMismatch(address[] memory tos, uint256[] memory ids) public {
-        if (tos.length == ids.length) return;
+        vm.assume(tos.length != ids.length);
 
         for (uint256 i = 0; i < tos.length; i++) {
             if (tos[i] == address(0)) {

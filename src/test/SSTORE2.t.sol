@@ -66,7 +66,7 @@ contract SSTORE2Test is TestPlus {
 
     function testWriteReadOutOfBounds() public {
         address pointer = SSTORE2.write(hex"11223344");
-        if (pointer.code.length == 0) return;
+        vm.assume(pointer.code.length != 0);
         vm.expectRevert("OUT_OF_BOUNDS");
         SSTORE2.read(pointer, 41000, 42000);
     }
@@ -76,7 +76,7 @@ contract SSTORE2Test is TestPlus {
     }
 
     function testWriteReadCustomStartBound(bytes calldata testBytes, uint256 startIndex) public {
-        if (testBytes.length == 0) return;
+        vm.assume(testBytes.length != 0);
 
         startIndex = bound(startIndex, 0, testBytes.length);
 
@@ -88,7 +88,7 @@ contract SSTORE2Test is TestPlus {
         uint256 startIndex,
         uint256 endIndex
     ) public {
-        if (testBytes.length == 0) return;
+        vm.assume(testBytes.length != 0);
 
         endIndex = bound(endIndex, 0, testBytes.length);
         startIndex = bound(startIndex, 0, testBytes.length);
@@ -102,14 +102,14 @@ contract SSTORE2Test is TestPlus {
     }
 
     function testReadInvalidPointer(address pointer) public {
-        if (pointer.code.length > 0) return;
+        vm.assume(pointer.code.length == 0);
 
         vm.expectRevert(stdError.arithmeticError);
         SSTORE2.read(pointer);
     }
 
     function testReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public {
-        if (pointer.code.length > 0) return;
+        vm.assume(pointer.code.length == 0);
 
         vm.expectRevert(stdError.arithmeticError);
         SSTORE2.read(pointer, startIndex);
@@ -129,7 +129,7 @@ contract SSTORE2Test is TestPlus {
     }
 
     function testWriteReadCustomStartBoundOutOfRange(bytes calldata testBytes, uint256 startIndex) public {
-        if (testBytes.length == 0) return;
+        vm.assume(testBytes.length != 0);
         startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max - 1);
 
         address pointer = SSTORE2.write(testBytes);
@@ -142,7 +142,7 @@ contract SSTORE2Test is TestPlus {
         uint256 startIndex,
         uint256 endIndex
     ) public {
-        if (testBytes.length == 0) return;
+        vm.assume(testBytes.length != 0);
         endIndex = bound(endIndex, testBytes.length + 1, type(uint256).max - 1);
         startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max - 1);
         if (startIndex > endIndex) (startIndex, endIndex) = (endIndex, startIndex);

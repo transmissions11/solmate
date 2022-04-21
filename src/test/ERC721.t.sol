@@ -512,7 +512,8 @@ contract ERC721Test is TestPlus {
 
         if (to == address(0) || to == address(this) || to == from) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         token.mint(from, id);
 
@@ -574,7 +575,8 @@ contract ERC721Test is TestPlus {
     function testSafeMintToEOA(uint256 id, address to) public {
         if (to == address(0)) to = address(0xBEEF);
 
-        if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
+        vm.assume(uint256(uint160(to)) > 18);
+        vm.assume(to.code.length == 0);
 
         token.safeMint(to, id);
 
@@ -676,7 +678,8 @@ contract ERC721Test is TestPlus {
         if (to == address(0)) to = address(0xBEEF);
         if (from == address(0)) from = address(0xDEAD);
         if (owner == address(0)) owner = address(0xDEAF);
-        if (from == owner) return;
+
+        vm.assume(from != owner);
 
         token.mint(owner, id);
 
