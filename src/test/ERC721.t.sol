@@ -460,7 +460,6 @@ contract ERC721Test is TestPlus {
 
     function testTransferFrom(uint256 id, address to) public {
         address from = address(0xABCD);
-
         if (to == address(0) || to == from) to = address(0xBEEF);
 
         token.mint(from, id);
@@ -491,7 +490,6 @@ contract ERC721Test is TestPlus {
 
     function testTransferFromApproveAll(uint256 id, address to) public {
         address from = address(0xABCD);
-
         if (to == address(0) || to == address(this) || to == from) to = address(0xBEEF);
 
 
@@ -510,7 +508,6 @@ contract ERC721Test is TestPlus {
 
     function testSafeTransferFromToEOA(uint256 id, address to) public {
         address from = address(0xABCD);
-
         if (to == address(0) || to == address(this) || to == from) to = address(0xBEEF);
 
         vm.assume(uint256(uint160(to)) > 18);
@@ -665,7 +662,7 @@ contract ERC721Test is TestPlus {
         uint256 id
     ) public {
         if (to == address(0)) to = address(0xDEAD);
-        if (from == address(0)) from = address(0xDEAD);
+        if (from == address(0) || from == to) from = address(0xBEEF);
         vm.expectRevert("WRONG_FROM");
         token.transferFrom(from, to, id);
     }
@@ -680,6 +677,7 @@ contract ERC721Test is TestPlus {
         if (from == address(0)) from = address(0xDEAD);
         if (owner == address(0)) owner = address(0xDEAF);
 
+        vm.assume(from != to);
         vm.assume(from != owner);
 
         token.mint(owner, id);
@@ -701,7 +699,7 @@ contract ERC721Test is TestPlus {
         uint256 id
     ) public {
         if (from == address(this) || from == address(0)) from = address(0xBEEF);
-        if (to == address(0)) to = address(0xDEAF);
+        if (to == address(0) || to == from) to = address(0xDEAF);
 
         token.mint(from, id);
 

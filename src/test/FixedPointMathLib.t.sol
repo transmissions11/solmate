@@ -233,13 +233,10 @@ contract FixedPointMathLibTest is TestPlus {
         uint256 y,
         uint256 denominator
     ) public {
-        // If the denominator or x is 0, the call should revert
-        if (denominator == 0) {
-            vm.expectRevert();
-            FixedPointMathLib.mulDivDown(x, y, denominator);
-            return;
-        }
-        // Ignore cases where x * y does not overflow or x is 0.
+        // The denominator should not be 0 (tested below).
+        vm.assume(denominator != 0);
+
+        // Ignore cases where x * y does not overflow.
         unchecked {
             if (x == 0 || (x * y) / x == y) return;
         }

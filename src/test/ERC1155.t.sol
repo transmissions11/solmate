@@ -1128,12 +1128,12 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        if (to == address(0)) to = address(0xBEEF);
+        address from = address(0xABCD);
+        if (to == address(0) || to == from) to = address(0xBEEF);
 
         vm.assume(uint256(uint160(to)) > 18);
         vm.assume(to.code.length == 0);
 
-        address from = address(0xABCD);
 
         uint256 minLength = min3(ids.length, mintAmounts.length, transferAmounts.length);
 
@@ -1324,8 +1324,8 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
         bytes memory mintData,
         bytes memory transferData
     ) public {
-        if (to == address(0)) to = address(0xDEAD);
         address from = address(0xABCD);
+        if (to == address(0) || to == from) to = address(0xDEAD);
 
         mintAmount = bound(mintAmount, 0, type(uint256).max - 1);
         transferAmount = bound(transferAmount, mintAmount + 1, type(uint256).max);
@@ -1433,7 +1433,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
 
         vm.assume(minLength != 0);
 
-        if (to == address(0)) to = address(0xDEAD);
+        if (to == address(0) || to == from) to = address(0xDEAD);
 
         uint256[] memory normalizedIds = new uint256[](minLength);
         uint256[] memory normalizedMintAmounts = new uint256[](minLength);
@@ -1640,7 +1640,7 @@ contract ERC1155Test is TestPlus, ERC1155TokenReceiver {
     ) public {
         address from = address(0xABCD);
 
-        if (to == address(0)) to = address(0xDEAD);
+        if (to == address(0) || to == from) to = address(0xDEAD);
 
         if (ids.length <= transferAmounts.length) revert();
         if (ids.length != mintAmounts.length) revert();
