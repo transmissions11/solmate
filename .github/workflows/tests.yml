@@ -3,8 +3,9 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  forge-tests:
+  tests:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v2
 
@@ -15,6 +16,9 @@ jobs:
 
       - name: Install dependencies
         run: forge install
+
+      - name: Check contract sizes
+        run: forge build --sizes
 
       - name: Check gas snapshots
         run: forge snapshot --check
