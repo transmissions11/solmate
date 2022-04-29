@@ -458,9 +458,9 @@ contract ERC721Test is DSTestPlus {
     }
 
     function testTransferFromApproveAll(uint256 id, address to) public {
-        if (to == address(0) || to == address(this)) to = address(0xBEEF);
-
         address from = address(0xABCD);
+
+        if (to == address(0) || to == from) to = address(0xBEEF);
 
         token.mint(from, id);
 
@@ -478,7 +478,7 @@ contract ERC721Test is DSTestPlus {
     function testSafeTransferFromToEOA(uint256 id, address to) public {
         address from = address(0xABCD);
 
-        if (to == address(0) || to == address(this)) to = address(0xBEEF);
+        if (to == address(0) || to == from) to = address(0xBEEF);
 
         if (uint256(uint160(to)) <= 18 || to.code.length > 0) return;
 
@@ -497,6 +497,7 @@ contract ERC721Test is DSTestPlus {
 
     function testSafeTransferFromToERC721Recipient(uint256 id) public {
         address from = address(0xABCD);
+
         ERC721Recipient recipient = new ERC721Recipient();
 
         token.mint(from, id);
