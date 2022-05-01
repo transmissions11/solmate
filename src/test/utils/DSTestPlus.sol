@@ -112,21 +112,20 @@ contract DSTestPlus is DSTest {
         }
     }
 
-    function bound(uint256 x, uint256 min, uint256 max) public returns (uint256 result) {
+    function bound(
+        uint256 x,
+        uint256 min,
+        uint256 max
+    ) public returns (uint256 result) {
         require(min <= max, "MAX_LESS_THAN_MIN");
 
         uint256 size = max - min;
 
-        if (size == 0)
-        {
+        if (size == 0) {
             result = min;
-        }
-        else if (size == type(uint256).max)
-        {
+        } else if (size == type(uint256).max) {
             result = x;
-        }
-        else
-        {
+        } else {
             ++size; // make `max` inclusive
             uint256 mod = x % size;
             result = min + mod;
