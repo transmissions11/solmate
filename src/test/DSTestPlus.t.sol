@@ -5,12 +5,12 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
 contract DSTestPlusTest is DSTestPlus {
     function testBound() public {
-        assertEq(bound(5, 0, 4), 0);
         assertEq(bound(0, 69, 69), 69);
         assertEq(bound(0, 68, 69), 68);
-        assertEq(bound(10, 150, 190), 174);
-        assertEq(bound(300, 2800, 3200), 3107);
-        assertEq(bound(9999, 1337, 6666), 4669);
+        assertEq(bound(5, 0, 4), 0);
+        assertEq(bound(9999, 1337, 6666), 6006);
+        assertEq(bound(0, type(uint256).max - 6, type(uint256).max), type(uint256).max - 6);
+        assertEq(bound(6, type(uint256).max - 6, type(uint256).max), type(uint256).max);
     }
 
     function testFailBoundMinBiggerThanMax() public {
