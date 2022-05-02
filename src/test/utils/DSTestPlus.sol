@@ -141,12 +141,10 @@ contract DSTestPlus is DSTest {
 
         uint256 size = max - min;
 
-        if (size == 0) {
-            result = min;
-        } else if (size == type(uint256).max) {
-            result = x;
-        } else {
-            ++size; // make `max` inclusive
+        if (size == 0) result = min;
+        else if (size == type(uint256).max) result = x;
+        else {
+            ++size; // Make max inclusive.
             uint256 mod = x % size;
             result = min + mod;
         }
