@@ -10,8 +10,8 @@ import {ERC20} from "../tokens/ERC20.sol";
 library SafeTransferLib {
     event Debug(bool one, bool two, uint256 retsize);
 
-    /*///////////////////////////////////////////////////////////////
-                            ETH OPERATIONS
+    /*//////////////////////////////////////////////////////////////
+                             ETH OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
@@ -25,8 +25,8 @@ library SafeTransferLib {
         require(success, "ETH_TRANSFER_FAILED");
     }
 
-    /*///////////////////////////////////////////////////////////////
-                           ERC20 OPERATIONS
+    /*//////////////////////////////////////////////////////////////
+                            ERC20 OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferFrom(
