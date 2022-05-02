@@ -50,4 +50,14 @@ contract DSTestPlusTest is DSTestPlus {
 
         bound(num, min, max);
     }
+
+    function testBrutalizeMemory() public brutalizeMemory("FEEDFACECAFEBEEFFEEDFACECAFEBEEF") {
+        bytes32 data;
+
+        assembly {
+            data := mload(mload(0x40))
+        }
+
+        assertGt(uint256(data), 0);
+    }
 }
