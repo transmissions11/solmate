@@ -15,6 +15,26 @@ contract DSTestPlus is DSTest {
     string private checkpointLabel;
     uint256 private checkpointGasLeft = 1; // Start the slot warm.
 
+    modifier brutalizeMemory(bytes memory brutalizeWith) {
+        /// @solidity memory-safe-assembly
+        assembly {
+            let size := mload(brutalizeWith) // Size of the data.
+
+            pop(
+                staticcall(
+                    gas(), // Pass along all the gas in the call.
+                    0x04, // Call the identity precompile address.
+                    brutalizeWith, // Offset is the bytes' pointer.
+                    size, // We want to pass the length of the bytes.
+                    mload(0x40), // Store the return value at the free memory pointer.
+                    size // Since the precompile just returns its input, we reuse size.
+                )
+            )
+        }
+
+        _;
+    }
+
     function startMeasuringGas(string memory label) internal virtual {
         checkpointLabel = label;
 
