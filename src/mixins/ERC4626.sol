@@ -89,7 +89,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        asset.safeTransfer(receiver, assets);
+        withdrawAssets(receiver, assets);
     }
 
     function redeem(
@@ -112,7 +112,7 @@ abstract contract ERC4626 is ERC20 {
 
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
-        asset.safeTransfer(receiver, assets);
+        withdrawAssets(receiver, assets);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -171,6 +171,11 @@ abstract contract ERC4626 is ERC20 {
 
     function maxRedeem(address owner) public view virtual returns (uint256) {
         return balanceOf[owner];
+    }
+
+    // will allow users to override in case they want to introduce some withdrawal fees, etc.
+    function withdrawAssets(address receiver, uint256 assets) internal virtual {
+        asset.safeTransfer(receiver, assets);
     }
 
     /*//////////////////////////////////////////////////////////////
