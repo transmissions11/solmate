@@ -126,7 +126,7 @@ contract FixedPointMathLibTest is DSTestPlus {
     function testMulWadDown(uint256 x, uint256 y) public {
         // Ignore cases where x * y overflows.
         unchecked {
-            if ((x != 0 && (x * y) / x != y)) return;
+            if (x != 0 && (x * y) / x != y) return;
         }
 
         assertEq(FixedPointMathLib.mulWadDown(x, y), (x * y) / 1e18);
@@ -144,7 +144,7 @@ contract FixedPointMathLibTest is DSTestPlus {
     function testMulWadUp(uint256 x, uint256 y) public {
         // Ignore cases where x * y overflows.
         unchecked {
-            if ((x != 0 && (x * y) / x != y)) return;
+            if (x != 0 && (x * y) / x != y) return;
         }
 
         assertEq(FixedPointMathLib.mulWadUp(x, y), x * y == 0 ? 0 : (x * y - 1) / 1e18 + 1);
