@@ -18,8 +18,21 @@ contract DSTestPlus is DSTest {
     modifier brutalizeMemory(bytes memory brutalizeWith) {
         /// @solidity memory-safe-assembly
         assembly {
-            let size := mload(brutalizeWith) // Size of the data.
+            // Fill the 64 bytes of scratch space with the data.
+            pop(
+                staticcall(
+                    gas(), // Pass along all the gas in the call.
+                    0x04, // Call the identity precompile address.
+                    brutalizeWith, // Offset is the bytes' pointer.
+                    64, // Copy enough to fill only the scratch space.
+                    0, // Store the return value in the scratch space.
+                    64 // Scratch space is only 64 bytes in size, we don't want to write further.
+                )
+            )
 
+            let size := add(mload(brutalizeWith), 32) // Add 32 to include the 32 byte length slot.
+
+            // Fill the free memory pointer's destination with the data.
             pop(
                 staticcall(
                     gas(), // Pass along all the gas in the call.
