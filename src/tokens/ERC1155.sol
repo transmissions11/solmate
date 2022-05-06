@@ -140,7 +140,7 @@ abstract contract ERC1155 {
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
+            interfaceId == this.supportsInterface.selector || // ERC165 Interface ID for ERC165
             interfaceId == 0xd9b67a26 || // ERC165 Interface ID for ERC1155
             interfaceId == 0x0e89341c; // ERC165 Interface ID for ERC1155MetadataURI
     }
