@@ -69,4 +69,9 @@ contract DSTestPlusTest is DSTestPlus {
         assertGt(uint256(scratchSpace1), 0);
         assertGt(uint256(scratchSpace2), 0);
     }
+
+    function testMeasuringGas() public {
+        startMeasuringGas();
+        stopMeasuringGas();
+    }
 }
