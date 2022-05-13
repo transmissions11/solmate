@@ -15,6 +15,39 @@ contract DSTestPlus is DSTest {
     string private checkpointLabel;
     uint256 private checkpointGasLeft = 1; // Start the slot warm.
 
+    modifier brutalizeMemory(bytes memory brutalizeWith) {
+        /// @solidity memory-safe-assembly
+        assembly {
+            // Fill the 64 bytes of scratch space with the data.
+            pop(
+                staticcall(
+                    gas(), // Pass along all the gas in the call.
+                    0x04, // Call the identity precompile address.
+                    brutalizeWith, // Offset is the bytes' pointer.
+                    64, // Copy enough to only fill the scratch space.
+                    0, // Store the return value in the scratch space.
+                    64 // Scratch space is only 64 bytes in size, we don't want to write further.
+                )
+            )
+
+            let size := add(mload(brutalizeWith), 32) // Add 32 to include the 32 byte length slot.
+
+            // Fill the free memory pointer's destination with the data.
+            pop(
+                staticcall(
+                    gas(), // Pass along all the gas in the call.
+                    0x04, // Call the identity precompile address.
+                    brutalizeWith, // Offset is the bytes' pointer.
+                    size, // We want to pass the length of the bytes.
+                    mload(0x40), // Store the return value at the free memory pointer.
+                    size // Since the precompile just returns its input, we reuse size.
+                )
+            )
+        }
+
+        _;
+    }
+
     function startMeasuringGas(string memory label) internal virtual {
         checkpointLabel = label;
 
@@ -121,16 +154,13 @@ contract DSTestPlus is DSTest {
 
         uint256 size = max - min;
 
-        if (max != type(uint256).max) size++; // Make the max inclusive.
-        if (size == 0) return min; // Using max would be equivalent as well.
-        // Ensure max is inclusive in cases where x != 0 and max is at uint max.
-        if (max == type(uint256).max && x != 0) x--; // Accounted for later.
-
-        if (x < min) x += size * (((min - x) / size) + 1);
-        result = min + ((x - min) % size);
-
-        // Account for decrementing x to make max inclusive.
-        if (max == type(uint256).max && x != 0) result++;
+        if (size == 0) result = min;
+        else if (size == type(uint256).max) result = x;
+        else {
+            ++size; // Make max inclusive.
+            uint256 mod = x % size;
+            result = min + mod;
+        }
 
         emit log_named_uint("Bound Result", result);
     }

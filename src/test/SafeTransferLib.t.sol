@@ -127,23 +127,36 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTooLittle), address(0xBEEF), 1e18);
     }
 
-    function testTransferWithMissingReturn(address to, uint256 amount) public {
+    function testTransferWithMissingReturn(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(missingReturn), to, amount);
     }
 
-    function testTransferWithStandardERC20(address to, uint256 amount) public {
+    function testTransferWithStandardERC20(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(erc20), to, amount);
     }
 
-    function testTransferWithReturnsTooMuch(address to, uint256 amount) public {
+    function testTransferWithReturnsTooMuch(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(returnsTooMuch), to, amount);
     }
 
     function testTransferWithGarbage(
         address to,
         uint256 amount,
-        bytes memory garbage
-    ) public {
+        bytes memory garbage,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (
             (garbage.length < 32 ||
                 (garbage[0] != 0 ||
@@ -188,8 +201,9 @@ contract SafeTransferLibTest is DSTestPlus {
     function testTransferWithNonContract(
         address nonContract,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (uint256(uint160(nonContract)) <= 18 || nonContract.code.length > 0) return;
 
         SafeTransferLib.safeTransfer(ERC20(nonContract), to, amount);
@@ -202,24 +216,27 @@ contract SafeTransferLibTest is DSTestPlus {
     function testTransferFromWithMissingReturn(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(missingReturn), from, to, amount);
     }
 
     function testTransferFromWithStandardERC20(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(erc20), from, to, amount);
     }
 
     function testTransferFromWithReturnsTooMuch(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(returnsTooMuch), from, to, amount);
     }
 
@@ -227,8 +244,9 @@ contract SafeTransferLibTest is DSTestPlus {
         address from,
         address to,
         uint256 amount,
-        bytes memory garbage
-    ) public {
+        bytes memory garbage,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (
             (garbage.length < 32 ||
                 (garbage[0] != 0 ||
@@ -274,30 +292,44 @@ contract SafeTransferLibTest is DSTestPlus {
         address nonContract,
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (uint256(uint160(nonContract)) <= 18 || nonContract.code.length > 0) return;
 
         SafeTransferLib.safeTransferFrom(ERC20(nonContract), from, to, amount);
     }
 
-    function testApproveWithMissingReturn(address to, uint256 amount) public {
+    function testApproveWithMissingReturn(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(missingReturn), to, amount);
     }
 
-    function testApproveWithStandardERC20(address to, uint256 amount) public {
+    function testApproveWithStandardERC20(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(erc20), to, amount);
     }
 
-    function testApproveWithReturnsTooMuch(address to, uint256 amount) public {
+    function testApproveWithReturnsTooMuch(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(returnsTooMuch), to, amount);
     }
 
     function testApproveWithGarbage(
         address to,
         uint256 amount,
-        bytes memory garbage
-    ) public {
+        bytes memory garbage,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (
             (garbage.length < 32 ||
                 (garbage[0] != 0 ||
@@ -342,14 +374,19 @@ contract SafeTransferLibTest is DSTestPlus {
     function testApproveWithNonContract(
         address nonContract,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (uint256(uint160(nonContract)) <= 18 || nonContract.code.length > 0) return;
 
         SafeTransferLib.safeApprove(ERC20(nonContract), to, amount);
     }
 
-    function testTransferETH(address recipient, uint256 amount) public {
+    function testTransferETH(
+        address recipient,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         // Transferring to msg.sender can fail because it's possible to overflow their ETH balance as it begins non-zero.
         if (recipient.code.length > 0 || uint256(uint160(recipient)) <= 18 || recipient == msg.sender) return;
 
@@ -358,27 +395,44 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferETH(recipient, amount);
     }
 
-    function testFailTransferWithReturnsFalse(address to, uint256 amount) public {
+    function testFailTransferWithReturnsFalse(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(returnsFalse), to, amount);
     }
 
-    function testFailTransferWithReverting(address to, uint256 amount) public {
+    function testFailTransferWithReverting(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(reverting), to, amount);
     }
 
-    function testFailTransferWithReturnsTooLittle(address to, uint256 amount) public {
+    function testFailTransferWithReturnsTooLittle(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(returnsTooLittle), to, amount);
     }
 
-    function testFailTransferWithReturnsTwo(address to, uint256 amount) public {
+    function testFailTransferWithReturnsTwo(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransfer(address(returnsTwo), to, amount);
     }
 
     function testFailTransferWithGarbage(
         address to,
         uint256 amount,
-        bytes memory garbage
-    ) public {
+        bytes memory garbage,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         require(garbage.length != 0 && (garbage.length < 32 || garbage[31] != bytes1(0x01)));
 
         returnsGarbage.setGarbage(garbage);
@@ -389,32 +443,36 @@ contract SafeTransferLibTest is DSTestPlus {
     function testFailTransferFromWithReturnsFalse(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(returnsFalse), from, to, amount);
     }
 
     function testFailTransferFromWithReverting(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(reverting), from, to, amount);
     }
 
     function testFailTransferFromWithReturnsTooLittle(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(returnsTooLittle), from, to, amount);
     }
 
     function testFailTransferFromWithReturnsTwo(
         address from,
         address to,
-        uint256 amount
-    ) public {
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeTransferFrom(address(returnsTwo), from, to, amount);
     }
 
@@ -422,8 +480,9 @@ contract SafeTransferLibTest is DSTestPlus {
         address from,
         address to,
         uint256 amount,
-        bytes memory garbage
-    ) public {
+        bytes memory garbage,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         require(garbage.length != 0 && (garbage.length < 32 || garbage[31] != bytes1(0x01)));
 
         returnsGarbage.setGarbage(garbage);
@@ -431,27 +490,44 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
     }
 
-    function testFailApproveWithReturnsFalse(address to, uint256 amount) public {
+    function testFailApproveWithReturnsFalse(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(returnsFalse), to, amount);
     }
 
-    function testFailApproveWithReverting(address to, uint256 amount) public {
+    function testFailApproveWithReverting(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(reverting), to, amount);
     }
 
-    function testFailApproveWithReturnsTooLittle(address to, uint256 amount) public {
+    function testFailApproveWithReturnsTooLittle(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(returnsTooLittle), to, amount);
     }
 
-    function testFailApproveWithReturnsTwo(address to, uint256 amount) public {
+    function testFailApproveWithReturnsTwo(
+        address to,
+        uint256 amount,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         verifySafeApprove(address(returnsTwo), to, amount);
     }
 
     function testFailApproveWithGarbage(
         address to,
         uint256 amount,
-        bytes memory garbage
-    ) public {
+        bytes memory garbage,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         require(garbage.length != 0 && (garbage.length < 32 || garbage[31] != bytes1(0x01)));
 
         returnsGarbage.setGarbage(garbage);
@@ -459,7 +535,10 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
-    function testFailTransferETHToContractWithoutFallback(uint256 amount) public {
+    function testFailTransferETHToContractWithoutFallback(uint256 amount, bytes calldata brutalizeWith)
+        public
+        brutalizeMemory(brutalizeWith)
+    {
         SafeTransferLib.safeTransferETH(address(this), amount);
     }
 
