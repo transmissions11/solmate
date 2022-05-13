@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-/// @notice Minimalist and gas efficient standard ERC1155 implementation.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155.sol)
-abstract contract ERC1155 {
+import {ERC1155TokenReceiver} from "./ERC1155.sol";
+
+/// @notice Minimalist and gas efficient ERC1155 implementation optimized for single supply ids.
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155B.sol)
+abstract contract ERC1155B {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -32,9 +34,23 @@ abstract contract ERC1155 {
                              ERC1155 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => mapping(uint256 => uint256)) public balanceOf;
-
     mapping(address => mapping(address => bool)) public isApprovedForAll;
+
+    /*//////////////////////////////////////////////////////////////
+                            ERC1155B STORAGE
+    //////////////////////////////////////////////////////////////*/
+
+    mapping(uint256 => address) public ownerOf;
+
+    function balanceOf(address owner, uint256 id) public view virtual returns (uint256 bal) {
+        address idOwner = ownerOf[id];
+
+        assembly {
+            // We avoid branching by using assembly to take
+            // the bool output of eq() and use it as a uint.
+            bal := eq(idOwner, owner)
+        }
+    }
 
     /*//////////////////////////////////////////////////////////////
                              METADATA LOGIC
@@ -61,8 +77,12 @@ abstract contract ERC1155 {
     ) public virtual {
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        balanceOf[from][id] -= amount;
-        balanceOf[to][id] += amount;
+        require(from == ownerOf[id], "WRONG_FROM"); // Can only transfer from the owner.
+
+        // Can only transfer 1 with ERC1155B.
+        require(amount == 1, "INVALID_AMOUNT");
+
+        ownerOf[id] = to;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -90,17 +110,20 @@ abstract contract ERC1155 {
         uint256 id;
         uint256 amount;
 
-        for (uint256 i = 0; i < ids.length; ) {
-            id = ids[i];
-            amount = amounts[i];
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < ids.length; i++) {
+                id = ids[i];
+                amount = amounts[i];
 
-            balanceOf[from][id] -= amount;
-            balanceOf[to][id] += amount;
+                // Can only transfer from the owner.
+                require(from == ownerOf[id], "WRONG_FROM");
 
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                ++i;
+                // Can only transfer 1 with ERC1155B.
+                require(amount == 1, "INVALID_AMOUNT");
+
+                ownerOf[id] = to;
             }
         }
 
@@ -129,20 +152,9 @@ abstract contract ERC1155 {
         // the array index counter which cannot possibly overflow.
         unchecked {
             for (uint256 i = 0; i < owners.length; ++i) {
-                balances[i] = balanceOf[owners[i]][ids[i]];
+                balances[i] = balanceOf(owners[i], ids[i]);
             }
         }
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                              ERC165 LOGIC
-    //////////////////////////////////////////////////////////////*/
-
-    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
-        return
-            interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0xd9b67a26 || // ERC165 Interface ID for ERC1155
-            interfaceId == 0x0e89341c; // ERC165 Interface ID for ERC1155MetadataURI
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -152,17 +164,19 @@ abstract contract ERC1155 {
     function _mint(
         address to,
         uint256 id,
-        uint256 amount,
         bytes memory data
     ) internal virtual {
-        balanceOf[to][id] += amount;
+        // Minting twice would effectively be a force transfer.
+        require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
-        emit TransferSingle(msg.sender, address(0), to, id, amount);
+        ownerOf[id] = to;
+
+        emit TransferSingle(msg.sender, address(0), to, id, 1);
 
         require(
             to.code.length == 0
                 ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
+                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, 1, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
             "UNSAFE_RECIPIENT"
         );
@@ -171,20 +185,27 @@ abstract contract ERC1155 {
     function _batchMint(
         address to,
         uint256[] memory ids,
-        uint256[] memory amounts,
         bytes memory data
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        require(idsLength == amounts.length, "LENGTH_MISMATCH");
+        // Generate an amounts array locally to use in the event below.
+        uint256[] memory amounts = new uint256[](idsLength);
 
-        for (uint256 i = 0; i < idsLength; ) {
-            balanceOf[to][ids[i]] += amounts[i];
+        uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                ++i;
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < idsLength; ++i) {
+                id = ids[i];
+
+                // Minting twice would effectively be a force transfer.
+                require(ownerOf[id] == address(0), "ALREADY_MINTED");
+
+                ownerOf[id] = to;
+
+                amounts[i] = 1;
             }
         }
 
@@ -199,59 +220,41 @@ abstract contract ERC1155 {
         );
     }
 
-    function _batchBurn(
-        address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
-    ) internal virtual {
+    function _batchBurn(address from, uint256[] memory ids) internal virtual {
+        // Burning unminted tokens makes no sense.
+        require(from != address(0), "INVALID_FROM");
+
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        require(idsLength == amounts.length, "LENGTH_MISMATCH");
+        // Generate an amounts array locally to use in the event below.
+        uint256[] memory amounts = new uint256[](idsLength);
 
-        for (uint256 i = 0; i < idsLength; ) {
-            balanceOf[from][ids[i]] -= amounts[i];
+        uint256 id; // Storing outside the loop saves ~7 gas per iteration.
 
-            // An array can't have a total length
-            // larger than the max uint256 value.
-            unchecked {
-                ++i;
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < idsLength; ++i) {
+                id = ids[i];
+
+                require(ownerOf[id] == from, "WRONG_FROM");
+
+                ownerOf[id] = address(0);
+
+                amounts[i] = 1;
             }
         }
 
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
 
-    function _burn(
-        address from,
-        uint256 id,
-        uint256 amount
-    ) internal virtual {
-        balanceOf[from][id] -= amount;
+    function _burn(uint256 id) internal virtual {
+        address owner = ownerOf[id];
 
-        emit TransferSingle(msg.sender, from, address(0), id, amount);
-    }
-}
+        require(owner != address(0), "NOT_MINTED");
 
-/// @notice A generic interface for a contract which properly accepts ERC1155 tokens.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155.sol)
-abstract contract ERC1155TokenReceiver {
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes calldata
-    ) external virtual returns (bytes4) {
-        return ERC1155TokenReceiver.onERC1155Received.selector;
-    }
+        ownerOf[id] = address(0);
 
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] calldata,
-        uint256[] calldata,
-        bytes calldata
-    ) external virtual returns (bytes4) {
-        return ERC1155TokenReceiver.onERC1155BatchReceived.selector;
+        emit TransferSingle(msg.sender, owner, address(0), id, 1);
     }
 }

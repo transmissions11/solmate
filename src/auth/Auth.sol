@@ -21,7 +21,7 @@ abstract contract Auth {
         emit AuthorityUpdated(msg.sender, _authority);
     }
 
-    modifier requiresAuth() {
+    modifier requiresAuth() virtual {
         require(isAuthorized(msg.sender, msg.sig), "UNAUTHORIZED");
 
         _;
