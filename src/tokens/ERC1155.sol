@@ -32,7 +32,7 @@ abstract contract ERC1155 {
                              ERC1155 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(address => mapping(uint256 => uint256)) public balanceOf;
+    mapping(uint256 => mapping(address => uint256)) internal _balances;
 
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
@@ -45,6 +45,10 @@ abstract contract ERC1155 {
     /*//////////////////////////////////////////////////////////////
                               ERC1155 LOGIC
     //////////////////////////////////////////////////////////////*/
+
+    function balanceOf(address user, uint256 id) public view returns (uint256) {
+        return _balances[id][user];
+    }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
         isApprovedForAll[msg.sender][operator] = approved;
@@ -61,8 +65,10 @@ abstract contract ERC1155 {
     ) public virtual {
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
-        balanceOf[from][id] -= amount;
-        balanceOf[to][id] += amount;
+        mapping(address => uint256) storage balances = _balances[id];
+
+        balances[from] -= amount;
+        balances[to] += amount;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -94,8 +100,10 @@ abstract contract ERC1155 {
             id = ids[i];
             amount = amounts[i];
 
-            balanceOf[from][id] -= amount;
-            balanceOf[to][id] += amount;
+            mapping(address => uint256) storage balances = _balances[id];
+
+            balances[from] -= amount;
+            balances[to] += amount;
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -129,7 +137,7 @@ abstract contract ERC1155 {
         // the array index counter which cannot possibly overflow.
         unchecked {
             for (uint256 i = 0; i < owners.length; ++i) {
-                balances[i] = balanceOf[owners[i]][ids[i]];
+                balances[i] = _balances[ids[i]][owners[i]];
             }
         }
     }
@@ -155,7 +163,7 @@ abstract contract ERC1155 {
         uint256 amount,
         bytes memory data
     ) internal virtual {
-        balanceOf[to][id] += amount;
+        _balances[id][to] += amount;
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
@@ -179,7 +187,7 @@ abstract contract ERC1155 {
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
         for (uint256 i = 0; i < idsLength; ) {
-            balanceOf[to][ids[i]] += amounts[i];
+            _balances[ids[i]][to] += amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -209,7 +217,7 @@ abstract contract ERC1155 {
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
         for (uint256 i = 0; i < idsLength; ) {
-            balanceOf[from][ids[i]] -= amounts[i];
+            _balances[ids[i]][from] -= amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -226,7 +234,7 @@ abstract contract ERC1155 {
         uint256 id,
         uint256 amount
     ) internal virtual {
-        balanceOf[from][id] -= amount;
+        _balances[id][from] -= amount;
 
         emit TransferSingle(msg.sender, from, address(0), id, amount);
     }
