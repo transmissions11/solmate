@@ -15,6 +15,6 @@
     "prettier-plugin-solidity": "^1.0.0-beta.13"
   },
   "scripts": {
-    "lint": "prettier --write src/**/*.sol"
+    "lint": "prettier --write **.sol"
   }
 }
