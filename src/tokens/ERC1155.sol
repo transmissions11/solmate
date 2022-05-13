@@ -46,8 +46,8 @@ abstract contract ERC1155 {
                               ERC1155 LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function balanceOf(address user, uint256 id) public view returns (uint256) {
-        return _balances[id][user];
+    function balanceOf(address owner, uint256 id) public view returns (uint256) {
+        return _balances[id][owner];
     }
 
     function setApprovalForAll(address operator, bool approved) public virtual {
