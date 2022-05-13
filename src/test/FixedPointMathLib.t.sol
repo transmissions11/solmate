@@ -108,6 +108,54 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.mulDivUp(1e18, 1e18, 0);
     }
 
+    function testLnWad() public {
+        assertEq(FixedPointMathLib.lnWad(1e18), 0);
+
+        // Actual: 999999999999999999.8674576…
+        assertEq(FixedPointMathLib.lnWad(2718281828459045235), 999999999999999999);
+
+        // Actual: 2461607324344817917.963296…
+        assertEq(FixedPointMathLib.lnWad(11723640096265400935), 2461607324344817918);
+    }
+
+    function testLnWadSmall() public {
+        // Actual: -41446531673892822312.3238461…
+        assertEq(FixedPointMathLib.lnWad(1), -41446531673892822313);
+
+        // Actual: -37708862055609454006.40601608…
+        assertEq(FixedPointMathLib.lnWad(42), -37708862055609454007);
+
+        // Actual: -32236191301916639576.251880365581…
+        assertEq(FixedPointMathLib.lnWad(1e4), -32236191301916639577);
+
+        // Actual: -20723265836946411156.161923092…
+        assertEq(FixedPointMathLib.lnWad(1e9), -20723265836946411157);
+    }
+
+    function testLnWadBig() public {
+        // Actual: 135305999368893231589.070344787…
+        assertEq(FixedPointMathLib.lnWad(2**255 - 1), 135305999368893231589);
+
+        // Actual: 76388489021297880288.605614463571…
+        assertEq(FixedPointMathLib.lnWad(2**170), 76388489021297880288);
+
+        // Actual: 47276307437780177293.081865…
+        assertEq(FixedPointMathLib.lnWad(2**128), 47276307437780177293);
+    }
+
+    function testLnWadNegative() public {
+        // TODO: Blocked on <https://github.com/gakonst/foundry/issues/864>
+        // hevm.expectRevert(FixedPointMathLib.LnNegativeUndefined.selector);
+        // FixedPointMathLib.lnWad(-1);
+        // FixedPointMathLib.lnWad(-2**255);
+    }
+
+    function testLnWadOverfloww() public {
+        // TODO: Blocked on <https://github.com/gakonst/foundry/issues/864>
+        // hevm.expectRevert(FixedPointMathLib.Overflow.selector);
+        // FixedPointMathLib.lnWad(0);
+    }
+
     function testRPow() public {
         assertEq(FixedPointMathLib.rpow(2e27, 2, 1e27), 4e27);
         assertEq(FixedPointMathLib.rpow(2e18, 2, 1e18), 4e18);
