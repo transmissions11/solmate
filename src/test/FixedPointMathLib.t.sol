@@ -18,7 +18,7 @@ contract FixedPointMathLibTest is DSTestPlus {
 
         assertEq(
             FixedPointMathLib.expWad(0),
-            999999999999999999
+            1000000000000000000
             // True value: 1000000000000000000 (off by 1 wei)
         );
 
