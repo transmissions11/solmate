@@ -6,9 +6,9 @@ import {Auth, Authority} from "../Auth.sol";
 /// @notice Flexible and target agnostic role based Authority that supports up to 256 roles.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/MultiRolesAuthority.sol)
 contract MultiRolesAuthority is Auth, Authority {
-    /*//////////////////////////////////////////////////////////////
-                                 EVENTS
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                           EVENTS                           */
+    /*////////////////////////////////////////////////////////////*/
 
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
 
@@ -18,21 +18,21 @@ contract MultiRolesAuthority is Auth, Authority {
 
     event TargetCustomAuthorityUpdated(address indexed target, Authority indexed authority);
 
-    /*//////////////////////////////////////////////////////////////
-                               CONSTRUCTOR
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                         CONSTRUCTOR                        */
+    /*////////////////////////////////////////////////////////////*/
 
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
 
-    /*//////////////////////////////////////////////////////////////
-                     CUSTOM TARGET AUTHORITY STORAGE
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*               CUSTOM TARGET AUTHORITY STORAGE              */
+    /*////////////////////////////////////////////////////////////*/
 
     mapping(address => Authority) public getTargetCustomAuthority;
 
-    /*//////////////////////////////////////////////////////////////
-                            ROLE/USER STORAGE
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                      ROLE/USER STORAGE                     */
+    /*////////////////////////////////////////////////////////////*/
 
     mapping(address => bytes32) public getUserRoles;
 
@@ -48,9 +48,9 @@ contract MultiRolesAuthority is Auth, Authority {
         return (uint256(getRolesWithCapability[functionSig]) >> role) & 1 != 0;
     }
 
-    /*//////////////////////////////////////////////////////////////
-                           AUTHORIZATION LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                     AUTHORIZATION LOGIC                    */
+    /*////////////////////////////////////////////////////////////*/
 
     function canCall(
         address user,
@@ -65,9 +65,9 @@ contract MultiRolesAuthority is Auth, Authority {
             isCapabilityPublic[functionSig] || bytes32(0) != getUserRoles[user] & getRolesWithCapability[functionSig];
     }
 
-    /*///////////////////////////////////////////////////////////////
-               CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*          CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC       */
+    /*////////////////////////////////////////////////////////////*/
 
     function setTargetCustomAuthority(address target, Authority customAuthority) public virtual requiresAuth {
         getTargetCustomAuthority[target] = customAuthority;
@@ -75,9 +75,9 @@ contract MultiRolesAuthority is Auth, Authority {
         emit TargetCustomAuthorityUpdated(target, customAuthority);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                  PUBLIC CAPABILITY CONFIGURATION LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*            PUBLIC CAPABILITY CONFIGURATION LOGIC           */
+    /*////////////////////////////////////////////////////////////*/
 
     function setPublicCapability(bytes4 functionSig, bool enabled) public virtual requiresAuth {
         isCapabilityPublic[functionSig] = enabled;
@@ -85,9 +85,9 @@ contract MultiRolesAuthority is Auth, Authority {
         emit PublicCapabilityUpdated(functionSig, enabled);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                       USER ROLE ASSIGNMENT LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                 USER ROLE ASSIGNMENT LOGIC                 */
+    /*////////////////////////////////////////////////////////////*/
 
     function setUserRole(
         address user,
@@ -103,9 +103,9 @@ contract MultiRolesAuthority is Auth, Authority {
         emit UserRoleUpdated(user, role, enabled);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                   ROLE CAPABILITY CONFIGURATION LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*             ROLE CAPABILITY CONFIGURATION LOGIC            */
+    /*////////////////////////////////////////////////////////////*/
 
     function setRoleCapability(
         uint8 role,
