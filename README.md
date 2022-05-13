@@ -53,7 +53,7 @@ To install with [**Hardhat**](https://github.com/nomiclabs/hardhat) or [**Truffl
 npm install @rari-capital/solmate
 ```
 
-## Acknowledgements
+## Acknowledgements 🫡
 
 These contracts were inspired by or directly modified from many sources, primarily:
 
