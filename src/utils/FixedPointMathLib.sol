@@ -5,7 +5,6 @@ import {BitwiseLib} from "./BitwiseLib.sol";
 
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
-/// @author Inspired by Balancer (https://github.com/balancer-labs/balancer-v2-monorepo/tree/master/pkg/solidity-utils/contracts/math)
 library FixedPointMathLib {
     error Overflow();
 
