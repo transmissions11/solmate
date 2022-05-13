@@ -60,11 +60,18 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(SSTORE2.write(hex"11223344"), 41000, 42000);
     }
 
-    function testWriteRead(bytes calldata testBytes) public {
+    function testFuzzWriteRead(bytes calldata testBytes, bytes calldata brutalizeWith)
+        public
+        brutalizeMemory(brutalizeWith)
+    {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes)), testBytes);
     }
 
-    function testWriteReadCustomStartBound(bytes calldata testBytes, uint256 startIndex) public {
+    function testFuzzWriteReadCustomStartBound(
+        bytes calldata testBytes,
+        uint256 startIndex,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (testBytes.length == 0) return;
 
         startIndex = bound(startIndex, 0, testBytes.length);
@@ -72,11 +79,12 @@ contract SSTORE2Test is DSTestPlus {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes), startIndex), bytes(testBytes[startIndex:]));
     }
 
-    function testWriteReadCustomBounds(
+    function testFuzzWriteReadCustomBounds(
         bytes calldata testBytes,
         uint256 startIndex,
-        uint256 endIndex
-    ) public {
+        uint256 endIndex,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         if (testBytes.length == 0) return;
 
         endIndex = bound(endIndex, 0, testBytes.length);
@@ -90,39 +98,53 @@ contract SSTORE2Test is DSTestPlus {
         );
     }
 
-    function testFailReadInvalidPointer(address pointer) public view {
+    function testFailFuzzReadInvalidPointer(address pointer, bytes calldata brutalizeWith)
+        public
+        view
+        brutalizeMemory(brutalizeWith)
+    {
         if (pointer.code.length > 0) revert();
 
         SSTORE2.read(pointer);
     }
 
-    function testFailReadInvalidPointerCustomStartBound(address pointer, uint256 startIndex) public view {
+    function testFailFuzzReadInvalidPointerCustomStartBound(
+        address pointer,
+        uint256 startIndex,
+        bytes calldata brutalizeWith
+    ) public view brutalizeMemory(brutalizeWith) {
         if (pointer.code.length > 0) revert();
 
         SSTORE2.read(pointer, startIndex);
     }
 
-    function testFailReadInvalidPointerCustomBounds(
+    function testFailFuzzReadInvalidPointerCustomBounds(
         address pointer,
         uint256 startIndex,
-        uint256 endIndex
-    ) public view {
+        uint256 endIndex,
+        bytes calldata brutalizeWith
+    ) public view brutalizeMemory(brutalizeWith) {
         if (pointer.code.length > 0) revert();
 
         SSTORE2.read(pointer, startIndex, endIndex);
     }
 
-    function testFailWriteReadCustomStartBoundOutOfRange(bytes calldata testBytes, uint256 startIndex) public {
+    function testFailFuzzWriteReadCustomStartBoundOutOfRange(
+        bytes calldata testBytes,
+        uint256 startIndex,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         startIndex = bound(startIndex, testBytes.length + 1, type(uint256).max);
 
         SSTORE2.read(SSTORE2.write(testBytes), startIndex);
     }
 
-    function testFailWriteReadCustomBoundsOutOfRange(
+    function testFailFuzzWriteReadCustomBoundsOutOfRange(
         bytes calldata testBytes,
         uint256 startIndex,
-        uint256 endIndex
-    ) public {
+        uint256 endIndex,
+        bytes calldata brutalizeWith
+    ) public brutalizeMemory(brutalizeWith) {
         endIndex = bound(endIndex, testBytes.length + 1, type(uint256).max);
 
         SSTORE2.read(SSTORE2.write(testBytes), startIndex, endIndex);
