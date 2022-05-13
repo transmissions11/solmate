@@ -60,14 +60,14 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(SSTORE2.write(hex"11223344"), 41000, 42000);
     }
 
-    function testWriteRead(bytes calldata testBytes, bytes calldata brutalizeWith)
+    function testFuzzWriteRead(bytes calldata testBytes, bytes calldata brutalizeWith)
         public
         brutalizeMemory(brutalizeWith)
     {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes)), testBytes);
     }
 
-    function testWriteReadCustomStartBound(
+    function testFuzzWriteReadCustomStartBound(
         bytes calldata testBytes,
         uint256 startIndex,
         bytes calldata brutalizeWith
@@ -79,7 +79,7 @@ contract SSTORE2Test is DSTestPlus {
         assertBytesEq(SSTORE2.read(SSTORE2.write(testBytes), startIndex), bytes(testBytes[startIndex:]));
     }
 
-    function testWriteReadCustomBounds(
+    function testFuzzWriteReadCustomBounds(
         bytes calldata testBytes,
         uint256 startIndex,
         uint256 endIndex,
@@ -98,7 +98,7 @@ contract SSTORE2Test is DSTestPlus {
         );
     }
 
-    function testFailReadInvalidPointer(address pointer, bytes calldata brutalizeWith)
+    function testFailFuzzReadInvalidPointer(address pointer, bytes calldata brutalizeWith)
         public
         view
         brutalizeMemory(brutalizeWith)
@@ -108,7 +108,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(pointer);
     }
 
-    function testFailReadInvalidPointerCustomStartBound(
+    function testFailFuzzReadInvalidPointerCustomStartBound(
         address pointer,
         uint256 startIndex,
         bytes calldata brutalizeWith
@@ -118,7 +118,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(pointer, startIndex);
     }
 
-    function testFailReadInvalidPointerCustomBounds(
+    function testFailFuzzReadInvalidPointerCustomBounds(
         address pointer,
         uint256 startIndex,
         uint256 endIndex,
@@ -129,7 +129,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(pointer, startIndex, endIndex);
     }
 
-    function testFailWriteReadCustomStartBoundOutOfRange(
+    function testFailFuzzWriteReadCustomStartBoundOutOfRange(
         bytes calldata testBytes,
         uint256 startIndex,
         bytes calldata brutalizeWith
@@ -139,7 +139,7 @@ contract SSTORE2Test is DSTestPlus {
         SSTORE2.read(SSTORE2.write(testBytes), startIndex);
     }
 
-    function testFailWriteReadCustomBoundsOutOfRange(
+    function testFailFuzzWriteReadCustomBoundsOutOfRange(
         bytes calldata testBytes,
         uint256 startIndex,
         uint256 endIndex,
