@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {Ownable} from "../../../auth/Ownable.sol";
+import {Owned} from "../../../auth/Owned.sol";
 
-contract MockOwnable is Ownable(msg.sender) {
+contract MockOwned is Owned(msg.sender) {
     bool public flag;
 
     function updateFlag() public virtual onlyOwner {
