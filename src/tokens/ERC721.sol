@@ -210,8 +210,7 @@ abstract contract ERC721 {
 
         if (to.code.length != 0)
             require(
-                to.code.length == 0 ||
-                    ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) ==
+                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) ==
                     ERC721TokenReceiver.onERC721Received.selector,
                 "UNSAFE_RECIPIENT"
             );
