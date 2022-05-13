@@ -62,6 +62,7 @@ library FixedPointMathLib {
             int256 p = y + x - 94201549194550492254356042504812;
             p = ((p * y) >> 96) + 28719021644029726153956944680412240;
             p = p * x + (4385272521454847904632057985693276 << 96);
+            p +=  (27019 * 10**9) << 96;
 
             // We leave p in 2**192 basis so we don't need to scale it back up for the division.
             int256 q = x - 2855989394907223263936484059900;
