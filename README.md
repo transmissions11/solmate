@@ -41,12 +41,6 @@ We **do not give any warranties** and **will not be liable for any loss** incurr
 
 ## Installation
 
-To install with [**DappTools**](https://github.com/dapphub/dapptools):
-
-```sh
-dapp install rari-capital/solmate
-```
-
 To install with [**Foundry**](https://github.com/gakonst/foundry):
 
 ```sh

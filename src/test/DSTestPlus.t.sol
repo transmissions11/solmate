@@ -5,16 +5,21 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
 contract DSTestPlusTest is DSTestPlus {
     function testBound() public {
-        assertEq(bound(5, 0, 4), 0);
         assertEq(bound(0, 69, 69), 69);
         assertEq(bound(0, 68, 69), 68);
-        assertEq(bound(10, 150, 190), 174);
-        assertEq(bound(300, 2800, 3200), 3107);
-        assertEq(bound(9999, 1337, 6666), 4669);
+        assertEq(bound(5, 0, 4), 0);
+        assertEq(bound(9999, 1337, 6666), 6006);
+        assertEq(bound(0, type(uint256).max - 6, type(uint256).max), type(uint256).max - 6);
+        assertEq(bound(6, type(uint256).max - 6, type(uint256).max), type(uint256).max);
     }
 
     function testFailBoundMinBiggerThanMax() public {
         bound(5, 100, 10);
+    }
+
+    function testRelApproxEqBothZeroesPasses() public {
+        assertRelApproxEq(0, 0, 1e18);
+        assertRelApproxEq(0, 0, 0);
     }
 
     function testBound(
@@ -44,5 +49,24 @@ contract DSTestPlusTest is DSTestPlus {
         if (max > min) (min, max) = (max, min);
 
         bound(num, min, max);
+    }
+
+    function testBrutalizeMemory() public brutalizeMemory("FEEDFACECAFEBEEFFEEDFACECAFEBEEF") {
+        bytes32 scratchSpace1;
+        bytes32 scratchSpace2;
+        bytes32 freeMem1;
+        bytes32 freeMem2;
+
+        assembly {
+            scratchSpace1 := mload(0)
+            scratchSpace2 := mload(32)
+            freeMem1 := mload(mload(0x40))
+            freeMem2 := mload(add(mload(0x40), 32))
+        }
+
+        assertGt(uint256(freeMem1), 0);
+        assertGt(uint256(freeMem2), 0);
+        assertGt(uint256(scratchSpace1), 0);
+        assertGt(uint256(scratchSpace2), 0);
     }
 }
