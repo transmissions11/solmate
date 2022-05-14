@@ -5,9 +5,9 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
 /// @author Inspired by USM (https://github.com/usmfum/USM/blob/master/contracts/WadMath.sol)
 library FixedPointMathLib {
-    /*//////////////////////////////////////////////////////////////
-                    SIMPLIFIED FIXED POINT OPERATIONS
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*              SIMPLIFIED FIXED POINT OPERATIONS             */
+    /*////////////////////////////////////////////////////////////*/
 
     uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
@@ -27,9 +27,9 @@ library FixedPointMathLib {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
 
-    /*//////////////////////////////////////////////////////////////
-                    LOW LEVEL FIXED POINT OPERATIONS
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*              LOW LEVEL FIXED POINT OPERATIONS              */
+    /*////////////////////////////////////////////////////////////*/
 
     function mulDivDown(
         uint256 x,
@@ -159,9 +159,9 @@ library FixedPointMathLib {
         }
     }
 
-    /*//////////////////////////////////////////////////////////////
-                        GENERAL NUMBER UTILITIES
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                  GENERAL NUMBER UTILITIES                  */
+    /*////////////////////////////////////////////////////////////*/
 
     function sqrt(uint256 x) internal pure returns (uint256 z) {
         assembly {

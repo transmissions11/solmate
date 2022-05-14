@@ -7,9 +7,9 @@ pragma solidity >=0.8.0;
 library SSTORE2 {
     uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's a STOP opcode to ensure the contract can't be called.
 
-    /*//////////////////////////////////////////////////////////////
-                               WRITE LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                         WRITE LOGIC                        */
+    /*////////////////////////////////////////////////////////////*/
 
     function write(bytes memory data) internal returns (address pointer) {
         // Prefix the bytecode with a STOP opcode to ensure it cannot be called.
@@ -43,9 +43,9 @@ library SSTORE2 {
         require(pointer != address(0), "DEPLOYMENT_FAILED");
     }
 
-    /*//////////////////////////////////////////////////////////////
-                               READ LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                         READ LOGIC                         */
+    /*////////////////////////////////////////////////////////////*/
 
     function read(address pointer) internal view returns (bytes memory) {
         return readBytecode(pointer, DATA_OFFSET, pointer.code.length - DATA_OFFSET);
@@ -70,9 +70,9 @@ library SSTORE2 {
         return readBytecode(pointer, start, end - start);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                          INTERNAL HELPER LOGIC
-    //////////////////////////////////////////////////////////////*/
+    /*////////////////////////////////////////////////////////////*/
+    /*                    INTERNAL HELPER LOGIC                   */
+    /*////////////////////////////////////////////////////////////*/
 
     function readBytecode(
         address pointer,
