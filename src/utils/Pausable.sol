@@ -38,8 +38,9 @@ abstract contract Pausable {
     }
 
     function togglePause(bool shouldPause) internal virtual {
-        _paused = (shouldPause == false ? 1 : 2);
-
+        uint256 toPause = (shouldPause == false ? 1 : 2);
+        require(toPause != _paused, "SAME_TOGGLE");
+        _paused = toPause;
         emit PauseToggled(msg.sender, shouldPause);
     }
 }
