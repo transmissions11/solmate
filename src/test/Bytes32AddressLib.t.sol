@@ -19,4 +19,13 @@ contract Bytes32AddressLibTest is DSTestPlus {
             0xCAfeBeefFeedfAceCAFeBEEffEEDfaCecafEBeeF
         );
     }
+
+    function testFromFirst20Bytes() public {
+        assertEq(
+            Bytes32AddressLib.fromFirst20Bytes(
+                Bytes32AddressLib.fillLast12Bytes(0xfEEDFaCEcaFeBEEFfEEDFACecaFEBeeFfeEdfAce)
+            ),
+            0xfEEDFaCEcaFeBEEFfEEDFACecaFEBeeFfeEdfAce
+        );
+    }
 }
