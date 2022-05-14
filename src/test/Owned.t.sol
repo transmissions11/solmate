@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockOwned} from "./utils/mocks/MockOwned.sol";
 
-contract AuthTest is DSTestPlus {
+contract OwnedTest is DSTestPlus {
     MockOwned mockOwned;
 
     function setUp() public {
