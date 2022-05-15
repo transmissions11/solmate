@@ -66,13 +66,13 @@ abstract contract ERC1155 {
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
-        require(
-            to.code.length == 0
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
+        if (to.code.length != 0) {
+            require(
+                ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
-            "UNSAFE_RECIPIENT"
-        );
+                "UNSAFE_RECIPIENT"
+            );
+        } else require(to != address(0), "UNSAFE_RECIPIENT");
     }
 
     function safeBatchTransferFrom(
@@ -106,13 +106,13 @@ abstract contract ERC1155 {
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
 
-        require(
-            to.code.length == 0
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) ==
+        if (to.code.length != 0) {
+            require(
+                ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) ==
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector,
-            "UNSAFE_RECIPIENT"
-        );
+                "UNSAFE_RECIPIENT"
+            );
+        } else require(to != address(0), "UNSAFE_RECIPIENT");
     }
 
     function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)
@@ -159,13 +159,13 @@ abstract contract ERC1155 {
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
-        require(
-            to.code.length == 0
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
+        if (to.code.length != 0) {
+            require(
+                ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
-            "UNSAFE_RECIPIENT"
-        );
+                "UNSAFE_RECIPIENT"
+            );
+        } else require(to != address(0), "UNSAFE_RECIPIENT");
     }
 
     function _batchMint(
@@ -190,13 +190,13 @@ abstract contract ERC1155 {
 
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
 
-        require(
-            to.code.length == 0
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) ==
+        if (to.code.length != 0) {
+            require(
+                ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) ==
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector,
-            "UNSAFE_RECIPIENT"
-        );
+                "UNSAFE_RECIPIENT"
+            );
+        } else require(to != address(0), "UNSAFE_RECIPIENT");
     }
 
     function _batchBurn(
