@@ -15,7 +15,7 @@ abstract contract Pausable {
                             PAUSABLE STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    uint256 private _paused = 1; // 1 is un paused
+    uint256 private _paused = 1;
 
     modifier whenNotPaused() {
         require(_paused == 1, "PAUSED");
@@ -40,6 +40,7 @@ abstract contract Pausable {
     function togglePause(bool shouldPause) internal virtual {
         uint256 toPause = (shouldPause == false ? 1 : 2);
         require(toPause != _paused, "SAME_TOGGLE");
+
         _paused = toPause;
         emit PauseToggled(msg.sender, shouldPause);
     }

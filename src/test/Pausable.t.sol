@@ -21,7 +21,7 @@ contract PausableTest is DSTestPlus {
         assertBoolEq(mockpausable.isPaused(), true);
     }
 
-    function testUnPause() public {
+    function testUnpause() public {
         assertBoolEq(mockpausable.isPaused(), false);
         hevm.expectEmit(true, true, true, true);
         emit PauseToggled(address(this), true);
