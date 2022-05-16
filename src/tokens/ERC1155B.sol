@@ -87,7 +87,6 @@ abstract contract ERC1155B {
         emit TransferSingle(msg.sender, from, to, id, amount);
 
         if (to.code.length != 0) {
-            // TODO: wait is using amount or 1 faster here
             require(
                 ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
                     ERC1155TokenReceiver.onERC1155Received.selector,
