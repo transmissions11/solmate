@@ -72,7 +72,7 @@ abstract contract ERC1155 {
                     ERC1155TokenReceiver.onERC1155Received.selector,
                 "UNSAFE_RECIPIENT"
             );
-        } else require(to != address(0), "UNSAFE_RECIPIENT");
+        } else require(to != address(0), "INVALID_RECIPIENT");
     }
 
     function safeBatchTransferFrom(
@@ -112,7 +112,7 @@ abstract contract ERC1155 {
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector,
                 "UNSAFE_RECIPIENT"
             );
-        } else require(to != address(0), "UNSAFE_RECIPIENT");
+        } else require(to != address(0), "INVALID_RECIPIENT");
     }
 
     function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)
@@ -165,7 +165,7 @@ abstract contract ERC1155 {
                     ERC1155TokenReceiver.onERC1155Received.selector,
                 "UNSAFE_RECIPIENT"
             );
-        } else require(to != address(0), "UNSAFE_RECIPIENT");
+        } else require(to != address(0), "INVALID_RECIPIENT");
     }
 
     function _batchMint(
@@ -196,7 +196,7 @@ abstract contract ERC1155 {
                     ERC1155TokenReceiver.onERC1155BatchReceived.selector,
                 "UNSAFE_RECIPIENT"
             );
-        } else require(to != address(0), "UNSAFE_RECIPIENT");
+        } else require(to != address(0), "INVALID_RECIPIENT");
     }
 
     function _batchBurn(
