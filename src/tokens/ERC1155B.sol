@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC1155TokenReceiver} from "./ERC1155.sol";
+import { ERC1155TokenReceiver } from "./ERC1155.sol";
 
 /// @notice Minimalist and gas efficient ERC1155 implementation optimized for single supply ids.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155B.sol)
@@ -41,6 +41,12 @@ abstract contract ERC1155B {
     //////////////////////////////////////////////////////////////*/
 
     mapping(uint256 => address) public ownerOf;
+
+    mapping(address => uint256) internal _balanceOf;
+
+    function balanceOf(address owner) public view virtual returns (uint256 bal) {
+        return _balanceOf[owner];
+    }
 
     function balanceOf(address owner, uint256 id) public view virtual returns (uint256 bal) {
         address idOwner = ownerOf[id];
@@ -83,6 +89,12 @@ abstract contract ERC1155B {
         require(amount == 1, "INVALID_AMOUNT");
 
         ownerOf[id] = to;
+        // Underflow of the sender's balance is impossible because we check for
+        // ownership above and the recipient's balance can't realistically overflow.
+        unchecked {
+            _balanceOf[from]--;
+            _balanceOf[to]++;
+        }
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
@@ -110,10 +122,11 @@ abstract contract ERC1155B {
         uint256 id;
         uint256 amount;
 
+        uint256 idsLength = ids.length; // Saves MLOADs.
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            for (uint256 i = 0; i < ids.length; i++) {
+            for (uint256 i = 0; i < idsLength; i++) {
                 id = ids[i];
                 amount = amounts[i];
 
@@ -125,6 +138,11 @@ abstract contract ERC1155B {
 
                 ownerOf[id] = to;
             }
+
+            // Underflow of the sender's balance is impossible because we check for
+            // ownership above and the recipient's balance can't realistically overflow.
+            _balanceOf[from] -= idsLength;
+            _balanceOf[to] += idsLength;
         }
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
@@ -170,6 +188,9 @@ abstract contract ERC1155B {
         require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
         ownerOf[id] = to;
+        unchecked {
+            _balanceOf[to]++;
+        }
 
         emit TransferSingle(msg.sender, address(0), to, id, 1);
 
@@ -207,6 +228,8 @@ abstract contract ERC1155B {
 
                 amounts[i] = 1;
             }
+
+            _balanceOf[to] += idsLength;
         }
 
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
@@ -239,22 +262,29 @@ abstract contract ERC1155B {
 
                 require(ownerOf[id] == from, "WRONG_FROM");
 
+                // todo: delete here
                 ownerOf[id] = address(0);
 
                 amounts[i] = 1;
             }
+
+            _balanceOf[from] -= idsLength;
         }
 
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
 
-    function _burn(uint256 id) internal virtual {
-        address owner = ownerOf[id];
+    function _burn(address from, uint256 id) internal virtual {
+        require(from != address(0), "INVALID_FROM");
 
-        require(owner != address(0), "NOT_MINTED");
-
+        require(from == ownerOf[id], "NOT_MINTED");
+        // todo: delete here
         ownerOf[id] = address(0);
 
-        emit TransferSingle(msg.sender, owner, address(0), id, 1);
+        unchecked {
+            _balanceOf[from]--;
+        }
+
+        emit TransferSingle(msg.sender, from, address(0), id, 1);
     }
 }

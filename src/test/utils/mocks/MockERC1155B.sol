@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC1155B} from "../../../tokens/ERC1155B.sol";
+import { ERC1155B } from "../../../tokens/ERC1155B.sol";
 
 contract MockERC1155B is ERC1155B {
     function uri(uint256) public pure virtual override returns (string memory) {}
@@ -22,8 +22,8 @@ contract MockERC1155B is ERC1155B {
         _batchMint(to, ids, data);
     }
 
-    function burn(uint256 id) public virtual {
-        _burn(id);
+    function burn(address from, uint256 id) public virtual {
+        _burn(from, id);
     }
 
     function batchBurn(address from, uint256[] memory ids) public virtual {
