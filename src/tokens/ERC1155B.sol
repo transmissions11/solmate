@@ -262,8 +262,7 @@ abstract contract ERC1155B {
 
                 require(ownerOf[id] == from, "WRONG_FROM");
 
-                // todo: delete here
-                ownerOf[id] = address(0);
+                delete ownerOf[id];
 
                 amounts[i] = 1;
             }
@@ -278,9 +277,8 @@ abstract contract ERC1155B {
         require(from != address(0), "INVALID_FROM");
 
         require(from == ownerOf[id], "NOT_MINTED");
-        // todo: delete here
-        ownerOf[id] = address(0);
 
+        delete ownerOf[id];
         unchecked {
             _balanceOf[from]--;
         }
