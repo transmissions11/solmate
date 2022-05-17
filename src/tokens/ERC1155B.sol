@@ -26,11 +26,7 @@ abstract contract ERC1155B {
         uint256[] amounts
     );
 
-    event ApprovalForAll(
-        address indexed owner,
-        address indexed operator,
-        bool approved
-    );
+    event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
     event URI(string value, uint256 indexed id);
 
@@ -48,21 +44,11 @@ abstract contract ERC1155B {
 
     mapping(address => uint256) internal _balanceOf;
 
-    function balanceOf(address owner)
-        public
-        view
-        virtual
-        returns (uint256 bal)
-    {
+    function balanceOf(address owner) public view virtual returns (uint256 bal) {
         return _balanceOf[owner];
     }
 
-    function balanceOf(address owner, uint256 id)
-        public
-        view
-        virtual
-        returns (uint256 bal)
-    {
+    function balanceOf(address owner, uint256 id) public view virtual returns (uint256 bal) {
         address idOwner = ownerOf[id];
 
         assembly {
@@ -95,10 +81,7 @@ abstract contract ERC1155B {
         uint256 amount,
         bytes calldata data
     ) public virtual {
-        require(
-            msg.sender == from || isApprovedForAll[from][msg.sender],
-            "NOT_AUTHORIZED"
-        );
+        require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
         require(from == ownerOf[id], "WRONG_FROM"); // Can only transfer from the owner.
 
@@ -117,13 +100,8 @@ abstract contract ERC1155B {
 
         if (to.code.length != 0) {
             require(
-                ERC1155TokenReceiver(to).onERC1155Received(
-                    msg.sender,
-                    from,
-                    id,
-                    amount,
-                    data
-                ) == ERC1155TokenReceiver.onERC1155Received.selector,
+                ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
+                    ERC1155TokenReceiver.onERC1155Received.selector,
                 "UNSAFE_RECIPIENT"
             );
         } else require(to != address(0), "INVALID_RECIPIENT");
@@ -138,10 +116,7 @@ abstract contract ERC1155B {
     ) public virtual {
         require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
-        require(
-            msg.sender == from || isApprovedForAll[from][msg.sender],
-            "NOT_AUTHORIZED"
-        );
+        require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
         // Storing these outside the loop saves ~15 gas per iteration.
         uint256 id;
@@ -174,13 +149,8 @@ abstract contract ERC1155B {
 
         if (to.code.length != 0) {
             require(
-                ERC1155TokenReceiver(to).onERC1155BatchReceived(
-                    msg.sender,
-                    from,
-                    ids,
-                    amounts,
-                    data
-                ) == ERC1155TokenReceiver.onERC1155BatchReceived.selector,
+                ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) ==
+                    ERC1155TokenReceiver.onERC1155BatchReceived.selector,
                 "UNSAFE_RECIPIENT"
             );
         } else require(to != address(0), "INVALID_RECIPIENT");
@@ -226,13 +196,8 @@ abstract contract ERC1155B {
 
         if (to.code.length != 0) {
             require(
-                ERC1155TokenReceiver(to).onERC1155Received(
-                    msg.sender,
-                    address(0),
-                    id,
-                    1,
-                    data
-                ) == ERC1155TokenReceiver.onERC1155Received.selector,
+                ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, 1, data) ==
+                    ERC1155TokenReceiver.onERC1155Received.selector,
                 "UNSAFE_RECIPIENT"
             );
         } else require(to != address(0), "INVALID_RECIPIENT");
@@ -271,13 +236,8 @@ abstract contract ERC1155B {
 
         if (to.code.length != 0) {
             require(
-                ERC1155TokenReceiver(to).onERC1155BatchReceived(
-                    msg.sender,
-                    address(0),
-                    ids,
-                    amounts,
-                    data
-                ) == ERC1155TokenReceiver.onERC1155BatchReceived.selector,
+                ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) ==
+                    ERC1155TokenReceiver.onERC1155BatchReceived.selector,
                 "UNSAFE_RECIPIENT"
             );
         } else require(to != address(0), "INVALID_RECIPIENT");

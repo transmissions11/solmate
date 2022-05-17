@@ -24,7 +24,7 @@ contract MerkleProofTest is DSTestPlus {
         proof[0] = 0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510;
         proof[1] = 0x0b42b6393c1f53060fe3ddbfcd7aadcca894465a5a438f69c87d790b2299b9b2;
         bytes32 root = 0x5842148bc6ebeb52af882a317c765fccd3ae80589b21a9b8cbf21abb630e46a7;
-        bytes32 leaf = 0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb; 
+        bytes32 leaf = 0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb;
         assertBoolEq(MerkleProof.verify(proof, root, leaf), true);
     }
 
@@ -39,6 +39,4 @@ contract MerkleProofTest is DSTestPlus {
         bytes32 leaf = 0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb;
         assertBoolEq(MerkleProof.verify(proof, root, leaf), false);
     }
-
-
 }

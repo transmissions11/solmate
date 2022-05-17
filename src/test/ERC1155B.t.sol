@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import { DSTestPlus } from "./utils/DSTestPlus.sol";
-import { DSInvariantTest } from "./utils/DSInvariantTest.sol";
+import {DSTestPlus} from "./utils/DSTestPlus.sol";
+import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
-import { MockERC1155B } from "./utils/mocks/MockERC1155B.sol";
-import { ERC1155BUser } from "./utils/users/ERC1155BUser.sol";
+import {MockERC1155B} from "./utils/mocks/MockERC1155B.sol";
+import {ERC1155BUser} from "./utils/users/ERC1155BUser.sol";
 
-import { ERC1155TokenReceiver } from "../tokens/ERC1155.sol";
+import {ERC1155TokenReceiver} from "../tokens/ERC1155.sol";
 
 // TODO: test invalid_amount errors
 // TODO: test ownerOf()
