@@ -97,7 +97,7 @@ library FixedPointMathLib {
     //   reverts with `LnNegativeUndefined()` if x is negative, and with
     //   `Overflow()` if x is zero.
     // Consumes about 670 gas.
-    function lnWad(int256 x) internal returns (int256 r) {
+    function lnWad(int256 x) internal pure returns (int256 r) {
         unchecked {
             if (x < 1) {
                 if (x < 0) revert LnNegativeUndefined();
