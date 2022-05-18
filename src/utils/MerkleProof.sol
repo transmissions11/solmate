@@ -19,7 +19,7 @@ library MerkleProof {
             // Iterate over proof elements to compute root hash.
             for {
                 // Left shift by 5 is equivalent to multiplying by 0x20.
-                let end := add(data, shl(5, mload(proof))) 
+                let end := add(data, shl(5, mload(proof)))
             } lt(data, end) {
                 data := add(data, 0x20)
             } {
@@ -27,9 +27,32 @@ library MerkleProof {
                 // Slot of `computedHash` in scratch space.
                 // If the condition is true: 0x20, otherwise: 0x00.
                 let scratch := shl(5, gt(computedHash, loadedData))
-                
+
                 // Store elements to hash contiguously in scratch space.
                 // Scratch space is 64 bytes (0x00 - 0x3f) and both elements are 32 bytes.
+                mstore(scratch, computedHash)
+                mstore(xor(scratch, 0x20), loadedData)
+                computedHash := keccak256(0x00, 0x40)
+            }
+            isValid := eq(computedHash, root)
+        }
+    }
+
+    function verifyCalldata(
+        bytes32[] calldata proof,
+        bytes32 root,
+        bytes32 leaf
+    ) internal pure returns (bool isValid) {
+        assembly {
+            let computedHash := leaf
+            for {
+                let length := proof.length
+                let idx := 0
+            } lt(idx, length) {
+                idx := add(idx, 1)
+            } {
+                let loadedData := proof[idx]
+                let scratch := shl(5, gt(computedHash, loadedData))
                 mstore(scratch, computedHash)
                 mstore(xor(scratch, 0x20), loadedData)
                 computedHash := keccak256(0x00, 0x40)
