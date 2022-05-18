@@ -45,13 +45,13 @@ library MerkleProof {
     ) internal pure returns (bool isValid) {
         assembly {
             let computedHash := leaf
+            let data := proof.offset
             for {
-                let length := proof.length
-                let idx := 0
-            } lt(idx, length) {
-                idx := add(idx, 1)
+                let end := add(data, shl(5, proof.length))
+            } lt(data, end) {
+                data := add(data, 0x20)
             } {
-                let loadedData := proof[idx]
+                let loadedData := calldataload(data)
                 let scratch := shl(5, gt(computedHash, loadedData))
                 mstore(scratch, computedHash)
                 mstore(xor(scratch, 0x20), loadedData)
