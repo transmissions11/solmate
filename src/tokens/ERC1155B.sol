@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import { ERC1155TokenReceiver } from "./ERC1155.sol";
+import {ERC1155TokenReceiver} from "./ERC1155.sol";
 
 /// @notice Minimalist and gas efficient ERC1155 implementation optimized for single supply ids.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155B.sol)
