@@ -202,7 +202,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         // FixedPointMathLib.lnWad(-2**255);
     }
 
-    function testLnWadOverfloww() public {
+    function testLnWadOverflow() public {
         // TODO: Blocked on <https://github.com/gakonst/foundry/issues/864>
         // hevm.expectRevert(FixedPointMathLib.Overflow.selector);
         // FixedPointMathLib.lnWad(0);
