@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC1155TokenReceiver} from "./ERC1155.sol";
+import { ERC1155TokenReceiver } from "./ERC1155.sol";
 
 /// @notice Minimalist and gas efficient ERC1155 implementation optimized for single supply ids.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155B.sol)
@@ -172,7 +172,14 @@ abstract contract ERC1155B {
         ownerOf[id] = to;
 
         emit TransferSingle(msg.sender, address(0), to, id, 1);
+    }
 
+    function _safeMint(
+        address to,
+        uint256 id,
+        bytes memory data
+    ) internal virtual {
+        _mint(to, id, data);
         if (to.code.length != 0) {
             require(
                 ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, 1, data) ==
@@ -199,11 +206,35 @@ abstract contract ERC1155B {
         unchecked {
             for (uint256 i = 0; i < idsLength; ++i) {
                 id = ids[i];
-
-                // Minting twice would effectively be a force transfer.
                 require(ownerOf[id] == address(0), "ALREADY_MINTED");
 
                 ownerOf[id] = to;
+
+                amounts[i] = 1;
+            }
+        }
+
+        emit TransferBatch(msg.sender, address(0), to, ids, amounts);
+    }
+
+    function _safeBatchMint(
+        address to,
+        uint256[] memory ids,
+        bytes memory data
+    ) internal virtual {
+        uint256 idsLength = ids.length; // Saves MLOADs.
+
+        // Generate an amounts array locally to use in the event below.
+        uint256[] memory amounts = new uint256[](idsLength);
+
+        uint256 id; // Storing outside the loop saves ~7 gas per iteration.
+
+        // Unchecked because the only math done is incrementing
+        // the array index counter which cannot possibly overflow.
+        unchecked {
+            for (uint256 i = 0; i < idsLength; ++i) {
+                id = ids[i];
+                _mint(to, id, data);
 
                 amounts[i] = 1;
             }
@@ -239,7 +270,7 @@ abstract contract ERC1155B {
 
                 require(ownerOf[id] == from, "WRONG_FROM");
 
-                ownerOf[id] = address(0);
+                delete ownerOf[id];
 
                 amounts[i] = 1;
             }
@@ -253,7 +284,7 @@ abstract contract ERC1155B {
 
         require(owner != address(0), "NOT_MINTED");
 
-        ownerOf[id] = address(0);
+        delete ownerOf[id];
 
         emit TransferSingle(msg.sender, owner, address(0), id, 1);
     }
