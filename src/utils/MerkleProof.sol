@@ -25,12 +25,12 @@ library MerkleProof {
                 let loadedData := mload(data)
                 // Slot of `computedHash` in scratch space.
                 // If the condition is true: 0x20, otherwise: 0x00.
-                let p := shl(5, gt(computedHash, loadedData))
+                let scratch := shl(5, gt(computedHash, loadedData))
                 
                 // Store elements to hash contiguously in scratch space.
                 // Scratch space is 64 bytes (0x00 - 0x3f) and both elements are 32 bytes.
-                mstore(p, computedHash)
-                mstore(xor(p, 32), loadedData)
+                mstore(scratch, computedHash)
+                mstore(xor(scratch, 32), loadedData)
                 computedHash := keccak256(0x00, 0x40)
             }
             isValid := eq(computedHash, root)
