@@ -4,10 +4,6 @@ pragma solidity >=0.8.0;
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
 library FixedPointMathLib {
-    error Overflow();
-
-    error LnNegativeUndefined();
-
     /*//////////////////////////////////////////////////////////////
                     SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
