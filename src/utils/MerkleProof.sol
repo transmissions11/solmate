@@ -18,7 +18,8 @@ library MerkleProof {
 
             // Iterate over proof elements to compute root hash.
             for {
-                let end := add(data, shl(5, mload(proof)))
+                // Left shift by 5 is equivalent to multiplying by 0x20.
+                let end := add(data, shl(5, mload(proof))) 
             } lt(data, end) {
                 data := add(data, 0x20)
             } {
@@ -30,7 +31,7 @@ library MerkleProof {
                 // Store elements to hash contiguously in scratch space.
                 // Scratch space is 64 bytes (0x00 - 0x3f) and both elements are 32 bytes.
                 mstore(scratch, computedHash)
-                mstore(xor(scratch, 32), loadedData)
+                mstore(xor(scratch, 0x20), loadedData)
                 computedHash := keccak256(0x00, 0x40)
             }
             isValid := eq(computedHash, root)
