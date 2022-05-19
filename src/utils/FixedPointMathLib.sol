@@ -1,15 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {BitwiseLib} from "./BitwiseLib.sol";
-
 /// @notice Arithmetic library with operations for fixed-point numbers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/FixedPointMathLib.sol)
 library FixedPointMathLib {
-    error Overflow();
-
-    error LnNegativeUndefined();
-
     /*//////////////////////////////////////////////////////////////
                     SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
@@ -32,14 +26,19 @@ library FixedPointMathLib {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
 
+    function powWad(int256 x, int256 y) internal pure returns (int256) {
+        // Equivalent to x to the power of y because x ** y = (e ** ln(x)) ** y = e ** (ln(x) * y)
+        return expWad((lnWad(x) * y) / int256(WAD)); // Using ln(x) means x must be greater than 0.
+    }
+
     function expWad(int256 x) internal pure returns (int256 r) {
         unchecked {
             // When the result is < 0.5 we return zero. This happens when
             // x <= floor(log(0.5e18) * 1e18) ~ -42e18
             if (x <= -42139678854452767551) return 0;
 
-            // When the result is > (2**255 - 1) / 1e18 we can not represent it
-            // as an int256. This happens when x >= floor(log((2**255 -1) / 1e18) * 1e18) ~ 135.
+            // When the result is > (2**255 - 1) / 1e18 we can not represent it as an
+            // int. This happens when x >= floor(log((2**255 - 1) / 1e18) * 1e18) ~ 135.
             if (x >= 135305999368893231589) revert("EXP_OVERFLOW");
 
             // x is now in the range (-42, 136) * 1e18. Convert to (-42, 136) * 2**96
@@ -47,8 +46,8 @@ library FixedPointMathLib {
             // is a multiplication by 1e18 / 2**96 = 5**18 / 2**78.
             x = (x << 78) / 5**18;
 
-            // Reduce range of x to (-½ ln 2, ½ ln 2) * 2**96 by factoring out powers of two
-            // such that exp(x) = exp(x') * 2**k, where k is an integer.
+            // Reduce range of x to (-½ ln 2, ½ ln 2) * 2**96 by factoring out powers
+            // of two such that exp(x) = exp(x') * 2**k, where k is an integer.
             // Solving this gives k = round(x / log(2)) and x' = x - k * log(2).
             int256 k = ((x << 96) / 54916777467707473351141471128 + 2**95) >> 96;
             x = x - k * 54916777467707473351141471128;
@@ -72,7 +71,7 @@ library FixedPointMathLib {
             q = ((q * x) >> 96) + 26449188498355588339934803723976023;
 
             assembly {
-                // Div in assembly because solidity adds a zero check despite the `unchecked`.
+                // Div in assembly because solidity adds a zero check despite the unchecked.
                 // The q polynomial won't have zeros in the domain as all its roots are complex.
                 // No scaling is necessary because p is already 2**96 too large.
                 r := sdiv(p, q)
@@ -81,42 +80,32 @@ library FixedPointMathLib {
             // r should be in the range (0.09, 0.25) * 2**96.
 
             // We now need to multiply r by:
-            // - the scale factor s = ~6.031367120.
-            // - the 2**k factor from the range reduction.
-            // - the 1e18 / 2**96 factor for base conversion.
+            // * the scale factor s = ~6.031367120.
+            // * the 2**k factor from the range reduction.
+            // * the 1e18 / 2**96 factor for base conversion.
             // We do this all at once, with an intermediate result in 2**213
             // basis, so the final right shift is always by a positive amount.
             r = int256((uint256(r) * 3822833074963236453042738258902158003155416615667) >> uint256(195 - k));
         }
     }
 
-    // Computes ln(x) in 1e18 fixed point.
-    // Reverts if x is negative or zero.
-    // @param x The number to compute ln(x) for.
-    // @returns Approximately ln(x / 1e18) * 1e18 if x is strictly positive,
-    //   reverts with `LnNegativeUndefined()` if x is negative, and with
-    //   `Overflow()` if x is zero.
-    // Consumes about 670 gas.
-    function lnWad(int256 x) internal returns (int256 r) {
+    function lnWad(int256 x) internal pure returns (int256 r) {
         unchecked {
-            if (x < 1) {
-                if (x < 0) revert LnNegativeUndefined();
-                revert Overflow();
-            }
+            require(x > 0, "UNDEFINED");
 
             // We want to convert x from 10**18 fixed point to 2**96 fixed point.
-            // We do this by multiplying by 2**96 / 10**18.
-            // But since ln(x * C) = ln(x) + ln(C), we can simply do nothing here
+            // We do this by multiplying by 2**96 / 10**18. But since
+            // ln(x * C) = ln(x) + ln(C), we can simply do nothing here
             // and add ln(2**96 / 10**18) at the end.
 
             // Reduce range of x to (1, 2) * 2**96
             // ln(2^k * x) = k * ln(2) + ln(x)
-            int256 k = int256(BitwiseLib.ilog2(uint256(x))) - 96;
+            int256 k = int256(log2(uint256(x))) - 96;
             x <<= uint256(159 - k);
             x = int256(uint256(x) >> 159);
 
-            // Evaluate using a (8, 8)-term rational approximation
-            // p is made monic, we will multiply by a scale factor later
+            // Evaluate using a (8, 8)-term rational approximation.
+            // p is made monic, we will multiply by a scale factor later.
             int256 p = x + 3273285459638523848632254066296;
             p = ((p * x) >> 96) + 24828157081833163892658089445524;
             p = ((p * x) >> 96) + 43456485725739037958740375743393;
@@ -124,8 +113,9 @@ library FixedPointMathLib {
             p = ((p * x) >> 96) - 45023709667254063763336534515857;
             p = ((p * x) >> 96) - 14706773417378608786704636184526;
             p = p * x - (795164235651350426258249787498 << 96);
+
             // We leave p in 2**192 basis so we don't need to scale it back up for the division.
-            // q is monic by convention
+            // q is monic by convention.
             int256 q = x + 5573035233440673466300451813936;
             q = ((q * x) >> 96) + 71694874799317883764090561454958;
             q = ((q * x) >> 96) + 283447036172924575727196451306956;
@@ -134,18 +124,20 @@ library FixedPointMathLib {
             q = ((q * x) >> 96) + 31853899698501571402653359427138;
             q = ((q * x) >> 96) + 909429971244387300277376558375;
             assembly {
-                // Div in assembly because solidity adds a zero check despite the `unchecked`.
-                // The q polynomial is known not to have zeros in the domain. (All roots are complex)
+                // Div in assembly because solidity adds a zero check despite the unchecked.
+                // The q polynomial is known not to have zeros in the domain.
                 // No scaling required because p is already 2**96 too large.
                 r := sdiv(p, q)
             }
+
             // r is in the range (0, 0.125) * 2**96
 
-            // Finalization, we need to
+            // Finalization, we need to:
             // * multiply by the scale factor s = 5.549…
             // * add ln(2**96 / 10**18)
             // * add k * ln(2)
             // * multiply by 10**18 / 2**96 = 5**18 >> 78
+
             // mul s * 5e18 * 2**96, base is now 5**18 * 2**192
             r *= 1677202110996718588342820967067443963516166;
             // add ln(2) * k * 5e18 * 2**192
@@ -356,6 +348,21 @@ library FixedPointMathLib {
             if lt(div(x, z), z) {
                 z := div(x, z)
             }
+        }
+    }
+
+    function log2(uint256 x) internal pure returns (uint256 r) {
+        require(x > 0, "UNDEFINED");
+
+        assembly {
+            r := shl(7, lt(0xffffffffffffffffffffffffffffffff, x))
+            r := or(r, shl(6, lt(0xffffffffffffffff, shr(r, x))))
+            r := or(r, shl(5, lt(0xffffffff, shr(r, x))))
+            r := or(r, shl(4, lt(0xffff, shr(r, x))))
+            r := or(r, shl(3, lt(0xff, shr(r, x))))
+            r := or(r, shl(2, lt(0xf, shr(r, x))))
+            r := or(r, shl(1, lt(0x3, shr(r, x))))
+            r := or(r, lt(0x1, shr(r, x)))
         }
     }
 }

@@ -202,7 +202,7 @@ contract FixedPointMathLibTest is DSTestPlus {
         // FixedPointMathLib.lnWad(-2**255);
     }
 
-    function testLnWadOverfloww() public {
+    function testLnWadOverflow() public {
         // TODO: Blocked on <https://github.com/gakonst/foundry/issues/864>
         // hevm.expectRevert(FixedPointMathLib.Overflow.selector);
         // FixedPointMathLib.lnWad(0);
@@ -221,6 +221,14 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.sqrt(2704), 52);
         assertEq(FixedPointMathLib.sqrt(110889), 333);
         assertEq(FixedPointMathLib.sqrt(32239684), 5678);
+    }
+
+    function testLog2() public {
+        assertEq(FixedPointMathLib.log2(2), 1);
+        assertEq(FixedPointMathLib.log2(4), 2);
+        assertEq(FixedPointMathLib.log2(1024), 10);
+        assertEq(FixedPointMathLib.log2(1048576), 20);
+        assertEq(FixedPointMathLib.log2(1073741824), 30);
     }
 
     function testFuzzMulWadDown(uint256 x, uint256 y) public {
@@ -373,5 +381,13 @@ contract FixedPointMathLibTest is DSTestPlus {
         }
 
         assertTrue(root * root <= x && next * next > x);
+    }
+
+    function testFuzzLog2() public {
+        for (uint256 i = 1; i < 255; i++) {
+            assertEq(FixedPointMathLib.log2((1 << i) - 1), i - 1);
+            assertEq(FixedPointMathLib.log2((1 << i)), i);
+            assertEq(FixedPointMathLib.log2((1 << i) + 1), i);
+        }
     }
 }
