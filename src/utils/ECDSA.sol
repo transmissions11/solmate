@@ -51,17 +51,26 @@ library ECDSA {
 
     function toEthSignedMessageHash(bytes memory s) internal pure returns (bytes32 result) {
         assembly {
-            let ptr := add(mload(0x40), 128)
+            // We need at most 128 bytes for Ethereum signed message header.
+            // The max length of the ASCII reprenstation of a uint256 is 78 bytes.
+            // The length of "\x19Ethereum Signed Message:\n" is 26 bytes.
+            // The next multiple of 32 above 78 + 26 is 128.
 
-            let mid := ptr
+            // Instead of allocating, we temporarily copy the 128 bytes before the
+            // start of `s` data to some variables.
+            let m3 := mload(sub(s, 0x60))
+            let m2 := mload(sub(s, 0x40))
+            let m1 := mload(sub(s, 0x20))
+            // The length of `s` is in bytes.
             let sLength := mload(s)
-            let end := add(mid, sLength)
 
-            // Update the free memory pointer to allocate.
-            mstore(0x40, shl(5, add(1, shr(5, end))))
+            let ptr := add(s, 0x20)
+
+            // `end` marks the end of the memory which we will compute the keccak256 of.
+            let end := add(ptr, sLength)
 
             // Convert the length of the bytes to ASCII decimal representation
-            // and concatenate to the signature.
+            // while copying it over the the memory.
             for {
                 let temp := sLength
                 ptr := sub(ptr, 1)
@@ -74,23 +83,20 @@ library ECDSA {
                 mstore8(ptr, add(48, mod(temp, 10)))
             }
 
-            // Move the pointer 32 bytes lower to make room for the prefix.
+            // Move the pointer 32 bytes lower to make room for the string.
+            // `start` marks the start of the memory which we will compute the keccak256 of.
             let start := sub(ptr, 32)
-            // Concatenate the prefix to the signature.
+            // Copy the header over to the memory.
             mstore(start, "\x00\x00\x00\x00\x00\x00\x19Ethereum Signed Message:\n")
             start := add(start, 6)
 
-            // Concatenate the bytes to the signature.
-            for {
-                let temp := add(s, 0x20)
-                ptr := mid
-            } lt(ptr, end) {
-                ptr := add(ptr, 0x20)
-            } {
-                mstore(ptr, mload(temp))
-                temp := add(temp, 0x20)
-            }
+            // Compute the keccak256 of the memory.
             result := keccak256(start, sub(end, start))
+
+            mstore(s, sLength)
+            mstore(sub(s, 0x20), m1)
+            mstore(sub(s, 0x40), m2)
+            mstore(sub(s, 0x60), m3)
         }
     }
 }
