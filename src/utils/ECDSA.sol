@@ -8,8 +8,8 @@ library ECDSA {
     function recover(bytes32 hash, bytes calldata signature) internal view returns (address result) {
         assembly {
             // Copy the words above scratch space to some variables temporarily.
-            let m2 := mload(0x40)
             let m3 := mload(0x60)
+            let m2 := mload(0x40)
 
             // Directly load the fields from the calldata.
             let s := calldataload(add(signature.offset, 0x20))
@@ -44,7 +44,7 @@ library ECDSA {
                     0x00, // Start of input.
                     0x80, // Size of input.
                     0x00, // Start of output.
-                    0x20 // Size of output
+                    0x20 // Size of output.
                 )
                 // If invalid, the result will be the zero address.
                 result := mul(success, and(mload(0x00), 0xffffffffffffffffffffffffffffffffffffffff))
