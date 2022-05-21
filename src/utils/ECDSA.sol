@@ -2,8 +2,8 @@
 pragma solidity >=0.8.0;
 
 /// @notice Gas optimized ECDSA wrapper.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/MerkleProof.sol)
-/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/MerkleProof.sol)
+/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/ECDSA.sol)
+/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/ECDSA.sol)
 library ECDSA {
     function recover(bytes32 hash, bytes calldata signature) internal pure returns (address result) {
         bytes32 r;
