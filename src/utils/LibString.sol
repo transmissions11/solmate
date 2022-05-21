@@ -93,8 +93,8 @@ library LibString {
     function toHexString(uint256 value) internal pure returns (string memory str) {
         assembly {
             let start := mload(0x40)
-            // We need 32 bytes for the length, 2 bytes for the prefix, 
-            // and 64 bytes for the digits. 
+            // We need 32 bytes for the length, 2 bytes for the prefix,
+            // and 64 bytes for the digits.
             // The next multiple of 32 above (32 + 2 + 64) is 128.
             str := add(start, 128)
 
@@ -140,8 +140,8 @@ library LibString {
     function toHexString(address value) internal pure returns (string memory str) {
         assembly {
             let start := mload(0x40)
-            // We need 32 bytes for the length, 2 bytes for the prefix, 
-            // and 40 bytes for the digits. 
+            // We need 32 bytes for the length, 2 bytes for the prefix,
+            // and 40 bytes for the digits.
             // The next multiple of 32 above (32 + 2 + 40) is 96.
             str := add(start, 96)
 
