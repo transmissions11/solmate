@@ -120,7 +120,7 @@ contract EDCSATest is DSTestPlus {
         assertTrue(message.toEthSignedMessageHash() == bytes32(0xa46dbedd405cff161b6e80c17c8567597621d9f4c087204201097cb34448e71b));
     }
 
-    function recover(bytes32 hash, bytes calldata signature) external pure returns (address) {
+    function recover(bytes32 hash, bytes calldata signature) external view returns (address) {
         return ECDSA.recover(hash, signature);
     }
 }

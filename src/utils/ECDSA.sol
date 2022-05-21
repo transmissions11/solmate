@@ -5,15 +5,16 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/ECDSA.sol)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/cryptography/ECDSA.sol)
 library ECDSA {
-    function recover(bytes32 hash, bytes calldata signature) internal pure returns (address result) {
-        bytes32 r;
-        bytes32 s;
-        uint8 v;
-        bool isValid;
+    function recover(bytes32 hash, bytes calldata signature) internal view returns (address result) {
         assembly {
+            // Copy the words above scratch space to some variables temporarily.
+            let m2 := mload(0x40)
+            let m3 := mload(0x60)
+
             // Directly load the fields from the calldata.
-            r := calldataload(signature.offset)
-            s := calldataload(add(signature.offset, 0x20))
+            let s := calldataload(add(signature.offset, 0x20))
+            let v
+
             switch signature.length
             case 65 {
                 v := byte(0, calldataload(add(signature.offset, 0x40)))
@@ -24,18 +25,34 @@ library ECDSA {
                 // prettier-ignore
                 s := and(s, 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
             }
-            // Ensure signature is valid and not malleable.
-            isValid := and(
+
+            // If signature is valid and not malleable.
+            if and(
                 // `s` in lower half order.
                 // prettier-ignore
                 lt(s, 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1),
                 // `v` is 27 or 28
                 byte(v, 0x0101000000)
-            )
-        }
-        if (isValid) {
-            // If invalid, the result will be the zero address.
-            result = ecrecover(hash, v, r, s);
+            ) {
+                mstore(0x00, hash)
+                mstore(0x20, v)
+                calldatacopy(0x40, signature.offset, 0x20) // Directly copy `r` over.
+                mstore(0x60, s)
+                let success := staticcall(
+                    gas(), // Amount of gas left for the transaction.
+                    0x01, // Address of `ecrecover`.
+                    0x00, // Start of input.
+                    0x80, // Size of input.
+                    0x00, // Start of output.
+                    0x20 // Size of output
+                )
+                // If invalid, the result will be the zero address.
+                result := mul(success, and(mload(0x00), 0xffffffffffffffffffffffffffffffffffffffff))
+            }
+
+            // Restore the words above scratch space.
+            mstore(0x40, m2)
+            mstore(0x60, m3)
         }
     }
 
