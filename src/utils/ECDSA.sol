@@ -70,7 +70,7 @@ library ECDSA {
             let end := add(ptr, sLength)
 
             // Convert the length of the bytes to ASCII decimal representation
-            // while copying it over the the memory.
+            // and store it into the memory.
             for {
                 let temp := sLength
                 ptr := sub(ptr, 1)
@@ -93,6 +93,7 @@ library ECDSA {
             // Compute the keccak256 of the memory.
             result := keccak256(start, sub(end, start))
 
+            // Restore the previous memory.
             mstore(s, sLength)
             mstore(sub(s, 0x20), m1)
             mstore(sub(s, 0x40), m2)
