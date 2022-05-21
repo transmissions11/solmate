@@ -55,9 +55,9 @@ library ECDSA {
             // The max length of the ASCII reprenstation of a uint256 is 78 bytes.
             // The length of "\x19Ethereum Signed Message:\n" is 26 bytes.
             // The next multiple of 32 above 78 + 26 is 128.
-            
+
             // Instead of allocating, we temporarily copy the 128 bytes before the
-            // start of `s` data to some variables. 
+            // start of `s` data to some variables.
             let m3 := mload(sub(s, 0x60))
             let m2 := mload(sub(s, 0x40))
             let m1 := mload(sub(s, 0x20))
@@ -68,13 +68,13 @@ library ECDSA {
 
             // `end` marks the end of the memory which we will compute the keccak256 of.
             let end := add(ptr, sLength)
-            
+
             // Convert the length of the bytes to ASCII decimal representation
             // while copying it over the the memory.
             for {
                 let temp := sLength
                 ptr := sub(ptr, 1)
-                mstore8(ptr, add(48, mod(temp, 10))) 
+                mstore8(ptr, add(48, mod(temp, 10)))
                 temp := div(temp, 10)
             } temp {
                 temp := div(temp, 10)
