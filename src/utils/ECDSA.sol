@@ -47,7 +47,7 @@ library ECDSA {
                     0x20 // Size of output.
                 )
                 // If invalid, the result will be the zero address.
-                result := mul(success, and(mload(0x00), 0xffffffffffffffffffffffffffffffffffffffff))
+                result := mul(success, mload(0x00))
             }
 
             // Restore the words above scratch space.
