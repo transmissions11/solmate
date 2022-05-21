@@ -41,4 +41,144 @@ library LibString {
             mstore(str, sub(78, k))
         }
     }
+
+    function toHexString(uint256 value, uint256 length) internal pure returns (string memory str) {
+        assembly {
+            let start := mload(0x40)
+            // We need length * 2 bytes for the digits, 2 bytes for the prefix,
+            // and 32 bytes for the length. We add 32 to the total and round down
+            // to a multiple of 32. (32 + 2 + 32) = 66.
+            str := add(start, and(add(shl(1, length), 66), not(31)))
+
+            // Cache the end to calculate the length later.
+            let end := str
+
+            // Allocate the memory.
+            mstore(0x40, str)
+
+            // We write the string from rightmost digit to leftmost digit.
+            // The following is essentially a do-while loop that also handles the zero case.
+            for {
+                // Initialize and perform the first pass without check.
+                let temp := value
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                length := sub(length, gt(length, 0))
+            } or(length, temp) {
+                length := sub(length, gt(length, 0))
+            } {
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+            }
+
+            // Compute the string's length.
+            let strLength := add(sub(end, str), 2)
+            // Move the pointer and write the "0x" prefix, which is 0x3078.
+            str := sub(str, 32)
+            mstore(str, 0x3078)
+            // Move the pointer and write the length.
+            str := sub(str, 2)
+            mstore(str, strLength)
+        }
+    }
+
+    function toHexString(uint256 value) internal pure returns (string memory str) {
+        assembly {
+            let start := mload(0x40)
+            // We need 32 bytes for the length, 2 bytes for the prefix, 
+            // and 64 bytes for the digits. 
+            // The next multiple of 32 above (32 + 2 + 64) is 128.
+            str := add(start, 128)
+
+            // Cache the end to calculate the length later.
+            let end := str
+
+            // Allocate the memory.
+            mstore(0x40, str)
+
+            // We write the string from rightmost digit to leftmost digit.
+            // The following is essentially a do-while loop that also handles the zero case.
+            for {
+                // Initialize and perform the first pass without check.
+                let temp := value
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+            } temp {
+                // prettier-ignore
+            } {
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+            }
+
+            // Compute the string's length.
+            let strLength := add(sub(end, str), 2)
+            // Move the pointer and write the "0x" prefix, which is 0x3078.
+            str := sub(str, 32)
+            mstore(str, 0x3078)
+            // Move the pointer and write the length.
+            str := sub(str, 2)
+            mstore(str, strLength)
+        }
+    }
+
+    function toHexString(address value) internal pure returns (string memory str) {
+        assembly {
+            let start := mload(0x40)
+            // We need 32 bytes for the length, 2 bytes for the prefix, 
+            // and 40 bytes for the digits. 
+            // The next multiple of 32 above (32 + 2 + 40) is 96.
+            str := add(start, 96)
+
+            // Allocate the memory.
+            mstore(0x40, str)
+
+            // We write the string from rightmost digit to leftmost digit.
+            // The following is essentially a do-while loop that also handles the zero case.
+            for {
+                // Initialize and perform the first pass without check.
+                let length := 20
+                let temp := value
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                length := sub(length, 1)
+            } length {
+                length := sub(length, 1)
+            } {
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+                str := sub(str, 1)
+                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
+                temp := shr(4, temp)
+            }
+
+            // Compute the string's length.
+            // Move the pointer and write the "0x" prefix, which is 0x3078.
+            str := sub(str, 32)
+            mstore(str, 0x3078)
+            // Move the pointer and write the length.
+            str := sub(str, 2)
+            mstore(str, 42)
+        }
+    }
 }
