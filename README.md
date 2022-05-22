@@ -28,6 +28,16 @@ utils
 ├─ SafeTransferLib — "Safe ERC20/ETH transfer lib that handles missing return values"
 ```
 
+## Users
+
+Solmate is used across the industry for performance critical smart contracts because it's:
+
+- **Lightweight:** Solmate contracts use very little bytecode size and have a small runtime footprint.
+- **Battle tested:** Solmate contracts are audited and tested by some of the best in the industry.
+- **Readable:** Solmate contracts are designed be as efficient as possible while still being easy to read.
+
+![solmate-users](https://user-images.githubusercontent.com/26209401/169712653-995b8a40-8771-48c2-afc0-1e3232e1c068.png)
+
 ## Safety
 
 This is **experimental software** and is provided on an "as is" and "as available" basis.
