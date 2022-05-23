@@ -32,7 +32,7 @@ library LibBitmap {
         uint256 value = bitmap.map[index >> 8];
 
         assembly {
-            // Follow sets the bit at `shift` without branching.
+            // The following sets the bit at `shift` without branching.
             let shift := and(index, 0xff)
             // Isolate the bit at `shift`.
             let x := and(shr(shift, value), 1)
