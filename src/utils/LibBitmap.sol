@@ -29,6 +29,13 @@ library LibBitmap {
         uint256 index,
         bool shouldSet
     ) internal {
-        shouldSet ? set(bitmap, index) : unset(bitmap, index);
+        uint256 value = bitmap.map[index >> 8];
+
+        assembly {
+            // Set the bit at `shift` without branching.
+            let shift := and(index, 0xff)
+            value := xor(value, shl(shift, xor(and(shr(shift, value), 1), shouldSet)))
+        }
+        bitmap.map[index >> 8] = value;
     }
 }
