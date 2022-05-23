@@ -19,6 +19,10 @@ contract MockLibBitmap {
         bitmap.unset(index);
     }
 
+    function toggle(uint256 index) public {
+        bitmap.toggle(index);
+    }
+
     function setTo(uint256 index, bool shouldSet) public {
         bitmap.setTo(index, shouldSet);
     }
