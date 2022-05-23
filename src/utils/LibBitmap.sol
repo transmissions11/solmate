@@ -32,9 +32,16 @@ library LibBitmap {
         uint256 value = bitmap.map[index >> 8];
 
         assembly {
-            // Set the bit at `shift` without branching.
+            // Follow sets the bit at `shift` without branching.
             let shift := and(index, 0xff)
-            value := xor(value, shl(shift, xor(and(shr(shift, value), 1), shouldSet)))
+            // Isolate the bit at `shift`.
+            let x := and(shr(shift, value), 1)
+            // Xor it with `shouldSet`. Results in 1 if both are different, else 0.
+            x := xor(x, shouldSet)
+            // Shifts the bit back. Then, xor with value.
+            // Only the bit at `shift` will be flipped if they differ.
+            // Every other bit will stay the same, as they are xor'ed with zeroes.
+            value := xor(value, shl(shift, x))
         }
         bitmap.map[index >> 8] = value;
     }
