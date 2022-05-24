@@ -24,6 +24,10 @@ library LibBitmap {
         bitmap.map[index >> 8] &= ~(1 << (index & 0xff));
     }
 
+    function toggle(Bitmap storage bitmap, uint256 index) internal {
+        bitmap.map[index >> 8] ^= (1 << (index & 0xff));
+    }
+
     function setTo(
         Bitmap storage bitmap,
         uint256 index,

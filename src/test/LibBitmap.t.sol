@@ -29,6 +29,17 @@ contract LibBitmapTest is DSTestPlus {
         assertTrue(mockLibBitmap.get(index));
     }
 
+    function testBitmapUnset() public {
+        testBitmapSet(123);
+    }
+
+    function testBitmapUnset(uint256 index) public {
+        mockLibBitmap.set(index);
+        assertTrue(mockLibBitmap.get(index));
+        mockLibBitmap.unset(index);
+        assertFalse(mockLibBitmap.get(index));
+    }
+
     function testBitmapSetTo() public {
         testBitmapSetTo(123, true);
         testBitmapSetTo(123, false);
@@ -36,6 +47,18 @@ contract LibBitmapTest is DSTestPlus {
 
     function testBitmapSetTo(uint256 index, bool shouldSet) public {
         mockLibBitmap.setTo(index, shouldSet);
-        assertTrue(mockLibBitmap.get(index) == shouldSet);
+        assertBoolEq(mockLibBitmap.get(index), shouldSet);
+    }
+
+    function testBitmapToggle() public {
+        testBitmapToggle(123, true);
+        testBitmapToggle(321, false);
+    }
+
+    function testBitmapToggle(uint256 index, bool initialValue) public {
+        mockLibBitmap.setTo(index, initialValue);
+        assertBoolEq(mockLibBitmap.get(index), initialValue);
+        mockLibBitmap.toggle(index);
+        assertBoolEq(mockLibBitmap.get(index), !initialValue);
     }
 }
