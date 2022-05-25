@@ -13,13 +13,11 @@ library ECDSA {
 
             // Directly load the fields from the calldata.
             let s := calldataload(add(signature.offset, 0x20))
-            let v
+            // Case for `signature.length == 65`, but just do it anyway as it costs less gas.
+            let v := byte(0, calldataload(add(signature.offset, 0x40)))
 
-            switch signature.length
-            case 65 {
-                v := byte(0, calldataload(add(signature.offset, 0x40)))
-            }
-            case 64 {
+            // Case for `signature.length == 64`.
+            if iszero(sub(signature.length, 64)) {
                 // Here, `s` is actually `vs` that needs to be recovered into `v` and `s`.
                 v := add(shr(255, s), 27)
                 // prettier-ignore
