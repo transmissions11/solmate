@@ -5,7 +5,7 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
 import {ECDSA} from "../utils/ECDSA.sol";
 
-contract EDCSATest is DSTestPlus {
+contract ECDSATest is DSTestPlus {
     using ECDSA for bytes32;
     using ECDSA for bytes;
 
