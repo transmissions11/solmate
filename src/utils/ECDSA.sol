@@ -7,9 +7,8 @@ pragma solidity >=0.8.0;
 library ECDSA {
     function recover(bytes32 hash, bytes calldata signature) internal view returns (address result) {
         assembly {
-            // Copy the words above scratch space to some variables temporarily.
-            let m3 := mload(0x60)
-            let m2 := mload(0x40)
+            // Copy the word above scratch space so we can restore it later.
+            let m := mload(0x40)
 
             // Directly load the fields from the calldata.
             let s := calldataload(add(signature.offset, 0x20))
@@ -48,9 +47,8 @@ library ECDSA {
                 result := mul(success, mload(0x00))
             }
 
-            // Restore the words above scratch space.
-            mstore(0x40, m2)
-            mstore(0x60, m3)
+            mstore(0x40, m) // Restore the word above scratch space.
+            mstore(0x60, 0) // Restore the zero slot.
         }
     }
 
