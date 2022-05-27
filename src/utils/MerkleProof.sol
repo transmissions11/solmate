@@ -48,8 +48,8 @@ library MerkleProof {
         // At the end of the process, the last value in the `hashes` array should
         // be the root of the merkle tree.
         assembly {
-            // If the number of flags is correct.
-            if eq(add(leafs.length, proofs.length), add(flags.length, 1)) {
+            // If the number of flags is correct. Underflow will make it false.
+            if eq(sub(add(leafs.length, proofs.length), 1), flags.length) {
                 // Left shift by 5 is equivalent to multiplying by 0x20.
                 // Compute the end calldata offset of `leafs`.
                 let leafsEnd := add(leafs.offset, shl(5, leafs.length))
@@ -64,6 +64,23 @@ library MerkleProof {
                 let hashesBack := hashesFront
                 // This is the end of the memory for the queue.
                 let end := add(hashesBack, shl(5, flags.length))
+
+                // For the case where either `proofs.length + leafs.length == 1`.
+                if iszero(flags.length) {
+                    // If `proofs.length` is zero, `leafs.length` is not zero.
+                    if iszero(proofs.length) {
+                        mstore(hashesBack, calldataload(leafsOffset))
+                    }
+                    // If `leafs.length` is zero, `proofs.length` is not zero.
+                    if iszero(leafs.length) {
+                        // We will just
+                        mstore(hashesBack, not(root))
+                    }
+                    // Advance `hashesBack` to push the value onto the queue.
+                    hashesBack := add(hashesBack, 0x20)
+                    // Advance `end` too so that we can skip the iteration.
+                    end := add(end, 0x20)
+                }
 
                 // prettier-ignore
                 for {} iszero(eq(hashesBack, end)) {} {
@@ -116,7 +133,7 @@ library MerkleProof {
                     hashesBack := add(hashesBack, 0x20)
                 }
                 // Checks if the last value in the queue is same as the root.
-                isValid := eq(mload(sub(end, 0x20)), root)
+                isValid := eq(mload(sub(hashesBack, 0x20)), root)
             }
         }
     }
