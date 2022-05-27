@@ -42,6 +42,7 @@ library MerkleProof {
         bytes32[] calldata proofs,
         bool[] calldata flags
     ) internal pure returns (bool isValid) {
+        // Verifies the output of `merkletreejs.MerkleTree.getMultiProof()`.
         // Rebuilds the root by consuming and producing values on a queue.
         // The queue starts with the `leafs` array, and goes into a `hashes` array.
         // At the end of the process, the last value in the `hashes` array should
@@ -50,6 +51,7 @@ library MerkleProof {
             // If the number of flags is correct.
             if eq(add(leafs.length, proofs.length), add(flags.length, 1)) {
                 // Left shift by 5 is equivalent to multiplying by 0x20.
+                // Compute the end calldata offset of `leafs`.
                 let leafsEnd := add(leafs.offset, shl(5, leafs.length))
                 // These are the calldata offsets.
                 let leafsOffset := leafs.offset
@@ -58,16 +60,13 @@ library MerkleProof {
 
                 // We can use the free memory space for the queue.
                 // We don't need to allocate, since the queue is temporary.
-                let hashesBack := mload(0x40)
-                let hashesFront := hashesBack
+                let hashesFront := mload(0x40)
+                let hashesBack := hashesFront
                 // This is the end of the memory for the queue.
                 let end := add(hashesBack, shl(5, flags.length))
 
-                for {
-
-                } iszero(eq(hashesBack, end)) {
-
-                } {
+                // prettier-ignore
+                for {} iszero(eq(hashesBack, end)) {} {
                     let a := 0
 
                     // Pops a value from the queue into `a`.
@@ -104,7 +103,7 @@ library MerkleProof {
                             leafsOffset := add(leafsOffset, 0x20)
                         }
                     }
-
+                    // Advance to the next flag.
                     flagsOffset := add(flagsOffset, 0x20)
 
                     // Slot of `a` in scratch space.
