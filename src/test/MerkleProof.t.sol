@@ -6,24 +6,24 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MerkleProof} from "../utils/MerkleProof.sol";
 
 contract MerkleProofTest is DSTestPlus {
-    function testVerifyProofEmpty(
-        bool nonEmptyRoot,
+    function testVerifyProofBaseCase(
         bool hasProof,
         bool nonEmptyProof,
+        bool nonEmptyRoot,
         bool nonEmptyLeaf
     ) public {
         bytes32 root;
         if (nonEmptyRoot) {
             root = bytes32("a");
         }
+        bytes32 leaf;
+        if (nonEmptyLeaf) {
+            leaf = bytes32("a");
+        }
         bytes32[] memory proof;
         if (hasProof) {
             proof = new bytes32[](1);
             proof[0] = nonEmptyProof ? bytes32("a") : bytes32(0);
-        }
-        bytes32 leaf;
-        if (nonEmptyLeaf) {
-            leaf = bytes32("a");
         }
         bool isValid = leaf == root && proof.length == 0;
         assertBoolEq(this.verify(proof, root, leaf), isValid);
@@ -72,10 +72,10 @@ contract MerkleProofTest is DSTestPlus {
         assertBoolEq(this.verify(proof, root, leaf), noDamage);
     }
 
-    function testMultiProofVerifyEmpty(
-        bool nonEmptyRoot,
+    function testVerifyMultiProofBaseCase(
         bool hasProof,
         bool nonEmptyProof,
+        bool nonEmptyRoot,
         bool hasLeaf,
         bool nonEmptyLeaf,
         bool[] memory flags
@@ -84,33 +84,35 @@ contract MerkleProofTest is DSTestPlus {
         if (nonEmptyRoot) {
             root = bytes32("a");
         }
-        bytes32[] memory proofs;
+        bytes32[] memory proof;
         if (hasProof) {
-            proofs = new bytes32[](1);
-            proofs[0] = nonEmptyProof ? bytes32("a") : bytes32(0);
+            proof = new bytes32[](1);
+            proof[0] = nonEmptyProof ? bytes32("a") : bytes32(0);
         }
         bytes32[] memory leafs;
         if (hasLeaf) {
             leafs = new bytes32[](1);
             leafs[0] = nonEmptyLeaf ? bytes32("a") : bytes32(0);
         }
-        bool isValid = proofs.length + leafs.length == flags.length + 1;
-        isValid = isValid && leafs.length > 0 && leafs[0] == root;
-        assertBoolEq(this.multiProofVerify(root, leafs, proofs, flags), isValid);
+        bool isValid = flags.length == 0 && // No flags.
+            proof.length == 0 && // No proof, because only has one leaf.
+            leafs.length == 1 && // Has a leaf.
+            leafs[0] == root; // The only leaf is equal to `root`.
+        assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
     }
 
-    function testMultiProofVerifyValidProof() public {
-        testMultiProofVerify(false, false, false, false, 0x00);
+    function testVerifyMultiProofValid() public {
+        testVerifyMultiProof(false, false, false, false, 0x00);
     }
 
-    function testMultiProofVerifyInvalidProof() public {
-        testMultiProofVerify(false, false, true, false, 0x00);
+    function testVerifyMultiProofInvalid() public {
+        testVerifyMultiProof(false, false, true, false, 0x00);
     }
 
-    function testMultiProofVerify(
+    function testVerifyMultiProof(
         bool damageRoot,
         bool damageLeafs,
-        bool damageProofs,
+        bool damageProof,
         bool damageFlags,
         bytes32 randomness
     ) public {
@@ -136,14 +138,14 @@ contract MerkleProofTest is DSTestPlus {
             if (uint256(uint8(randomness[ri++])) & 1 == 0) delete leafs;
         }
 
-        bytes32[] memory proofs = new bytes32[](2);
-        proofs[0] = 0xa8982c89d80987fb9a510e25981ee9170206be21af3c8e0eb312ef1d3382e761;
-        proofs[1] = 0x7dea550f679f3caab547cbbc5ee1a4c978c8c039b572ba00af1baa6481b88360;
-        if (damageProofs) {
+        bytes32[] memory proof = new bytes32[](2);
+        proof[0] = 0xa8982c89d80987fb9a510e25981ee9170206be21af3c8e0eb312ef1d3382e761;
+        proof[1] = 0x7dea550f679f3caab547cbbc5ee1a4c978c8c039b572ba00af1baa6481b88360;
+        if (damageProof) {
             noDamage = false;
-            uint256 i = uint256(uint8(randomness[ri++])) % proofs.length;
-            proofs[i] = bytes32(uint256(proofs[i]) ^ 1); // Flip a bit.
-            if (uint256(uint8(randomness[ri++])) & 1 == 0) delete proofs;
+            uint256 i = uint256(uint8(randomness[ri++])) % proof.length;
+            proof[i] = bytes32(uint256(proof[i]) ^ 1); // Flip a bit.
+            if (uint256(uint8(randomness[ri++])) & 1 == 0) delete proof;
         }
 
         bool[] memory flags = new bool[](4);
@@ -158,7 +160,7 @@ contract MerkleProofTest is DSTestPlus {
             if (uint256(uint8(randomness[ri++])) & 1 == 0) delete flags;
         }
 
-        assertBoolEq(this.multiProofVerify(root, leafs, proofs, flags), noDamage);
+        assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), noDamage);
     }
 
     function verify(
@@ -169,12 +171,12 @@ contract MerkleProofTest is DSTestPlus {
         return MerkleProof.verify(proof, root, leaf);
     }
 
-    function multiProofVerify(
+    function verifyMultiProof(
+        bytes32[] calldata proof,
         bytes32 root,
         bytes32[] calldata leafs,
-        bytes32[] calldata proofs,
         bool[] calldata flags
     ) external pure returns (bool) {
-        return MerkleProof.multiProofVerify(root, leafs, proofs, flags);
+        return MerkleProof.verifyMultiProof(proof, root, leafs, flags);
     }
 }

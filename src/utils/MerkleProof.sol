@@ -36,27 +36,30 @@ library MerkleProof {
         }
     }
 
-    function multiProofVerify(
+    function verifyMultiProof(
+        bytes32[] calldata proof,
         bytes32 root,
         bytes32[] calldata leafs,
-        bytes32[] calldata proofs,
         bool[] calldata flags
     ) internal pure returns (bool isValid) {
-        // Verifies the output of `merkletreejs.MerkleTree.getMultiProof`.
         // Rebuilds the root by consuming and producing values on a queue.
         // The queue starts with the `leafs` array, and goes into a `hashes` array.
-        // At the end of the process, the last value in the `hashes` array should
-        // be the root of the merkle tree.
+        // After the process, the last element on the queue is verified
+        // to be equal to the `root`.
+        //
+        // The `flags` array denotes whether the sibling
+        // should be popped from the queue (`flag == true`), or
+        // should be popped from the `proof` (`flag == false`).
         assembly {
             // If the number of flags is correct.
-            if eq(add(leafs.length, proofs.length), add(flags.length, 1)) {
+            if eq(add(leafs.length, proof.length), add(flags.length, 1)) {
                 // Left shift by 5 is equivalent to multiplying by 0x20.
                 // Compute the end calldata offset of `leafs`.
                 let leafsEnd := add(leafs.offset, shl(5, leafs.length))
                 // These are the calldata offsets.
                 let leafsOffset := leafs.offset
                 let flagsOffset := flags.offset
-                let proofsOffset := proofs.offset
+                let proofOffset := proof.offset
 
                 // We can use the free memory space for the queue.
                 // We don't need to allocate, since the queue is temporary.
@@ -65,14 +68,14 @@ library MerkleProof {
                 // This is the end of the memory for the queue.
                 let end := add(hashesBack, shl(5, flags.length))
 
-                // For the case where `proofs.length + leafs.length == 1`.
+                // For the case where `proof.length + leafs.length == 1`.
                 if iszero(flags.length) {
-                    // If `proofs.length` is zero, `leafs.length` is not zero.
-                    if iszero(proofs.length) {
+                    // If `proof.length` is zero, `leafs.length` is not zero.
+                    if iszero(proof.length) {
                         // Push the leaf onto the queue.
                         mstore(hashesBack, calldataload(leafsOffset))
                     }
-                    // If `leafs.length` is zero, `proofs.length` is not zero.
+                    // If `leafs.length` is zero, `proof.length` is not zero.
                     if iszero(leafs.length) {
                         // Just push something that does not equal `root`
                         // onto the queue to make `isValid` false.
@@ -102,11 +105,13 @@ library MerkleProof {
                     }
 
                     let b := 0
+                    // If the flag is false, load the next proof,
+                    // else, pops from the queue.
                     switch calldataload(flagsOffset)
                     case 0 {
                         // Loads the next proof.
-                        b := calldataload(proofsOffset)
-                        proofsOffset := add(proofsOffset, 0x20)
+                        b := calldataload(proofOffset)
+                        proofOffset := add(proofOffset, 0x20)
                     }
                     default {
                         // Pops a value from the queue into `a`.
