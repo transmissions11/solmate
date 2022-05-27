@@ -344,10 +344,8 @@ library FixedPointMathLib {
             // floor(sqrt(x)) and ceil(sqrt(x)). This check ensures we return floor.
             // See: https://en.wikipedia.org/wiki/Integer_square_root#Using_only_integer_division
             // Since the ceil is rare, we save gas on the assignment and repeat division in the rare case.
-            // If you don't care whether the floor or ceil square root is returned, you can remove this block.
-            if lt(div(x, z), z) {
-                z := div(x, z)
-            }
+            // If you don't care whether the floor or ceil square root is returned, you can remove this statement.
+            z := sub(z, lt(div(x, z), z))
         }
     }
 
