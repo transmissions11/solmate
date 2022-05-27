@@ -42,7 +42,7 @@ library MerkleProof {
         bytes32[] calldata proofs,
         bool[] calldata flags
     ) internal pure returns (bool isValid) {
-        // Verifies the output of `merkletreejs.MerkleTree.getMultiProof()`.
+        // Verifies the output of `merkletreejs.MerkleTree.getMultiProof`.
         // Rebuilds the root by consuming and producing values on a queue.
         // The queue starts with the `leafs` array, and goes into a `hashes` array.
         // At the end of the process, the last value in the `hashes` array should
@@ -122,7 +122,7 @@ library MerkleProof {
                             leafsOffset := add(leafsOffset, 0x20)
                         }
                     }
-                    // Advance to the next flag.
+                    // Advance to the next flag offset.
                     flagsOffset := add(flagsOffset, 0x20)
 
                     // Slot of `a` in scratch space.
