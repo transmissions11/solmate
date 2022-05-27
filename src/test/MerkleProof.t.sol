@@ -29,11 +29,11 @@ contract MerkleProofTest is DSTestPlus {
         assertBoolEq(this.verify(proof, root, leaf), isValid);
     }
 
-    function testVerifyValidProof() public {
+    function testVerifyProofIsValid() public {
         testVerifyProof(false, false, false, 0x00);
     }
 
-    function testVerifyInvalidProof() public {
+    function testVerifyProofIsInvalid() public {
         testVerifyProof(false, false, true, 0x00);
     }
 
@@ -101,11 +101,11 @@ contract MerkleProofTest is DSTestPlus {
         assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
     }
 
-    function testVerifyMultiProofValid() public {
+    function testVerifyMultiProofIsValid() public {
         testVerifyMultiProof(false, false, false, false, 0x00);
     }
 
-    function testVerifyMultiProofInvalid() public {
+    function testVerifyMultiProofIsInvalid() public {
         testVerifyMultiProof(false, false, true, false, 0x00);
     }
 
