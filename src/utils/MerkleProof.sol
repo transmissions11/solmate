@@ -48,8 +48,8 @@ library MerkleProof {
         // At the end of the process, the last value in the `hashes` array should
         // be the root of the merkle tree.
         assembly {
-            // If the number of flags is correct. Underflow will make it false.
-            if eq(sub(add(leafs.length, proofs.length), 1), flags.length) {
+            // If the number of flags is correct.
+            if eq(add(leafs.length, proofs.length), add(flags.length, 1)) {
                 // Left shift by 5 is equivalent to multiplying by 0x20.
                 // Compute the end calldata offset of `leafs`.
                 let leafsEnd := add(leafs.offset, shl(5, leafs.length))

@@ -6,7 +6,7 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MerkleProof} from "../utils/MerkleProof.sol";
 
 contract MerkleProofTest is DSTestPlus {
-    function testVerifyEmpty(
+    function testVerifyProofEmpty(
         bool nonEmptyRoot,
         bool hasProof,
         bool nonEmptyProof,
