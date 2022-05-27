@@ -69,11 +69,12 @@ library MerkleProof {
                 if iszero(flags.length) {
                     // If `proofs.length` is zero, `leafs.length` is not zero.
                     if iszero(proofs.length) {
+                        // Push the leaf onto the queue.
                         mstore(hashesBack, calldataload(leafsOffset))
                     }
                     // If `leafs.length` is zero, `proofs.length` is not zero.
                     if iszero(leafs.length) {
-                        // We will just
+                        // Just push something that does not equal `root`.
                         mstore(hashesBack, not(root))
                     }
                     // Advance `hashesBack` to push the value onto the queue.

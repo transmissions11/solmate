@@ -94,7 +94,8 @@ contract MerkleProofTest is DSTestPlus {
             leafs = new bytes32[](1);
             leafs[0] = nonEmptyLeaf ? bytes32("a") : bytes32(0);
         }
-        bool isValid = leafs.length > 0 && leafs[0] == root && (proofs.length + leafs.length == flags.length + 1);
+        bool isValid = proofs.length + leafs.length == flags.length + 1;
+        isValid = isValid && leafs.length > 0 && leafs[0] == root;
         assertBoolEq(this.multiProofVerify(root, leafs, proofs, flags), isValid);
     }
 
