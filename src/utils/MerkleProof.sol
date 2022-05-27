@@ -65,7 +65,7 @@ library MerkleProof {
                 // This is the end of the memory for the queue.
                 let end := add(hashesBack, shl(5, flags.length))
 
-                // For the case where either `proofs.length + leafs.length == 1`.
+                // For the case where `proofs.length + leafs.length == 1`.
                 if iszero(flags.length) {
                     // If `proofs.length` is zero, `leafs.length` is not zero.
                     if iszero(proofs.length) {
@@ -74,10 +74,11 @@ library MerkleProof {
                     }
                     // If `leafs.length` is zero, `proofs.length` is not zero.
                     if iszero(leafs.length) {
-                        // Just push something that does not equal `root`.
+                        // Just push something that does not equal `root`
+                        // onto the queue to make `isValid` false.
                         mstore(hashesBack, not(root))
                     }
-                    // Advance `hashesBack` to push the value onto the queue.
+                    // Advance `hashesBack` to push onto the queue.
                     hashesBack := add(hashesBack, 0x20)
                     // Advance `end` too so that we can skip the iteration.
                     end := add(end, 0x20)
