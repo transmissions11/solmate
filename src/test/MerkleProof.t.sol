@@ -94,11 +94,71 @@ contract MerkleProofTest is DSTestPlus {
             leafs = new bytes32[](1);
             leafs[0] = nonEmptyLeaf ? bytes32("a") : bytes32(0);
         }
-        bool isValid = flags.length == 0 && // No flags.
+        bool isValid = flags.length == 0 && // No flags, because `proof.length + leafs.length - 1 == 0`.
             proof.length == 0 && // No proof, because only has one leaf.
             leafs.length == 1 && // Has a leaf.
             leafs[0] == root; // The only leaf is equal to `root`.
         assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
+    }
+
+    function testVerifyMultiProofSingleLayer(
+        bool allLeafs,
+        bool damageRoot,
+        bool damageLeafs,
+        bool damageProof,
+        bool damageFlags,
+        bytes32 randomness
+    ) public {
+        bool noDamage = true;
+        uint256 ri; // Randomness index.
+
+        bytes32 leafA = 0x3ac225168df54212a25c1c01fd35bebfea408fdac2e31ddd6f80a4bbf9a5f1cb;
+        bytes32 leafB = 0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510;
+
+        // Merkle tree created from leaves ['a', 'b'].
+        bytes32 root = 0x805b21d846b189efaeb0377d6bb0d201b3872a363e607c25088f025b0c6ae1f8;
+
+        bytes32[] memory proof;
+        bytes32[] memory leafs;
+        bool[] memory flags = new bool[](1);
+        flags[0] = allLeafs;
+
+        if (allLeafs) {
+            leafs = new bytes32[](2);
+            leafs[0] = leafA;
+            leafs[1] = leafB;
+        } else {
+            leafs = new bytes32[](1);
+            leafs[0] = leafA;
+            proof = new bytes32[](1);
+            proof[0] = leafB;
+        }
+
+        if (damageRoot) {
+            noDamage = false;
+            root = bytes32(uint256(root) ^ 1); // Flip a bit.
+        }
+
+        if (damageFlags) {
+            noDamage = false;
+            flags[0] = !flags[0]; // Flip a bool.
+            if (uint256(uint8(randomness[ri++])) & 1 == 0) delete flags;
+        }
+
+        if (damageLeafs) {
+            noDamage = false;
+            uint256 i = uint256(uint8(randomness[ri++])) % leafs.length;
+            leafs[i] = bytes32(uint256(leafs[i]) ^ 1); // Flip a bit.
+            if (uint256(uint8(randomness[ri++])) & 1 == 0) delete leafs;
+        }
+
+        if (damageProof && proof.length != 0) {
+            noDamage = false;
+            proof[0] = bytes32(uint256(proof[0]) ^ 1); // Flip a bit.
+            if (uint256(uint8(randomness[ri++])) & 1 == 0) delete proof;
+        }
+
+        assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), noDamage);
     }
 
     function testVerifyMultiProofIsValid() public {
@@ -122,15 +182,27 @@ contract MerkleProofTest is DSTestPlus {
         // Merkle tree created from ['a', 'b', 'c', 'd', 'e', 'f'].
         // Leafs are ['b', 'f', 'd'].
         bytes32 root = 0x1b404f199ea828ec5771fb30139c222d8417a82175fefad5cd42bc3a189bd8d5;
-        if (damageRoot) {
-            noDamage = false;
-            root = bytes32(uint256(root) ^ 1); // Flip a bit.
-        }
 
         bytes32[] memory leafs = new bytes32[](3);
         leafs[0] = 0xb5553de315e0edf504d9150af82dafa5c4667fa618ed0a6f19c69b41166c5510;
         leafs[1] = 0xd1e8aeb79500496ef3dc2e57ba746a8315d048b7a664a2bf948db4fa91960483;
         leafs[2] = 0xf1918e8562236eb17adc8502332f4c9c82bc14e19bfc0aa10ab674ff75b3d2f3;
+
+        bytes32[] memory proof = new bytes32[](2);
+        proof[0] = 0xa8982c89d80987fb9a510e25981ee9170206be21af3c8e0eb312ef1d3382e761;
+        proof[1] = 0x7dea550f679f3caab547cbbc5ee1a4c978c8c039b572ba00af1baa6481b88360;
+
+        bool[] memory flags = new bool[](4);
+        flags[0] = false;
+        flags[1] = true;
+        flags[2] = false;
+        flags[3] = true;
+
+        if (damageRoot) {
+            noDamage = false;
+            root = bytes32(uint256(root) ^ 1); // Flip a bit.
+        }
+
         if (damageLeafs) {
             noDamage = false;
             uint256 i = uint256(uint8(randomness[ri++])) % leafs.length;
@@ -138,9 +210,6 @@ contract MerkleProofTest is DSTestPlus {
             if (uint256(uint8(randomness[ri++])) & 1 == 0) delete leafs;
         }
 
-        bytes32[] memory proof = new bytes32[](2);
-        proof[0] = 0xa8982c89d80987fb9a510e25981ee9170206be21af3c8e0eb312ef1d3382e761;
-        proof[1] = 0x7dea550f679f3caab547cbbc5ee1a4c978c8c039b572ba00af1baa6481b88360;
         if (damageProof) {
             noDamage = false;
             uint256 i = uint256(uint8(randomness[ri++])) % proof.length;
@@ -148,11 +217,6 @@ contract MerkleProofTest is DSTestPlus {
             if (uint256(uint8(randomness[ri++])) & 1 == 0) delete proof;
         }
 
-        bool[] memory flags = new bool[](4);
-        flags[0] = false;
-        flags[1] = true;
-        flags[2] = false;
-        flags[3] = true;
         if (damageFlags) {
             noDamage = false;
             uint256 i = uint256(uint8(randomness[ri++])) % flags.length;
