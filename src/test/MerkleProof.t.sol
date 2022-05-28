@@ -6,7 +6,7 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MerkleProof} from "../utils/MerkleProof.sol";
 
 contract MerkleProofTest is DSTestPlus {
-    function testVerifyProofBaseCase(
+    function testVerifyProofForHeightOneTree(
         bool hasProof,
         bool nonEmptyProof,
         bool nonEmptyRoot,
@@ -72,7 +72,7 @@ contract MerkleProofTest is DSTestPlus {
         assertBoolEq(this.verify(proof, root, leaf), noDamage);
     }
 
-    function testVerifyMultiProofBaseCase(
+    function testVerifyMultiProofForHeightOneTree(
         bool hasProof,
         bool nonEmptyProof,
         bool nonEmptyRoot,
@@ -101,7 +101,7 @@ contract MerkleProofTest is DSTestPlus {
         assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
     }
 
-    function testVerifyMultiProofSingleLayer(
+    function testVerifyMultiProofForHeightTwoTree(
         bool allLeafs,
         bool damageRoot,
         bool damageLeafs,
