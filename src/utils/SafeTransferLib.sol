@@ -12,14 +12,17 @@ library SafeTransferLib {
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
-        bool success;
-
         assembly {
             // Transfer the ETH and store if it succeeded or not.
-            success := call(gas(), to, amount, 0, 0, 0, 0)
+            let success := call(gas(), to, amount, 0, 0, 0, 0)
+            if iszero(success) {
+                mstore(0x64, 0x08c379a0) // Function selector of error method.
+                mstore(0x84, 0x20) // Offset of the error string.
+                mstore(0xa4, 19) // Length of the error string.
+                mstore(0xc3, "ETH_TRANSFER_FAILED") // Error string.
+                revert(0x80, 0x64) // Revert with (offset, size)
+            }
         }
-
-        require(success, "ETH_TRANSFER_FAILED");
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -32,8 +35,6 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        bool success;
-
         assembly {
             // We'll write our calldata to this slot below, but restore it later.
             let memPointer := mload(0x40)
@@ -44,7 +45,7 @@ library SafeTransferLib {
             mstore(36, to) // Append the "to" argument.
             mstore(68, amount) // Append the "amount" argument.
 
-            success := and(
+            let success := and(
                 // Set success to whether the call reverted, if not we check it either
                 // returned exactly 1 (can't just be non-zero data), or had no return data.
                 or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
@@ -54,11 +55,17 @@ library SafeTransferLib {
                 call(gas(), token, 0, 0, 100, 0, 32)
             )
 
+            if iszero(success) {
+                mstore(0x64, 0x08c379a0) // Function selector of error method.
+                mstore(0x84, 0x20) // Offset of the error string.
+                mstore(0xa4, 20) // Length of the error string.
+                mstore(0xc3, "TRANSFER_FROM_FAILED") // Error string.
+                revert(0x80, 0x64) // Revert with (offset, size)
+            }
+
             mstore(0x60, 0) // Restore the zero slot to zero.
             mstore(0x40, memPointer) // Restore the memPointer.
         }
-
-        require(success, "TRANSFER_FROM_FAILED");
     }
 
     function safeTransfer(
@@ -66,8 +73,6 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        bool success;
-
         assembly {
             // We'll write our calldata to this slot below, but restore it later.
             let memPointer := mload(0x40)
@@ -77,7 +82,7 @@ library SafeTransferLib {
             mstore(4, to) // Append the "to" argument.
             mstore(36, amount) // Append the "amount" argument.
 
-            success := and(
+            let success := and(
                 // Set success to whether the call reverted, if not we check it either
                 // returned exactly 1 (can't just be non-zero data), or had no return data.
                 or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
@@ -87,11 +92,17 @@ library SafeTransferLib {
                 call(gas(), token, 0, 0, 68, 0, 32)
             )
 
+            if iszero(success) {
+                mstore(0x64, 0x08c379a0) // Function selector of error method.
+                mstore(0x84, 0x20) // Offset of the error string.
+                mstore(0xa4, 15) // Length of the error string.
+                mstore(0xc3, "TRANSFER_FAILED") // Error string.
+                revert(0x80, 0x64) // Revert with (offset, size)
+            }
+
             mstore(0x60, 0) // Restore the zero slot to zero.
             mstore(0x40, memPointer) // Restore the memPointer.
         }
-
-        require(success, "TRANSFER_FAILED");
     }
 
     function safeApprove(
@@ -99,8 +110,6 @@ library SafeTransferLib {
         address to,
         uint256 amount
     ) internal {
-        bool success;
-
         assembly {
             // We'll write our calldata to this slot below, but restore it later.
             let memPointer := mload(0x40)
@@ -110,7 +119,7 @@ library SafeTransferLib {
             mstore(4, to) // Append the "to" argument.
             mstore(36, amount) // Append the "amount" argument.
 
-            success := and(
+            let success := and(
                 // Set success to whether the call reverted, if not we check it either
                 // returned exactly 1 (can't just be non-zero data), or had no return data.
                 or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
@@ -120,10 +129,16 @@ library SafeTransferLib {
                 call(gas(), token, 0, 0, 68, 0, 32)
             )
 
+            if iszero(success) {
+                mstore(0x64, 0x08c379a0) // Function selector of error method.
+                mstore(0x84, 0x20) // Offset of the error string.
+                mstore(0xa4, 14) // Length of the error string.
+                mstore(0xc3, "APPROVE_FAILED") // Error string.
+                revert(0x80, 0x64) // Revert with (offset, size)
+            }
+
             mstore(0x60, 0) // Restore the zero slot to zero.
             mstore(0x40, memPointer) // Restore the memPointer.
         }
-
-        require(success, "APPROVE_FAILED");
     }
 }
