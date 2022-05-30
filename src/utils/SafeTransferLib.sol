@@ -15,8 +15,9 @@ library SafeTransferLib {
         assembly {
             // Transfer the ETH and store if it succeeded or not.
             let success := call(gas(), to, amount, 0, 0, 0, 0)
+
             if iszero(success) {
-                mstore(0x64, 0x08c379a0) // Function selector of the error method.
+                mstore(0x64, 0x08c379a0) // Function selector of the error method, offseted.
                 mstore(0x84, 0x20) // Offset of the error string.
                 mstore(0xc3, "\x13ETH_TRANSFER_FAILED") // Error string's length and bytes.
                 revert(0x80, 0x64) // Revert with (offset, size)
