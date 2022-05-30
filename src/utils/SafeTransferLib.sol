@@ -18,8 +18,7 @@ library SafeTransferLib {
             if iszero(success) {
                 mstore(0x64, 0x08c379a0) // Function selector of error method.
                 mstore(0x84, 0x20) // Offset of the error string.
-                mstore(0xa4, 19) // Length of the error string.
-                mstore(0xc3, "ETH_TRANSFER_FAILED") // Error string.
+                mstore(0xc2, "\x13ETH_TRANSFER_FAILED") // Error string length + error string.
                 revert(0x80, 0x64) // Revert with (offset, size)
             }
         }
@@ -58,8 +57,7 @@ library SafeTransferLib {
             if iszero(success) {
                 mstore(0x64, 0x08c379a0) // Function selector of error method.
                 mstore(0x84, 0x20) // Offset of the error string.
-                mstore(0xa4, 20) // Length of the error string.
-                mstore(0xc3, "TRANSFER_FROM_FAILED") // Error string.
+                mstore(0xc2, "\x14TRANSFER_FROM_FAILED") // Error string length + error string.
                 revert(0x80, 0x64) // Revert with (offset, size)
             }
 
@@ -95,8 +93,7 @@ library SafeTransferLib {
             if iszero(success) {
                 mstore(0x64, 0x08c379a0) // Function selector of error method.
                 mstore(0x84, 0x20) // Offset of the error string.
-                mstore(0xa4, 15) // Length of the error string.
-                mstore(0xc3, "TRANSFER_FAILED") // Error string.
+                mstore(0xc2, "\x0fTRANSFER_FAILED") // Error string length + error string.
                 revert(0x80, 0x64) // Revert with (offset, size)
             }
 
@@ -132,8 +129,7 @@ library SafeTransferLib {
             if iszero(success) {
                 mstore(0x64, 0x08c379a0) // Function selector of error method.
                 mstore(0x84, 0x20) // Offset of the error string.
-                mstore(0xa4, 14) // Length of the error string.
-                mstore(0xc3, "APPROVE_FAILED") // Error string.
+                mstore(0xc2, "\x0eTRANSFER_FAILED") // Error string length + error string.
                 revert(0x80, 0x64) // Revert with (offset, size)
             }
 
