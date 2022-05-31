@@ -13,7 +13,7 @@ contract RiskyContract is ReentrancyGuard {
 
         if (enterTimes > 1) return;
 
-        protectedCall();
+        this.protectedCall();
     }
 
     function protectedCall() public nonReentrant {
@@ -21,7 +21,7 @@ contract RiskyContract is ReentrancyGuard {
 
         if (enterTimes > 1) return;
 
-        protectedCall();
+        this.protectedCall();
     }
 
     function overprotectedCall() public nonReentrant {}
