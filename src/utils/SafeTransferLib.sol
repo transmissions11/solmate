@@ -13,10 +13,8 @@ library SafeTransferLib {
 
     function safeTransferETH(address to, uint256 amount) internal {
         assembly {
-            // Transfer the ETH and store if it succeeded or not.
-            let success := call(gas(), to, amount, 0, 0, 0, 0)
-
-            if iszero(success) {
+            // Transfer the ETH and check if it succeeded or not.
+            if iszero(call(gas(), to, amount, 0, 0, 0, 0)) {
                 mstore(0x64, 0x08c379a0) // Function selector of the error method, offseted.
                 mstore(0x84, 0x20) // Offset of the error string.
                 mstore(0xc3, "\x13ETH_TRANSFER_FAILED") // Error string's length and bytes.
@@ -45,17 +43,17 @@ library SafeTransferLib {
             mstore(36, to) // Append the "to" argument.
             mstore(68, amount) // Append the "amount" argument.
 
-            let success := and(
-                // Set success to whether the call reverted, if not we check it either
-                // returned exactly 1 (can't just be non-zero data), or had no return data.
-                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
-                // We use 100 because that's the total length of our calldata (4 + 32 * 3)
-                // Counterintuitively, this call() must be positioned after the or() in the
-                // surrounding and() because and() evaluates its arguments from right to left.
-                call(gas(), token, 0, 0, 100, 0, 32)
-            )
-
-            if iszero(success) {
+            if iszero(
+                and(
+                    // Set success to whether the call reverted, if not we check it either
+                    // returned exactly 1 (can't just be non-zero data), or had no return data.
+                    or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                    // We use 100 because that's the total length of our calldata (4 + 32 * 3)
+                    // Counterintuitively, this call() must be positioned after the or() in the
+                    // surrounding and() because and() evaluates its arguments from right to left.
+                    call(gas(), token, 0, 0, 100, 0, 32)
+                )
+            ) {
                 mstore(0x64, 0x08c379a0) // Function selector of the error method.
                 mstore(0x84, 0x20) // Offset of the error string.
                 mstore(0xc3, "\x14TRANSFER_FROM_FAILED") // Error string's length and bytes.
@@ -81,17 +79,17 @@ library SafeTransferLib {
             mstore(4, to) // Append the "to" argument.
             mstore(36, amount) // Append the "amount" argument.
 
-            let success := and(
-                // Set success to whether the call reverted, if not we check it either
-                // returned exactly 1 (can't just be non-zero data), or had no return data.
-                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
-                // We use 68 because that's the total length of our calldata (4 + 32 * 2)
-                // Counterintuitively, this call() must be positioned after the or() in the
-                // surrounding and() because and() evaluates its arguments from right to left.
-                call(gas(), token, 0, 0, 68, 0, 32)
-            )
-
-            if iszero(success) {
+            if iszero(
+                and(
+                    // Set success to whether the call reverted, if not we check it either
+                    // returned exactly 1 (can't just be non-zero data), or had no return data.
+                    or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                    // We use 68 because that's the total length of our calldata (4 + 32 * 2)
+                    // Counterintuitively, this call() must be positioned after the or() in the
+                    // surrounding and() because and() evaluates its arguments from right to left.
+                    call(gas(), token, 0, 0, 68, 0, 32)
+                )
+            ) {
                 mstore(0x64, 0x08c379a0) // Function selector of the error method.
                 mstore(0x84, 0x20) // Offset of the error string.
                 mstore(0xc3, "\x0fTRANSFER_FAILED") // Error string's length and bytes.
@@ -117,17 +115,17 @@ library SafeTransferLib {
             mstore(4, to) // Append the "to" argument.
             mstore(36, amount) // Append the "amount" argument.
 
-            let success := and(
-                // Set success to whether the call reverted, if not we check it either
-                // returned exactly 1 (can't just be non-zero data), or had no return data.
-                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
-                // We use 68 because that's the total length of our calldata (4 + 32 * 2)
-                // Counterintuitively, this call() must be positioned after the or() in the
-                // surrounding and() because and() evaluates its arguments from right to left.
-                call(gas(), token, 0, 0, 68, 0, 32)
-            )
-
-            if iszero(success) {
+            if iszero(
+                and(
+                    // Set success to whether the call reverted, if not we check it either
+                    // returned exactly 1 (can't just be non-zero data), or had no return data.
+                    or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                    // We use 68 because that's the total length of our calldata (4 + 32 * 2)
+                    // Counterintuitively, this call() must be positioned after the or() in the
+                    // surrounding and() because and() evaluates its arguments from right to left.
+                    call(gas(), token, 0, 0, 68, 0, 32)
+                )
+            ) {
                 mstore(0x64, 0x08c379a0) // Function selector of the error method.
                 mstore(0x84, 0x20) // Offset of the error string.
                 mstore(0xc3, "\x0eAPPROVE_FAILED") // Error string's length and bytes.
