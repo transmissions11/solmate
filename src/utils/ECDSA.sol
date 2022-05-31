@@ -44,7 +44,7 @@ library ECDSA {
                     0x20 // Size of output.
                 )
                 // Restore the zero slot.
-                mstore(0x60, 0) 
+                mstore(0x60, 0)
                 // `returndatasize()` will be `0x20` upon success, and `0x00` otherwise.
                 result := mload(sub(0x60, mul(returndatasize(), success)))
             }
