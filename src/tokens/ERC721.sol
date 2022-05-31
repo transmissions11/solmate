@@ -27,46 +27,46 @@ abstract contract ERC721 {
     function name() public view virtual returns (string memory) {
         string memory ptr;
         assembly {
-            // Load the free memory pointer, where we'll return the value
+            // Load the free memory pointer, where we'll return the value.
             ptr := mload(64)
 
             // Determine if the length > 32 by checking the lowest order bit, if true, this means the 
-            // string itself is stored at keccak256(_name.slot)
+            // string itself is stored at keccak256(_name.slot).
             let slotLoad := sload(_name.slot)
 
             // Determine if the length > 32 by checking the lowest order bit, meaning the string
-            // itself is stored at keccak256(_name.slot)
+            // itself is stored at keccak256(_name.slot).
             switch and(slotLoad, 1)
             case 0 {
-                // The name is in the same slot
-                // Determine the size by dividing the last byte's value by 2
+                // The name is in the same slot.
+                // Determine the size by dividing the last byte's value by 2.
                 let size := shr(1, and(slotLoad, 255))
 
-                // Store the size in the first slot
+                // Store the size in the first slot.
                 mstore(ptr, size)
 
-                // Store the actual string in the second slot (without the size)
+                // Store the actual string in the second slot (without the size).
                 mstore(add(ptr, 32), and(slotLoad, not(255)))
 
-                // Store the new memory pointer in the free memory pointer slot
+                // Store the new memory pointer in the free memory pointer slot.
                 mstore(64, add(add(ptr, 32), size))
             }
             case 1 {
-                // The name is not in the same slot
-                // Compute the name content storage slot
+                // The name is not in the same slot.
+                // Compute the name content storage slot.
                 mstore(0, _name.slot)
                 let nameContentStartSlot := keccak256(0, 32)
 
-                // Determine the size by dividing the value in the whole slot minus 1 by 2
+                // Determine the size by dividing the value in the whole slot minus 1 by 2.
                 let size := shr(1, sub(slotLoad, 1))
 
-                // Store the size in the first slot
+                // Store the size in the first slot.
                 mstore(ptr, size)
 
-                // Compute the total memory slots we need, this is (size + 31) / 32
+                // Compute the total memory slots we need, this is (size + 31) / 32.
                 let totalMemorySlots := shr(5, add(size, 31))
 
-                // Iterate through the words in memory and store the string word by word
+                // Iterate through the words in memory and store the string word by word.
                 for {
                     let i := 0
                 } lt(i, totalMemorySlots) {
@@ -75,57 +75,58 @@ abstract contract ERC721 {
                     mstore(add(add(ptr, 32), mul(32, i)), sload(add(nameContentStartSlot, i)))
                 }
 
-                // Store the new memory pointer in the free memory pointer slot
+                // Store the new memory pointer in the free memory pointer slot.
                 mstore(64, add(add(ptr, 32), size))
             }
         }
-        // Return a memory pointer to the name (which always starts with the size at the first word)
+        // Return a memory pointer to the name (which always starts with the size at 
+        // the first word).
         return ptr;
     }
 
     function symbol() public view virtual returns (string memory) {
         string memory ptr;
         assembly {
-            // Load the free memory pointer, where we'll return the value
+            // Load the free memory pointer, where we'll return the value.
             ptr := mload(64)
 
             // Load the slot, which either contains the symbol + 2*length if length < 32 or
-            // 2*length+1 if length >= 32, and the actual string starts at slot keccak256(NAME_SLOT)
+            // 2*length+1 if length >= 32, and the actual string starts at slot keccak256(NAME_SLOT).
             let slotLoad := sload(_symbol.slot)
 
             // Determine if the length > 32 by checking the lowest order bit, if true, this means the 
-            // string itself is stored at keccak256(_symbol.slot)
+            // string itself is stored at keccak256(_symbol.slot).
             switch and(slotLoad, 1)
             case 0 {
-                // The symbol is in the same slot
-                // Determine the size by dividing the last byte's value by 2
+                // The symbol is in the same slot.
+                // Determine the size by dividing the last byte's value by 2.
                 let size := shr(1, and(slotLoad, 255))
 
-                // Store the size in the first slot
+                // Store the size in the first slot.
                 mstore(ptr, size)
 
-                // Store the actual string in the second slot (without the size)
+                // Store the actual string in the second slot (without the size).
                 mstore(add(ptr, 32), and(slotLoad, not(255)))
 
-                // Store the new memory pointer in the free memory pointer slot
+                // Store the new memory pointer in the free memory pointer slot.
                 mstore(64, add(add(ptr, 32), size))
             }
             case 1 {
-                // The symbol is not in the same slot
-                // Compute the symbol content storage slot
+                // The symbol is not in the same slot.
+                // Compute the symbol content storage slot.
                 mstore(0, _symbol.slot)
                 let symbolContentStartSlot := keccak256(0, 32)
 
-                // Determine the size by dividing the value in the whole slot minus 1 by 2
+                // Determine the size by dividing the value in the whole slot minus 1 by 2.
                 let size := shr(1, sub(slotLoad, 1))
 
                 // Store the size in the first slot
                 mstore(ptr, size)
 
-                // Compute the total memory slots we need, this is (size + 31) / 32
+                // Compute the total memory slots we need, this is (size + 31) / 32.
                 let totalMemorySlots := shr(5, add(size, 31))
 
-                // Iterate through the words in memory and store the string word by word
+                // Iterate through the words in memory and store the string word by word.
                 for {
                     let i := 0
                 } lt(i, totalMemorySlots) {
@@ -134,11 +135,11 @@ abstract contract ERC721 {
                     mstore(add(add(ptr, 32), mul(32, i)), sload(add(symbolContentStartSlot, i)))
                 }
 
-                // Store the new memory pointer in the free memory pointer slot
+                // Store the new memory pointer in the free memory pointer slot.
                 mstore(64, add(add(ptr, 32), size))
             }
         }
-        // Return a memory pointer to the symbol (which always starts with the size at the first word)
+        // Return a memory pointer to the symbol (which always starts with the size at the first word).
         return ptr;
     }
 
