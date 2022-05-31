@@ -24,7 +24,7 @@ abstract contract ERC721 {
 
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
-    function name() public view returns (string memory) {
+    function name() public view virtual returns (string memory) {
         string memory ptr;
         assembly {
             // Load the free memory pointer, where we'll return the value
@@ -83,7 +83,7 @@ abstract contract ERC721 {
         return ptr;
     }
 
-    function symbol() public view returns (string memory) {
+    function symbol() public view virtual returns (string memory) {
         string memory ptr;
         assembly {
             // Load the free memory pointer, where we'll return the value
@@ -172,9 +172,9 @@ abstract contract ERC721 {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(string memory _name, string memory _symbol) {
-        _name = _name;
-        _symbol = _symbol;
+    constructor(string memory __name, string memory __symbol) {
+        _name = __name;
+        _symbol = __symbol;
     }
 
     /*//////////////////////////////////////////////////////////////
