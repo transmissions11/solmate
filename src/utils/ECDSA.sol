@@ -7,7 +7,7 @@ pragma solidity >=0.8.0;
 library ECDSA {
     function recover(bytes32 hash, bytes calldata signature) internal view returns (address result) {
         assembly {
-            // Copy the word above scratch space so we can restore it later.
+            // Copy the free memory pointer so that we can restore it later.
             let m := mload(0x40)
 
             // Directly load the fields from the calldata.
@@ -40,15 +40,16 @@ library ECDSA {
                     0x01, // Address of `ecrecover`.
                     0x00, // Start of input.
                     0x80, // Size of input.
-                    0x00, // Start of output.
+                    0x40, // Start of output.
                     0x20 // Size of output.
                 )
-                // If invalid, the result will be the zero address.
-                result := mul(success, mload(0x00))
+                // Restore the zero slot.
+                mstore(0x60, 0) 
+                // `returndatasize()` will be `0x20` upon success, and `0x00` otherwise.
+                result := mload(sub(0x60, mul(returndatasize(), success)))
             }
-
-            mstore(0x40, m) // Restore the word above scratch space.
-            mstore(0x60, 0) // Restore the zero slot.
+            // Restore the free memory pointer.
+            mstore(0x40, m)
         }
     }
 
