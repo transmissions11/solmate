@@ -368,6 +368,12 @@ contract ERC721Test is DSTestPlus {
         token.ownerOf(1337);
     }
 
+    function testMetadataStatic() public {
+        MockERC721 tkn = new MockERC721("name", "symbol");
+        assertEq(tkn.name(), "name");
+        assertEq(tkn.symbol(), "symbol");
+    }
+
     function testMetadata(string memory name, string memory symbol) public {
         MockERC721 tkn = new MockERC721(name, symbol);
 
