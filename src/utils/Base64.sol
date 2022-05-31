@@ -11,6 +11,7 @@ library Base64 {
 
             if dataLength {
                 // Multiply by 4/3 rounded up.
+                // The `shl(2, ...)` is equivalent to multiplying by 4.
                 let encodedLength := shl(2, div(add(dataLength, 2), 3))
 
                 // Set `result` to point to the start of the free memory.
@@ -21,7 +22,7 @@ library Base64 {
 
                 // Store the table into the scratch space.
                 // Offsetted by -1 byte so that the `mload` will load the character.
-                // We will rewrite the free memory pointer at `0x40`later with
+                // We will rewrite the free memory pointer at `0x40` later with
                 // the allocated size.
                 mstore(0x1f, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef")
                 mstore(0x3f, "ghijklmnopqrstuvwxyz0123456789+/")
@@ -33,8 +34,7 @@ library Base64 {
                 // Run over the input, 3 bytes at a time.
                 // prettier-ignore
                 for {} iszero(eq(ptr, end)) {} {
-                    // Advance 3 bytes.
-                    data := add(data, 3)
+                    data := add(data, 3) // Advance 3 bytes.
                     let input := mload(data)
 
                     // Write 4 characters. Optimized for fewer stack operations.
@@ -42,11 +42,12 @@ library Base64 {
                     mstore8(add(ptr, 1), mload(and(shr(12, input), 0x3F)))
                     mstore8(add(ptr, 2), mload(and(shr( 6, input), 0x3F)))
                     mstore8(add(ptr, 3), mload(and(        input , 0x3F)))
-
-                    ptr := add(ptr, 4)
+                    
+                    ptr := add(ptr, 4) // Advance 4 bytes.
                 }
 
                 // Offset `ptr` and pad with '='. We can simply write over the end.
+                // The `byte(...)` part is equivalent to `[0, 2, 1][dataLength % 3]`.
                 mstore(sub(ptr, byte(mod(dataLength, 3), "\x00\x02\x01")), "==")
 
                 // Allocate the memory for the string.

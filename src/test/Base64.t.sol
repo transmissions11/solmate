@@ -44,11 +44,12 @@ contract Base64Test is DSTestPlus {
         bool freeMemoryPointerIs32ByteAligned;
         assembly {
             let freeMemoryPointer := mload(0x40)
-            // This ensures that the memory allocated is 32-byte aligned
+            // This ensures that the memory allocated is 32-byte aligned.
             freeMemoryPointerIs32ByteAligned := iszero(and(freeMemoryPointer, 31))
-            // Write some character to the free memory pointer.
-            // If insufficient memory is allocated, this will write onto the encoded string.
-            mstore(freeMemoryPointer, "@")
+            // Write a non Base64 character to the free memory pointer.
+            // If the allocated memory is insufficient, this will write over the
+            // encoded strings and make the subsequent asserts fail.
+            mstore(freeMemoryPointer, "#")
         }
         assertTrue(freeMemoryPointerIs32ByteAligned);
         assertEq(keccak256(bytes(encoded)), keccak256(bytes(output)));
