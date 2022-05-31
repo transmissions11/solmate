@@ -30,7 +30,7 @@ abstract contract ERC721 {
             // Load the free memory pointer, where we'll return the value.
             ptr := mload(64)
 
-            // Determine if the length > 32 by checking the lowest order bit, if true, this means the 
+            // Determine if the length > 32 by checking the lowest order bit, if true, this means the
             // string itself is stored at keccak256(_name.slot).
             let slotLoad := sload(_name.slot)
 
@@ -79,7 +79,7 @@ abstract contract ERC721 {
                 mstore(64, add(add(ptr, 32), size))
             }
         }
-        // Return a memory pointer to the name (which always starts with the size at 
+        // Return a memory pointer to the name (which always starts with the size at
         // the first word).
         return ptr;
     }
@@ -94,7 +94,7 @@ abstract contract ERC721 {
             // 2*length+1 if length >= 32, and the actual string starts at slot keccak256(NAME_SLOT).
             let slotLoad := sload(_symbol.slot)
 
-            // Determine if the length > 32 by checking the lowest order bit, if true, this means the 
+            // Determine if the length > 32 by checking the lowest order bit, if true, this means the
             // string itself is stored at keccak256(_symbol.slot).
             switch and(slotLoad, 1)
             case 0 {
