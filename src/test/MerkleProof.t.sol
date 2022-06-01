@@ -94,10 +94,9 @@ contract MerkleProofTest is DSTestPlus {
             leafs = new bytes32[](1);
             leafs[0] = nonEmptyLeaf ? bytes32("a") : bytes32(0);
         }
-        bool isValid = flags.length == 0 && // No flags, because `proof.length + leafs.length - 1 == 0`.
-            proof.length == 0 && // No proof, because only has one leaf.
-            leafs.length == 1 && // Has a leaf.
-            leafs[0] == root; // The only leaf is equal to `root`.
+        bool leafSameAsRoot = leafs.length == 1 && leafs[0] == root;
+        bool proofSameAsRoot = proof.length == 1 && proof[0] == root;
+        bool isValid = flags.length == 0 && (leafSameAsRoot || proofSameAsRoot);
         assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
     }
 

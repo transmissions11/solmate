@@ -70,16 +70,15 @@ library MerkleProof {
 
                 // For the case where `proof.length + leafs.length == 1`.
                 if iszero(flags.length) {
-                    // If `proof.length` is zero, `leafs.length` is not zero.
+                    // If `proof.length` is zero, `leafs.length` is 1.
                     if iszero(proof.length) {
-                        // Push the leaf onto the queue.
+                        // Push the only leaf onto the queue.
                         mstore(hashesBack, calldataload(leafsOffset))
                     }
-                    // If `leafs.length` is zero, `proof.length` is not zero.
+                    // If `leafs.length` is zero, `proof.length` is 1.
                     if iszero(leafs.length) {
-                        // Just push something that does not equal `root`
-                        // onto the queue to make `isValid` false.
-                        mstore(hashesBack, not(root))
+                        // Push the only proof onto the queue.
+                        mstore(hashesBack, calldataload(proofOffset))
                     }
                     // Advance `hashesBack` to push onto the queue.
                     hashesBack := add(hashesBack, 0x20)
