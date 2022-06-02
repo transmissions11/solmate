@@ -8,7 +8,7 @@ import {Auth, Authority} from "../Auth.sol";
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-roles/blob/master/src/roles.sol)
 contract RolesAuthority is Auth, Authority {
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+    //                           EVENTS                           //
     //////////////////////////////////////////////////////////////*/
 
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
@@ -18,13 +18,13 @@ contract RolesAuthority is Auth, Authority {
     event RoleCapabilityUpdated(uint8 indexed role, address indexed target, bytes4 indexed functionSig, bool enabled);
 
     /*//////////////////////////////////////////////////////////////
-                               CONSTRUCTOR
+    //                         CONSTRUCTOR                        //
     //////////////////////////////////////////////////////////////*/
 
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
 
     /*//////////////////////////////////////////////////////////////
-                            ROLE/USER STORAGE
+    //                      ROLE/USER STORAGE                     //
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bytes32) public getUserRoles;
@@ -46,7 +46,7 @@ contract RolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                           AUTHORIZATION LOGIC
+    //                     AUTHORIZATION LOGIC                    //
     //////////////////////////////////////////////////////////////*/
 
     function canCall(
@@ -60,7 +60,7 @@ contract RolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                   ROLE CAPABILITY CONFIGURATION LOGIC
+    //             ROLE CAPABILITY CONFIGURATION LOGIC            //
     //////////////////////////////////////////////////////////////*/
 
     function setPublicCapability(
@@ -89,7 +89,7 @@ contract RolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                       USER ROLE ASSIGNMENT LOGIC
+    //                 USER ROLE ASSIGNMENT LOGIC                 //
     //////////////////////////////////////////////////////////////*/
 
     function setUserRole(

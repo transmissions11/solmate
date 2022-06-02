@@ -5,13 +5,13 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/Owned.sol)
 abstract contract Owned {
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+    //                           EVENTS                           //
     //////////////////////////////////////////////////////////////*/
 
     event OwnerUpdated(address indexed user, address indexed newOwner);
 
     /*//////////////////////////////////////////////////////////////
-                            OWNERSHIP STORAGE
+    //                      OWNERSHIP STORAGE                     //
     //////////////////////////////////////////////////////////////*/
 
     address public owner;
@@ -23,7 +23,7 @@ abstract contract Owned {
     }
 
     /*//////////////////////////////////////////////////////////////
-                               CONSTRUCTOR
+    //                         CONSTRUCTOR                        //
     //////////////////////////////////////////////////////////////*/
 
     constructor(address _owner) {
@@ -33,7 +33,7 @@ abstract contract Owned {
     }
 
     /*//////////////////////////////////////////////////////////////
-                             OWNERSHIP LOGIC
+    //                        OWNERSHIP LOGIC                     //
     //////////////////////////////////////////////////////////////*/
 
     function setOwner(address newOwner) public virtual onlyOwner {

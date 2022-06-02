@@ -5,7 +5,7 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC1155.sol)
 abstract contract ERC1155 {
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+    //                           EVENTS                           //
     //////////////////////////////////////////////////////////////*/
 
     event TransferSingle(
@@ -29,7 +29,7 @@ abstract contract ERC1155 {
     event URI(string value, uint256 indexed id);
 
     /*//////////////////////////////////////////////////////////////
-                             ERC1155 STORAGE
+    //                       ERC1155 STORAGE                      //
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => mapping(uint256 => uint256)) public balanceOf;
@@ -37,13 +37,13 @@ abstract contract ERC1155 {
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
     /*//////////////////////////////////////////////////////////////
-                             METADATA LOGIC
+    //                       METADATA LOGIC                       //
     //////////////////////////////////////////////////////////////*/
 
     function uri(uint256 id) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
-                              ERC1155 LOGIC
+    //                        ERC1155 LOGIC                       //
     //////////////////////////////////////////////////////////////*/
 
     function setApprovalForAll(address operator, bool approved) public virtual {
@@ -135,7 +135,7 @@ abstract contract ERC1155 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                              ERC165 LOGIC
+    //                        ERC165 LOGIC                        //
     //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
@@ -146,7 +146,7 @@ abstract contract ERC1155 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                        INTERNAL MINT/BURN LOGIC
+    //                  INTERNAL MINT/BURN LOGIC                  //
     //////////////////////////////////////////////////////////////*/
 
     function _mint(

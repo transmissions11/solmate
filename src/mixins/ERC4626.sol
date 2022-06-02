@@ -12,7 +12,7 @@ abstract contract ERC4626 is ERC20 {
     using FixedPointMathLib for uint256;
 
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+    //                           EVENTS
     //////////////////////////////////////////////////////////////*/
 
     event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares);
@@ -26,7 +26,7 @@ abstract contract ERC4626 is ERC20 {
     );
 
     /*//////////////////////////////////////////////////////////////
-                               IMMUTABLES
+    //                         IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
     ERC20 public immutable asset;
@@ -40,7 +40,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                        DEPOSIT/WITHDRAWAL LOGIC
+    //                  DEPOSIT/WITHDRAWAL LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function deposit(uint256 assets, address receiver) public virtual returns (uint256 shares) {
@@ -116,7 +116,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                            ACCOUNTING LOGIC
+    //                      ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function totalAssets() public view virtual returns (uint256);
@@ -154,7 +154,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                     DEPOSIT/WITHDRAWAL LIMIT LOGIC
+    //                 DEPOSIT/WITHDRAWAL LIMIT LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function maxDeposit(address) public view virtual returns (uint256) {
@@ -174,7 +174,7 @@ abstract contract ERC4626 is ERC20 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                          INTERNAL HOOKS LOGIC
+    //                    INTERNAL HOOKS LOGIC
     //////////////////////////////////////////////////////////////*/
 
     function beforeWithdraw(uint256 assets, uint256 shares) internal virtual {}

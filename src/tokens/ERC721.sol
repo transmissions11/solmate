@@ -5,7 +5,7 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/tokens/ERC721.sol)
 abstract contract ERC721 {
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+    //                           EVENTS                           //
     //////////////////////////////////////////////////////////////*/
 
     event Transfer(address indexed from, address indexed to, uint256 indexed id);
@@ -15,7 +15,7 @@ abstract contract ERC721 {
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
 
     /*//////////////////////////////////////////////////////////////
-                         METADATA STORAGE/LOGIC
+    //                   METADATA STORAGE/LOGIC                   //
     //////////////////////////////////////////////////////////////*/
 
     string public name;
@@ -25,7 +25,7 @@ abstract contract ERC721 {
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
-                      ERC721 BALANCE/OWNER STORAGE
+    //                ERC721 BALANCE/OWNER STORAGE                //
     //////////////////////////////////////////////////////////////*/
 
     mapping(uint256 => address) internal _ownerOf;
@@ -43,7 +43,7 @@ abstract contract ERC721 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                         ERC721 APPROVAL STORAGE
+    //                   ERC721 APPROVAL STORAGE                  //
     //////////////////////////////////////////////////////////////*/
 
     mapping(uint256 => address) public getApproved;
@@ -51,7 +51,7 @@ abstract contract ERC721 {
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
     /*//////////////////////////////////////////////////////////////
-                               CONSTRUCTOR
+    //                         CONSTRUCTOR                        //
     //////////////////////////////////////////////////////////////*/
 
     constructor(string memory _name, string memory _symbol) {
@@ -60,7 +60,7 @@ abstract contract ERC721 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                              ERC721 LOGIC
+    //                        ERC721 LOGIC                        //
     //////////////////////////////////////////////////////////////*/
 
     function approve(address spender, uint256 id) public virtual {
@@ -140,7 +140,7 @@ abstract contract ERC721 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                              ERC165 LOGIC
+    //                        ERC165 LOGIC                        //
     //////////////////////////////////////////////////////////////*/
 
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
@@ -151,7 +151,7 @@ abstract contract ERC721 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                        INTERNAL MINT/BURN LOGIC
+    //                  INTERNAL MINT/BURN LOGIC                  //
     //////////////////////////////////////////////////////////////*/
 
     function _mint(address to, uint256 id) internal virtual {
@@ -187,7 +187,7 @@ abstract contract ERC721 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                        INTERNAL SAFE MINT LOGIC
+    //                  INTERNAL SAFE MINT LOGIC                  //
     //////////////////////////////////////////////////////////////*/
 
     function _safeMint(address to, uint256 id) internal virtual {

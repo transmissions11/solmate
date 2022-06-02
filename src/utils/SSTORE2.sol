@@ -8,7 +8,7 @@ library SSTORE2 {
     uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's a STOP opcode to ensure the contract can't be called.
 
     /*//////////////////////////////////////////////////////////////
-                               WRITE LOGIC
+    //                         WRITE LOGIC                        //
     //////////////////////////////////////////////////////////////*/
 
     function write(bytes memory data) internal returns (address pointer) {
@@ -44,7 +44,7 @@ library SSTORE2 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                               READ LOGIC
+    //                         READ LOGIC                         //
     //////////////////////////////////////////////////////////////*/
 
     function read(address pointer) internal view returns (bytes memory) {
@@ -71,7 +71,7 @@ library SSTORE2 {
     }
 
     /*//////////////////////////////////////////////////////////////
-                          INTERNAL HELPER LOGIC
+    //                    INTERNAL HELPER LOGIC                   //
     //////////////////////////////////////////////////////////////*/
 
     function readBytecode(

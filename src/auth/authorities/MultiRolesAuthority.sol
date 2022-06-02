@@ -7,7 +7,7 @@ import {Auth, Authority} from "../Auth.sol";
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/MultiRolesAuthority.sol)
 contract MultiRolesAuthority is Auth, Authority {
     /*//////////////////////////////////////////////////////////////
-                                 EVENTS
+    //                           EVENTS                           //
     //////////////////////////////////////////////////////////////*/
 
     event UserRoleUpdated(address indexed user, uint8 indexed role, bool enabled);
@@ -19,19 +19,19 @@ contract MultiRolesAuthority is Auth, Authority {
     event TargetCustomAuthorityUpdated(address indexed target, Authority indexed authority);
 
     /*//////////////////////////////////////////////////////////////
-                               CONSTRUCTOR
+    //                         CONSTRUCTOR                        //
     //////////////////////////////////////////////////////////////*/
 
     constructor(address _owner, Authority _authority) Auth(_owner, _authority) {}
 
     /*//////////////////////////////////////////////////////////////
-                     CUSTOM TARGET AUTHORITY STORAGE
+    //               CUSTOM TARGET AUTHORITY STORAGE              //
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => Authority) public getTargetCustomAuthority;
 
     /*//////////////////////////////////////////////////////////////
-                            ROLE/USER STORAGE
+    //                      ROLE/USER STORAGE                     //
     //////////////////////////////////////////////////////////////*/
 
     mapping(address => bytes32) public getUserRoles;
@@ -49,7 +49,7 @@ contract MultiRolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                           AUTHORIZATION LOGIC
+    //                     AUTHORIZATION LOGIC                    //
     //////////////////////////////////////////////////////////////*/
 
     function canCall(
@@ -66,8 +66,8 @@ contract MultiRolesAuthority is Auth, Authority {
     }
 
     /*///////////////////////////////////////////////////////////////
-               CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC
-    //////////////////////////////////////////////////////////////*/
+    //         CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC         //
+    ///////////////////////////////////////////////////////////////*/
 
     function setTargetCustomAuthority(address target, Authority customAuthority) public virtual requiresAuth {
         getTargetCustomAuthority[target] = customAuthority;
@@ -76,7 +76,7 @@ contract MultiRolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                  PUBLIC CAPABILITY CONFIGURATION LOGIC
+    //            PUBLIC CAPABILITY CONFIGURATION LOGIC           //
     //////////////////////////////////////////////////////////////*/
 
     function setPublicCapability(bytes4 functionSig, bool enabled) public virtual requiresAuth {
@@ -86,7 +86,7 @@ contract MultiRolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                       USER ROLE ASSIGNMENT LOGIC
+    //                 USER ROLE ASSIGNMENT LOGIC                 //
     //////////////////////////////////////////////////////////////*/
 
     function setUserRole(
@@ -104,7 +104,7 @@ contract MultiRolesAuthority is Auth, Authority {
     }
 
     /*//////////////////////////////////////////////////////////////
-                   ROLE CAPABILITY CONFIGURATION LOGIC
+    //             ROLE CAPABILITY CONFIGURATION LOGIC            //
     //////////////////////////////////////////////////////////////*/
 
     function setRoleCapability(

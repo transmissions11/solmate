@@ -3,16 +3,16 @@ pragma solidity >=0.8.0;
 
 contract ReturnsFalseToken {
     /*///////////////////////////////////////////////////////////////
-                                  EVENTS
-    //////////////////////////////////////////////////////////////*/
+    //                            EVENTS                           //
+    ///////////////////////////////////////////////////////////////*/
 
     event Transfer(address indexed from, address indexed to, uint256 amount);
 
     event Approval(address indexed owner, address indexed spender, uint256 amount);
 
     /*///////////////////////////////////////////////////////////////
-                             METADATA STORAGE
-    //////////////////////////////////////////////////////////////*/
+    //                       METADATA STORAGE                      //
+    ///////////////////////////////////////////////////////////////*/
 
     string public constant name = "ReturnsFalseToken";
 
@@ -21,8 +21,8 @@ contract ReturnsFalseToken {
     uint8 public constant decimals = 18;
 
     /*///////////////////////////////////////////////////////////////
-                              ERC20 STORAGE
-    //////////////////////////////////////////////////////////////*/
+    //                        ERC20 STORAGE                        //
+    ///////////////////////////////////////////////////////////////*/
 
     uint256 public totalSupply;
 
@@ -31,8 +31,8 @@ contract ReturnsFalseToken {
     mapping(address => mapping(address => uint256)) public allowance;
 
     /*///////////////////////////////////////////////////////////////
-                               CONSTRUCTOR
-    //////////////////////////////////////////////////////////////*/
+    //                         CONSTRUCTOR                         //
+    ///////////////////////////////////////////////////////////////*/
 
     constructor() {
         totalSupply = type(uint256).max;
@@ -40,8 +40,8 @@ contract ReturnsFalseToken {
     }
 
     /*///////////////////////////////////////////////////////////////
-                              ERC20 LOGIC
-    //////////////////////////////////////////////////////////////*/
+    //                        ERC20 LOGIC                          //
+    ///////////////////////////////////////////////////////////////*/
 
     function approve(address, uint256) public virtual returns (bool) {
         return false;

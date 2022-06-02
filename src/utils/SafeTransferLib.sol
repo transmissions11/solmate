@@ -9,7 +9,7 @@ import {ERC20} from "../tokens/ERC20.sol";
 /// @dev Note that none of the functions in this library check that a token has code at all! That responsibility is delegated to the caller.
 library SafeTransferLib {
     /*//////////////////////////////////////////////////////////////
-                             ETH OPERATIONS
+    //                       ETH OPERATIONS                       //
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferETH(address to, uint256 amount) internal {
@@ -24,7 +24,7 @@ library SafeTransferLib {
     }
 
     /*//////////////////////////////////////////////////////////////
-                            ERC20 OPERATIONS
+    //                      ERC20 OPERATIONS                      //
     //////////////////////////////////////////////////////////////*/
 
     function safeTransferFrom(
