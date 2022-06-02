@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -13,7 +13,7 @@ contract RiskyContract is ReentrancyGuard {
 
         if (enterTimes > 1) return;
 
-        protectedCall();
+        this.protectedCall();
     }
 
     function protectedCall() public nonReentrant {
@@ -21,7 +21,7 @@ contract RiskyContract is ReentrancyGuard {
 
         if (enterTimes > 1) return;
 
-        protectedCall();
+        this.protectedCall();
     }
 
     function overprotectedCall() public nonReentrant {}
