@@ -79,12 +79,12 @@ library LibString {
                 mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
                 mstore(0x43, "\x17HEX_LENGTH_INSUFFICIENT") // Error string's length and bytes.
-                revert(0x00, 0x64) // Revert with (offset, size)
+                revert(0x00, 0x64) // Revert with (offset, size).
             }
 
             // Compute the string's length.
             let strLength := add(sub(end, str), 2)
-            // Move the pointer and write the "0x" prefix, which is 0x3078.
+            // Move the pointer and write the "0x" prefix.
             str := sub(str, 32)
             mstore(str, 0x3078)
             // Move the pointer and write the length.
@@ -127,7 +127,7 @@ library LibString {
 
             // Compute the string's length.
             let strLength := add(sub(end, str), 2)
-            // Move the pointer and write the "0x" prefix, which is 0x3078.
+            // Move the pointer and write the "0x" prefix.
             str := sub(str, 32)
             mstore(str, 0x3078)
             // Move the pointer and write the length.
@@ -167,8 +167,7 @@ library LibString {
                 temp := shr(8, temp)
             }
 
-            // Compute the string's length.
-            // Move the pointer and write the "0x" prefix, which is 0x3078.
+            // Move the pointer and write the "0x" prefix.
             str := sub(str, 32)
             mstore(str, 0x3078)
             // Move the pointer and write the length.
