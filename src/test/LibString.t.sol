@@ -44,7 +44,12 @@ contract LibStringTest is DSTestPlus {
     }
 
     function testToHexStringFixedLengthPositiveNumberShort() public {
-        assertEq(keccak256(bytes(LibString.toHexString(0x4132, 1))), keccak256(bytes("0x4132")));
+        assertEq(keccak256(bytes(LibString.toHexString(0x4132, 2))), keccak256(bytes("0x4132")));
+    }
+
+    function testToHexStringFixedLengthInsufficientLength() public {
+        hevm.expectRevert("HEX_LENGTH_INSUFFICIENT");
+        LibString.toHexString(0x4132, 1);
     }
 
     function testToHexStringFixedLengthUint256Max() public {

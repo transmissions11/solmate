@@ -56,27 +56,30 @@ library LibString {
             // Allocate the memory.
             mstore(0x40, str)
 
+            let temp := value
             // We write the string from rightmost digit to leftmost digit.
             // The following is essentially a do-while loop that also handles the zero case.
             for {
                 // Initialize and perform the first pass without check.
-                let temp := value
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                length := sub(length, gt(length, 0))
-            } or(length, temp) {
-                length := sub(length, gt(length, 0))
+                str := sub(str, 2)
+                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
+                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                temp := shr(8, temp)
+                length := sub(length, 1)
+            } length {
+                length := sub(length, 1)
             } {
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
+                str := sub(str, 2)
+                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
+                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                temp := shr(8, temp)
+            }
+
+            if temp {
+                mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
+                mstore(0x04, 0x20) // Offset of the error string.
+                mstore(0x43, "\x17HEX_LENGTH_INSUFFICIENT") // Error string's length and bytes.
+                revert(0x00, 0x64) // Revert with (offset, size)
             }
 
             // Compute the string's length.
@@ -109,21 +112,17 @@ library LibString {
             for {
                 // Initialize and perform the first pass without check.
                 let temp := value
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
+                str := sub(str, 2)
+                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
+                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                temp := shr(8, temp)
             } temp {
                 // prettier-ignore
             } {
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
+                str := sub(str, 2)
+                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
+                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                temp := shr(8, temp)
             }
 
             // Compute the string's length.
@@ -154,22 +153,18 @@ library LibString {
                 // Initialize and perform the first pass without check.
                 let length := 20
                 let temp := value
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
+                str := sub(str, 2)
+                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
+                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                temp := shr(8, temp)
                 length := sub(length, 1)
             } length {
                 length := sub(length, 1)
             } {
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
-                str := sub(str, 1)
-                mstore8(str, byte(and(temp, 15), "0123456789abcdef"))
-                temp := shr(4, temp)
+                str := sub(str, 2)
+                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
+                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                temp := shr(8, temp)
             }
 
             // Compute the string's length.
