@@ -1390,6 +1390,8 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
 
             uint256 remainingMintAmountForId = type(uint256).max - userMintAmounts[from][id];
 
+            if (mintAmounts[i] == remainingMintAmountForId) continue;
+
             uint256 mintAmount = bound(mintAmounts[i], 0, remainingMintAmountForId);
             uint256 transferAmount = bound(transferAmounts[i], mintAmount + 1, type(uint256).max);
 
