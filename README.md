@@ -6,6 +6,7 @@
 
 ```ml
 auth
+├─ Owned — "Simple single owner authorization"
 ├─ Auth — "Flexible and updatable auth pattern"
 ├─ authorities
 │  ├─ RolesAuthority — "Role based Authority that supports up to 256 roles"
