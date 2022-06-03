@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 /// @notice Gas optimized ECDSA wrapper.
@@ -35,18 +35,20 @@ library ECDSA {
                 mstore(0x20, v)
                 calldatacopy(0x40, signature.offset, 0x20) // Directly copy `r` over.
                 mstore(0x60, s)
-                let success := staticcall(
-                    gas(), // Amount of gas left for the transaction.
-                    0x01, // Address of `ecrecover`.
-                    0x00, // Start of input.
-                    0x80, // Size of input.
-                    0x40, // Start of output.
-                    0x20 // Size of output.
+                pop(
+                    staticcall(
+                        gas(), // Amount of gas left for the transaction.
+                        0x01, // Address of `ecrecover`.
+                        0x00, // Start of input.
+                        0x80, // Size of input.
+                        0x40, // Start of output.
+                        0x20 // Size of output.
+                    )
                 )
                 // Restore the zero slot.
                 mstore(0x60, 0)
                 // `returndatasize()` will be `0x20` upon success, and `0x00` otherwise.
-                result := mload(sub(0x60, mul(returndatasize(), success)))
+                result := mload(sub(0x60, returndatasize()))
             }
             // Restore the free memory pointer.
             mstore(0x40, m)
