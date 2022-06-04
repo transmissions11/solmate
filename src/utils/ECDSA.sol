@@ -9,18 +9,21 @@ library ECDSA {
         assembly {
             // Copy the free memory pointer so that we can restore it later.
             let m := mload(0x40)
-
-            // Directly load the fields from the calldata.
+            // Directly load `s` from the calldata.
             let s := calldataload(add(signature.offset, 0x20))
-            // If `signature.length == 65`, but just do it anyway as it costs less gas than a switch.
-            let v := byte(0, calldataload(add(signature.offset, 0x40)))
 
-            // If `signature.length == 64`.
-            if iszero(sub(signature.length, 64)) {
+            let v := 0
+
+            switch signature.length
+            case 64 {
                 // Here, `s` is actually `vs` that needs to be recovered into `v` and `s`.
                 v := add(shr(255, s), 27)
                 // prettier-ignore
                 s := and(s, 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+            }
+            case 65 {
+                // Directly load `v` from the calldata.
+                v := byte(0, calldataload(add(signature.offset, 0x40)))
             }
 
             // If signature is valid and not malleable.
@@ -28,7 +31,7 @@ library ECDSA {
                 // `s` in lower half order.
                 // prettier-ignore
                 lt(s, 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1),
-                // `v` is 27 or 28
+                // `v` is 27 or 28.
                 byte(v, 0x0101000000)
             ) {
                 mstore(0x00, hash)
