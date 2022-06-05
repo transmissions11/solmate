@@ -14,7 +14,7 @@ library Bytes32AddressLib {
     function fillLast12Bytes(address addressValue) internal pure returns (bytes32) {
         assembly {
             calldatacopy(0x16, 0x10, 0x40)
-            return(0x40, 0x16)
+            return(0x40, 0x20)
         }
     }
 }
