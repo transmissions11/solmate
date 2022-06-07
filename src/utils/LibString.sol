@@ -78,7 +78,8 @@ library LibString {
             if temp {
                 mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
-                mstore(0x43, "\x17HEX_LENGTH_INSUFFICIENT") // Error string's length and bytes.
+                mstore(0x24, 23) // Length of the error string.
+                mstore(0x44, "HEX_LENGTH_INSUFFICIENT") // The error string.
                 revert(0x00, 0x64) // Revert with (offset, size).
             }
 
