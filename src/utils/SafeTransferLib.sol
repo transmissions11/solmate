@@ -17,7 +17,8 @@ library SafeTransferLib {
             if iszero(call(gas(), to, amount, 0, 0, 0, 0)) {
                 mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
-                mstore(0x43, "\x13ETH_TRANSFER_FAILED") // Error string's length and bytes.
+                mstore(0x24, 19) // Length of the error string.
+                mstore(0x44, "ETH_TRANSFER_FAILED") // The error string.
                 revert(0x00, 0x64) // Revert with (offset, size).
             }
         }
@@ -56,7 +57,8 @@ library SafeTransferLib {
             ) {
                 mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
-                mstore(0x43, "\x14TRANSFER_FROM_FAILED") // Error string's length and bytes.
+                mstore(0x24, 20) // Length of the error string.
+                mstore(0x44, "TRANSFER_FROM_FAILED") // The error string.
                 revert(0x00, 0x64) // Revert with (offset, size).
             }
 
@@ -92,7 +94,8 @@ library SafeTransferLib {
             ) {
                 mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
-                mstore(0x43, "\x0fTRANSFER_FAILED") // Error string's length and bytes.
+                mstore(0x24, 15) // Length of the error string.
+                mstore(0x44, "TRANSFER_FAILED") // The error string.
                 revert(0x00, 0x64) // Revert with (offset, size).
             }
 
@@ -128,7 +131,8 @@ library SafeTransferLib {
             ) {
                 mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
-                mstore(0x43, "\x0eAPPROVE_FAILED") // Error string's length and bytes.
+                mstore(0x24, 14) // Length of the error string.
+                mstore(0x44, "APPROVE_FAILED") // The error string.
                 revert(0x00, 0x64) // Revert with (offset, size).
             }
 
