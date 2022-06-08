@@ -12,25 +12,23 @@ library ECDSA {
             // Directly load `s` from the calldata.
             let s := calldataload(add(signature.offset, 0x20))
 
-            let v := 0
-
             switch signature.length
             case 64 {
                 // Here, `s` is actually `vs` that needs to be recovered into `v` and `s`.
-                v := add(shr(255, s), 27)
+                // Compute `v` and store it in the scratch space.
+                mstore(0x20, add(shr(255, s), 27))
                 // prettier-ignore
                 s := and(s, 0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
             }
             case 65 {
-                // Directly load `v` from the calldata.
-                v := byte(0, calldataload(add(signature.offset, 0x40)))
+                // Compute `v` and store it in the scratch space.
+                mstore(0x20, byte(0, calldataload(add(signature.offset, 0x40))))
             }
 
-            // `s` in lower half order.
+            // If `s` in lower half order, such that the signature is not malleable.
             // prettier-ignore
             if iszero(gt(s, 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0)) {
                 mstore(0x00, hash)
-                mstore(0x20, v)
                 calldatacopy(0x40, signature.offset, 0x20) // Directly copy `r` over.
                 mstore(0x60, s)
                 pop(
