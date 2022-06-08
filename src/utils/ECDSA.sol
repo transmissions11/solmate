@@ -26,14 +26,9 @@ library ECDSA {
                 v := byte(0, calldataload(add(signature.offset, 0x40)))
             }
 
-            // If signature is valid and not malleable.
-            if and(
-                // `s` in lower half order.
-                // prettier-ignore
-                lt(s, 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a1),
-                // `v` is 27 or 28.
-                byte(v, 0x0101000000)
-            ) {
+            // `s` in lower half order.
+            // prettier-ignore
+            if iszero(gt(s, 0x7fffffffffffffffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0)) {
                 mstore(0x00, hash)
                 mstore(0x20, v)
                 calldatacopy(0x40, signature.offset, 0x20) // Directly copy `r` over.
