@@ -8,7 +8,7 @@ abstract contract ReentrancyGuard {
     uint256 private locked = 1;
 
     modifier nonReentrant() virtual {
-        require(locked == 1, "REENTRANCY");
+        require(locked < 2, "REENTRANCY");
 
         locked = 2;
 
