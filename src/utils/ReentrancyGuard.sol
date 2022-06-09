@@ -8,8 +8,10 @@ abstract contract ReentrancyGuard {
     uint256 private locked = 1;
 
     modifier nonReentrant() virtual {
-        //`require(locked == 1)` works fine in normal conditions. But when deployed via proxy, the storage slot should be manually set to 1, by default it would be 0.
-        // Hence, instead of setting the storage, we can simply check whether `locked < 2`.
+        // `require(locked == 1)` works fine in normal conditions.
+        // When deployed via proxy, its value would be 0 by default.
+        // Hence, instead of setting the storage slot manually, we can simply
+        // check whether `locked < 2`.
         require(locked < 2, "REENTRANCY");
 
         locked = 2;
