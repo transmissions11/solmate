@@ -420,15 +420,15 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(0), 1337, 1, "");
     }
 
-    function testFailMintToNonERC155Recipient() public {
+    function testFailMintToNonERC1155Recipient() public {
         token.mint(address(new NonERC1155Recipient()), 1337, 1, "");
     }
 
-    function testFailMintToRevertingERC155Recipient() public {
+    function testFailMintToRevertingERC1155Recipient() public {
         token.mint(address(new RevertingERC1155Recipient()), 1337, 1, "");
     }
 
-    function testFailMintToWrongReturnDataERC155Recipient() public {
+    function testFailMintToWrongReturnDataERC1155Recipient() public {
         token.mint(address(new RevertingERC1155Recipient()), 1337, 1, "");
     }
 
@@ -458,7 +458,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeTransferFrom(address(this), address(0), 1337, 70, "");
     }
 
-    function testFailSafeTransferFromToNonERC155Recipient() public {
+    function testFailSafeTransferFromToNonERC1155Recipient() public {
         token.mint(address(this), 1337, 100, "");
         token.safeTransferFrom(address(this), address(new NonERC1155Recipient()), 1337, 70, "");
     }
@@ -1232,7 +1232,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(0), id, amount, data);
     }
 
-    function testFailMintToNonERC155Recipient(
+    function testFailMintToNonERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData
@@ -1240,7 +1240,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(new NonERC1155Recipient()), id, mintAmount, mintData);
     }
 
-    function testFailMintToRevertingERC155Recipient(
+    function testFailMintToRevertingERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData
@@ -1248,7 +1248,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(new RevertingERC1155Recipient()), id, mintAmount, mintData);
     }
 
-    function testFailMintToWrongReturnDataERC155Recipient(
+    function testFailMintToWrongReturnDataERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData
@@ -1316,7 +1316,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeTransferFrom(address(this), address(0), id, transferAmount, transferData);
     }
 
-    function testFailSafeTransferFromToNonERC155Recipient(
+    function testFailSafeTransferFromToNonERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         uint256 transferAmount,
