@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 import {DSTest} from "ds-test/test.sol";
@@ -12,8 +12,7 @@ contract DSTestPlus is DSTest {
 
     address internal constant DEAD_ADDRESS = 0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF;
 
-    string private checkpointLabel;
-    uint256 private checkpointGasLeft = 1; // Start the slot warm.
+    uint256 private checkpointGasLeft;
 
     modifier brutalizeMemory(bytes memory brutalizeWith) {
         /// @solidity memory-safe-assembly
@@ -48,8 +47,8 @@ contract DSTestPlus is DSTest {
         _;
     }
 
-    function startMeasuringGas(string memory label) internal virtual {
-        checkpointLabel = label;
+    function startMeasuringGas() internal virtual {
+        checkpointGasLeft = 1; // Start the slot warm.
 
         checkpointGasLeft = gasleft();
     }
@@ -57,10 +56,10 @@ contract DSTestPlus is DSTest {
     function stopMeasuringGas() internal virtual {
         uint256 checkpointGasLeft2 = gasleft();
 
-        // Subtract 100 to account for the warm SLOAD in startMeasuringGas.
+        // Subtract 100 to account for the warm SSTORE in startMeasuringGas.
         uint256 gasDelta = checkpointGasLeft - checkpointGasLeft2 - 100;
 
-        emit log_named_uint(string(abi.encodePacked(checkpointLabel, " Gas")), gasDelta);
+        emit log_named_uint("Gas Used", gasDelta);
     }
 
     function fail(string memory err) internal virtual {
@@ -105,6 +104,23 @@ contract DSTestPlus is DSTest {
             emit log_named_uint("    Actual", a);
             emit log_named_uint(" Max Delta", maxDelta);
             emit log_named_uint("     Delta", delta);
+            fail();
+        }
+    }
+
+    function assertApproxEq(
+        int256 a,
+        int256 b,
+        uint256 maxDelta
+    ) internal virtual {
+        int256 delta = a > b ? a - b : b - a;
+
+        if (delta > int256(maxDelta)) {
+            emit log("Error: a ~= b not satisfied [uint]");
+            emit log_named_int("  Expected", b);
+            emit log_named_int("    Actual", a);
+            emit log_named_uint(" Max Delta", maxDelta);
+            emit log_named_int("     Delta", delta);
             fail();
         }
     }

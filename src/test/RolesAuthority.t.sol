@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -74,7 +74,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.canCall(address(0xBEEF), address(0xCAFE), 0xBEEFCAFE));
     }
 
-    function testSetRoles(address user, uint8 role) public {
+    function testFuzzSetRoles(address user, uint8 role) public {
         assertFalse(rolesAuthority.doesUserHaveRole(user, role));
 
         rolesAuthority.setUserRole(user, role, true);
@@ -84,7 +84,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.doesUserHaveRole(user, role));
     }
 
-    function testSetRoleCapabilities(
+    function testFuzzSetRoleCapabilities(
         uint8 role,
         address target,
         bytes4 functionSig
@@ -98,7 +98,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.doesRoleHaveCapability(role, target, functionSig));
     }
 
-    function testSetPublicCapabilities(address target, bytes4 functionSig) public {
+    function testFuzzSetPublicCapabilities(address target, bytes4 functionSig) public {
         assertFalse(rolesAuthority.isCapabilityPublic(target, functionSig));
 
         rolesAuthority.setPublicCapability(target, functionSig, true);
@@ -108,7 +108,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.isCapabilityPublic(target, functionSig));
     }
 
-    function testCanCallWithAuthorizedRole(
+    function testFuzzCanCallWithAuthorizedRole(
         address user,
         uint8 role,
         address target,
@@ -132,7 +132,7 @@ contract RolesAuthorityTest is DSTestPlus {
         assertFalse(rolesAuthority.canCall(user, target, functionSig));
     }
 
-    function testCanCallPublicCapability(
+    function testFuzzCanCallPublicCapability(
         address user,
         address target,
         bytes4 functionSig

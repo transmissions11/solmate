@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -63,7 +63,7 @@ contract WETHTest is DSTestPlus {
         assertEq(weth.totalSupply(), 0.5 ether);
     }
 
-    function testDeposit(uint256 amount) public {
+    function testFuzzDeposit(uint256 amount) public {
         amount = bound(amount, 0, address(this).balance);
 
         assertEq(weth.balanceOf(address(this)), 0);
@@ -75,7 +75,7 @@ contract WETHTest is DSTestPlus {
         assertEq(weth.totalSupply(), amount);
     }
 
-    function testFallbackDeposit(uint256 amount) public {
+    function testFuzzFallbackDeposit(uint256 amount) public {
         amount = bound(amount, 0, address(this).balance);
 
         assertEq(weth.balanceOf(address(this)), 0);
@@ -87,7 +87,7 @@ contract WETHTest is DSTestPlus {
         assertEq(weth.totalSupply(), amount);
     }
 
-    function testWithdraw(uint256 depositAmount, uint256 withdrawAmount) public {
+    function testFuzzWithdraw(uint256 depositAmount, uint256 withdrawAmount) public {
         depositAmount = bound(depositAmount, 0, address(this).balance);
         withdrawAmount = bound(withdrawAmount, 0, depositAmount);
 

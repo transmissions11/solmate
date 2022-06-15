@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -22,7 +22,7 @@ contract DSTestPlusTest is DSTestPlus {
         assertRelApproxEq(0, 0, 0);
     }
 
-    function testBound(
+    function testFuzzBound(
         uint256 num,
         uint256 min,
         uint256 max
@@ -35,7 +35,7 @@ contract DSTestPlusTest is DSTestPlus {
         assertLe(bounded, max);
     }
 
-    function testFailBoundMinBiggerThanMax(
+    function testFailFuzzBoundMinBiggerThanMax(
         uint256 num,
         uint256 min,
         uint256 max
@@ -68,5 +68,10 @@ contract DSTestPlusTest is DSTestPlus {
         assertGt(uint256(freeMem2), 0);
         assertGt(uint256(scratchSpace1), 0);
         assertGt(uint256(scratchSpace2), 0);
+    }
+
+    function testMeasuringGas() public {
+        startMeasuringGas();
+        stopMeasuringGas();
     }
 }

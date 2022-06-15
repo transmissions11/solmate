@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -208,7 +208,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, address(0xCAFE), 1e18, block.timestamp, v, r, s);
     }
 
-    function testMetadata(
+    function testFuzzMetadata(
         string calldata name,
         string calldata symbol,
         uint8 decimals
@@ -219,14 +219,14 @@ contract ERC20Test is DSTestPlus {
         assertEq(tkn.decimals(), decimals);
     }
 
-    function testMint(address from, uint256 amount) public {
+    function testFuzzMint(address from, uint256 amount) public {
         token.mint(from, amount);
 
         assertEq(token.totalSupply(), amount);
         assertEq(token.balanceOf(from), amount);
     }
 
-    function testBurn(
+    function testFuzzBurn(
         address from,
         uint256 mintAmount,
         uint256 burnAmount
@@ -240,13 +240,13 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.balanceOf(from), mintAmount - burnAmount);
     }
 
-    function testApprove(address to, uint256 amount) public {
+    function testFuzzApprove(address to, uint256 amount) public {
         assertTrue(token.approve(to, amount));
 
         assertEq(token.allowance(address(this), to), amount);
     }
 
-    function testTransfer(address from, uint256 amount) public {
+    function testFuzzTransfer(address from, uint256 amount) public {
         token.mint(address(this), amount);
 
         assertTrue(token.transfer(from, amount));
@@ -260,7 +260,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function testTransferFrom(
+    function testFuzzTransferFrom(
         address to,
         uint256 approval,
         uint256 amount
@@ -288,7 +288,7 @@ contract ERC20Test is DSTestPlus {
         }
     }
 
-    function testPermit(
+    function testFuzzPermit(
         uint248 privKey,
         address to,
         uint256 amount,
@@ -317,7 +317,7 @@ contract ERC20Test is DSTestPlus {
         assertEq(token.nonces(owner), 1);
     }
 
-    function testFailBurnInsufficientBalance(
+    function testFailFuzzBurnInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 burnAmount
@@ -328,7 +328,7 @@ contract ERC20Test is DSTestPlus {
         token.burn(to, burnAmount);
     }
 
-    function testFailTransferInsufficientBalance(
+    function testFailFuzzTransferInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 sendAmount
@@ -339,7 +339,7 @@ contract ERC20Test is DSTestPlus {
         token.transfer(to, sendAmount);
     }
 
-    function testFailTransferFromInsufficientAllowance(
+    function testFailFuzzTransferFromInsufficientAllowance(
         address to,
         uint256 approval,
         uint256 amount
@@ -356,7 +356,7 @@ contract ERC20Test is DSTestPlus {
         token.transferFrom(from, to, amount);
     }
 
-    function testFailTransferFromInsufficientBalance(
+    function testFailFuzzTransferFromInsufficientBalance(
         address to,
         uint256 mintAmount,
         uint256 sendAmount
@@ -373,7 +373,7 @@ contract ERC20Test is DSTestPlus {
         token.transferFrom(from, to, sendAmount);
     }
 
-    function testFailPermitBadNonce(
+    function testFailFuzzPermitBadNonce(
         uint256 privateKey,
         address to,
         uint256 amount,
@@ -400,7 +400,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailPermitBadDeadline(
+    function testFailFuzzPermitBadDeadline(
         uint256 privateKey,
         address to,
         uint256 amount,
@@ -425,7 +425,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, to, amount, deadline + 1, v, r, s);
     }
 
-    function testFailPermitPastDeadline(
+    function testFailFuzzPermitPastDeadline(
         uint256 privateKey,
         address to,
         uint256 amount,
@@ -450,7 +450,7 @@ contract ERC20Test is DSTestPlus {
         token.permit(owner, to, amount, deadline, v, r, s);
     }
 
-    function testFailPermitReplay(
+    function testFailFuzzPermitReplay(
         uint256 privateKey,
         address to,
         uint256 amount,
