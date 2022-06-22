@@ -15,7 +15,7 @@ contract WETHTest is DSTestPlus {
         weth = new WETH();
     }
 
-    function testDeposit() public {
+    function testFallbackDeposit() public {
         assertEq(weth.balanceOf(address(this)), 0);
         assertEq(weth.totalSupply(), 0);
 
@@ -25,7 +25,7 @@ contract WETHTest is DSTestPlus {
         assertEq(weth.totalSupply(), 1 ether);
     }
 
-    function testFallbackDeposit() public {
+    function testDeposit() public {
         assertEq(weth.balanceOf(address(this)), 0);
         assertEq(weth.totalSupply(), 0);
 
@@ -63,7 +63,7 @@ contract WETHTest is DSTestPlus {
         assertEq(weth.totalSupply(), 0.5 ether);
     }
 
-    function testDeposit(uint256 amount) public {
+    function testFallbackDeposit(uint256 amount) public {
         amount = bound(amount, 0, address(this).balance);
 
         assertEq(weth.balanceOf(address(this)), 0);
@@ -75,7 +75,7 @@ contract WETHTest is DSTestPlus {
         assertEq(weth.totalSupply(), amount);
     }
 
-    function testFallbackDeposit(uint256 amount) public {
+    function testDeposit(uint256 amount) public {
         amount = bound(amount, 0, address(this).balance);
 
         assertEq(weth.balanceOf(address(this)), 0);
