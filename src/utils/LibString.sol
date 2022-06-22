@@ -76,7 +76,7 @@ library LibString {
             }
 
             if temp {
-                mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
+                mstore(0x00, hex"08c379a0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
                 mstore(0x24, 23) // Length of the error string.
                 mstore(0x44, "HEX_LENGTH_INSUFFICIENT") // The error string.
