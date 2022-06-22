@@ -8,6 +8,32 @@ import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
 
 import {WETH} from "../tokens/WETH.sol";
 
+interface IWETH {
+    function deposit() external payable;
+
+    function withdraw(uint256) external;
+}
+
+contract MockReentrancyHack {
+    IWETH weth;
+
+    constructor(address _addr) {
+        weth = IWETH(_addr);
+    }
+
+    function attack() external payable {
+        require(address(this).balance == 1 ether);
+        weth.deposit{value: 1 ether}();
+        weth.withdraw(1 ether);
+    }
+
+    receive() external payable {
+        if (address(weth).balance >= 1 ether) {
+            weth.withdraw(1 ether);
+        }
+    }
+}
+
 contract WETHTest is DSTestPlus {
     WETH weth;
 
@@ -102,6 +128,17 @@ contract WETHTest is DSTestPlus {
         assertEq(balanceAfterWithdraw, balanceBeforeWithdraw + withdrawAmount);
         assertEq(weth.balanceOf(address(this)), depositAmount - withdrawAmount);
         assertEq(weth.totalSupply(), depositAmount - withdrawAmount);
+    }
+
+    function testReentrancyFails() public {
+        SafeTransferLib.safeTransferETH(address(weth), 1 ether);
+
+        assertEq(address(weth).balance, 1 ether);
+
+        MockReentrancyHack hacker = new MockReentrancyHack(address(weth));
+
+        hevm.expectRevert("ETH_TRANSFER_FAILED");
+        hacker.attack{value: 1 ether}();
     }
 
     receive() external payable {}
