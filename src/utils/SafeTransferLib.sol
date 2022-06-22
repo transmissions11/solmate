@@ -15,7 +15,7 @@ library SafeTransferLib {
         assembly {
             // Transfer the ETH and check if it succeeded or not.
             if iszero(call(gas(), to, amount, 0, 0, 0, 0)) {
-                mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
+                mstore(0x00, hex"08c379a0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
                 mstore(0x24, 19) // Length of the error string.
                 mstore(0x44, "ETH_TRANSFER_FAILED") // The error string.
@@ -55,7 +55,7 @@ library SafeTransferLib {
                     call(gas(), token, 0, 0x1c, 0x64, 0x00, 0x20)
                 )
             ) {
-                mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
+                mstore(0x00, hex"08c379a0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
                 mstore(0x24, 20) // Length of the error string.
                 mstore(0x44, "TRANSFER_FROM_FAILED") // The error string.
@@ -92,7 +92,7 @@ library SafeTransferLib {
                     call(gas(), token, 0, 0x1c, 0x44, 0x00, 0x20)
                 )
             ) {
-                mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
+                mstore(0x00, hex"08c379a0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
                 mstore(0x24, 15) // Length of the error string.
                 mstore(0x44, "TRANSFER_FAILED") // The error string.
@@ -128,7 +128,7 @@ library SafeTransferLib {
                     call(gas(), token, 0, 0x1c, 0x44, 0x00, 0x20)
                 )
             ) {
-                mstore(0x00, "\x08\xc3\x79\xa0") // Function selector of the error method.
+                mstore(0x00, hex"08c379a0") // Function selector of the error method.
                 mstore(0x04, 0x20) // Offset of the error string.
                 mstore(0x24, 14) // Length of the error string.
                 mstore(0x44, "APPROVE_FAILED") // The error string.
