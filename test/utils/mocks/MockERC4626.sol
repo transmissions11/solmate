@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {ERC20} from "../../../tokens/ERC20.sol";
-import {ERC4626} from "../../../mixins/ERC4626.sol";
+import {ERC20} from "../../../src/tokens/ERC20.sol";
+import {ERC4626} from "../../../src/mixins/ERC4626.sol";
 
 contract MockERC4626 is ERC4626 {
     uint256 public beforeWithdrawHookCalledCounter = 0;

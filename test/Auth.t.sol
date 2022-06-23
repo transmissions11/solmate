@@ -5,7 +5,7 @@ import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 import {MockAuthority} from "./utils/mocks/MockAuthority.sol";
 
-import {Authority} from "../auth/Auth.sol";
+import {Authority} from "../src/auth/Auth.sol";
 
 contract OutOfOrderAuthority is Authority {
     function canCall(
