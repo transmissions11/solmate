@@ -63,12 +63,7 @@ contract DSTestPlus is DSTest {
         emit log_named_uint(string(abi.encodePacked(checkpointLabel, " Gas")), gasDelta);
     }
 
-    function fail(string memory err) internal virtual {
-        emit log_named_string("Error", err);
-        fail();
-    }
-
-    function assertFalse(bool data) internal virtual {
+    function _assertFalse(bool data) private {
         assertTrue(!data);
     }
 
@@ -89,7 +84,7 @@ contract DSTestPlus is DSTest {
     }
 
     function assertBoolEq(bool a, bool b) internal virtual {
-        b ? assertTrue(a) : assertFalse(a);
+        b ? assertTrue(a) : _assertFalse(a);
     }
 
     function assertApproxEq(
@@ -143,26 +138,6 @@ contract DSTestPlus is DSTest {
         for (uint256 i = 0; i < a.length; i++) {
             assertEq(a[i], b[i]);
         }
-    }
-
-    function bound(
-        uint256 x,
-        uint256 min,
-        uint256 max
-    ) internal returns (uint256 result) {
-        require(max >= min, "MAX_LESS_THAN_MIN");
-
-        uint256 size = max - min;
-
-        if (size == 0) result = min;
-        else if (size == type(uint256).max) result = x;
-        else {
-            ++size; // Make max inclusive.
-            uint256 mod = x % size;
-            result = min + mod;
-        }
-
-        emit log_named_uint("Bound Result", result);
     }
 
     function min3(
