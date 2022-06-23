@@ -3,7 +3,7 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {FixedPointMathLib} from "../utils/FixedPointMathLib.sol";
+import {FixedPointMathLib} from "../src/utils/FixedPointMathLib.sol";
 
 contract FixedPointMathLibTest is DSTestPlus {
     function testMulWadDown() public {

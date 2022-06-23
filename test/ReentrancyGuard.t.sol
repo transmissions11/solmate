@@ -3,7 +3,7 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {ReentrancyGuard} from "../utils/ReentrancyGuard.sol";
+import {ReentrancyGuard} from "../src/utils/ReentrancyGuard.sol";
 
 contract RiskyContract is ReentrancyGuard {
     uint256 public enterTimes;

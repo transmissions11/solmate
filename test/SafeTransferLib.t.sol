@@ -12,8 +12,8 @@ import {ReturnsTooLittleToken} from "./utils/weird-tokens/ReturnsTooLittleToken.
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {ERC20} from "../tokens/ERC20.sol";
-import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
+import {ERC20} from "../src/tokens/ERC20.sol";
+import {SafeTransferLib} from "../src/utils/SafeTransferLib.sol";
 
 contract SafeTransferLibTest is DSTestPlus {
     RevertingToken reverting;

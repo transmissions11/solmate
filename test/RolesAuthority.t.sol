@@ -4,9 +4,9 @@ pragma solidity 0.8.10;
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockAuthority} from "./utils/mocks/MockAuthority.sol";
 
-import {Authority} from "../auth/Auth.sol";
+import {Authority} from "../src/auth/Auth.sol";
 
-import {RolesAuthority} from "../auth/authorities/RolesAuthority.sol";
+import {RolesAuthority} from "../src/auth/authorities/RolesAuthority.sol";
 
 contract RolesAuthorityTest is DSTestPlus {
     RolesAuthority rolesAuthority;

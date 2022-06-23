@@ -6,7 +6,7 @@ import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
 import {MockERC1155} from "./utils/mocks/MockERC1155.sol";
 
-import {ERC1155TokenReceiver} from "../tokens/ERC1155.sol";
+import {ERC1155TokenReceiver} from "../src/tokens/ERC1155.sol";
 
 contract ERC1155Recipient is ERC1155TokenReceiver {
     address public operator;

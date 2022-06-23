@@ -3,7 +3,7 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {SafeCastLib} from "../utils/SafeCastLib.sol";
+import {SafeCastLib} from "../src/utils/SafeCastLib.sol";
 
 contract SafeCastLibTest is DSTestPlus {
     function testSafeCastTo248() public {

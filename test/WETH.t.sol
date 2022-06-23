@@ -4,9 +4,9 @@ pragma solidity 0.8.10;
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {DSInvariantTest} from "./utils/DSInvariantTest.sol";
 
-import {SafeTransferLib} from "../utils/SafeTransferLib.sol";
+import {SafeTransferLib} from "../src/utils/SafeTransferLib.sol";
 
-import {WETH} from "../tokens/WETH.sol";
+import {WETH} from "../src/tokens/WETH.sol";
 
 contract WETHTest is DSTestPlus {
     WETH weth;

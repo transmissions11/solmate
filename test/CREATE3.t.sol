@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity 0.8.10;
 
-import {WETH} from "../tokens/WETH.sol";
+import {WETH} from "../src/tokens/WETH.sol";
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
 import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 
-import {CREATE3} from "../utils/CREATE3.sol";
+import {CREATE3} from "../src/utils/CREATE3.sol";
 
 contract CREATE3Test is DSTestPlus {
     function testDeployERC20() public {
