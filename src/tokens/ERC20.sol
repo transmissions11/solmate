@@ -151,7 +151,8 @@ abstract contract ERC20 {
                 s
             );
 
-            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
+            require(recoveredAddress != address(0), "INVALID_SIGNER");
+            require(recoveredAddress == owner, "INVALID_SIGNER");
 
             allowance[recoveredAddress][spender] = value;
         }
