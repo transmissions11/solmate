@@ -170,8 +170,8 @@ abstract contract ERC1155 {
 
     function _batchMint(
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
+        uint256[] calldata ids,
+        uint256[] calldata amounts,
         bytes memory data
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
@@ -201,8 +201,8 @@ abstract contract ERC1155 {
 
     function _batchBurn(
         address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
+        uint256[] calldata ids,
+        uint256[] calldata amounts
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
