@@ -3,7 +3,7 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {MerkleProof} from "../utils/MerkleProof.sol";
+import {MerkleProofLib} from "../utils/MerkleProofLib.sol";
 
 contract MerkleProofTest is DSTestPlus {
     function testVerifyEmptyMerkleProofSuppliedLeafAndRootSame() public {
@@ -45,6 +45,6 @@ contract MerkleProofTest is DSTestPlus {
         bytes32 root,
         bytes32 leaf
     ) external pure returns (bool) {
-        return MerkleProof.verify(proof, root, leaf);
+        return MerkleProofLib.verify(proof, root, leaf);
     }
 }
