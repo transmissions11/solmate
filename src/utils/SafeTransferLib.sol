@@ -12,6 +12,11 @@ library SafeTransferLib {
                              ETH OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
+    error ETH();
+    error TRANSFER();
+    error TRANSFER_FROM();
+    error APPROVE();
+
     function safeTransferETH(address to, uint256 amount) internal {
         bool success;
 
@@ -19,8 +24,9 @@ library SafeTransferLib {
             // Transfer the ETH and store if it succeeded or not.
             success := call(gas(), to, amount, 0, 0, 0, 0)
         }
-
-        require(success, "ETH_TRANSFER_FAILED");
+        if (!success) {
+            revert ETH();
+        }
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -56,8 +62,9 @@ library SafeTransferLib {
                 call(gas(), token, 0, freeMemoryPointer, 100, 0, 32)
             )
         }
-
-        require(success, "TRANSFER_FROM_FAILED");
+        if (!success) {
+            revert TRANSFER_FROM();
+        }
     }
 
     function safeTransfer(
@@ -87,8 +94,9 @@ library SafeTransferLib {
                 call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
             )
         }
-
-        require(success, "TRANSFER_FAILED");
+        if (!success) {
+            revert TRANSFER();
+        }
     }
 
     function safeApprove(
@@ -118,7 +126,8 @@ library SafeTransferLib {
                 call(gas(), token, 0, freeMemoryPointer, 68, 0, 32)
             )
         }
-
-        require(success, "APPROVE_FAILED");
+        if (!success) {
+            revert APPROVE();
+        }
     }
 }
