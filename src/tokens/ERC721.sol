@@ -140,9 +140,11 @@ abstract contract ERC721 {
     ) public virtual {
         transferFrom(from, to, id);
 
-        if(to.code.length != 0 &&
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") !=
-                ERC721TokenReceiver.onERC721Received.selector) {       
+        if (
+            to.code.length != 0 &&
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, "") !=
+            ERC721TokenReceiver.onERC721Received.selector
+        ) {
             revert UNSAFE_RECIPIENT();
         }
     }
@@ -155,9 +157,11 @@ abstract contract ERC721 {
     ) public virtual {
         transferFrom(from, to, id);
 
-        if(to.code.length != 0 &&
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) !=
-                ERC721TokenReceiver.onERC721Received.selector) {
+        if (
+            to.code.length != 0 &&
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, from, id, data) !=
+            ERC721TokenReceiver.onERC721Received.selector
+        ) {
             revert UNSAFE_RECIPIENT();
         }
     }
@@ -222,9 +226,11 @@ abstract contract ERC721 {
     function _safeMint(address to, uint256 id) internal virtual {
         _mint(to, id);
 
-        if(to.code.length != 0 &&
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") !=
-                ERC721TokenReceiver.onERC721Received.selector) {
+        if (
+            to.code.length != 0 &&
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, "") !=
+            ERC721TokenReceiver.onERC721Received.selector
+        ) {
             revert UNSAFE_RECIPIENT();
         }
     }
@@ -236,9 +242,11 @@ abstract contract ERC721 {
     ) internal virtual {
         _mint(to, id);
 
-        if(to.code.length != 0 &&
-                ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) !=
-                ERC721TokenReceiver.onERC721Received.selector) {
+        if (
+            to.code.length != 0 &&
+            ERC721TokenReceiver(to).onERC721Received(msg.sender, address(0), id, data) !=
+            ERC721TokenReceiver.onERC721Received.selector
+        ) {
             revert UNSAFE_RECIPIENT();
         }
     }

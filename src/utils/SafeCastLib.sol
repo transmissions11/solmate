@@ -5,10 +5,10 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/SafeCastLib.sol)
 /// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeCast.sol)
 library SafeCastLib {
-
     error CAST();
+
     function safeCastTo248(uint256 x) internal pure returns (uint248 y) {
-        if (!(x < 1 << 248)){
+        if (!(x < 1 << 248)) {
             revert CAST();
         }
 
@@ -16,7 +16,7 @@ library SafeCastLib {
     }
 
     function safeCastTo224(uint256 x) internal pure returns (uint224 y) {
-        if (!(x < 1 << 224)){
+        if (!(x < 1 << 224)) {
             revert CAST();
         }
 
@@ -24,7 +24,7 @@ library SafeCastLib {
     }
 
     function safeCastTo192(uint256 x) internal pure returns (uint192 y) {
-        if (!(x < 1 << 192)){
+        if (!(x < 1 << 192)) {
             revert CAST();
         }
 
@@ -32,7 +32,7 @@ library SafeCastLib {
     }
 
     function safeCastTo160(uint256 x) internal pure returns (uint160 y) {
-        if (!(x < 1 << 160)){
+        if (!(x < 1 << 160)) {
             revert CAST();
         }
 
@@ -40,7 +40,7 @@ library SafeCastLib {
     }
 
     function safeCastTo128(uint256 x) internal pure returns (uint128 y) {
-        if (!(x < 1 << 128)){
+        if (!(x < 1 << 128)) {
             revert CAST();
         }
 
@@ -48,7 +48,7 @@ library SafeCastLib {
     }
 
     function safeCastTo96(uint256 x) internal pure returns (uint96 y) {
-        if (!(x < 1 << 96)){
+        if (!(x < 1 << 96)) {
             revert CAST();
         }
 
@@ -56,7 +56,7 @@ library SafeCastLib {
     }
 
     function safeCastTo64(uint256 x) internal pure returns (uint64 y) {
-        if (!(x < 1 << 64)){
+        if (!(x < 1 << 64)) {
             revert CAST();
         }
 
@@ -64,7 +64,7 @@ library SafeCastLib {
     }
 
     function safeCastTo32(uint256 x) internal pure returns (uint32 y) {
-        if (!(x < 1 << 32)){
+        if (!(x < 1 << 32)) {
             revert CAST();
         }
 
@@ -72,7 +72,7 @@ library SafeCastLib {
     }
 
     function safeCastTo8(uint256 x) internal pure returns (uint8 y) {
-        if (!(x < 1 << 8)){
+        if (!(x < 1 << 8)) {
             revert CAST();
         }
 

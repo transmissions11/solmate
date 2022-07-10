@@ -78,12 +78,15 @@ abstract contract ERC1155 {
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
-        if ((to.code.length == 0 
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) == 
-                ERC1155TokenReceiver.onERC1155Received.selector)
-                == false) {
-                    revert UNSAFE_RECIPIENT();
+        if (
+            (
+                to.code.length == 0
+                    ? to != address(0)
+                    : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
+                        ERC1155TokenReceiver.onERC1155Received.selector
+            ) == false
+        ) {
+            revert UNSAFE_RECIPIENT();
         }
     }
 
@@ -93,7 +96,7 @@ abstract contract ERC1155 {
         uint256[] calldata ids,
         uint256[] calldata amounts,
         bytes calldata data
-    ) public virtual {     
+    ) public virtual {
         if (ids.length != amounts.length) {
             revert LENGTH_MISMATCH();
         }
@@ -122,13 +125,15 @@ abstract contract ERC1155 {
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
 
-
-        if ((to.code.length == 0 
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) == 
-                ERC1155TokenReceiver.onERC1155BatchReceived.selector)
-                == false) {
-                    revert UNSAFE_RECIPIENT();
+        if (
+            (
+                to.code.length == 0
+                    ? to != address(0)
+                    : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) ==
+                        ERC1155TokenReceiver.onERC1155BatchReceived.selector
+            ) == false
+        ) {
+            revert UNSAFE_RECIPIENT();
         }
     }
 
@@ -141,7 +146,7 @@ abstract contract ERC1155 {
         if ((owners.length == ids.length) == false) {
             revert LENGTH_MISMATCH();
         }
-        
+
         balances = new uint256[](owners.length);
 
         // Unchecked because the only math done is incrementing
@@ -178,12 +183,15 @@ abstract contract ERC1155 {
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
-        if ((to.code.length == 0 
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) == 
-                ERC1155TokenReceiver.onERC1155Received.selector)
-                == false) {
-                    revert UNSAFE_RECIPIENT();
+        if (
+            (
+                to.code.length == 0
+                    ? to != address(0)
+                    : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
+                        ERC1155TokenReceiver.onERC1155Received.selector
+            ) == false
+        ) {
+            revert UNSAFE_RECIPIENT();
         }
     }
 
@@ -211,12 +219,15 @@ abstract contract ERC1155 {
 
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
 
-        if ((to.code.length == 0 
-                ? to != address(0)
-                : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) == 
-                ERC1155TokenReceiver.onERC1155BatchReceived.selector)
-                == false) {
-                    revert UNSAFE_RECIPIENT();
+        if (
+            (
+                to.code.length == 0
+                    ? to != address(0)
+                    : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) ==
+                        ERC1155TokenReceiver.onERC1155BatchReceived.selector
+            ) == false
+        ) {
+            revert UNSAFE_RECIPIENT();
         }
     }
 
