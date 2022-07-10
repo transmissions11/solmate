@@ -48,9 +48,9 @@ abstract contract ERC20 {
                             CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error Invalid(address signer, address owner);
+    error INVALID_SIGNATURE();
 
-    error Deadline(uint256 deadline, uint256 timestamp);
+    error DEADLINE();
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -131,7 +131,7 @@ abstract contract ERC20 {
         bytes32 s
     ) public virtual {
         if (deadline < block.timestamp) {
-            revert Deadline(deadline, block.timestamp);
+            revert DEADLINE();
         }
         // Unchecked because the only math done is incrementing
         // the owner's nonce which cannot realistically overflow.
@@ -161,7 +161,7 @@ abstract contract ERC20 {
             );
 
             if (recoveredAddress != address(0) && recoveredAddress != owner) {
-                revert Invalid(msg.sender, owner);
+                revert INVALID();
             }
 
             allowance[recoveredAddress][spender] = value;

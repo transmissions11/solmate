@@ -7,8 +7,12 @@ pragma solidity >=0.8.0;
 abstract contract ReentrancyGuard {
     uint256 private locked = 1;
 
+    error REENTRANCY();
+
     modifier nonReentrant() virtual {
-        require(locked == 1, "REENTRANCY");
+        if (locked != 1) {
+            revert REENTRANCY();
+        }
 
         locked = 2;
 

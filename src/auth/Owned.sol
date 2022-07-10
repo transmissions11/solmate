@@ -16,9 +16,16 @@ abstract contract Owned {
 
     address public owner;
 
-    modifier onlyOwner() virtual {
-        require(msg.sender == owner, "UNAUTHORIZED");
+    /*//////////////////////////////////////////////////////////////
+                            CUSTOM ERRORS
+    //////////////////////////////////////////////////////////////*/
 
+    error UNAUTHORIZED();
+
+    modifier onlyOwner() virtual {
+        if (msg.sender != owner) {
+            revert UNAUTHORIZED();
+        }
         _;
     }
 
