@@ -161,7 +161,7 @@ abstract contract ERC20 {
             );
 
             if (recoveredAddress != address(0) && recoveredAddress != owner) {
-                revert INVALID();
+                revert INVALID_SIGNATURE();
             }
 
             allowance[recoveredAddress][spender] = value;

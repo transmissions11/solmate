@@ -24,7 +24,7 @@ abstract contract Auth {
     }
 
     modifier requiresAuth() virtual {
-        if (msg.sender != owner) {
+        if (!isAuthorized(msg.sender, msg.sig)) {
             revert UNAUTHORIZED();
         }
         _;
