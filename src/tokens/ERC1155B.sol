@@ -215,9 +215,7 @@ abstract contract ERC1155B {
                 id = ids[i];
 
                 // Minting twice would effectively be a force transfer.
-                if (ownerOf[id] != address(0)) {
-                    revert AlreadyMinted();
-                }
+                if (ownerOf[id] != address(0)) { revert AlreadyMinted(); }
 
                 ownerOf[id] = to;
 
