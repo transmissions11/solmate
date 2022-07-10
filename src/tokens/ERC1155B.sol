@@ -68,7 +68,7 @@ abstract contract ERC1155B {
 
     error InvalidRecipient();
 
-    error INVALID_FROM();
+    error InvalidFrom();
 
     error LengthMismatch();
 
@@ -97,35 +97,21 @@ abstract contract ERC1155B {
         uint256 amount,
         bytes calldata data
     ) public virtual {
-        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) {
-            revert NotAuthorized();
-        }
+        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) { revert NotAuthorized(); }
 
-        if (from != ownerOf[id]) {
-            revert WrongFrom();
-        } // Can only transfer from the owner.
+        if (from != ownerOf[id]) { revert WrongFrom(); } // Can only transfer from the owner.
 
         // Can only transfer 1 with ERC1155B.
-        if (amount != 1) {
-            revert InvalidAmount();
-        }
+        if (amount != 1) { revert InvalidAmount(); }
 
         ownerOf[id] = to;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
         if (to.code.length != 0) {
-            if (
-                ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) !=
-                ERC1155TokenReceiver.onERC1155Received.selector
-            ) {
-                revert UnsafeRecipient();
-            }
-        } else {
-            if (to == address(0)) {
-                revert InvalidRecipient();
-            }
-        }
+            if (ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) !=
+                ERC1155TokenReceiver.onERC1155Received.selector) { revert UnsafeRecipient(); }
+        } else { if (to == address(0)) { revert InvalidRecipient(); }}
     }
 
     function safeBatchTransferFrom(
@@ -135,13 +121,9 @@ abstract contract ERC1155B {
         uint256[] calldata amounts,
         bytes calldata data
     ) public virtual {
-        if (ids.length != amounts.length) {
-            revert LengthMismatch();
-        }
+        if (ids.length != amounts.length) { revert LengthMismatch(); }
 
-        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) {
-            revert NotAuthorized();
-        }
+        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) { revert NotAuthorized(); }
 
         // Storing these outside the loop saves ~15 gas per iteration.
         uint256 id;
@@ -155,14 +137,10 @@ abstract contract ERC1155B {
                 amount = amounts[i];
 
                 // Can only transfer from the owner.
-                if (from != ownerOf[id]) {
-                    revert WrongFrom();
-                } // Can only transfer from the owner.
+                if (from != ownerOf[id]) { revert WrongFrom(); } // Can only transfer from the owner.
 
                 // Can only transfer 1 with ERC1155B.
-                if (amount != 1) {
-                    revert InvalidAmount();
-                }
+                if (amount != 1) { revert InvalidAmount(); }
 
                 ownerOf[id] = to;
             }
@@ -173,15 +151,8 @@ abstract contract ERC1155B {
         if (to.code.length != 0) {
             if (
                 ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) !=
-                ERC1155TokenReceiver.onERC1155BatchReceived.selector
-            ) {
-                revert UnsafeRecipient();
-            }
-        } else {
-            if (to == address(0)) {
-                revert InvalidRecipient();
-            }
-        }
+                ERC1155TokenReceiver.onERC1155BatchReceived.selector) { revert UnsafeRecipient(); }
+        } else { if (to == address(0)) { revert InvalidRecipient(); }}
     }
 
     function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)
@@ -190,9 +161,7 @@ abstract contract ERC1155B {
         virtual
         returns (uint256[] memory balances)
     {
-        if (owners.length != ids.length) {
-            revert LengthMismatch();
-        }
+        if (owners.length != ids.length) { revert LengthMismatch(); }
 
         balances = new uint256[](owners.length);
 
@@ -215,26 +184,16 @@ abstract contract ERC1155B {
         bytes memory data
     ) internal virtual {
         // Minting twice would effectively be a force transfer.
-        if (ownerOf[id] != address(0)) {
-            revert AlreadyMinted();
-        }
+        if (ownerOf[id] != address(0)) { revert AlreadyMinted(); }
 
         ownerOf[id] = to;
 
         emit TransferSingle(msg.sender, address(0), to, id, 1);
 
         if (to.code.length != 0) {
-            if (
-                ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, 1, data) !=
-                ERC1155TokenReceiver.onERC1155Received.selector
-            ) {
-                revert UnsafeRecipient();
-            }
-        } else {
-            if (to == address(0)) {
-                revert InvalidRecipient();
-            }
-        }
+            if (ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, 1, data) !=
+                ERC1155TokenReceiver.onERC1155Received.selector) { revert UnsafeRecipient(); }
+        } else { if (to == address(0)) { revert InvalidRecipient(); }}
     }
 
     function _batchMint(
@@ -269,24 +228,14 @@ abstract contract ERC1155B {
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
 
         if (to.code.length != 0) {
-            if (
-                ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) !=
-                ERC1155TokenReceiver.onERC1155BatchReceived.selector
-            ) {
-                revert UnsafeRecipient();
-            }
-        } else {
-            if (to == address(0)) {
-                revert InvalidRecipient();
-            }
-        }
+            if (ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) !=
+                ERC1155TokenReceiver.onERC1155BatchReceived.selector ) { revert UnsafeRecipient(); }
+        } else { if (to == address(0)) { revert InvalidRecipient(); }}
     }
 
     function _batchBurn(address from, uint256[] memory ids) internal virtual {
         // Burning unminted tokens makes no sense.
-        if (from == address(0)) {
-            revert INVALID_FROM();
-        }
+        if (from == address(0)) { revert InvalidFrom(); }
 
         uint256 idsLength = ids.length; // Saves MLOADs.
 
@@ -301,9 +250,7 @@ abstract contract ERC1155B {
             for (uint256 i = 0; i < idsLength; ++i) {
                 id = ids[i];
 
-                if (ownerOf[id] != from) {
-                    revert WrongFrom();
-                }
+                if (ownerOf[id] != from) { revert WrongFrom(); }
 
                 ownerOf[id] = address(0);
 
@@ -317,9 +264,7 @@ abstract contract ERC1155B {
     function _burn(uint256 id) internal virtual {
         address owner = ownerOf[id];
 
-        if (owner == address(0)) {
-            revert NotMinted();
-        }
+        if (owner == address(0)) { revert NotMinted(); }
 
         ownerOf[id] = address(0);
 

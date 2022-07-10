@@ -10,9 +10,7 @@ abstract contract ReentrancyGuard {
     error Reentrancy();
 
     modifier nonReentrant() virtual {
-        if (locked != 1) {
-            revert Reentrancy();
-        }
+        if (locked != 1) { revert Reentrancy(); }
 
         locked = 2;
 

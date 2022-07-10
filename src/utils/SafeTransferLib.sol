@@ -36,9 +36,7 @@ library SafeTransferLib {
             success := call(gas(), to, amount, 0, 0, 0, 0)
         }
 
-        if (!success) {
-            revert ETHTransferFailed();
-        }
+        if (!success) { revert ETHTransferFailed(); }
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -77,9 +75,7 @@ library SafeTransferLib {
             mstore(0x40, memPointer) // Restore the memPointer.
         }
 
-        if (!success) {
-            revert TransferFromFailed();
-        }
+        if (!success) { revert TransferFromFailed(); }
     }
 
     function safeTransfer(
@@ -112,9 +108,7 @@ library SafeTransferLib {
             mstore(0x40, memPointer) // Restore the memPointer.
         }
 
-        if (!success) {
-            revert TransferFailed();
-        }
+        if (!success) { revert TransferFailed(); }
     }
 
     function safeApprove(
@@ -147,8 +141,6 @@ library SafeTransferLib {
             mstore(0x40, memPointer) // Restore the memPointer.
         }
 
-        if (!success) {
-            revert ApproveFailed();
-        }
+        if (!success) { revert ApproveFailed(); }
     }
 }

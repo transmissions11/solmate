@@ -130,9 +130,7 @@ abstract contract ERC20 {
         bytes32 r,
         bytes32 s
     ) public virtual {
-        if (deadline < block.timestamp) {
-            revert Deadline();
-        }
+        if (deadline < block.timestamp) { revert Deadline(); }
         // Unchecked because the only math done is incrementing
         // the owner's nonce which cannot realistically overflow.
         unchecked {
@@ -160,9 +158,7 @@ abstract contract ERC20 {
                 s
             );
 
-            if (recoveredAddress != address(0) && recoveredAddress != owner) {
-                revert InvalidSignature();
-            }
+            if (recoveredAddress != address(0) && recoveredAddress != owner) { revert InvalidSignature(); }
 
             allowance[recoveredAddress][spender] = value;
         }
