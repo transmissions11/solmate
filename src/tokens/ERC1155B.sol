@@ -59,7 +59,7 @@ abstract contract ERC1155B {
     function uri(uint256 id) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
-                             CUSTOM ERRORS
+                              CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
     error NotAuthorized();

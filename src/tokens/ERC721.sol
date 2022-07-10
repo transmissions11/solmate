@@ -50,7 +50,7 @@ abstract contract ERC721 {
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
     /*//////////////////////////////////////////////////////////////
-                            CUSTOM ERRORS
+                              CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
     error NotMinted();

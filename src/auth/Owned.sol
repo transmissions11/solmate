@@ -17,7 +17,7 @@ abstract contract Owned {
     address public owner;
 
     /*//////////////////////////////////////////////////////////////
-                            CUSTOM ERRORS
+                              CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
     error Unauthorized();
