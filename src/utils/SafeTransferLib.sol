@@ -23,6 +23,11 @@ library SafeTransferLib {
                              ETH OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
+    error ETH();
+    error TRANSFER();
+    error TRANSFER_FROM();
+    error APPROVE();
+
     function safeTransferETH(address to, uint256 amount) internal {
         bool success;
 
