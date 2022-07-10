@@ -165,7 +165,7 @@ contract DSTestPlus is DSTest {
         uint256 x,
         uint256 min,
         uint256 max
-    ) internal virtual returns (uint256 result) {
+    ) internal returns (uint256 result) {
         require(max >= min, "MAX_LESS_THAN_MIN");
 
         uint256 size = max - min;

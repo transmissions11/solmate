@@ -23,9 +23,7 @@ abstract contract Owned {
     error Unauthorized();
 
     modifier onlyOwner() virtual {
-        if (msg.sender != owner) {
-            revert Unauthorized();
-        }
+        if (msg.sender != owner) { revert Unauthorized(); }
         _;
     }
 
