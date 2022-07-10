@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 /// @notice Minimalist and gas efficient standard ERC1155 implementation.
@@ -46,11 +46,13 @@ abstract contract ERC1155 {
                              CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error NOT_AUTHORIZED();
+    error NotAuthorized();
 
-    error UNSAFE_RECIPIENT();
+    error UnsafeRecipient();
 
-    error LENGTH_MISMATCH();
+    error InvalidRecipient();
+
+    error LengthMismatch();
 
     /*//////////////////////////////////////////////////////////////
                               ERC1155 LOGIC
@@ -69,25 +71,17 @@ abstract contract ERC1155 {
         uint256 amount,
         bytes calldata data
     ) public virtual {
-        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) {
-            revert NOT_AUTHORIZED();
-        }
+        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) { revert NotAuthorized(); }
 
         balanceOf[from][id] -= amount;
         balanceOf[to][id] += amount;
 
         emit TransferSingle(msg.sender, from, to, id, amount);
 
-        if (
-            (
-                to.code.length == 0
-                    ? to != address(0)
-                    : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) ==
-                        ERC1155TokenReceiver.onERC1155Received.selector
-            ) == false
-        ) {
-            revert UNSAFE_RECIPIENT();
-        }
+        if (to.code.length != 0) {
+            if (ERC1155TokenReceiver(to).onERC1155Received(msg.sender, from, id, amount, data) !=
+            ERC1155TokenReceiver.onERC1155Received.selector) { revert UnsafeRecipient(); }
+        } else if (to == address(0)) { revert InvalidRecipient(); }
     }
 
     function safeBatchTransferFrom(
@@ -97,13 +91,9 @@ abstract contract ERC1155 {
         uint256[] calldata amounts,
         bytes calldata data
     ) public virtual {
-        if (ids.length != amounts.length) {
-            revert LENGTH_MISMATCH();
-        }
+        if (ids.length != amounts.length) { revert LengthMismatch(); }
 
-        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) {
-            revert NOT_AUTHORIZED();
-        }
+        if (msg.sender != from && !isApprovedForAll[from][msg.sender]) { revert NotAuthorized(); }
 
         // Storing these outside the loop saves ~15 gas per iteration.
         uint256 id;
@@ -125,16 +115,10 @@ abstract contract ERC1155 {
 
         emit TransferBatch(msg.sender, from, to, ids, amounts);
 
-        if (
-            (
-                to.code.length == 0
-                    ? to != address(0)
-                    : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) ==
-                        ERC1155TokenReceiver.onERC1155BatchReceived.selector
-            ) == false
-        ) {
-            revert UNSAFE_RECIPIENT();
-        }
+        if (to.code.length != 0) {
+            if (ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, from, ids, amounts, data) !=
+            ERC1155TokenReceiver.onERC1155BatchReceived.selector) { revert UnsafeRecipient(); }
+        } else if (to == address(0)) { revert InvalidRecipient(); }
     }
 
     function balanceOfBatch(address[] calldata owners, uint256[] calldata ids)
@@ -143,9 +127,7 @@ abstract contract ERC1155 {
         virtual
         returns (uint256[] memory balances)
     {
-        if ((owners.length == ids.length) == false) {
-            revert LENGTH_MISMATCH();
-        }
+        if (ids.length != owners.length) { revert LengthMismatch(); }
 
         balances = new uint256[](owners.length);
 
@@ -183,16 +165,10 @@ abstract contract ERC1155 {
 
         emit TransferSingle(msg.sender, address(0), to, id, amount);
 
-        if (
-            (
-                to.code.length == 0
-                    ? to != address(0)
-                    : ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) ==
-                        ERC1155TokenReceiver.onERC1155Received.selector
-            ) == false
-        ) {
-            revert UNSAFE_RECIPIENT();
-        }
+        if (to.code.length != 0) {
+            if (ERC1155TokenReceiver(to).onERC1155Received(msg.sender, address(0), id, amount, data) != 
+            ERC1155TokenReceiver.onERC1155Received.selector) {revert UnsafeRecipient(); }
+        } else if (to == address(0)) { revert InvalidRecipient(); }
     }
 
     function _batchMint(
@@ -203,9 +179,7 @@ abstract contract ERC1155 {
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        if (idsLength != amounts.length) {
-            revert LENGTH_MISMATCH();
-        }
+        if (ids.length != amounts.length) { revert LengthMismatch(); }
 
         for (uint256 i = 0; i < idsLength; ) {
             balanceOf[to][ids[i]] += amounts[i];
@@ -219,16 +193,10 @@ abstract contract ERC1155 {
 
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
 
-        if (
-            (
-                to.code.length == 0
-                    ? to != address(0)
-                    : ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) ==
-                        ERC1155TokenReceiver.onERC1155BatchReceived.selector
-            ) == false
-        ) {
-            revert UNSAFE_RECIPIENT();
-        }
+        if (to.code.length != 0) {
+            if (ERC1155TokenReceiver(to).onERC1155BatchReceived(msg.sender, address(0), ids, amounts, data) !=
+            ERC1155TokenReceiver.onERC1155BatchReceived.selector) { revert UnsafeRecipient(); }
+        } else if (to == address(0)) { revert InvalidRecipient(); }
     }
 
     function _batchBurn(
@@ -238,9 +206,7 @@ abstract contract ERC1155 {
     ) internal virtual {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
-        if (idsLength != amounts.length) {
-            revert LENGTH_MISMATCH();
-        }
+        if (ids.length != amounts.length) { revert LengthMismatch(); }
 
         for (uint256 i = 0; i < idsLength; ) {
             balanceOf[from][ids[i]] -= amounts[i];

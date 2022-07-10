@@ -20,11 +20,11 @@ abstract contract Owned {
                             CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error UNAUTHORIZED();
+    error Unauthorized();
 
     modifier onlyOwner() virtual {
         if (msg.sender != owner) {
-            revert UNAUTHORIZED();
+            revert Unauthorized();
         }
         _;
     }

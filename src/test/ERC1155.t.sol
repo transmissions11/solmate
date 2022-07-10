@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -830,7 +830,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.balanceOfBatch(tos, ids);
     }
 
-    function testMintToEOA(
+    function testFuzzMintToEOA(
         address to,
         uint256 id,
         uint256 amount,
@@ -845,7 +845,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertEq(token.balanceOf(to, id), amount);
     }
 
-    function testMintToERC1155Recipient(
+    function testFuzzMintToERC1155Recipient(
         uint256 id,
         uint256 amount,
         bytes memory mintData
@@ -862,7 +862,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertBytesEq(to.mintData(), mintData);
     }
 
-    function testBatchMintToEOA(
+    function testFuzzBatchMintToEOA(
         address to,
         uint256[] memory ids,
         uint256[] memory amounts,
@@ -899,7 +899,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testBatchMintToERC1155Recipient(
+    function testFuzzBatchMintToERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory mintData
@@ -939,7 +939,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testBurn(
+    function testFuzzBurn(
         address to,
         uint256 id,
         uint256 mintAmount,
@@ -959,7 +959,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertEq(token.balanceOf(address(to), id), mintAmount - burnAmount);
     }
 
-    function testBatchBurn(
+    function testFuzzBatchBurn(
         address to,
         uint256[] memory ids,
         uint256[] memory mintAmounts,
@@ -1000,13 +1000,13 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testApproveAll(address to, bool approved) public {
+    function testFuzzApproveAll(address to, bool approved) public {
         token.setApprovalForAll(to, approved);
 
         assertBoolEq(token.isApprovedForAll(address(this), to), approved);
     }
 
-    function testSafeTransferFromToEOA(
+    function testFuzzSafeTransferFromToEOA(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData,
@@ -1033,7 +1033,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
     }
 
-    function testSafeTransferFromToERC1155Recipient(
+    function testFuzzSafeTransferFromToERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData,
@@ -1062,7 +1062,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
     }
 
-    function testSafeTransferFromSelf(
+    function testFuzzSafeTransferFromSelf(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData,
@@ -1084,7 +1084,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertEq(token.balanceOf(address(this), id), mintAmount - transferAmount);
     }
 
-    function testSafeBatchTransferFromToEOA(
+    function testFuzzSafeBatchTransferFromToEOA(
         address to,
         uint256[] memory ids,
         uint256[] memory mintAmounts,
@@ -1135,7 +1135,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testSafeBatchTransferFromToERC1155Recipient(
+    function testFuzzSafeBatchTransferFromToERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory mintAmounts,
         uint256[] memory transferAmounts,
@@ -1190,7 +1190,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testBatchBalanceOf(
+    function testFuzzBatchBalanceOf(
         address[] memory tos,
         uint256[] memory ids,
         uint256[] memory amounts,
@@ -1224,7 +1224,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         }
     }
 
-    function testFailMintToZero(
+    function testFailFuzzMintToZero(
         uint256 id,
         uint256 amount,
         bytes memory data
@@ -1232,7 +1232,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(0), id, amount, data);
     }
 
-    function testFailMintToNonERC155Recipient(
+    function testFailFuzzMintToNonERC155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData
@@ -1240,7 +1240,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(new NonERC1155Recipient()), id, mintAmount, mintData);
     }
 
-    function testFailMintToRevertingERC155Recipient(
+    function testFailFuzzMintToRevertingERC155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData
@@ -1248,7 +1248,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(new RevertingERC1155Recipient()), id, mintAmount, mintData);
     }
 
-    function testFailMintToWrongReturnDataERC155Recipient(
+    function testFailFuzzMintToWrongReturnDataERC155Recipient(
         uint256 id,
         uint256 mintAmount,
         bytes memory mintData
@@ -1256,7 +1256,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.mint(address(new RevertingERC1155Recipient()), id, mintAmount, mintData);
     }
 
-    function testFailBurnInsufficientBalance(
+    function testFailFuzzBurnInsufficientBalance(
         address to,
         uint256 id,
         uint256 mintAmount,
@@ -1269,7 +1269,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.burn(to, id, burnAmount);
     }
 
-    function testFailSafeTransferFromInsufficientBalance(
+    function testFailFuzzSafeTransferFromInsufficientBalance(
         address to,
         uint256 id,
         uint256 mintAmount,
@@ -1289,7 +1289,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeTransferFrom(from, to, id, transferAmount, transferData);
     }
 
-    function testFailSafeTransferFromSelfInsufficientBalance(
+    function testFailFuzzSafeTransferFromSelfInsufficientBalance(
         address to,
         uint256 id,
         uint256 mintAmount,
@@ -1303,7 +1303,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeTransferFrom(address(this), to, id, transferAmount, transferData);
     }
 
-    function testFailSafeTransferFromToZero(
+    function testFailFuzzSafeTransferFromToZero(
         uint256 id,
         uint256 mintAmount,
         uint256 transferAmount,
@@ -1316,7 +1316,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeTransferFrom(address(this), address(0), id, transferAmount, transferData);
     }
 
-    function testFailSafeTransferFromToNonERC155Recipient(
+    function testFailFuzzSafeTransferFromToNonERC155Recipient(
         uint256 id,
         uint256 mintAmount,
         uint256 transferAmount,
@@ -1329,7 +1329,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeTransferFrom(address(this), address(new NonERC1155Recipient()), id, transferAmount, transferData);
     }
 
-    function testFailSafeTransferFromToRevertingERC1155Recipient(
+    function testFailFuzzSafeTransferFromToRevertingERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         uint256 transferAmount,
@@ -1348,7 +1348,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         );
     }
 
-    function testFailSafeTransferFromToWrongReturnDataERC1155Recipient(
+    function testFailFuzzSafeTransferFromToWrongReturnDataERC1155Recipient(
         uint256 id,
         uint256 mintAmount,
         uint256 transferAmount,
@@ -1367,7 +1367,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         );
     }
 
-    function testFailSafeBatchTransferInsufficientBalance(
+    function testFailFuzzSafeBatchTransferInsufficientBalance(
         address to,
         uint256[] memory ids,
         uint256[] memory mintAmounts,
@@ -1408,7 +1408,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeBatchTransferFrom(from, to, normalizedIds, normalizedTransferAmounts, transferData);
     }
 
-    function testFailSafeBatchTransferFromToZero(
+    function testFailFuzzSafeBatchTransferFromToZero(
         uint256[] memory ids,
         uint256[] memory mintAmounts,
         uint256[] memory transferAmounts,
@@ -1446,7 +1446,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeBatchTransferFrom(from, address(0), normalizedIds, normalizedTransferAmounts, transferData);
     }
 
-    function testFailSafeBatchTransferFromToNonERC1155Recipient(
+    function testFailFuzzSafeBatchTransferFromToNonERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory mintAmounts,
         uint256[] memory transferAmounts,
@@ -1490,7 +1490,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         );
     }
 
-    function testFailSafeBatchTransferFromToRevertingERC1155Recipient(
+    function testFailFuzzSafeBatchTransferFromToRevertingERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory mintAmounts,
         uint256[] memory transferAmounts,
@@ -1534,7 +1534,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         );
     }
 
-    function testFailSafeBatchTransferFromToWrongReturnDataERC1155Recipient(
+    function testFailFuzzSafeBatchTransferFromToWrongReturnDataERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory mintAmounts,
         uint256[] memory transferAmounts,
@@ -1578,7 +1578,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         );
     }
 
-    function testFailSafeBatchTransferFromWithArrayLengthMismatch(
+    function testFailFuzzSafeBatchTransferFromWithArrayLengthMismatch(
         address to,
         uint256[] memory ids,
         uint256[] memory mintAmounts,
@@ -1598,7 +1598,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.safeBatchTransferFrom(from, to, ids, transferAmounts, transferData);
     }
 
-    function testFailBatchMintToZero(
+    function testFailFuzzBatchMintToZero(
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory mintData
@@ -1624,7 +1624,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchMint(address(0), normalizedIds, normalizedAmounts, mintData);
     }
 
-    function testFailBatchMintToNonERC1155Recipient(
+    function testFailFuzzBatchMintToNonERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory mintData
@@ -1652,7 +1652,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchMint(address(to), normalizedIds, normalizedAmounts, mintData);
     }
 
-    function testFailBatchMintToRevertingERC1155Recipient(
+    function testFailFuzzBatchMintToRevertingERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory mintData
@@ -1680,7 +1680,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchMint(address(to), normalizedIds, normalizedAmounts, mintData);
     }
 
-    function testFailBatchMintToWrongReturnDataERC1155Recipient(
+    function testFailFuzzBatchMintToWrongReturnDataERC1155Recipient(
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory mintData
@@ -1708,7 +1708,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchMint(address(to), normalizedIds, normalizedAmounts, mintData);
     }
 
-    function testFailBatchMintWithArrayMismatch(
+    function testFailFuzzBatchMintWithArrayMismatch(
         address to,
         uint256[] memory ids,
         uint256[] memory amounts,
@@ -1719,7 +1719,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchMint(address(to), ids, amounts, mintData);
     }
 
-    function testFailBatchBurnInsufficientBalance(
+    function testFailFuzzBatchBurnInsufficientBalance(
         address to,
         uint256[] memory ids,
         uint256[] memory mintAmounts,
@@ -1751,7 +1751,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchBurn(to, normalizedIds, normalizedBurnAmounts);
     }
 
-    function testFailBatchBurnWithArrayLengthMismatch(
+    function testFailFuzzBatchBurnWithArrayLengthMismatch(
         address to,
         uint256[] memory ids,
         uint256[] memory mintAmounts,
@@ -1765,7 +1765,7 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         token.batchBurn(to, ids, burnAmounts);
     }
 
-    function testFailBalanceOfBatchWithArrayMismatch(address[] memory tos, uint256[] memory ids) public view {
+    function testFailFuzzBalanceOfBatchWithArrayMismatch(address[] memory tos, uint256[] memory ids) public view {
         if (tos.length == ids.length) revert();
 
         token.balanceOfBatch(tos, ids);

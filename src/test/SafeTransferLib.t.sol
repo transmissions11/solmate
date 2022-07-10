@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {MockERC20} from "./utils/mocks/MockERC20.sol";
@@ -127,7 +127,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTooLittle), address(0xBEEF), 1e18);
     }
 
-    function testTransferWithMissingReturn(
+    function testFuzzTransferWithMissingReturn(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -135,7 +135,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(missingReturn), to, amount);
     }
 
-    function testTransferWithStandardERC20(
+    function testFuzzTransferWithStandardERC20(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -143,7 +143,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(erc20), to, amount);
     }
 
-    function testTransferWithReturnsTooMuch(
+    function testFuzzTransferWithReturnsTooMuch(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -151,7 +151,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTooMuch), to, amount);
     }
 
-    function testTransferWithGarbage(
+    function testFuzzTransferWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage,
@@ -198,7 +198,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsGarbage), to, amount);
     }
 
-    function testTransferWithNonContract(
+    function testFuzzTransferWithNonContract(
         address nonContract,
         address to,
         uint256 amount,
@@ -213,7 +213,7 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferETH(address(this), 1e18);
     }
 
-    function testTransferFromWithMissingReturn(
+    function testFuzzTransferFromWithMissingReturn(
         address from,
         address to,
         uint256 amount,
@@ -222,7 +222,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(missingReturn), from, to, amount);
     }
 
-    function testTransferFromWithStandardERC20(
+    function testFuzzTransferFromWithStandardERC20(
         address from,
         address to,
         uint256 amount,
@@ -231,7 +231,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(erc20), from, to, amount);
     }
 
-    function testTransferFromWithReturnsTooMuch(
+    function testFuzzTransferFromWithReturnsTooMuch(
         address from,
         address to,
         uint256 amount,
@@ -240,7 +240,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooMuch), from, to, amount);
     }
 
-    function testTransferFromWithGarbage(
+    function testFuzzTransferFromWithGarbage(
         address from,
         address to,
         uint256 amount,
@@ -288,7 +288,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
     }
 
-    function testTransferFromWithNonContract(
+    function testFuzzTransferFromWithNonContract(
         address nonContract,
         address from,
         address to,
@@ -300,7 +300,7 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferFrom(ERC20(nonContract), from, to, amount);
     }
 
-    function testApproveWithMissingReturn(
+    function testFuzzApproveWithMissingReturn(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -308,7 +308,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(missingReturn), to, amount);
     }
 
-    function testApproveWithStandardERC20(
+    function testFuzzApproveWithStandardERC20(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -316,7 +316,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(erc20), to, amount);
     }
 
-    function testApproveWithReturnsTooMuch(
+    function testFuzzApproveWithReturnsTooMuch(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -324,7 +324,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTooMuch), to, amount);
     }
 
-    function testApproveWithGarbage(
+    function testFuzzApproveWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage,
@@ -371,7 +371,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
-    function testApproveWithNonContract(
+    function testFuzzApproveWithNonContract(
         address nonContract,
         address to,
         uint256 amount,
@@ -382,7 +382,7 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeApprove(ERC20(nonContract), to, amount);
     }
 
-    function testTransferETH(
+    function testFuzzTransferETH(
         address recipient,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -395,7 +395,7 @@ contract SafeTransferLibTest is DSTestPlus {
         SafeTransferLib.safeTransferETH(recipient, amount);
     }
 
-    function testFailTransferWithReturnsFalse(
+    function testFailFuzzTransferWithReturnsFalse(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -403,7 +403,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsFalse), to, amount);
     }
 
-    function testFailTransferWithReverting(
+    function testFailFuzzTransferWithReverting(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -411,7 +411,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(reverting), to, amount);
     }
 
-    function testFailTransferWithReturnsTooLittle(
+    function testFailFuzzTransferWithReturnsTooLittle(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -419,7 +419,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTooLittle), to, amount);
     }
 
-    function testFailTransferWithReturnsTwo(
+    function testFailFuzzTransferWithReturnsTwo(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -427,7 +427,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsTwo), to, amount);
     }
 
-    function testFailTransferWithGarbage(
+    function testFailFuzzTransferWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage,
@@ -440,7 +440,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransfer(address(returnsGarbage), to, amount);
     }
 
-    function testFailTransferFromWithReturnsFalse(
+    function testFailFuzzTransferFromWithReturnsFalse(
         address from,
         address to,
         uint256 amount,
@@ -449,7 +449,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsFalse), from, to, amount);
     }
 
-    function testFailTransferFromWithReverting(
+    function testFailFuzzTransferFromWithReverting(
         address from,
         address to,
         uint256 amount,
@@ -458,7 +458,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(reverting), from, to, amount);
     }
 
-    function testFailTransferFromWithReturnsTooLittle(
+    function testFailFuzzTransferFromWithReturnsTooLittle(
         address from,
         address to,
         uint256 amount,
@@ -467,7 +467,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTooLittle), from, to, amount);
     }
 
-    function testFailTransferFromWithReturnsTwo(
+    function testFailFuzzTransferFromWithReturnsTwo(
         address from,
         address to,
         uint256 amount,
@@ -476,7 +476,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsTwo), from, to, amount);
     }
 
-    function testFailTransferFromWithGarbage(
+    function testFailFuzzTransferFromWithGarbage(
         address from,
         address to,
         uint256 amount,
@@ -490,7 +490,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeTransferFrom(address(returnsGarbage), from, to, amount);
     }
 
-    function testFailApproveWithReturnsFalse(
+    function testFailFuzzApproveWithReturnsFalse(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -498,7 +498,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsFalse), to, amount);
     }
 
-    function testFailApproveWithReverting(
+    function testFailFuzzApproveWithReverting(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -506,7 +506,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(reverting), to, amount);
     }
 
-    function testFailApproveWithReturnsTooLittle(
+    function testFailFuzzApproveWithReturnsTooLittle(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -514,7 +514,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTooLittle), to, amount);
     }
 
-    function testFailApproveWithReturnsTwo(
+    function testFailFuzzApproveWithReturnsTwo(
         address to,
         uint256 amount,
         bytes calldata brutalizeWith
@@ -522,7 +522,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsTwo), to, amount);
     }
 
-    function testFailApproveWithGarbage(
+    function testFailFuzzApproveWithGarbage(
         address to,
         uint256 amount,
         bytes memory garbage,
@@ -535,7 +535,7 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(returnsGarbage), to, amount);
     }
 
-    function testFailTransferETHToContractWithoutFallback(uint256 amount, bytes calldata brutalizeWith)
+    function testFailFuzzTransferETHToContractWithoutFallback(uint256 amount, bytes calldata brutalizeWith)
         public
         brutalizeMemory(brutalizeWith)
     {

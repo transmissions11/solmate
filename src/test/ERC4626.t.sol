@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
@@ -21,14 +21,14 @@ contract ERC4626Test is DSTestPlus {
         assertEq(vault.decimals(), 18);
     }
 
-    function testMetadata(string calldata name, string calldata symbol) public {
+    function testFuzzMetadata(string calldata name, string calldata symbol) public {
         MockERC4626 vlt = new MockERC4626(underlying, name, symbol);
         assertEq(vlt.name(), name);
         assertEq(vlt.symbol(), symbol);
         assertEq(address(vlt.asset()), address(underlying));
     }
 
-    function testSingleDepositWithdraw(uint128 amount) public {
+    function testFuzzSingleDepositWithdraw(uint128 amount) public {
         if (amount == 0) amount = 1;
 
         uint256 aliceUnderlyingAmount = amount;
@@ -69,7 +69,7 @@ contract ERC4626Test is DSTestPlus {
         assertEq(underlying.balanceOf(alice), alicePreDepositBal);
     }
 
-    function testSingleMintRedeem(uint128 amount) public {
+    function testFuzzSingleMintRedeem(uint128 amount) public {
         if (amount == 0) amount = 1;
 
         uint256 aliceShareAmount = amount;

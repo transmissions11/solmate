@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 /// @notice Modern and gas efficient ERC20 + EIP-2612 implementation.
@@ -48,9 +48,9 @@ abstract contract ERC20 {
                             CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error INVALID_SIGNATURE();
+    error InvalidSignature();
 
-    error DEADLINE();
+    error Deadline();
 
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
@@ -130,9 +130,7 @@ abstract contract ERC20 {
         bytes32 r,
         bytes32 s
     ) public virtual {
-        if (deadline < block.timestamp) {
-            revert DEADLINE();
-        }
+        if (deadline < block.timestamp) { revert Deadline(); }
         // Unchecked because the only math done is incrementing
         // the owner's nonce which cannot realistically overflow.
         unchecked {
@@ -160,9 +158,7 @@ abstract contract ERC20 {
                 s
             );
 
-            if (recoveredAddress != address(0) && recoveredAddress != owner) {
-                revert INVALID_SIGNATURE();
-            }
+            if (recoveredAddress != address(0) && recoveredAddress != owner) { revert InvalidSignature(); }
 
             allowance[recoveredAddress][spender] = value;
         }
