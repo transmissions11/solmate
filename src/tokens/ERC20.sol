@@ -45,6 +45,14 @@ abstract contract ERC20 {
     mapping(address => uint256) public nonces;
 
     /*//////////////////////////////////////////////////////////////
+                            CUSTOM ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    error InvalidSignature();
+
+    error Deadline();
+
+    /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
@@ -122,8 +130,9 @@ abstract contract ERC20 {
         bytes32 r,
         bytes32 s
     ) public virtual {
-        require(deadline >= block.timestamp, "PERMIT_DEADLINE_EXPIRED");
-
+        if (deadline < block.timestamp) {
+            revert Deadline();
+        }
         // Unchecked because the only math done is incrementing
         // the owner's nonce which cannot realistically overflow.
         unchecked {
@@ -151,7 +160,9 @@ abstract contract ERC20 {
                 s
             );
 
-            require(recoveredAddress != address(0) && recoveredAddress == owner, "INVALID_SIGNER");
+            if (recoveredAddress != address(0) && recoveredAddress != owner) {
+                revert InvalidSignature();
+            }
 
             allowance[recoveredAddress][spender] = value;
         }
