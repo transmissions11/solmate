@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "prettier": "^2.3.1",
-    "prettier-plugin-solidity": "^1.0.0-beta.19"
+    "prettier-plugin-solidity": "^1.0.0-beta.13"
   },
   "scripts": {
     "lint": "prettier --write **.sol"
