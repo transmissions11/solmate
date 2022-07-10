@@ -13,7 +13,7 @@ abstract contract Auth {
 
     Authority public authority;
 
-    error UNAUTHORIZED();
+    error Unauthorized();
 
     constructor(address _owner, Authority _authority) {
         owner = _owner;
@@ -24,9 +24,7 @@ abstract contract Auth {
     }
 
     modifier requiresAuth() virtual {
-        if (!isAuthorized(msg.sender, msg.sig)) {
-            revert UNAUTHORIZED();
-        }
+        if (!isAuthorized(msg.sender, msg.sig)) { revert Unauthorized(); }
         _;
     }
 
