@@ -4,6 +4,16 @@ pragma solidity >=0.8.0;
 /// @notice Efficient library for creating string representations of integers.
 /// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/utils/LibString.sol)
 library LibString {
+    /*//////////////////////////////////////////////////////////////
+                              CUSTOM ERRORS
+    //////////////////////////////////////////////////////////////*/
+
+    error HexLengthInsufficient();
+
+    /*//////////////////////////////////////////////////////////////
+                           DECIMAL OPERATIONS
+    //////////////////////////////////////////////////////////////*/
+
     function toString(uint256 n) internal pure returns (string memory str) {
         if (n == 0) return "0"; // Otherwise it'd output an empty string for 0.
 
@@ -42,6 +52,10 @@ library LibString {
         }
     }
 
+    /*//////////////////////////////////////////////////////////////
+                         HEXADECIMAL OPERATIONS
+    //////////////////////////////////////////////////////////////*/
+
     function toHexString(uint256 value, uint256 length) internal pure returns (string memory str) {
         assembly {
             let start := mload(0x40)
@@ -76,11 +90,10 @@ library LibString {
             }
 
             if temp {
-                mstore(0x00, hex"08c379a0") // Function selector of the error method.
-                mstore(0x04, 0x20) // Offset of the error string.
-                mstore(0x24, 23) // Length of the error string.
-                mstore(0x44, "HEX_LENGTH_INSUFFICIENT") // The error string.
-                revert(0x00, 0x64) // Revert with (offset, size).
+                // Store the function selector of `HexLengthInsufficient()`.
+                mstore(0x00, 0x2194895a)
+                // Revert with (offset, size).
+                revert(0x1c, 0x04)
             }
 
             // Compute the string's length.

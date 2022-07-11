@@ -48,7 +48,7 @@ contract LibStringTest is DSTestPlus {
     }
 
     function testToHexStringFixedLengthInsufficientLength() public {
-        hevm.expectRevert("HEX_LENGTH_INSUFFICIENT");
+        hevm.expectRevert(LibString.HexLengthInsufficient.selector);
         LibString.toHexString(0x4132, 1);
     }
 
