@@ -48,7 +48,7 @@ abstract contract ERC20 {
                               CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
 
-    error InvalidSignature();
+    error InvalidSigner();
 
     error Deadline();
 
@@ -158,9 +158,9 @@ abstract contract ERC20 {
                 s
             );
 
-            if (recoveredAddress != address(0) && recoveredAddress != owner) { revert InvalidSignature(); }
 
             allowance[recoveredAddress][spender] = value;
+            if (recoveredAddress == address(0) || recoveredAddress != owner) { revert InvalidSigner(); }
         }
 
         emit Approval(owner, spender, value);
