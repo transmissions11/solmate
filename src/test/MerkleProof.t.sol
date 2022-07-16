@@ -96,7 +96,7 @@ contract MerkleProofTest is DSTestPlus {
         }
         bool leafSameAsRoot = leafs.length == 1 && leafs[0] == root;
         bool proofSameAsRoot = proof.length == 1 && proof[0] == root;
-        bool isValid = flags.length == 0 && (leafSameAsRoot || proofSameAsRoot);
+        bool isValid = flags.length == 0 && (leafSameAsRoot || proofSameAsRoot) && (leafs.length + proof.length == 1);
         assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
     }
 
