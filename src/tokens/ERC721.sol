@@ -50,6 +50,11 @@ abstract contract ERC721 {
 
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
+    function _isApprovedOrOwner(address spender, uint256 id) internal view virtual returns (bool) {
+        address owner = _ownerOf[id];
+        return (spender == owner || getApproved[id] == spender || isApprovedForAll[owner][spender]);
+    }
+
     /*//////////////////////////////////////////////////////////////
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
@@ -88,10 +93,7 @@ abstract contract ERC721 {
 
         require(to != address(0), "INVALID_RECIPIENT");
 
-        require(
-            msg.sender == from || isApprovedForAll[from][msg.sender] || msg.sender == getApproved[id],
-            "NOT_AUTHORIZED"
-        );
+        require(_isApprovedOrOwner(msg.sender, id), "NOT_AUTHORIZED");
 
         // Underflow of the sender's balance is impossible because we check for
         // ownership above and the recipient's balance can't realistically overflow.
