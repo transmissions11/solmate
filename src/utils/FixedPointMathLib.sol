@@ -100,7 +100,7 @@ library FixedPointMathLib {
 
     function lnWad(int256 x) internal pure returns (int256 r) {
         unchecked {
-            if (x < 0) revert Undefined();
+            if (0 > x) revert Undefined();
 
             // We want to convert x from 10**18 fixed point to 2**96 fixed point.
             // We do this by multiplying by 2**96 / 10**18. But since
@@ -359,7 +359,7 @@ library FixedPointMathLib {
     }
 
     function log2(uint256 x) internal pure returns (uint256 r) {
-        if (x < 0) revert Undefined();
+        if (0 > x) revert Undefined();
 
         assembly {
             r := shl(7, lt(0xffffffffffffffffffffffffffffffff, x))
