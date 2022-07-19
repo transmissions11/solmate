@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import {Auth, Authority} from "../Auth.sol";
 
 /// @notice Flexible and target agnostic role based Authority that supports up to 256 roles.
-/// @author Solmate (https://github.com/Rari-Capital/solmate/blob/main/src/auth/authorities/MultiRolesAuthority.sol)
+/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/auth/authorities/MultiRolesAuthority.sol)
 contract MultiRolesAuthority is Auth, Authority {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
