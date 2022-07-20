@@ -18,11 +18,11 @@ contract MockERC4626 is ERC4626 {
         return asset.balanceOf(address(this));
     }
 
-    function beforeWithdraw(uint256, uint256) internal override {
+    function beforeWithdraw(address, address, uint256, uint256) internal override {
         beforeWithdrawHookCalledCounter++;
     }
 
-    function afterDeposit(uint256, uint256) internal override {
+    function afterDeposit(address, uint256, uint256) internal override {
         afterDepositHookCalledCounter++;
     }
 }
