@@ -90,12 +90,15 @@ abstract contract ERC1155 {
         uint256 id;
         uint256 amount;
 
+        mapping(uint256 => uint256) storage pBalanceOfFrom = balanceOf[from];
+        mapping(uint256 => uint256) storage pBalanceOfTo = balanceOf[to];
+
         for (uint256 i = 0; i < ids.length; ) {
             id = ids[i];
             amount = amounts[i];
 
-            balanceOf[from][id] -= amount;
-            balanceOf[to][id] += amount;
+            pBalanceOfFrom[id] -= amount;
+            pBalanceOfTo[id] += amount;
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -177,9 +180,10 @@ abstract contract ERC1155 {
         uint256 idsLength = ids.length; // Saves MLOADs.
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
+        mapping(uint256 => uint256) storage pBalanceOfTo = balanceOf[to];
 
         for (uint256 i = 0; i < idsLength; ) {
-            balanceOf[to][ids[i]] += amounts[i];
+            pBalanceOfTo[ids[i]] += amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
@@ -208,8 +212,10 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
+        mapping(uint256 => uint256) storage pBalanceOfFrom = balanceOf[from];
+
         for (uint256 i = 0; i < idsLength; ) {
-            balanceOf[from][ids[i]] -= amounts[i];
+            pBalanceOfFrom[ids[i]] -= amounts[i];
 
             // An array can't have a total length
             // larger than the max uint256 value.
