@@ -13,7 +13,7 @@ contract RiskyContract is ReentrancyGuard {
 
         if (enterTimes > 1) return;
 
-        this.protectedCall();
+        this.unprotectedCall();
     }
 
     function protectedCall() public nonReentrant {
@@ -38,10 +38,10 @@ contract ReentrancyGuardTest is DSTestPlus {
         assertEq(uint256(hevm.load(address(riskyContract), 0)), 1);
     }
 
-    function testFailUnprotectedCall() public {
+    function testUnprotectedCall() public {
         riskyContract.unprotectedCall();
 
-        assertEq(riskyContract.enterTimes(), 1);
+        assertEq(riskyContract.enterTimes(), 2);
     }
 
     function testProtectedCall() public {
