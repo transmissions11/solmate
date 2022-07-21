@@ -1,7 +1,7 @@
 {
   "solidity.packageDefaultDependenciesContractsDirectory": "src",
   "solidity.packageDefaultDependenciesDirectory": "lib",
-  "solidity.compileUsingRemoteVersion": "v0.8.10",
+  "solidity.compileUsingRemoteVersion": "v0.8.15",
   "search.exclude": { "lib": true },
   "files.associations": {
     ".gas-snapshot": "julia"
