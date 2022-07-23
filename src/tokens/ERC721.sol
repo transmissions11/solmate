@@ -93,7 +93,10 @@ abstract contract ERC721 {
 
         require(to != address(0), "INVALID_RECIPIENT");
 
-        require(_isApprovedOrOwner(msg.sender, id), "NOT_AUTHORIZED");
+        require(
+            msg.sender == from || isApprovedForAll[from][msg.sender] || msg.sender == getApproved[id],
+            "NOT_AUTHORIZED"
+        );
 
         // Underflow of the sender's balance is impossible because we check for
         // ownership above and the recipient's balance can't realistically overflow.
