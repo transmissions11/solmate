@@ -46,6 +46,11 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo32(2.5e7), 2.5e7);
     }
 
+    function testSafeCastTo24() public {
+        assertEq(SafeCastLib.safeCastTo24(2.5e4), 2.5e4);
+        assertEq(SafeCastLib.safeCastTo24(2.5e3), 2.5e3);
+    }
+
     function testSafeCastTo8() public {
         assertEq(SafeCastLib.safeCastTo8(100), 100);
         assertEq(SafeCastLib.safeCastTo8(250), 250);
@@ -187,6 +192,12 @@ contract SafeCastLibTest is DSTestPlus {
         x = bound(x, type(uint32).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo32(x);
+    }
+
+    function testFailSafeCastTo24(uint256 x) public {
+        x = bound(x, type(uint24).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo24(x);
     }
 
     function testFailSafeCastTo8(uint256 x) public {
