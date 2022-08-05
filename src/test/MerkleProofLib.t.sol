@@ -3,9 +3,9 @@ pragma solidity 0.8.10;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {MerkleProof} from "../utils/MerkleProof.sol";
+import {MerkleProofLib} from "../utils/MerkleProofLib.sol";
 
-contract MerkleProofTest is DSTestPlus {
+contract MerkleProofLibTest is DSTestPlus {
     function testVerifyProofForHeightOneTree(
         bool hasProof,
         bool nonEmptyProof,
@@ -26,7 +26,7 @@ contract MerkleProofTest is DSTestPlus {
             proof[0] = nonEmptyProof ? bytes32("a") : bytes32(0);
         }
         bool isValid = leaf == root && proof.length == 0;
-        assertBoolEq(this.verify(proof, root, leaf), isValid);
+        assertTrue(this.verify(proof, root, leaf) == isValid);
     }
 
     function testVerifyProofIsValid() public {
@@ -69,7 +69,7 @@ contract MerkleProofTest is DSTestPlus {
             leaf = bytes32(uint256(leaf) ^ 1); // Flip a bit.
         }
 
-        assertBoolEq(this.verify(proof, root, leaf), noDamage);
+        assertTrue(this.verify(proof, root, leaf) == noDamage);
     }
 
     function testVerifyMultiProofForHeightOneTree(
@@ -97,7 +97,7 @@ contract MerkleProofTest is DSTestPlus {
         bool leafSameAsRoot = leafs.length == 1 && leafs[0] == root;
         bool proofSameAsRoot = proof.length == 1 && proof[0] == root;
         bool isValid = flags.length == 0 && (leafSameAsRoot || proofSameAsRoot) && (leafs.length + proof.length == 1);
-        assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), isValid);
+        assertTrue(this.verifyMultiProof(proof, root, leafs, flags) == isValid);
     }
 
     function testVerifyMultiProofForHeightTwoTree(
@@ -157,7 +157,7 @@ contract MerkleProofTest is DSTestPlus {
             if (uint256(uint8(randomness[ri++])) & 1 == 0) delete proof;
         }
 
-        assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), noDamage);
+        assertTrue(this.verifyMultiProof(proof, root, leafs, flags) == noDamage);
     }
 
     function testVerifyMultiProofIsValid() public {
@@ -223,7 +223,7 @@ contract MerkleProofTest is DSTestPlus {
             if (uint256(uint8(randomness[ri++])) & 1 == 0) delete flags;
         }
 
-        assertBoolEq(this.verifyMultiProof(proof, root, leafs, flags), noDamage);
+        assertTrue(this.verifyMultiProof(proof, root, leafs, flags) == noDamage);
     }
 
     function verify(
@@ -231,7 +231,7 @@ contract MerkleProofTest is DSTestPlus {
         bytes32 root,
         bytes32 leaf
     ) external pure returns (bool) {
-        return MerkleProof.verify(proof, root, leaf);
+        return MerkleProofLib.verify(proof, root, leaf);
     }
 
     function verifyMultiProof(
@@ -240,6 +240,6 @@ contract MerkleProofTest is DSTestPlus {
         bytes32[] calldata leafs,
         bool[] calldata flags
     ) external pure returns (bool) {
-        return MerkleProof.verifyMultiProof(proof, root, leafs, flags);
+        return MerkleProofLib.verifyMultiProof(proof, root, leafs, flags);
     }
 }
