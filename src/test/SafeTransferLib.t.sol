@@ -79,6 +79,26 @@ contract SafeTransferLibTest is DSTestPlus {
         verifySafeApprove(address(erc20), address(0xBEEF), 1e18);
     }
 
+    function testTransferRevertSelector() public {
+        hevm.expectRevert(SafeTransferLib.TransferFailed.selector);
+        this.testFailTransferWithReturnsFalse();
+    }
+
+    function testTransferFromRevertSelector() public {
+        hevm.expectRevert(SafeTransferLib.TransferFromFailed.selector);
+        this.testFailTransferFromWithReturnsFalse();
+    }
+
+    function testApproveRevertSelector() public {
+        hevm.expectRevert(SafeTransferLib.ApproveFailed.selector);
+        this.testFailApproveWithReturnsFalse();
+    }
+
+    function testTransferETHRevertSelector() public {
+        hevm.expectRevert(SafeTransferLib.ETHTransferFailed.selector);
+        this.testFailTransferETHToContractWithoutFallback();
+    }
+
     function testApproveWithReturnsTooMuch() public {
         verifySafeApprove(address(returnsTooMuch), address(0xBEEF), 1e18);
     }
