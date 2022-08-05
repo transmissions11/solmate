@@ -9,10 +9,12 @@ library LibBitmap {
     }
 
     function get(Bitmap storage bitmap, uint256 index) internal view returns (bool isSet) {
-        uint256 value = bitmap.map[index >> 8] & (1 << (index & 0xff));
-
+        // It is better to set `isSet` to either 0 or 1, than zero vs non-zero.
+        // Both cost the same amount of gas, but the former allows the returned value
+        // to be reused without cleaning the upper bits.
+        uint256 b = (bitmap.map[index >> 8] >> (index & 0xff)) & 1;
         assembly {
-            isSet := value // Assign isSet to whether the value is non zero.
+            isSet := b
         }
     }
 
@@ -24,8 +26,23 @@ library LibBitmap {
         bitmap.map[index >> 8] &= ~(1 << (index & 0xff));
     }
 
-    function toggle(Bitmap storage bitmap, uint256 index) internal {
-        bitmap.map[index >> 8] ^= (1 << (index & 0xff));
+    function toggle(Bitmap storage bitmap, uint256 index) internal returns (bool newIsSet) {
+        assembly {
+            mstore(0x00, shr(8, index))
+            mstore(0x20, bitmap.slot)
+            let storageSlot := keccak256(0x00, 0x40)
+            let shift := and(index, 0xff)
+            let storageValue := sload(storageSlot)
+
+            let mask := shl(shift, 1)
+            storageValue := xor(storageValue, mask)
+            // It makes sense to return the `newIsSet`,
+            // as it allow us to skip an additional warm `sload`,
+            // and it costs minimal gas (about 15),
+            // which may be optimized away if the returned value is unused.
+            newIsSet := iszero(iszero(and(storageValue, mask)))
+            sstore(storageSlot, storageValue)
+        }
     }
 
     function setTo(
@@ -33,20 +50,18 @@ library LibBitmap {
         uint256 index,
         bool shouldSet
     ) internal {
-        uint256 value = bitmap.map[index >> 8];
-
         assembly {
-            // The following sets the bit at `shift` without branching.
+            mstore(0x00, shr(8, index))
+            mstore(0x20, bitmap.slot)
+            let storageSlot := keccak256(0x00, 0x40)
+            let storageValue := sload(storageSlot)
             let shift := and(index, 0xff)
-            // Isolate the bit at `shift`.
-            let x := and(shr(shift, value), 1)
-            // Xor it with `shouldSet`. Results in 1 if both are different, else 0.
-            x := xor(x, shouldSet)
-            // Shifts the bit back. Then, xor with value.
-            // Only the bit at `shift` will be flipped if they differ.
-            // Every other bit will stay the same, as they are xor'ed with zeroes.
-            value := xor(value, shl(shift, x))
+
+            sstore(
+                storageSlot,
+                // Unsets the bit at `shift` via `and`, then sets its new value via `or`.
+                or(and(storageValue, not(shl(shift, 1))), shl(shift, iszero(iszero(shouldSet))))
+            )
         }
-        bitmap.map[index >> 8] = value;
     }
 }
