@@ -21,9 +21,9 @@ library LibRLP {
         if (nonce <= type(uint24).max) return keccak256(abi.encodePacked(bytes1(0xd9), bytes1(0x94), deployer, bytes1(0x83), uint24(nonce))).fromLast20Bytes();
 
         // More details about RLP encoding can be found here: https://eth.wiki/fundamentals/rlp
-        // 0xda = 0xc0 (short RLP prefix) + 0x16 (length of: 0x94 ++ proxy ++ 0x84 ++ nonce)
-        // 0x94 = 0x80 + 0x14 (0x14 = the length of an address, 20 bytes, in hex)
-        // 0x84 = 0x80 + 0x04 (0x04 = the bytes length of the nonce, 4 bytes, in hex)
+        // 0xda = 0xc0 (short RLP prefix) + 0x1a (= the bytes length of: 0x94 + address + 0x84 + nonce, in hex)
+        // 0x94 = 0x80 + 0x14 (= the bytes length of an address, 20 bytes, in hex)
+        // 0x84 = 0x80 + 0x04 (= the bytes length of the nonce, 4 bytes, in hex)
         // We assume nobody can have a nonce large enough to require more than 32 bytes.
         return keccak256(abi.encodePacked(bytes1(0xda), bytes1(0x94), deployer, bytes1(0x84), uint32(nonce))).fromLast20Bytes();
     }
