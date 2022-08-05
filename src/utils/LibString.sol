@@ -32,6 +32,8 @@ library LibString {
             // prettier-ignore
             for { let temp := value } 1 {} {
                 str := sub(str, 1)
+                // Write the character to the pointer.
+                // The ASCII index of the '0' character is 48.
                 mstore8(str, add(48, mod(temp, 10)))
                 // Keep dividing `temp` until zero.
                 temp := div(temp, 10)
@@ -64,6 +66,8 @@ library LibString {
 
             // Allocate the memory.
             mstore(0x40, str)
+            // Store "0123456789abcdef" in scratch space.
+            mstore(0x0f, 0x30313233343536373839616263646566)
 
             let temp := value
             // We write the string from rightmost digit to leftmost digit.
@@ -71,8 +75,8 @@ library LibString {
             // prettier-ignore
             for {} 1 {} {
                 str := sub(str, 2)
-                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
-                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                mstore8(add(str, 1), mload(and(temp, 15)))
+                mstore8(str, mload(and(shr(4, temp), 15)))
                 temp := shr(8, temp)
                 length := sub(length, 1)
                 // prettier-ignore
@@ -110,15 +114,16 @@ library LibString {
 
             // Allocate the memory.
             mstore(0x40, str)
+            // Store "0123456789abcdef" in scratch space.
+            mstore(0x0f, 0x30313233343536373839616263646566)
 
-            let temp := value
             // We write the string from rightmost digit to leftmost digit.
             // The following is essentially a do-while loop that also handles the zero case.
             // prettier-ignore
-            for {} 1 {} {
+            for { let temp := value } 1 {} {
                 str := sub(str, 2)
-                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
-                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                mstore8(add(str, 1), mload(and(temp, 15)))
+                mstore8(str, mload(and(shr(4, temp), 15)))
                 temp := shr(8, temp)
                 // prettier-ignore
                 if iszero(temp) { break }
@@ -145,16 +150,17 @@ library LibString {
 
             // Allocate the memory.
             mstore(0x40, str)
+            // Store "0123456789abcdef" in scratch space.
+            mstore(0x0f, 0x30313233343536373839616263646566)
 
             let length := 20
-            let temp := value
             // We write the string from rightmost digit to leftmost digit.
             // The following is essentially a do-while loop that also handles the zero case.
             // prettier-ignore
-            for {} 1 {} {
+            for { let temp := value } 1 {} {
                 str := sub(str, 2)
-                mstore8(add(str, 1), byte(and(temp, 15), "0123456789abcdef"))
-                mstore8(str, byte(and(shr(4, temp), 15), "0123456789abcdef"))
+                mstore8(add(str, 1), mload(and(temp, 15)))
+                mstore8(str, mload(and(shr(4, temp), 15)))
                 temp := shr(8, temp)
                 length := sub(length, 1)
                 // prettier-ignore
