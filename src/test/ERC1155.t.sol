@@ -1029,8 +1029,12 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
 
         token.safeTransferFrom(from, to, id, transferAmount, transferData);
 
-        assertEq(token.balanceOf(to, id), transferAmount);
-        assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+        if (from != to) {
+            assertEq(token.balanceOf(to, id), transferAmount);
+            assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+        } else {
+            assertEq(token.balanceOf(from, id), mintAmount);
+        }
     }
 
     function testSafeTransferFromToERC1155Recipient(
@@ -1058,8 +1062,12 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         assertEq(to.id(), id);
         assertBytesEq(to.mintData(), transferData);
 
-        assertEq(token.balanceOf(address(to), id), transferAmount);
-        assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+        if (from != address(to)) {
+            assertEq(token.balanceOf(address(to), id), transferAmount);
+            assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+        } else {
+            assertEq(token.balanceOf(from, id), mintAmount);
+        }
     }
 
     function testSafeTransferFromSelf(
@@ -1080,8 +1088,12 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
 
         token.safeTransferFrom(address(this), to, id, transferAmount, transferData);
 
-        assertEq(token.balanceOf(to, id), transferAmount);
-        assertEq(token.balanceOf(address(this), id), mintAmount - transferAmount);
+        if (address(this) != to) {
+            assertEq(token.balanceOf(to, id), transferAmount);
+            assertEq(token.balanceOf(address(this), id), mintAmount - transferAmount);
+        } else {
+            assertEq(token.balanceOf(address(this), id), mintAmount);
+        }
     }
 
     function testSafeBatchTransferFromToEOA(
@@ -1130,8 +1142,12 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
         for (uint256 i = 0; i < normalizedIds.length; i++) {
             uint256 id = normalizedIds[i];
 
-            assertEq(token.balanceOf(address(to), id), userTransferOrBurnAmounts[from][id]);
-            assertEq(token.balanceOf(from, id), userMintAmounts[from][id] - userTransferOrBurnAmounts[from][id]);
+            if (from != to) {
+                assertEq(token.balanceOf(to, id), userTransferOrBurnAmounts[from][id]);
+                assertEq(token.balanceOf(from, id), userMintAmounts[from][id] - userTransferOrBurnAmounts[from][id]);
+            } else {
+                assertEq(token.balanceOf(from, id), userMintAmounts[from][id]);
+            }
         }
     }
 
@@ -1185,8 +1201,12 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
             uint256 id = normalizedIds[i];
             uint256 transferAmount = userTransferOrBurnAmounts[from][id];
 
-            assertEq(token.balanceOf(address(to), id), transferAmount);
-            assertEq(token.balanceOf(from, id), userMintAmounts[from][id] - transferAmount);
+            if (from != address(to)) {
+                assertEq(token.balanceOf(address(to), id), transferAmount);
+                assertEq(token.balanceOf(from, id), userMintAmounts[from][id] - transferAmount);
+            } else {
+                assertEq(token.balanceOf(from, id), userMintAmounts[from][id]);
+            }
         }
     }
 
