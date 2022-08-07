@@ -17,7 +17,7 @@ library LibString {
     function toString(uint256 value) internal pure returns (string memory str) {
         assembly {
             // The maximum value of a uint256 contains 78 digits (1 byte per digit),
-            // but we allocate 0x80 bytes to keep the free memory pointer 32-byte word aliged.
+            // but we allocate 0x80 bytes to keep the free memory pointer 32-byte word aligned.
             // We will need 1 32-byte word to store the length,
             // and 3 32-byte words to store a maximum of 78 digits. Total: 0x20 + 3 * 0x20 = 0x80.
             str := add(mload(0x40), 0x80)
