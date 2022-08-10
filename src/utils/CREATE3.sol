@@ -53,8 +53,6 @@ library CREATE3 {
         bytes memory creationCode,
         uint256 value
     ) internal returns (address deployed) {
-        deployed = getDeployed(salt);
-
         assembly {
             // Store the `PROXY_BYTECODE` into scratch space.
             mstore(0x00, PROXY_BYTECODE)
@@ -69,23 +67,35 @@ library CREATE3 {
                 revert(0x1c, 0x04)
             }
 
-            let success := 0
+            // Store the proxy's address.
+            mstore(0x00, proxy)
+            // 0xd6 = 0xc0 (short RLP prefix) + 0x16 (length of: 0x94 ++ proxy ++ 0x01).
+            mstore8(0x0a, 0xd6)
+            // 0x94 = 0x80 + 0x14 (0x14 = the length of an address, 20 bytes, in hex).
+            mstore8(0x0b, 0x94)
+            // Nonce of the proxy contract (1).
+            mstore8(0x20, 0x01)
+            // Shift left and back to clear the upper 96 bits.
+            deployed := shr(96, shl(96, keccak256(0x0a, 0x17)))
 
-            // For the initialization to be a success, the call must return 1,
-            // and the deployed address must have a non-zero code size.
-            if call(
-                gas(), // Gas remaining.
-                proxy, // Proxy's address.
-                value, // Ether value.
-                add(creationCode, 0x20), // Start of `creationCode`.
-                mload(creationCode), // Length of `creationCode`.
-                0x00, // Offset of output.
-                0x00 // Length of output.
+            // If the deployment is not successful, revert.
+            if iszero(
+                and(
+                    // Whether the deployed address must have a non-zero code size.
+                    extcodesize(deployed),
+                    // The `call` must be the second argument of the `and`,
+                    // as the arguments are evaluated right to left.
+                    call(
+                        gas(), // Gas remaining.
+                        proxy, // Proxy's address.
+                        value, // Ether value.
+                        add(creationCode, 0x20), // Start of `creationCode`.
+                        mload(creationCode), // Length of `creationCode`.
+                        0x00, // Offset of output.
+                        0x00 // Length of output.
+                    )
+                )
             ) {
-                success := extcodesize(deployed)
-            }
-
-            if iszero(success) {
                 // Store the function selector of `InitializationFailed()`.
                 mstore(0x00, 0x19b991a8)
                 // Revert with (offset, size).
