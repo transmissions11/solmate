@@ -78,24 +78,26 @@ library CREATE3 {
             // Shift left and back to clear the upper 96 bits.
             deployed := shr(96, shl(96, keccak256(0x0a, 0x17)))
 
-            // If the deployment is not successful, revert.
+            // If the `call` fails, revert.
             if iszero(
-                and(
-                    // Whether the deployed address must have a non-zero code size.
-                    extcodesize(deployed),
-                    // The `call` must be the second argument of the `and`,
-                    // as the arguments are evaluated right to left.
-                    call(
-                        gas(), // Gas remaining.
-                        proxy, // Proxy's address.
-                        value, // Ether value.
-                        add(creationCode, 0x20), // Start of `creationCode`.
-                        mload(creationCode), // Length of `creationCode`.
-                        0x00, // Offset of output.
-                        0x00 // Length of output.
-                    )
+                call(
+                    gas(), // Gas remaining.
+                    proxy, // Proxy's address.
+                    value, // Ether value.
+                    add(creationCode, 0x20), // Start of `creationCode`.
+                    mload(creationCode), // Length of `creationCode`.
+                    0x00, // Offset of output.
+                    0x00 // Length of output.
                 )
             ) {
+                // Store the function selector of `InitializationFailed()`.
+                mstore(0x00, 0x19b991a8)
+                // Revert with (offset, size).
+                revert(0x1c, 0x04)
+            }
+
+            // If the code size of `deployed` is zero, revert.
+            if iszero(extcodesize(deployed)) {
                 // Store the function selector of `InitializationFailed()`.
                 mstore(0x00, 0x19b991a8)
                 // Revert with (offset, size).
