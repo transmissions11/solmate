@@ -1029,8 +1029,12 @@ contract ERC1155Test is DSTestPlus, ERC1155TokenReceiver {
 
         token.safeTransferFrom(from, to, id, transferAmount, transferData);
 
-        assertEq(token.balanceOf(to, id), transferAmount);
-        assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+        if (to == from) {
+            assertEq(token.balanceOf(to, id), mintAmount);
+        } else {
+            assertEq(token.balanceOf(to, id), transferAmount);
+            assertEq(token.balanceOf(from, id), mintAmount - transferAmount);
+        }
     }
 
     function testSafeTransferFromToERC1155Recipient(
