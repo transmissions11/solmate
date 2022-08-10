@@ -10,7 +10,7 @@ library CREATE3 {
     /*//////////////////////////////////////////////////////////////
                              CUSTOM ERRORS
     //////////////////////////////////////////////////////////////*/
-    
+
     error DeploymentFailed();
 
     error InitializationFailed();
@@ -39,7 +39,7 @@ library CREATE3 {
     // 0x60       |  0x6008               | PUSH1 08         | 8                      //
     // 0x60       |  0x6018               | PUSH1 18         | 24 8                   //
     // 0xf3       |  0xf3                 | RETURN           |                        //
-    //--------------------------------------------------------------------------------//    
+    //--------------------------------------------------------------------------------//
     uint256 internal constant PROXY_BYTECODE = 0x67_36_3d_3d_37_36_3d_34_f0_3d_52_60_08_60_18_f3;
 
     bytes32 internal constant PROXY_BYTECODE_HASH = 0x21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f;
@@ -82,7 +82,7 @@ library CREATE3 {
                 0x00, // Offset of output.
                 0x00 // Length of output.
             ) {
-                success := extcodesize(deployed) 
+                success := extcodesize(deployed)
             }
 
             if iszero(success) {
