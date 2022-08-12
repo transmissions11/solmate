@@ -54,13 +54,14 @@ library FixedPointMathLib {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Store x * y in z for now.
-            z := mul(x, y)
-
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+            // Revert if x * y > type(uint256).max
+            // <=> y > 0 and x > type(uint256).max / y
+            if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
                 revert(0, 0)
             }
+
+            // Store x * y in z for now.
+            z := mul(x, y)
 
             // First, divide z - 1 by the denominator and add 1.
             // We allow z - 1 to underflow if z is 0, because we multiply the
