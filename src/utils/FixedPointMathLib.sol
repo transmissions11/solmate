@@ -9,6 +9,7 @@ library FixedPointMathLib {
                     SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
+    uint256 internal constant MAX_UINT256 = 2**256 - 1;
     uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
     function mulWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
@@ -37,16 +38,13 @@ library FixedPointMathLib {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Store x * y in z for now.
-            z := mul(x, y)
-
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+            // Revert if x * y > type(uint256).max
+            // <=> y > 0 and x > type(uint256).max / y
+            if or(iszero(denominator), mul(y, gt(x, div(MAX_UINT256, y)))) {
                 revert(0, 0)
             }
 
-            // Divide z by the denominator.
-            z := div(z, denominator)
+            z := div(mul(x, y), denominator)
         }
     }
 
