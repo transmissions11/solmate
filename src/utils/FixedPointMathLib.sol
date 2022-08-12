@@ -40,7 +40,7 @@ library FixedPointMathLib {
         assembly {
             // Revert if x * y > type(uint256).max
             // <=> y > 0 and x > type(uint256).max / y
-            if or(iszero(denominator), mul(y, gt(x, div(MAX_UINT256, y)))) {
+            if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
                 revert(0, 0)
             }
 
