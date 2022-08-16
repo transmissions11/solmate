@@ -58,10 +58,7 @@ library FixedPointMathLib {
                 revert(0, 0)
             }
 
-            // Store x * y in z for now.
-            z := mul(x, y)
-
-            z := add(gt(mod(z, denominator), 0), div(z, denominator))
+            z := add(gt(mod(mul(x, y), denominator), 0), div(mul(x, y), denominator))
         }
     }
 
