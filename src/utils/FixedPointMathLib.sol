@@ -38,7 +38,7 @@ library FixedPointMathLib {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+            // Equivalent to require(denominator != 0 && (y == 0 || x <= type(uint256).max / y))
             if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
                 revert(0, 0)
             }
@@ -53,7 +53,7 @@ library FixedPointMathLib {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+            // Equivalent to require(denominator != 0 && (y == 0 || x <= type(uint256).max / y))
             if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
                 revert(0, 0)
             }
