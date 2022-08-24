@@ -50,7 +50,12 @@ library CREATE3 {
         require(proxy != address(0), "DEPLOYMENT_FAILED");
 
         deployed = getDeployed(salt);
-        (bool success, ) = proxy.call{value: value}(creationCode);
+
+        bool success;
+        assembly {
+            success := call(gas(), proxy, value, add(creationCode, 32), mload(creationCode), 0, 0)
+        }
+
         require(success && deployed.code.length != 0, "INITIALIZATION_FAILED");
     }
 
