@@ -96,7 +96,7 @@ library LibERB {
         }
     }
 
-    function readWriteNumber(
+    function readUpdateNumber(
         ERBValue[65535] storage self,
         uint32 updateNumber,
         uint32 totalUpdates,
@@ -161,11 +161,11 @@ library LibBoxedERB {
         return self.erb.readOffset(offset, self.totalUpdates, self.populatedSlots);
     }
 
-    function readWriteNumber(BoxedERB storage self, uint32 updateNumber)
+    function readUpdateNumber(BoxedERB storage self, uint32 updateNumber)
         internal
         view
         returns (LibERB.ERBValue memory)
     {
-        return self.erb.readWriteNumber(updateNumber, self.totalUpdates, self.populatedSlots);
+        return self.erb.readUpdateNumber(updateNumber, self.totalUpdates, self.populatedSlots);
     }
 }
