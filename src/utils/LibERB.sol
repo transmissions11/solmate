@@ -3,6 +3,8 @@ pragma solidity >=0.8.0;
 
 import {FixedPointMathLib} from "./FixedPointMathLib.sol";
 
+// TODO: Should we return the writeNumber from the read funcs?
+
 // TODO: Does a fixed size array save gas vs a dynamic or mapping?
 
 // TODO: Prove conjectures about ERB properties with Forge invariants.
@@ -14,8 +16,8 @@ import {FixedPointMathLib} from "./FixedPointMathLib.sol";
 // knowing the writeNumber helpful? It also allows touching the array
 // without messing up value in grow tho. If we removed I'd like to add
 // the "can't read uninitialized" slots rule back to the read functions.
-// I think the best thing to do would be to make it a generic param,
-// then if users find it useful they can attach write number, or timestamp, etc.
+// I think the best thing to do would be to make it a generic param, then
+// if users find it useful they can attach write number, or timestamp, etc.
 
 /*//////////////////////////////////////////////////////////////
                                ERB
