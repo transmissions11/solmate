@@ -1,0 +1,1176 @@
+{
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "log",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "log_address",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "log_bytes",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "log_bytes32",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "int256",
+          "name": "",
+          "type": "int256"
+        }
+      ],
+      "name": "log_int",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "val",
+          "type": "address"
+        }
+      ],
+      "name": "log_named_address",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "val",
+          "type": "bytes"
+        }
+      ],
+      "name": "log_named_bytes",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "val",
+          "type": "bytes32"
+        }
+      ],
+      "name": "log_named_bytes32",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "int256",
+          "name": "val",
+          "type": "int256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "decimals",
+          "type": "uint256"
+        }
+      ],
+      "name": "log_named_decimal_int",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "val",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "decimals",
+          "type": "uint256"
+        }
+      ],
+      "name": "log_named_decimal_uint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "int256",
+          "name": "val",
+          "type": "int256"
+        }
+      ],
+      "name": "log_named_int",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "val",
+          "type": "string"
+        }
+      ],
+      "name": "log_named_string",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "key",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "val",
+          "type": "uint256"
+        }
+      ],
+      "name": "log_named_uint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "name": "log_string",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "log_uint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "logs",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "IS_TEST",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "failed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "testFillLast12Bytes",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "testFromLast20Bytes",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x60806040526000805460ff1916600190811790915560025534801561002357600080fd5b506107e5806100336000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80632f20fb3414610051578063ba414fa61461005b578063dc1607f314610077578063fa7626d41461007f575b600080fd5b61005961008c565b005b6100636100cc565b604051901515815260200160405180910390f35b61005961022c565b6000546100639060ff1681565b6100ca7ffeedfacecafebeeffeedfacecafebeeffeedfacecafebeeffeedfacecafebeef73cafebeeffeedfacecafebeeffeedfacecafebeef610256565b565b60008054610100900460ff16156100ec5750600054610100900460ff1690565b6000737109709ecfa91a80626ff3989d68f67f5b1dd12d3b156102275760408051737109709ecfa91a80626ff3989d68f67f5b1dd12d602082018190527f6661696c6564000000000000000000000000000000000000000000000000000082840152825180830384018152606083019093526000929091610191917f667f9d70ca411d70ead50d8d5c22070dafc36ad75f3dcf5e7237b22ade9aecc491608001610641565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290526101c99161067d565b6000604051808303816000865af19150503d8060008114610206576040519150601f19603f3d011682016040523d82523d6000602084013e61020b565b606091505b50915050808060200190518101906102239190610690565b9150505b919050565b6100ca7ffeedfacecafebeeffeedfacecafebeeffeedface00000000000000000000000080610390565b8073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161461038c577f41304facd9323d75b11bcdd609cb38effffdb05710f7caf0e9b16c6d9d709f5060405161030e9060208082526025908201527f4572726f723a2061203d3d2062206e6f7420736174697366696564205b61646460408201527f726573735d000000000000000000000000000000000000000000000000000000606082015260800190565b60405180910390a17f9c4e8541ca8f0dc1c413f9108f66d82d3cecb1bddbce437a61caa3175c4cc96f8160405161034591906106b2565b60405180910390a17f9c4e8541ca8f0dc1c413f9108f66d82d3cecb1bddbce437a61caa3175c4cc96f8260405161037c9190610713565b60405180910390a161038c61048a565b5050565b80821461038c577f41304facd9323d75b11bcdd609cb38effffdb05710f7caf0e9b16c6d9d709f5060405161041c9060208082526025908201527f4572726f723a2061203d3d2062206e6f7420736174697366696564205b62797460408201527f657333325d000000000000000000000000000000000000000000000000000000606082015260800190565b60405180910390a17fafb795c9c61e4fe7468c386f925d7a5429ecad9c0495ddb8d38d690614d32f99816040516104539190610750565b60405180910390a17fafb795c9c61e4fe7468c386f925d7a5429ecad9c0495ddb8d38d690614d32f998260405161037c919061079b565b737109709ecfa91a80626ff3989d68f67f5b1dd12d3b156105d85760408051737109709ecfa91a80626ff3989d68f67f5b1dd12d602082018190527f6661696c656400000000000000000000000000000000000000000000000000009282019290925260016060820152600091907f70ca10bbd0dbfd9020a9f4b13402c16cb120705e0d1c0aeab10fa353ae586fc490608001604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290526105599291602001610641565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290526105919161067d565b6000604051808303816000865af19150503d80600081146105ce576040519150601f19603f3d011682016040523d82523d6000602084013e6105d3565b606091505b505050505b600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ff16610100179055565b6000815160005b81811015610627576020818501810151868301520161060d565b81811115610636576000828601525b509290920192915050565b7fffffffff000000000000000000000000000000000000000000000000000000008316815260006106756004830184610606565b949350505050565b60006106898284610606565b9392505050565b6000602082840312156106a257600080fd5b8151801515811461068957600080fd5b6040815260006106ef60408301600a81527f2020457870656374656400000000000000000000000000000000000000000000602082015260400190565b905073ffffffffffffffffffffffffffffffffffffffff8316602083015292915050565b6040815260006106ef60408301600a81527f2020202041637475616c00000000000000000000000000000000000000000000602082015260400190565b60408152600061078d60408301600a81527f2020457870656374656400000000000000000000000000000000000000000000602082015260400190565b905082602083015292915050565b60408152600061078d60408301600a81527f2020202041637475616c0000000000000000000000000000000000000000000060208201526040019056fea164736f6c634300080f000a",
+    "sourceMap": "193:561:7:-:0;;;1609:26:0;;;-1:-1:-1;;1609:26:0;1631:4;1609:26;;;;;;544:37:24;;193:561:7;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c80632f20fb3414610051578063ba414fa61461005b578063dc1607f314610077578063fa7626d41461007f575b600080fd5b61005961008c565b005b6100636100cc565b604051901515815260200160405180910390f35b61005961022c565b6000546100639060ff1681565b6100ca7ffeedfacecafebeeffeedfacecafebeeffeedfacecafebeeffeedfacecafebeef73cafebeeffeedfacecafebeeffeedfacecafebeef610256565b565b60008054610100900460ff16156100ec5750600054610100900460ff1690565b6000737109709ecfa91a80626ff3989d68f67f5b1dd12d3b156102275760408051737109709ecfa91a80626ff3989d68f67f5b1dd12d602082018190527f6661696c6564000000000000000000000000000000000000000000000000000082840152825180830384018152606083019093526000929091610191917f667f9d70ca411d70ead50d8d5c22070dafc36ad75f3dcf5e7237b22ade9aecc491608001610641565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290526101c99161067d565b6000604051808303816000865af19150503d8060008114610206576040519150601f19603f3d011682016040523d82523d6000602084013e61020b565b606091505b50915050808060200190518101906102239190610690565b9150505b919050565b6100ca7ffeedfacecafebeeffeedfacecafebeeffeedface00000000000000000000000080610390565b8073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff161461038c577f41304facd9323d75b11bcdd609cb38effffdb05710f7caf0e9b16c6d9d709f5060405161030e9060208082526025908201527f4572726f723a2061203d3d2062206e6f7420736174697366696564205b61646460408201527f726573735d000000000000000000000000000000000000000000000000000000606082015260800190565b60405180910390a17f9c4e8541ca8f0dc1c413f9108f66d82d3cecb1bddbce437a61caa3175c4cc96f8160405161034591906106b2565b60405180910390a17f9c4e8541ca8f0dc1c413f9108f66d82d3cecb1bddbce437a61caa3175c4cc96f8260405161037c9190610713565b60405180910390a161038c61048a565b5050565b80821461038c577f41304facd9323d75b11bcdd609cb38effffdb05710f7caf0e9b16c6d9d709f5060405161041c9060208082526025908201527f4572726f723a2061203d3d2062206e6f7420736174697366696564205b62797460408201527f657333325d000000000000000000000000000000000000000000000000000000606082015260800190565b60405180910390a17fafb795c9c61e4fe7468c386f925d7a5429ecad9c0495ddb8d38d690614d32f99816040516104539190610750565b60405180910390a17fafb795c9c61e4fe7468c386f925d7a5429ecad9c0495ddb8d38d690614d32f998260405161037c919061079b565b737109709ecfa91a80626ff3989d68f67f5b1dd12d3b156105d85760408051737109709ecfa91a80626ff3989d68f67f5b1dd12d602082018190527f6661696c656400000000000000000000000000000000000000000000000000009282019290925260016060820152600091907f70ca10bbd0dbfd9020a9f4b13402c16cb120705e0d1c0aeab10fa353ae586fc490608001604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290526105599291602001610641565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290526105919161067d565b6000604051808303816000865af19150503d80600081146105ce576040519150601f19603f3d011682016040523d82523d6000602084013e6105d3565b606091505b505050505b600080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00ff16610100179055565b6000815160005b81811015610627576020818501810151868301520161060d565b81811115610636576000828601525b509290920192915050565b7fffffffff000000000000000000000000000000000000000000000000000000008316815260006106756004830184610606565b949350505050565b60006106898284610606565b9392505050565b6000602082840312156106a257600080fd5b8151801515811461068957600080fd5b6040815260006106ef60408301600a81527f2020457870656374656400000000000000000000000000000000000000000000602082015260400190565b905073ffffffffffffffffffffffffffffffffffffffff8316602083015292915050565b6040815260006106ef60408301600a81527f2020202041637475616c00000000000000000000000000000000000000000000602082015260400190565b60408152600061078d60408301600a81527f2020457870656374656400000000000000000000000000000000000000000000602082015260400190565b905082602083015292915050565b60408152600061078d60408301600a81527f2020202041637475616c0000000000000000000000000000000000000000000060208201526040019056fea164736f6c634300080f000a",
+    "sourceMap": "193:561:7:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;502:249;;;:::i;:::-;;1865:600:0;;;:::i;:::-;;;179:14:51;;172:22;154:41;;142:2;127:18;1865:600:0;;;;;;;245:249:7;;;:::i;1609:26:0:-;;;;;;;;;502:249:7;551:192;608:66;690:42;551:8;:192::i;:::-;502:249::o;1865:600:0:-;1899:4;1920:7;;;;;;;1916:542;;;-1:-1:-1;1951:7:0;;;;;;;;1865:600::o;1916:542::-;1991:17;3070:42;3058:55;3141:16;2031:382;;2251:43;;;1712:64;2251:43;;;380:74:51;;;2276:17:0;470:18:51;;;463:34;2251:43:0;;;;;;;;;353:18:51;;;2251:43:0;;;-1:-1:-1;;1712:64:0;;2139:178;;2189:34;;2139:178;;;:::i;:::-;;;;;;;;;;;;;;;2099:237;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2072:264;;;2381:7;2370:27;;;;;;;;;;;;:::i;:::-;2355:42;;2053:360;2031:382;2434:12;1865:600;-1:-1:-1;1865:600:0:o;245:249:7:-;294:192;539:21:44;409:66:7;294:8;:192::i;3721:284:0:-;3790:1;3785:6;;:1;:6;;;3781:217;;3813:44;;;;;1856:2:51;1838:21;;;1895:2;1875:18;;;1868:30;1934:34;1929:2;1914:18;;1907:62;2005:7;2000:2;1985:18;;1978:35;2045:3;2030:19;;1654:401;3813:44:0;;;;;;;;3877:34;3909:1;3877:34;;;;;;:::i;:::-;;;;;;;;3931;3963:1;3931:34;;;;;;:::i;:::-;;;;;;;;3980:6;:4;:6::i;:::-;3721:284;;:::o;4209:::-;4278:1;4273;:6;4269:217;;4301:44;;;;;3394:2:51;3376:21;;;3433:2;3413:18;;;3406:30;3472:34;3467:2;3452:18;;3445:62;3543:7;3538:2;3523:18;;3516:35;3583:3;3568:19;;3192:401;4301:44:0;;;;;;;;4365:34;4397:1;4365:34;;;;;;:::i;:::-;;;;;;;;4419;4451:1;4419:34;;;;;;:::i;2474:435::-;3070:42;3058:55;3141:16;2510:367;;2714:67;;;1712:64;2714:67;;;4506:74:51;;;2739:17:0;4596:18:51;;;4589:34;;;;2774:4:0;4639:18:51;;;4632:34;2548:11:0;;1712:64;2647:43;;4479:18:51;;2714:67:0;;;;;;;;;;;;;;2601:199;;;2714:67;2601:199;;:::i;:::-;;;;;;;;;;;;;;;2565:250;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;2510:367:0;2887:7;:14;;;;;;;;2474:435::o;508:336:51:-;549:3;587:5;581:12;611:1;621:128;635:6;632:1;629:13;621:128;;;732:4;717:13;;;713:24;;707:31;694:11;;;687:52;650:12;621:128;;;767:6;764:1;761:13;758:48;;;802:1;793:6;788:3;784:16;777:27;758:48;-1:-1:-1;822:16:51;;;;;508:336;-1:-1:-1;;508:336:51:o;849:324::-;1046:66;1038:6;1034:79;1029:3;1022:92;1004:3;1130:37;1164:1;1159:3;1155:11;1147:6;1130:37;:::i;:::-;1123:44;849:324;-1:-1:-1;;;;849:324:51:o;1178:189::-;1307:3;1332:29;1357:3;1349:6;1332:29;:::i;:::-;1325:36;1178:189;-1:-1:-1;;;1178:189:51:o;1372:277::-;1439:6;1492:2;1480:9;1471:7;1467:23;1463:32;1460:52;;;1508:1;1505;1498:12;1460:52;1540:9;1534:16;1593:5;1586:13;1579:21;1572:5;1569:32;1559:60;;1615:1;1612;1605:12;2224:397;2454:2;2443:9;2436:21;2417:4;2474:49;2519:2;2508:9;2504:18;2137:2;2125:15;;2172:12;2165:4;2156:14;;2149:36;2210:2;2201:12;;2060:159;2474:49;2466:57;;2571:42;2563:6;2559:55;2554:2;2543:9;2539:18;2532:83;2224:397;;;;:::o;2790:::-;3020:2;3009:9;3002:21;2983:4;3040:49;3085:2;3074:9;3070:18;2703:2;2691:15;;2738:12;2731:4;2722:14;;2715:36;2776:2;2767:12;;2626:159;3598:348;3828:2;3817:9;3810:21;3791:4;3848:49;3893:2;3882:9;3878:18;2137:2;2125:15;;2172:12;2165:4;2156:14;;2149:36;2210:2;2201:12;;2060:159;3848:49;3840:57;;3933:6;3928:2;3917:9;3913:18;3906:34;3598:348;;;;:::o;3951:::-;4181:2;4170:9;4163:21;4144:4;4201:49;4246:2;4235:9;4231:18;2703:2;2691:15;;2738:12;2731:4;2722:14;;2715:36;2776:2;2767:12;;2626:159",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "IS_TEST()": "fa7626d4",
+    "failed()": "ba414fa6",
+    "testFillLast12Bytes()": "dc1607f3",
+    "testFromLast20Bytes()": "2f20fb34"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.15+commit.e14f2714\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"log\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"log_address\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"log_bytes\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"log_bytes32\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"int256\",\"name\":\"\",\"type\":\"int256\"}],\"name\":\"log_int\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"val\",\"type\":\"address\"}],\"name\":\"log_named_address\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"val\",\"type\":\"bytes\"}],\"name\":\"log_named_bytes\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"val\",\"type\":\"bytes32\"}],\"name\":\"log_named_bytes32\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"int256\",\"name\":\"val\",\"type\":\"int256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\"}],\"name\":\"log_named_decimal_int\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"val\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"decimals\",\"type\":\"uint256\"}],\"name\":\"log_named_decimal_uint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"int256\",\"name\":\"val\",\"type\":\"int256\"}],\"name\":\"log_named_int\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"val\",\"type\":\"string\"}],\"name\":\"log_named_string\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"key\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"val\",\"type\":\"uint256\"}],\"name\":\"log_named_uint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"log_string\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"log_uint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"logs\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"IS_TEST\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"failed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"testFillLast12Bytes\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"testFromLast20Bytes\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/test/Bytes32AddressLib.t.sol\":\"Bytes32AddressLibTest\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\"},\"optimizer\":{\"enabled\":true,\"runs\":1000000},\"remappings\":[\":ds-test/=lib/ds-test/src/\"]},\"sources\":{\"lib/ds-test/src/test.sol\":{\"keccak256\":\"0xd4cc3f57e7af003954200ec4ee92e8f189885cba55ae9cf87e7a59985d8e963e\",\"license\":\"GPL-3.0-or-later\",\"urls\":[\"bzz-raw://64df22826aa96e9c9eaebb698f5940ecafe95d72782b60b8f6fd68f6cd023bda\",\"dweb:/ipfs/QmSJGqC4GyyHdMUc2ViatN6wKZNBiaxRzntKH7JwM2UQ8R\"]},\"src/test/Bytes32AddressLib.t.sol\":{\"keccak256\":\"0x324d0c25145d8c2253e56b1626e9059ec143a4eb66ba9ce2a014acc4d538daa6\",\"license\":\"AGPL-3.0-only\",\"urls\":[\"bzz-raw://31f529032407611a6cdee8489931adfc7d4703b27c25ffcc5e810447d1b88314\",\"dweb:/ipfs/QmTb9jkRX27b6p5GidDMzFWRSrj4XKyRc3iLGrdcTmyKjH\"]},\"src/test/utils/DSTestPlus.sol\":{\"keccak256\":\"0xe7a7f10c038e784e5b134fa1e1d39f706adc7cf9ac0c3a44d21f6bd298d6235f\",\"license\":\"AGPL-3.0-only\",\"urls\":[\"bzz-raw://0ec326fec8aed3ae8f27cf1d811d102f31044a029a1ef8e5a2ee8111408c5316\",\"dweb:/ipfs/QmQLjeMnGHQ6hnn1rfftVZDt1uR7TiwL9DfJRLRgmsV6VX\"]},\"src/test/utils/Hevm.sol\":{\"keccak256\":\"0xd4d48a54bd3ce0830b561c487dcbd29f9e3d1988c333b7fd05b44b4e30bc49bb\",\"license\":\"AGPL-3.0-only\",\"urls\":[\"bzz-raw://3ed2544d9c41e165221373e60113c948599f95f9e7fcbb31038d52be3324de6f\",\"dweb:/ipfs/QmP8ibmcfcGjdAaxRMYWuLBtLoJgpJ2ykZdUdZrGpKd2jt\"]},\"src/utils/Bytes32AddressLib.sol\":{\"keccak256\":\"0xfb5bb712bde5dea2abe265962189693d568cbddc523be98e06ea47af738fdec6\",\"license\":\"AGPL-3.0-only\",\"urls\":[\"bzz-raw://98e1daa7fea5a49e62b14a546dc70bd56faf47a0b5ba36230abeae1d1851eee7\",\"dweb:/ipfs/QmVrFUDg6w8XjZ9aVzC1APt8Hodjy2BngncSd5AxX4iLzF\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.15+commit.e14f2714"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_address",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_bytes",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_bytes32",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "int256",
+              "name": "",
+              "type": "int256",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_int",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "address",
+              "name": "val",
+              "type": "address",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_address",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "bytes",
+              "name": "val",
+              "type": "bytes",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_bytes",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "bytes32",
+              "name": "val",
+              "type": "bytes32",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_bytes32",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "int256",
+              "name": "val",
+              "type": "int256",
+              "indexed": false
+            },
+            {
+              "internalType": "uint256",
+              "name": "decimals",
+              "type": "uint256",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_decimal_int",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "uint256",
+              "name": "val",
+              "type": "uint256",
+              "indexed": false
+            },
+            {
+              "internalType": "uint256",
+              "name": "decimals",
+              "type": "uint256",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_decimal_uint",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "int256",
+              "name": "val",
+              "type": "int256",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_int",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "string",
+              "name": "val",
+              "type": "string",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_string",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string",
+              "indexed": false
+            },
+            {
+              "internalType": "uint256",
+              "name": "val",
+              "type": "uint256",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_named_uint",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_string",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "log_uint",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "logs",
+          "anonymous": false
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "IS_TEST",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "failed",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "testFillLast12Bytes"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "testFromLast20Bytes"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":ds-test/=lib/ds-test/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 1000000
+      },
+      "metadata": {
+        "bytecodeHash": "none"
+      },
+      "compilationTarget": {
+        "src/test/Bytes32AddressLib.t.sol": "Bytes32AddressLibTest"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "lib/ds-test/src/test.sol": {
+        "keccak256": "0xd4cc3f57e7af003954200ec4ee92e8f189885cba55ae9cf87e7a59985d8e963e",
+        "urls": [
+          "bzz-raw://64df22826aa96e9c9eaebb698f5940ecafe95d72782b60b8f6fd68f6cd023bda",
+          "dweb:/ipfs/QmSJGqC4GyyHdMUc2ViatN6wKZNBiaxRzntKH7JwM2UQ8R"
+        ],
+        "license": "GPL-3.0-or-later"
+      },
+      "src/test/Bytes32AddressLib.t.sol": {
+        "keccak256": "0x324d0c25145d8c2253e56b1626e9059ec143a4eb66ba9ce2a014acc4d538daa6",
+        "urls": [
+          "bzz-raw://31f529032407611a6cdee8489931adfc7d4703b27c25ffcc5e810447d1b88314",
+          "dweb:/ipfs/QmTb9jkRX27b6p5GidDMzFWRSrj4XKyRc3iLGrdcTmyKjH"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "src/test/utils/DSTestPlus.sol": {
+        "keccak256": "0xe7a7f10c038e784e5b134fa1e1d39f706adc7cf9ac0c3a44d21f6bd298d6235f",
+        "urls": [
+          "bzz-raw://0ec326fec8aed3ae8f27cf1d811d102f31044a029a1ef8e5a2ee8111408c5316",
+          "dweb:/ipfs/QmQLjeMnGHQ6hnn1rfftVZDt1uR7TiwL9DfJRLRgmsV6VX"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "src/test/utils/Hevm.sol": {
+        "keccak256": "0xd4d48a54bd3ce0830b561c487dcbd29f9e3d1988c333b7fd05b44b4e30bc49bb",
+        "urls": [
+          "bzz-raw://3ed2544d9c41e165221373e60113c948599f95f9e7fcbb31038d52be3324de6f",
+          "dweb:/ipfs/QmP8ibmcfcGjdAaxRMYWuLBtLoJgpJ2ykZdUdZrGpKd2jt"
+        ],
+        "license": "AGPL-3.0-only"
+      },
+      "src/utils/Bytes32AddressLib.sol": {
+        "keccak256": "0xfb5bb712bde5dea2abe265962189693d568cbddc523be98e06ea47af738fdec6",
+        "urls": [
+          "bzz-raw://98e1daa7fea5a49e62b14a546dc70bd56faf47a0b5ba36230abeae1d1851eee7",
+          "dweb:/ipfs/QmVrFUDg6w8XjZ9aVzC1APt8Hodjy2BngncSd5AxX4iLzF"
+        ],
+        "license": "AGPL-3.0-only"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/test/Bytes32AddressLib.t.sol",
+    "id": 4015,
+    "exportedSymbols": {
+      "Bytes32AddressLib": [
+        32848
+      ],
+      "Bytes32AddressLibTest": [
+        4014
+      ],
+      "DSTestPlus": [
+        29583
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "43:713:7",
+    "nodes": [
+      {
+        "id": 3983,
+        "nodeType": "PragmaDirective",
+        "src": "43:23:7",
+        "literals": [
+          "solidity",
+          "0.8",
+          ".15"
+        ]
+      },
+      {
+        "id": 3985,
+        "nodeType": "ImportDirective",
+        "src": "70:50:7",
+        "absolutePath": "src/test/utils/DSTestPlus.sol",
+        "file": "./utils/DSTestPlus.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4015,
+        "sourceUnit": 29584,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 3984,
+              "name": "DSTestPlus",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 29583,
+              "src": "78:10:7",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 3987,
+        "nodeType": "ImportDirective",
+        "src": "124:65:7",
+        "absolutePath": "src/utils/Bytes32AddressLib.sol",
+        "file": "../utils/Bytes32AddressLib.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 4015,
+        "sourceUnit": 32849,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 3986,
+              "name": "Bytes32AddressLib",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 32848,
+              "src": "132:17:7",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 4014,
+        "nodeType": "ContractDefinition",
+        "src": "193:561:7",
+        "nodes": [
+          {
+            "id": 4001,
+            "nodeType": "FunctionDefinition",
+            "src": "245:249:7",
+            "body": {
+              "id": 4000,
+              "nodeType": "Block",
+              "src": "283:211:7",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "arguments": [
+                          {
+                            "hexValue": "307866454544466143456361466542454546664545444641436563614645426565466665456466416365",
+                            "id": 3995,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "351:42:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            },
+                            "value": "0xfEEDFaCEcaFeBEEFfEEDFACecaFEBeeFfeEdfAce"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          ],
+                          "expression": {
+                            "id": 3993,
+                            "name": "Bytes32AddressLib",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 32848,
+                            "src": "317:17:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_contract$_Bytes32AddressLib_$32848_$",
+                              "typeString": "type(library Bytes32AddressLib)"
+                            }
+                          },
+                          "id": 3994,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "fillLast12Bytes",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 32847,
+                          "src": "317:33:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$_t_address_$returns$_t_bytes32_$",
+                            "typeString": "function (address) pure returns (bytes32)"
+                          }
+                        },
+                        "id": 3996,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "317:77:7",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        }
+                      },
+                      {
+                        "hexValue": "307866656564666163656361666562656566666565646661636563616665626565666665656466616365303030303030303030303030303030303030303030303030",
+                        "id": 3997,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "409:66:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_rational_115307937306215730088059262655190692033592530375903862528823224851242382524416_by_1",
+                          "typeString": "int_const 1153...(70 digits omitted)...4416"
+                        },
+                        "value": "0xfeedfacecafebeeffeedfacecafebeeffeedface000000000000000000000000"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bytes32",
+                          "typeString": "bytes32"
+                        },
+                        {
+                          "typeIdentifier": "t_rational_115307937306215730088059262655190692033592530375903862528823224851242382524416_by_1",
+                          "typeString": "int_const 1153...(70 digits omitted)...4416"
+                        }
+                      ],
+                      "id": 3992,
+                      "name": "assertEq",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        320,
+                        345,
+                        375,
+                        400,
+                        459,
+                        484,
+                        514,
+                        539,
+                        1639,
+                        1674
+                      ],
+                      "referencedDeclaration": 375,
+                      "src": "294:8:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_bytes32_$_t_bytes32_$returns$__$",
+                        "typeString": "function (bytes32,bytes32)"
+                      }
+                    },
+                    "id": 3998,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "294:192:7",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 3999,
+                  "nodeType": "ExpressionStatement",
+                  "src": "294:192:7"
+                }
+              ]
+            },
+            "functionSelector": "dc1607f3",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "testFillLast12Bytes",
+            "nameLocation": "254:19:7",
+            "parameters": {
+              "id": 3990,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "273:2:7"
+            },
+            "returnParameters": {
+              "id": 3991,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "283:0:7"
+            },
+            "scope": 4014,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "id": 4013,
+            "nodeType": "FunctionDefinition",
+            "src": "502:249:7",
+            "body": {
+              "id": 4012,
+              "nodeType": "Block",
+              "src": "540:211:7",
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "arguments": [
+                          {
+                            "hexValue": "307866656564666163656361666562656566666565646661636563616665626565666665656466616365636166656265656666656564666163656361666562656566",
+                            "id": 4007,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": true,
+                            "kind": "number",
+                            "lValueRequested": false,
+                            "nodeType": "Literal",
+                            "src": "608:66:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_rational_115307937306215730088059262655190692033592530375966686469642091864005527125743_by_1",
+                              "typeString": "int_const 1153...(70 digits omitted)...5743"
+                            },
+                            "value": "0xfeedfacecafebeeffeedfacecafebeeffeedfacecafebeeffeedfacecafebeef"
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_rational_115307937306215730088059262655190692033592530375966686469642091864005527125743_by_1",
+                              "typeString": "int_const 1153...(70 digits omitted)...5743"
+                            }
+                          ],
+                          "expression": {
+                            "id": 4005,
+                            "name": "Bytes32AddressLib",
+                            "nodeType": "Identifier",
+                            "overloadedDeclarations": [],
+                            "referencedDeclaration": 32848,
+                            "src": "574:17:7",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_type$_t_contract$_Bytes32AddressLib_$32848_$",
+                              "typeString": "type(library Bytes32AddressLib)"
+                            }
+                          },
+                          "id": 4006,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "memberName": "fromLast20Bytes",
+                          "nodeType": "MemberAccess",
+                          "referencedDeclaration": 32831,
+                          "src": "574:33:7",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_function_internal_pure$_t_bytes32_$returns$_t_address_$",
+                            "typeString": "function (bytes32) pure returns (address)"
+                          }
+                        },
+                        "id": 4008,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "functionCall",
+                        "lValueRequested": false,
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "574:101:7",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "hexValue": "307843416665426565664665656466416365434146654245456666454544666143656361664542656546",
+                        "id": 4009,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "number",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "690:42:7",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        "value": "0xCAfeBeefFeedfAceCAFeBEEffEEDfaCecafEBeeF"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      ],
+                      "id": 4004,
+                      "name": "assertEq",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [
+                        320,
+                        345,
+                        375,
+                        400,
+                        459,
+                        484,
+                        514,
+                        539,
+                        1639,
+                        1674
+                      ],
+                      "referencedDeclaration": 320,
+                      "src": "551:8:7",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_address_$returns$__$",
+                        "typeString": "function (address,address)"
+                      }
+                    },
+                    "id": 4010,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "551:192:7",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 4011,
+                  "nodeType": "ExpressionStatement",
+                  "src": "551:192:7"
+                }
+              ]
+            },
+            "functionSelector": "2f20fb34",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "testFromLast20Bytes",
+            "nameLocation": "511:19:7",
+            "parameters": {
+              "id": 4002,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "530:2:7"
+            },
+            "returnParameters": {
+              "id": 4003,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "540:0:7"
+            },
+            "scope": 4014,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 3988,
+              "name": "DSTestPlus",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 29583,
+              "src": "227:10:7"
+            },
+            "id": 3989,
+            "nodeType": "InheritanceSpecifier",
+            "src": "227:10:7"
+          }
+        ],
+        "canonicalName": "Bytes32AddressLibTest",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          4014,
+          29583,
+          1786
+        ],
+        "name": "Bytes32AddressLibTest",
+        "nameLocation": "202:21:7",
+        "scope": 4015,
+        "usedErrors": []
+      }
+    ],
+    "license": "AGPL-3.0-only"
+  },
+  "id": 7
+}

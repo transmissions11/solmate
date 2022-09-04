@@ -1,0 +1,2211 @@
+{
+  "_format": "ethers-rs-sol-cache-3",
+  "paths": {
+    "artifacts": "out",
+    "build_infos": "out/build-info",
+    "sources": "src",
+    "tests": "test",
+    "scripts": "script",
+    "libraries": [
+      "lib"
+    ]
+  },
+  "files": {
+    "lib/ds-test/src/test.sol": {
+      "lastModificationDate": 1662301933884,
+      "contentHash": "a85cb92e605e48103a5375f81c8233f2",
+      "sourceName": "lib/ds-test/src/test.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.5.0",
+      "artifacts": {
+        "DSTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "test.sol\\DSTest.json"
+        }
+      }
+    },
+    "src/auth/Auth.sol": {
+      "lastModificationDate": 1662301920922,
+      "contentHash": "c7cf05d7567c9d1caa223dd51270f1bd",
+      "sourceName": "src/auth/Auth.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "Auth": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Auth.sol\\Auth.json"
+        },
+        "Authority": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Auth.sol\\Authority.json"
+        }
+      }
+    },
+    "src/auth/Owned.sol": {
+      "lastModificationDate": 1662301920923,
+      "contentHash": "2b70f1e59e91eb853020e3db775d2efb",
+      "sourceName": "src/auth/Owned.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "Owned": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Owned.sol\\Owned.json"
+        }
+      }
+    },
+    "src/auth/authorities/MultiRolesAuthority.sol": {
+      "lastModificationDate": 1662301920925,
+      "contentHash": "52cf59458bf70150ee206884777f5527",
+      "sourceName": "src/auth/authorities/MultiRolesAuthority.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\auth\\Auth.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MultiRolesAuthority": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MultiRolesAuthority.sol\\MultiRolesAuthority.json"
+        }
+      }
+    },
+    "src/auth/authorities/RolesAuthority.sol": {
+      "lastModificationDate": 1662301920927,
+      "contentHash": "c796c8f8dc70b33c1b07dce0e1c9eaea",
+      "sourceName": "src/auth/authorities/RolesAuthority.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\auth\\Auth.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "RolesAuthority": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "RolesAuthority.sol\\RolesAuthority.json"
+        }
+      }
+    },
+    "src/mixins/ERC4626.sol": {
+      "lastModificationDate": 1662301920930,
+      "contentHash": "36c71dcf46034ce1df61f6660da16b3e",
+      "sourceName": "src/mixins/ERC4626.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\tokens\\ERC20.sol",
+        "src\\utils\\FixedPointMathLib.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC4626": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC4626.sol\\ERC4626.json"
+        }
+      }
+    },
+    "src/test/Auth.t.sol": {
+      "lastModificationDate": 1662301920932,
+      "contentHash": "33edcaedf04570d45d6383fc3e630dd9",
+      "sourceName": "src/test/Auth.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\auth\\Auth.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockAuthChild.sol",
+        "src\\test\\utils\\mocks\\MockAuthority.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "AuthTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Auth.t.sol\\AuthTest.json"
+        },
+        "OutOfOrderAuthority": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Auth.t.sol\\OutOfOrderAuthority.json"
+        }
+      }
+    },
+    "src/test/Bytes32AddressLib.t.sol": {
+      "lastModificationDate": 1662301920934,
+      "contentHash": "bc86895b07ed1c425b68edaf3fcf0bc6",
+      "sourceName": "src/test/Bytes32AddressLib.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\utils\\Bytes32AddressLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "Bytes32AddressLibTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Bytes32AddressLib.t.sol\\Bytes32AddressLibTest.json"
+        }
+      }
+    },
+    "src/test/CREATE3.t.sol": {
+      "lastModificationDate": 1662301920936,
+      "contentHash": "8264c302b07c1ebf58f6a67d390e8300",
+      "sourceName": "src/test/CREATE3.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\auth\\Auth.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockAuthChild.sol",
+        "src\\test\\utils\\mocks\\MockERC20.sol",
+        "src\\tokens\\ERC20.sol",
+        "src\\tokens\\WETH.sol",
+        "src\\utils\\Bytes32AddressLib.sol",
+        "src\\utils\\CREATE3.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "CREATE3Test": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "CREATE3.t.sol\\CREATE3Test.json"
+        }
+      }
+    },
+    "src/test/DSTestPlus.t.sol": {
+      "lastModificationDate": 1662301920937,
+      "contentHash": "291f452cd4525dbdd3b349419c486f56",
+      "sourceName": "src/test/DSTestPlus.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "DSTestPlusTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "DSTestPlus.t.sol\\DSTestPlusTest.json"
+        }
+      }
+    },
+    "src/test/ERC1155.t.sol": {
+      "lastModificationDate": 1662301920939,
+      "contentHash": "9000856b4ac2b0538aba8328964d3f3d",
+      "sourceName": "src/test/ERC1155.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSInvariantTest.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockERC1155.sol",
+        "src\\tokens\\ERC1155.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "ERC1155Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.t.sol\\ERC1155Recipient.json"
+        },
+        "ERC1155Test": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.t.sol\\ERC1155Test.json"
+        },
+        "NonERC1155Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.t.sol\\NonERC1155Recipient.json"
+        },
+        "RevertingERC1155Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.t.sol\\RevertingERC1155Recipient.json"
+        },
+        "WrongReturnDataERC1155Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.t.sol\\WrongReturnDataERC1155Recipient.json"
+        }
+      }
+    },
+    "src/test/ERC20.t.sol": {
+      "lastModificationDate": 1662301920941,
+      "contentHash": "ee48fe61703a23469c86b63ec6fb180c",
+      "sourceName": "src/test/ERC20.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSInvariantTest.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockERC20.sol",
+        "src\\tokens\\ERC20.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "BalanceSum": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC20.t.sol\\BalanceSum.json"
+        },
+        "ERC20Invariants": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC20.t.sol\\ERC20Invariants.json"
+        },
+        "ERC20Test": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC20.t.sol\\ERC20Test.json"
+        }
+      }
+    },
+    "src/test/ERC4626.t.sol": {
+      "lastModificationDate": 1662301920942,
+      "contentHash": "9f4986456b5fd0cb6692cc0c2c87c541",
+      "sourceName": "src/test/ERC4626.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\mixins\\ERC4626.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockERC20.sol",
+        "src\\test\\utils\\mocks\\MockERC4626.sol",
+        "src\\tokens\\ERC20.sol",
+        "src\\utils\\FixedPointMathLib.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "ERC4626Test": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC4626.t.sol\\ERC4626Test.json"
+        }
+      }
+    },
+    "src/test/ERC721.t.sol": {
+      "lastModificationDate": 1662301920944,
+      "contentHash": "ef5cfd5fe1eeeb6b5fc7e239fef09527",
+      "sourceName": "src/test/ERC721.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSInvariantTest.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockERC721.sol",
+        "src\\tokens\\ERC721.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "ERC721Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.t.sol\\ERC721Recipient.json"
+        },
+        "ERC721Test": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.t.sol\\ERC721Test.json"
+        },
+        "NonERC721Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.t.sol\\NonERC721Recipient.json"
+        },
+        "RevertingERC721Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.t.sol\\RevertingERC721Recipient.json"
+        },
+        "WrongReturnDataERC721Recipient": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.t.sol\\WrongReturnDataERC721Recipient.json"
+        }
+      }
+    },
+    "src/test/FixedPointMathLib.t.sol": {
+      "lastModificationDate": 1662301920945,
+      "contentHash": "9118aed493a96166aa92c7e4b28c3cc0",
+      "sourceName": "src/test/FixedPointMathLib.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\utils\\FixedPointMathLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "FixedPointMathLibTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "FixedPointMathLib.t.sol\\FixedPointMathLibTest.json"
+        }
+      }
+    },
+    "src/test/MultiRolesAuthority.t.sol": {
+      "lastModificationDate": 1662301920957,
+      "contentHash": "647b716a1af9dbf83b7d77021e48ba66",
+      "sourceName": "src/test/MultiRolesAuthority.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\auth\\Auth.sol",
+        "src\\auth\\authorities\\MultiRolesAuthority.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockAuthority.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "MultiRolesAuthorityTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MultiRolesAuthority.t.sol\\MultiRolesAuthorityTest.json"
+        }
+      }
+    },
+    "src/test/Owned.t.sol": {
+      "lastModificationDate": 1662301920959,
+      "contentHash": "b6f6b7f27a679ad690a562852b83ec65",
+      "sourceName": "src/test/Owned.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\auth\\Owned.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockOwned.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "OwnedTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Owned.t.sol\\OwnedTest.json"
+        }
+      }
+    },
+    "src/test/ReentrancyGuard.t.sol": {
+      "lastModificationDate": 1662301920960,
+      "contentHash": "445e6fa92c30c603fab970ba97d9b586",
+      "sourceName": "src/test/ReentrancyGuard.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\utils\\ReentrancyGuard.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "ReentrancyGuardTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReentrancyGuard.t.sol\\ReentrancyGuardTest.json"
+        },
+        "RiskyContract": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReentrancyGuard.t.sol\\RiskyContract.json"
+        }
+      }
+    },
+    "src/test/RolesAuthority.t.sol": {
+      "lastModificationDate": 1662301920962,
+      "contentHash": "7fcd776cf76caaf6281c4db1e7a8d792",
+      "sourceName": "src/test/RolesAuthority.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\auth\\Auth.sol",
+        "src\\auth\\authorities\\RolesAuthority.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockAuthority.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "RolesAuthorityTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "RolesAuthority.t.sol\\RolesAuthorityTest.json"
+        }
+      }
+    },
+    "src/test/SSTORE2.t.sol": {
+      "lastModificationDate": 1662301920963,
+      "contentHash": "7003d596c568f6f8e0d81a4dabe75490",
+      "sourceName": "src/test/SSTORE2.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\utils\\SSTORE2.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "SSTORE2Test": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "SSTORE2.t.sol\\SSTORE2Test.json"
+        }
+      }
+    },
+    "src/test/SafeCastLib.t.sol": {
+      "lastModificationDate": 1662301920965,
+      "contentHash": "03d790cb2820303fcee58301498d4f07",
+      "sourceName": "src/test/SafeCastLib.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\utils\\SafeCastLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "SafeCastLibTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "SafeCastLib.t.sol\\SafeCastLibTest.json"
+        }
+      }
+    },
+    "src/test/SafeTransferLib.t.sol": {
+      "lastModificationDate": 1662301920967,
+      "contentHash": "3d3a38c81407d25dff3e2c4283a3a50c",
+      "sourceName": "src/test/SafeTransferLib.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\test\\utils\\mocks\\MockERC20.sol",
+        "src\\test\\utils\\weird-tokens\\MissingReturnToken.sol",
+        "src\\test\\utils\\weird-tokens\\ReturnsFalseToken.sol",
+        "src\\test\\utils\\weird-tokens\\ReturnsGarbageToken.sol",
+        "src\\test\\utils\\weird-tokens\\ReturnsTooLittleToken.sol",
+        "src\\test\\utils\\weird-tokens\\ReturnsTooMuchToken.sol",
+        "src\\test\\utils\\weird-tokens\\ReturnsTwoToken.sol",
+        "src\\test\\utils\\weird-tokens\\RevertingToken.sol",
+        "src\\tokens\\ERC20.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "SafeTransferLibTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "SafeTransferLib.t.sol\\SafeTransferLibTest.json"
+        }
+      }
+    },
+    "src/test/WETH.t.sol": {
+      "lastModificationDate": 1662301920968,
+      "contentHash": "6afd312807bd248f2f4c1fbfb71ad3e0",
+      "sourceName": "src/test/WETH.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\DSInvariantTest.sol",
+        "src\\test\\utils\\DSTestPlus.sol",
+        "src\\test\\utils\\Hevm.sol",
+        "src\\tokens\\ERC20.sol",
+        "src\\tokens\\WETH.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": "=0.8.15",
+      "artifacts": {
+        "WETHInvariants": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "WETH.t.sol\\WETHInvariants.json"
+        },
+        "WETHTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "WETH.t.sol\\WETHTest.json"
+        },
+        "WETHTester": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "WETH.t.sol\\WETHTester.json"
+        }
+      }
+    },
+    "src/test/utils/DSInvariantTest.sol": {
+      "lastModificationDate": 1662301920969,
+      "contentHash": "53bb546f8ebf4a65d46a4532be99b3bb",
+      "sourceName": "src/test/utils/DSInvariantTest.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "DSInvariantTest": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "DSInvariantTest.sol\\DSInvariantTest.json"
+        }
+      }
+    },
+    "src/test/utils/DSTestPlus.sol": {
+      "lastModificationDate": 1662301920971,
+      "contentHash": "a09f85873b7ab4f691461484e0a1ec5b",
+      "sourceName": "src/test/utils/DSTestPlus.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/ds-test/src\\test.sol",
+        "src\\test\\utils\\Hevm.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "DSTestPlus": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "DSTestPlus.sol\\DSTestPlus.json"
+        }
+      }
+    },
+    "src/test/utils/Hevm.sol": {
+      "lastModificationDate": 1662301920973,
+      "contentHash": "2f7270e636c4cf852302e46ddd4a7480",
+      "sourceName": "src/test/utils/Hevm.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "Hevm": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Hevm.sol\\Hevm.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockAuthChild.sol": {
+      "lastModificationDate": 1662301920975,
+      "contentHash": "5365f4216aa61d85b1f68d95ff089f70",
+      "sourceName": "src/test/utils/mocks/MockAuthChild.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\auth\\Auth.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockAuthChild": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockAuthChild.sol\\MockAuthChild.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockAuthority.sol": {
+      "lastModificationDate": 1662301920976,
+      "contentHash": "87f0cffb0896aff293c535bfdcf6cd6f",
+      "sourceName": "src/test/utils/mocks/MockAuthority.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\auth\\Auth.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockAuthority": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockAuthority.sol\\MockAuthority.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockERC1155.sol": {
+      "lastModificationDate": 1662301920977,
+      "contentHash": "b4ae299337dd4c78dfe6b28f0fdf0a28",
+      "sourceName": "src/test/utils/mocks/MockERC1155.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\tokens\\ERC1155.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockERC1155": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockERC1155.sol\\MockERC1155.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockERC20.sol": {
+      "lastModificationDate": 1662301904782,
+      "contentHash": "a43ff973f6fc1afad3fb92e761b233fc",
+      "sourceName": "src/test/utils/mocks/MockERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\tokens\\ERC20.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockERC20": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockERC20.sol\\MockERC20.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockERC4626.sol": {
+      "lastModificationDate": 1662301920978,
+      "contentHash": "6c425517666f7027b95c4cfe8a8abe62",
+      "sourceName": "src/test/utils/mocks/MockERC4626.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\mixins\\ERC4626.sol",
+        "src\\tokens\\ERC20.sol",
+        "src\\utils\\FixedPointMathLib.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockERC4626": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockERC4626.sol\\MockERC4626.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockERC721.sol": {
+      "lastModificationDate": 1662301920980,
+      "contentHash": "9f20e24b804c27953be7ea67488753b2",
+      "sourceName": "src/test/utils/mocks/MockERC721.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\tokens\\ERC721.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockERC721": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockERC721.sol\\MockERC721.json"
+        }
+      }
+    },
+    "src/test/utils/mocks/MockOwned.sol": {
+      "lastModificationDate": 1662301920981,
+      "contentHash": "e75fc7aebf3389b724e29232f7246bbf",
+      "sourceName": "src/test/utils/mocks/MockOwned.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\auth\\Owned.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MockOwned": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MockOwned.sol\\MockOwned.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/MissingReturnToken.sol": {
+      "lastModificationDate": 1662301920983,
+      "contentHash": "50c03f5936afa6482f86b54b83b8ec49",
+      "sourceName": "src/test/utils/weird-tokens/MissingReturnToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "MissingReturnToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "MissingReturnToken.sol\\MissingReturnToken.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/ReturnsFalseToken.sol": {
+      "lastModificationDate": 1662301920984,
+      "contentHash": "fdd61fbfd6e549153889b6ca21214b64",
+      "sourceName": "src/test/utils/weird-tokens/ReturnsFalseToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ReturnsFalseToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReturnsFalseToken.sol\\ReturnsFalseToken.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/ReturnsGarbageToken.sol": {
+      "lastModificationDate": 1662301920986,
+      "contentHash": "b13e6f1b382ce954328cfe28450488f0",
+      "sourceName": "src/test/utils/weird-tokens/ReturnsGarbageToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ReturnsGarbageToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReturnsGarbageToken.sol\\ReturnsGarbageToken.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/ReturnsTooLittleToken.sol": {
+      "lastModificationDate": 1662301920988,
+      "contentHash": "1717150c260c42b5b09eaccedecf1f2f",
+      "sourceName": "src/test/utils/weird-tokens/ReturnsTooLittleToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ReturnsTooLittleToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReturnsTooLittleToken.sol\\ReturnsTooLittleToken.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/ReturnsTooMuchToken.sol": {
+      "lastModificationDate": 1662301920989,
+      "contentHash": "f4e74d0862dc1b371c370341fad628be",
+      "sourceName": "src/test/utils/weird-tokens/ReturnsTooMuchToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ReturnsTooMuchToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReturnsTooMuchToken.sol\\ReturnsTooMuchToken.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/ReturnsTwoToken.sol": {
+      "lastModificationDate": 1662301920990,
+      "contentHash": "f7d24660bc84ed4264c27b07345eec2f",
+      "sourceName": "src/test/utils/weird-tokens/ReturnsTwoToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ReturnsTwoToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReturnsTwoToken.sol\\ReturnsTwoToken.json"
+        }
+      }
+    },
+    "src/test/utils/weird-tokens/RevertingToken.sol": {
+      "lastModificationDate": 1662301920991,
+      "contentHash": "7a72bb731cd36176cc52864e83d698c6",
+      "sourceName": "src/test/utils/weird-tokens/RevertingToken.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "RevertingToken": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "RevertingToken.sol\\RevertingToken.json"
+        }
+      }
+    },
+    "src/tokens/ERC1155.sol": {
+      "lastModificationDate": 1662301920993,
+      "contentHash": "8b254ebdc3cfc14c62f155e6fdc40fa3",
+      "sourceName": "src/tokens/ERC1155.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC1155": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.sol\\ERC1155.json"
+        },
+        "ERC1155TokenReceiver": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC1155.sol\\ERC1155TokenReceiver.json"
+        }
+      }
+    },
+    "src/tokens/ERC20.sol": {
+      "lastModificationDate": 1662301920995,
+      "contentHash": "0214f143584e3f454e7dab570204e785",
+      "sourceName": "src/tokens/ERC20.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC20": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC20.sol\\ERC20.json"
+        }
+      }
+    },
+    "src/tokens/ERC721.sol": {
+      "lastModificationDate": 1662301920996,
+      "contentHash": "f32c927712356f85fe357b8a37a3ab9f",
+      "sourceName": "src/tokens/ERC721.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ERC721": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.sol\\ERC721.json"
+        },
+        "ERC721TokenReceiver": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ERC721.sol\\ERC721TokenReceiver.json"
+        }
+      }
+    },
+    "src/tokens/WETH.sol": {
+      "lastModificationDate": 1662301920998,
+      "contentHash": "16b80183733b3d223f770bbb4f5b9329",
+      "sourceName": "src/tokens/WETH.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\tokens\\ERC20.sol",
+        "src\\utils\\SafeTransferLib.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "WETH": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "WETH.sol\\WETH.json"
+        }
+      }
+    },
+    "src/utils/Bytes32AddressLib.sol": {
+      "lastModificationDate": 1662301921000,
+      "contentHash": "b038f7d7c67491060e31feb0b9d38f5e",
+      "sourceName": "src/utils/Bytes32AddressLib.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "Bytes32AddressLib": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "Bytes32AddressLib.sol\\Bytes32AddressLib.json"
+        }
+      }
+    },
+    "src/utils/CREATE3.sol": {
+      "lastModificationDate": 1662301921001,
+      "contentHash": "b6ce9ec05adfdaea625602f410fbeb94",
+      "sourceName": "src/utils/CREATE3.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\utils\\Bytes32AddressLib.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "CREATE3": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "CREATE3.sol\\CREATE3.json"
+        }
+      }
+    },
+    "src/utils/FixedPointMathLib.sol": {
+      "lastModificationDate": 1662301921003,
+      "contentHash": "47dd879b9ec37b2ebcf42da9292e62d0",
+      "sourceName": "src/utils/FixedPointMathLib.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "FixedPointMathLib": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "FixedPointMathLib.sol\\FixedPointMathLib.json"
+        }
+      }
+    },
+    "src/utils/ReentrancyGuard.sol": {
+      "lastModificationDate": 1662301921004,
+      "contentHash": "134d8b35719eeed6a23e6a6b8869f7cc",
+      "sourceName": "src/utils/ReentrancyGuard.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "ReentrancyGuard": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "ReentrancyGuard.sol\\ReentrancyGuard.json"
+        }
+      }
+    },
+    "src/utils/SSTORE2.sol": {
+      "lastModificationDate": 1662301921006,
+      "contentHash": "f8ab34fb6282fe71a289d589adb7ec7e",
+      "sourceName": "src/utils/SSTORE2.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "SSTORE2": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "SSTORE2.sol\\SSTORE2.json"
+        }
+      }
+    },
+    "src/utils/SafeCastLib.sol": {
+      "lastModificationDate": 1662301921007,
+      "contentHash": "8e2999718ebcb7e05f7a9f681840cb0c",
+      "sourceName": "src/utils/SafeCastLib.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "SafeCastLib": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "SafeCastLib.sol\\SafeCastLib.json"
+        }
+      }
+    },
+    "src/utils/SafeTransferLib.sol": {
+      "lastModificationDate": 1662301921010,
+      "contentHash": "34052026b9db3b0c73ba2e3fb84249c2",
+      "sourceName": "src/utils/SafeTransferLib.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 1000000
+          },
+          "metadata": {
+            "bytecodeHash": "none"
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "src\\tokens\\ERC20.sol"
+      ],
+      "versionRequirement": ">=0.8.0",
+      "artifacts": {
+        "SafeTransferLib": {
+          "0.8.15+commit.e14f2714.Windows.msvc": "SafeTransferLib.sol\\SafeTransferLib.json"
+        }
+      }
+    }
+  }
+}
