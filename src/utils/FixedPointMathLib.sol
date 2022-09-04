@@ -363,4 +363,26 @@ library FixedPointMathLib {
             r := or(r, lt(0x1, shr(r, x)))
         }
     }
+
+    function unsafeMod(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            // z will equal 0 if y is 0, unlike in Solidity where it will revert.
+            z := mod(x, y)
+        }
+    }
+
+    function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            // z will equal 0 if y is 0, unlike in Solidity where it will revert.
+            z := div(x, y)
+        }
+    }
+
+    /// @dev Will return 0 instead of reverting if y is zero.
+    function unsafeDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            // Add 1 to x * y if x % y > 0.
+            z := add(gt(mod(x, y), 0), div(x, y))
+        }
+    }
 }
