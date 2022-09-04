@@ -40,7 +40,7 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo64(2.5e18), 2.5e18);
         assertEq(SafeCastLib.safeCastTo64(2.5e17), 2.5e17);
     }
-    
+
     function testSafeCastTo40() public {
         assertEq(SafeCastLib.safeCastTo40(2.5e11), 2.5e11);
         assertEq(SafeCastLib.safeCastTo40(2.5e10), 2.5e10);
@@ -207,7 +207,7 @@ contract SafeCastLibTest is DSTestPlus {
 
         SafeCastLib.safeCastTo64(x);
     }
-    
+
     function testFailSafeCastTo40(uint256 x) public {
         x = bound(x, type(uint40).max + 1, type(uint256).max);
 
