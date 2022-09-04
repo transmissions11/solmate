@@ -207,6 +207,12 @@ contract SafeCastLibTest is DSTestPlus {
 
         SafeCastLib.safeCastTo64(x);
     }
+    
+    function testFailSafeCastTo40(uint256 x) public {
+        x = bound(x, type(uint40).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo40(x);
+    }
 
     function testFailSafeCastTo32(uint256 x) public {
         x = bound(x, type(uint32).max + 1, type(uint256).max);
