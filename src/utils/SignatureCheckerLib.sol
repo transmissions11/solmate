@@ -5,8 +5,8 @@ import "./ECDSA.sol";
 
 /// @notice Signature verification helper that supports both ECDSA signatures from EOAs
 /// and ERC1271 signatures from smart contract wallets like Argent and Gnosis safe.
-/// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/Sort.sol)
-/// @author Modified from Solady (https://github.com/vectorized/solady/blob/main/src/utils/Sort.sol)
+/// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/SignatureCheckerLib.sol)
+/// @author Modified from Solady (https://github.com/vectorized/solady/blob/main/src/utils/SignatureCheckerLib.sol)
 library SignatureCheckerLib {
     function isValidSignatureNow(
         address signer,
