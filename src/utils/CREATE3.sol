@@ -5,9 +5,17 @@ pragma solidity ^0.8.4;
 /// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/CREATE3.sol)
 /// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/CREATE3.sol)
 library CREATE3 {
+    /*//////////////////////////////////////////////////////////////
+                              CUSTOM ERRORS                       
+    //////////////////////////////////////////////////////////////*/
+    
     error DeploymentFailed();
 
     error InitializationFailed();
+    
+    /*//////////////////////////////////////////////////////////////
+                            BYTECODE CONSTANTS                    
+    //////////////////////////////////////////////////////////////*/
 
     /**
      * -------------------------------------------------------------------+
@@ -36,6 +44,10 @@ library CREATE3 {
     uint256 private constant _PROXY_BYTECODE = 0x67363d3d37363d34f03d5260086018f3;
 
     bytes32 private constant _PROXY_BYTECODE_HASH = 0x21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f;
+    
+    /*//////////////////////////////////////////////////////////////
+                            CREATE3 OPERATIONS                    
+    //////////////////////////////////////////////////////////////*/
 
     function deploy(
         bytes32 salt,
