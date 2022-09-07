@@ -1,14 +1,15 @@
-// SPDX-License-Identifier: AGPL-3.0-only
-pragma solidity >=0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
 
 /// @notice Gas optimized reentrancy protection for smart contracts.
-/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/ReentrancyGuard.sol)
-/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/security/ReentrancyGuard.sol)
+/// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/ReentrancyGuard.sol)
 abstract contract ReentrancyGuard {
+    error Reentrancy();
+    
     uint256 private locked = 1;
 
     modifier nonReentrant() virtual {
-        require(locked == 1, "REENTRANCY");
+        if (locked == 2) revert Reentrancy(); 
 
         locked = 2;
 
