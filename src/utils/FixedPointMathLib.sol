@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 /// @notice Arithmetic library with operations for fixed-point numbers.
+/// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/FixedPointMathLib.sol)
 /// @author Modified from Solady (https://github.com/vectorized/solady/blob/main/src/utils/FixedPointMathLib.sol)
 library FixedPointMathLib {
     /*//////////////////////////////////////////////////////////////
