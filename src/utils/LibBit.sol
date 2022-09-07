@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 /// @notice Library for bit twiddling operations.
+/// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/LibBit.sol)
 /// @author Modified from Solady (https://github.com/vectorized/solady/blob/main/src/utils/LibBit.sol)
 library LibBit {
     /// @dev Returns the index of the most significant bit of `x`.
