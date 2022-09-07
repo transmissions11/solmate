@@ -2,6 +2,7 @@
 pragma solidity ^0.8.4;
 
 /// @notice Deploy to deterministic addresses without an initcode factor.
+/// @author SolDAO (https://github.com/Sol-DAO/solmate/blob/main/src/utils/CREATE3.sol)
 /// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/CREATE3.sol)
 library CREATE3 {
     error DeploymentFailed();
