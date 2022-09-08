@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 /// @notice Efficient library for creating string representations of integers.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/LibString.sol)
+/// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/LibString.sol)
 library LibString {
     function toString(uint256 value) internal pure returns (string memory str) {
         assembly {
