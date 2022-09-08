@@ -3,6 +3,7 @@ pragma solidity >=0.8.0;
 
 /// @notice Gas optimized merkle proof verification library.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/MerkleProofLib.sol)
+/// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/MerkleProofLib.sol)
 library MerkleProofLib {
     function verify(
         bytes32[] calldata proof,
