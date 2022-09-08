@@ -220,6 +220,14 @@ library FixedPointMathLib {
         }
     }
 
+    function unsafeMod(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            // Mod x by y. Note this will return
+            // 0 instead of reverting if y is zero.
+            z := mod(x, y)
+        }
+    }
+
     function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 r) {
         assembly {
             // Divide x by y. Note this will return
