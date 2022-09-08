@@ -43,7 +43,7 @@ library LibERB {
         uint16 availableSlots
     ) internal returns (uint16 newTotalAvailableSlots) {
         // This will overflow if we're trying to grow by too much.
-        availableSlots = availableSlots + growBy;
+        newTotalAvailableSlots = availableSlots + growBy;
 
         unchecked {
             for (uint256 i = availableSlots; i < newTotalAvailableSlots; i++)
@@ -61,11 +61,15 @@ library LibERB {
         uint16 availableSlots // Note: This MUST be at least 1.
     ) internal returns (uint32 newTotalUpdates, uint16 newPopulatedSlots) {
         unchecked {
-            newPopulatedSlots = populatedSlots == 0 || totalUpdates % populatedSlots == (populatedSlots - 1)
-                ? availableSlots
+            // TODO: hmm ok we also need to make sure we dont exceed available slots
+            // TODO: wait why do we even need to do this???
+            // TODO: also wait confused about the root cause, why does poulpated slots matter again
+            newPopulatedSlots = populatedSlots == 0 ||
+                (totalUpdates % populatedSlots == (populatedSlots - 1) && populatedSlots < availableSlots)
+                ? populatedSlots + 1
                 : populatedSlots;
 
-            newTotalUpdates = totalUpdates + 1; // This will overflow if we reach type(uint32).max updates.
+            newTotalUpdates = totalUpdates + 1; // This will silently overflow if we reach type(uint32).max updates.
 
             self[totalUpdates % newPopulatedSlots] = ERBValue({value: value, updateNumber: newTotalUpdates});
         }
