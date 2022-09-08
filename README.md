@@ -21,7 +21,10 @@ tokens
 utils
 ├─ SSTORE2 — "Library for cheaper reads and writes to persistent storage"
 ├─ CREATE3 — "Deploy to deterministic addresses without an initcode factor"
+├─ LibString — "Library for creating string representations of uint values"
 ├─ SafeCastLib — "Safe unsigned integer casting lib that reverts on overflow"
+├─ SignedWadMath — "Signed integer 18 decimal fixed point arithmetic library"
+├─ MerkleProofLib — "Efficient merkle tree inclusion proof verification library"
 ├─ ReentrancyGuard — "Gas optimized reentrancy protection for smart contracts"
 ├─ FixedPointMathLib — "Arithmetic library with operations for fixed-point numbers"
 ├─ Bytes32AddressLib — "Library for converting between addresses and bytes32 values"

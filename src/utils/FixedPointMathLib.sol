@@ -219,4 +219,20 @@ library FixedPointMathLib {
             }
         }
     }
+
+    function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 r) {
+        assembly {
+            // Divide x by y. Note this will return
+            // 0 instead of reverting if y is zero.
+            r := div(x, y)
+        }
+    }
+
+    function unsafeDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        assembly {
+            // Add 1 to x * y if x % y > 0. Note this will
+            // return 0 instead of reverting if y is zero.
+            z := add(gt(mod(x, y), 0), div(x, y))
+        }
+    }
 }
