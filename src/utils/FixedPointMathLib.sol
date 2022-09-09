@@ -325,22 +325,12 @@ library FixedPointMathLib {
 
             // We check y >= 2^(k + 8) but shift right by k bits
             // each branch to ensure that if x >= 256, then y >= 256.
-            if iszero(lt(y, 0x10000000000000000000000000000000000)) {
-                y := shr(128, y)
-                z := shl(64, z)
-            }
-            if iszero(lt(y, 0x1000000000000000000)) {
-                y := shr(64, y)
-                z := shl(32, z)
-            }
-            if iszero(lt(y, 0x10000000000)) {
-                y := shr(32, y)
-                z := shl(16, z)
-            }
-            if iszero(lt(y, 0x1000000)) {
-                y := shr(16, y)
-                z := shl(8, z)
-            }
+            let r := shl(7, gt(y, 0xffffffffffffffffffffffffffffffffff))
+            r := or(r, shl(6, gt(shr(r, y), 0xffffffffffffffffff)))
+            r := or(r, shl(5, gt(shr(r, y), 0xffffffffff)))
+            r := or(r, shl(4, gt(shr(r, y), 0xffffff)))
+            y := shr(r, y)
+            z := shl(shr(1, r), z)
 
             // Goal was to get z*z*y within a small factor of x. More iterations could
             // get y in a tighter range. Currently, we will have y in [256, 256*2^16).
