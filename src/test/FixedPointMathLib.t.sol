@@ -121,6 +121,11 @@ contract FixedPointMathLibTest is DSTestPlus {
         assertEq(FixedPointMathLib.sqrt(2704), 52);
         assertEq(FixedPointMathLib.sqrt(110889), 333);
         assertEq(FixedPointMathLib.sqrt(32239684), 5678);
+        assertEq(FixedPointMathLib.sqrt(type(uint256).max), 340282366920938463463374607431768211455);
+    }
+
+    function testSqrtBackHashedSingle() public {
+        testSqrtBackHashed(123);
     }
 
     function testMulWadDown(uint256 x, uint256 y) public {
@@ -263,6 +268,11 @@ contract FixedPointMathLibTest is DSTestPlus {
         FixedPointMathLib.mulDivUp(x, y, 0);
     }
 
+    function testDifferentiallyFuzzSqrt(uint256 x) public {
+        assertEq(FixedPointMathLib.sqrt(x), uniswapSqrt(x));
+        assertEq(FixedPointMathLib.sqrt(x), abdkSqrt(x));
+    }
+
     function testSqrt(uint256 x) public {
         uint256 root = FixedPointMathLib.sqrt(x);
         uint256 next = root + 1;
@@ -273,5 +283,78 @@ contract FixedPointMathLibTest is DSTestPlus {
         }
 
         assertTrue(root * root <= x && next * next > x);
+    }
+
+    function testSqrtBack(uint256 x) public {
+        unchecked {
+            x >>= 128;
+            while (x != 0) {
+                assertEq(FixedPointMathLib.sqrt(x * x), x);
+                x >>= 1;
+            }
+        }
+    }
+
+    function testSqrtBackHashed(uint256 x) public {
+        testSqrtBack(uint256(keccak256(abi.encode(x))));
+    }
+
+    function uniswapSqrt(uint256 y) internal pure returns (uint256 z) {
+        if (y > 3) {
+            z = y;
+            uint256 x = y / 2 + 1;
+            while (x < z) {
+                z = x;
+                x = (y / x + x) / 2;
+            }
+        } else if (y != 0) {
+            z = 1;
+        }
+    }
+
+    function abdkSqrt(uint256 x) private pure returns (uint256) {
+        unchecked {
+            if (x == 0) return 0;
+            else {
+                uint256 xx = x;
+                uint256 r = 1;
+                if (xx >= 0x100000000000000000000000000000000) {
+                    xx >>= 128;
+                    r <<= 64;
+                }
+                if (xx >= 0x10000000000000000) {
+                    xx >>= 64;
+                    r <<= 32;
+                }
+                if (xx >= 0x100000000) {
+                    xx >>= 32;
+                    r <<= 16;
+                }
+                if (xx >= 0x10000) {
+                    xx >>= 16;
+                    r <<= 8;
+                }
+                if (xx >= 0x100) {
+                    xx >>= 8;
+                    r <<= 4;
+                }
+                if (xx >= 0x10) {
+                    xx >>= 4;
+                    r <<= 2;
+                }
+                if (xx >= 0x8) {
+                    r <<= 1;
+                }
+                r = (r + x / r) >> 1;
+                r = (r + x / r) >> 1;
+                r = (r + x / r) >> 1;
+                r = (r + x / r) >> 1;
+                r = (r + x / r) >> 1;
+                r = (r + x / r) >> 1;
+                r = (r + x / r) >> 1; // Seven iterations should be enough
+                uint256 r1 = x / r;
+                return r < r1 ? r : r1;
+            }
+        }
     }
 }
