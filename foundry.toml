@@ -3,5 +3,5 @@ solc = "0.8.15"
 bytecode_hash = "none"
 optimizer_runs = 1000000
 
-[profile.intense]
+[profile.intense.fuzz]
 fuzz_runs = 10000
