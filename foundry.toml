@@ -4,4 +4,4 @@ bytecode_hash = "none"
 optimizer_runs = 1000000
 
 [profile.intense.fuzz]
-fuzz_runs = 100000
+runs = 100000
