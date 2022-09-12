@@ -172,13 +172,14 @@ library FixedPointMathLib {
             // This segment is to get a reasonable initial estimate for the Babylonian method. With a bad
             // start, the correct # of bits increases ~linearly each iteration instead of ~quadratically.
 
-            // Let y = x / 2**r, where r = lg2(x/65536).
-            // We check y >= 2^(k + 8) but shift right by k bits
-            // each branch to ensure that if x >= 256, then y >= 256.
+            // Compute r = log2(x / 2**16) & 0b11110000, where y = x / 2**r.
+            // We only need the upper 4 bits of the log2.
             let r := shl(7, gt(x, 0xffffffffffffffffffffffffffffffffff))
             r := or(r, shl(6, gt(shr(r, x), 0xffffffffffffffffff)))
             r := or(r, shl(5, gt(shr(r, x), 0xffffffffff)))
             r := or(r, shl(4, gt(shr(r, x), 0xffffff)))
+            // Compute a good start for z.
+            // Shifting 181 left by r / 2 makes z approximately sqrt(x).
             z := shl(shr(1, r), z)
 
             // Goal was to get z*z*y within a small factor of x. More iterations could
