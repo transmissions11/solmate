@@ -197,7 +197,7 @@ library FixedPointMathLib {
             // Since y is in [256, 256*2^16), let a = y/65536, so that a is in [1/256, 256). Then we can estimate
             // sqrt(y) using sqrt(65536) * 181/1024 * (a + 1) = 181/4 * (y + 65536)/65536 = 181 * (y + 65536)/2^18.
 
-            // There is no overflow risk here since y < 2^136 after the first branch above.
+            // There is no overflow risk here since y < 2^136 after the approximate log2 computation above.
             z := shr(18, mul(z, add(shr(r, x), 65536))) // A mul() is saved from starting z at 181.
 
             // Given the worst case multiplicative error of 2.84 above, 7 iterations should be enough.
