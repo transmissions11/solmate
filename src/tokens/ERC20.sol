@@ -42,6 +42,15 @@ abstract contract ERC20 {
 
     bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
 
+    // keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)")
+    bytes32 public constant EIP712_DOMAIN_TYPEHASH = 0x8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b39400f;
+
+    // keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)")
+    bytes32 public constant PERMIT_TYPEHASH = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
+
+    // Version 1 of the code: keccak256("1")
+    bytes32 public constant VERSION_TYPEHASH = 0xc89efdaa54c0f20c7adf612882df0950f5a951637e0307cdcb4c672f298b8bc6;
+
     mapping(address => uint256) public nonces;
 
     /*//////////////////////////////////////////////////////////////
@@ -132,18 +141,7 @@ abstract contract ERC20 {
                     abi.encodePacked(
                         "\x19\x01",
                         DOMAIN_SEPARATOR(),
-                        keccak256(
-                            abi.encode(
-                                keccak256(
-                                    "Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)"
-                                ),
-                                owner,
-                                spender,
-                                value,
-                                nonces[owner]++,
-                                deadline
-                            )
-                        )
+                        keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, nonces[owner]++, deadline))
                     )
                 ),
                 v,
@@ -167,9 +165,9 @@ abstract contract ERC20 {
         return
             keccak256(
                 abi.encode(
-                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                    EIP712_DOMAIN_TYPEHASH,
                     keccak256(bytes(name)),
-                    keccak256("1"),
+                    VERSION_TYPEHASH,
                     block.chainid,
                     address(this)
                 )
