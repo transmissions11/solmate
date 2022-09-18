@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-/// @notice Efficient library for encoding/decoding strings shorter than 31 bytes as one word.
-/// @notice Solidity has built-in functionality for storing strings shorter than 31 bytes in
+/// @notice Efficient library for encoding/decoding strings shorter than 32 bytes as one word.
+/// @notice Solidity has built-in functionality for storing strings shorter than 32 bytes in
 /// a single word, but it must determine at runtime whether to treat each string as one word
 /// or several. This introduces a significant amount of bytecode and runtime complexity to
 /// any contract storing strings.
@@ -25,9 +25,9 @@ library PackedStringLib {
         assembly {
             // -------------------------------------------------------------------------//
             // Layout in memory of input string (less than 32 bytes)                    //
-            // Note that "offset" is relative to the pointer, not an absolute position  //
+            // Note that "position" is relative to the pointer, not absolute            //
             // -------------------------------------------------------------------------//
-            // Offset   | Value             | Description                               //
+            // Bytes   | Value             | Description                                //
             // -------------------------------------------------------------------------//
             // 0:31     | 0                 | Empty left-padding for string length      //
             //          |                   | Not included in output                    //
