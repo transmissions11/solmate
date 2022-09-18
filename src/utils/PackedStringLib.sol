@@ -10,7 +10,7 @@ pragma solidity >=0.8.0;
 /// telling the compiler to always treat strings as such can greatly reduce extraneous runtime
 /// code that would have never been executed.
 /// @notice https://docs.soliditylang.org/en/v0.8.17/types.html#bytes-and-string-as-arrays
-/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/StringPacker.sol)
+/// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/PackedStringLib.sol)
 library PackedStringLib {
     error UnpackableString();
 
