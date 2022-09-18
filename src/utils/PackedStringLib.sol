@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
 /// @notice Efficient library for encoding/decoding strings shorter than 32 bytes as one word.
