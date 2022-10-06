@@ -153,7 +153,7 @@ abstract contract ERC1155 {
         address to,
         uint256 id,
         uint256 amount,
-        bytes memory data
+        bytes calldata data
     ) internal virtual {
         balanceOf[to][id] += amount;
 
@@ -170,15 +170,13 @@ abstract contract ERC1155 {
 
     function _batchMint(
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
+        uint256[] calldata ids,
+        uint256[] calldata amounts,
+        bytes calldata data
     ) internal virtual {
-        uint256 idsLength = ids.length; // Saves MLOADs.
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
-        require(idsLength == amounts.length, "LENGTH_MISMATCH");
-
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i = 0; i < ids.length; ) {
             balanceOf[to][ids[i]] += amounts[i];
 
             // An array can't have a total length
@@ -201,14 +199,12 @@ abstract contract ERC1155 {
 
     function _batchBurn(
         address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
+        uint256[] calldata ids,
+        uint256[] calldata amounts
     ) internal virtual {
-        uint256 idsLength = ids.length; // Saves MLOADs.
+        require(ids.length == amounts.length, "LENGTH_MISMATCH");
 
-        require(idsLength == amounts.length, "LENGTH_MISMATCH");
-
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i = 0; i < ids.length; ) {
             balanceOf[from][ids[i]] -= amounts[i];
 
             // An array can't have a total length
