@@ -24,7 +24,7 @@ contract OwnedTest is DSTestPlus {
     }
 
     function testSetOwner(address newOwner) public {
-        mockOwned.setOwner(newOwner);
+        mockOwned.transferOwnership(newOwner);
 
         assertEq(mockOwned.owner(), newOwner);
     }
@@ -32,7 +32,7 @@ contract OwnedTest is DSTestPlus {
     function testCallFunctionAsNonOwner(address owner) public {
         hevm.assume(owner != address(this));
 
-        mockOwned.setOwner(owner);
+        mockOwned.transferOwnership(owner);
 
         hevm.expectRevert("UNAUTHORIZED");
         mockOwned.updateFlag();

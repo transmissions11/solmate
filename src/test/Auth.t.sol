@@ -25,7 +25,7 @@ contract AuthTest is DSTestPlus {
     }
 
     function testSetOwnerAsOwner() public {
-        mockAuthChild.setOwner(address(0xBEEF));
+        mockAuthChild.transferOwnership(address(0xBEEF));
         assertEq(mockAuthChild.owner(), address(0xBEEF));
     }
 
@@ -40,19 +40,19 @@ contract AuthTest is DSTestPlus {
 
     function testSetOwnerWithPermissiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(true));
-        mockAuthChild.setOwner(address(0));
-        mockAuthChild.setOwner(address(this));
+        mockAuthChild.transferOwnership(address(0));
+        mockAuthChild.transferOwnership(address(this));
     }
 
     function testSetAuthorityWithPermissiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(true));
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
     function testCallFunctionWithPermissiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(true));
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
         mockAuthChild.updateFlag();
     }
 
@@ -62,41 +62,41 @@ contract AuthTest is DSTestPlus {
     }
 
     function testFailSetOwnerAsNonOwner() public {
-        mockAuthChild.setOwner(address(0));
-        mockAuthChild.setOwner(address(0xBEEF));
+        mockAuthChild.transferOwnership(address(0));
+        mockAuthChild.transferOwnership(address(0xBEEF));
     }
 
     function testFailSetAuthorityAsNonOwner() public {
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
     function testFailCallFunctionAsNonOwner() public {
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
         mockAuthChild.updateFlag();
     }
 
     function testFailSetOwnerWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
-        mockAuthChild.setOwner(address(0));
-        mockAuthChild.setOwner(address(this));
+        mockAuthChild.transferOwnership(address(0));
+        mockAuthChild.transferOwnership(address(this));
     }
 
     function testFailSetAuthorityWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
         mockAuthChild.setAuthority(Authority(address(0xBEEF)));
     }
 
     function testFailCallFunctionWithRestrictiveAuthority() public {
         mockAuthChild.setAuthority(new MockAuthority(false));
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
         mockAuthChild.updateFlag();
     }
 
     function testFailSetOwnerAsOwnerWithOutOfOrderAuthority() public {
         mockAuthChild.setAuthority(new OutOfOrderAuthority());
-        mockAuthChild.setOwner(address(0));
+        mockAuthChild.transferOwnership(address(0));
     }
 
     function testFailCallFunctionAsOwnerWithOutOfOrderAuthority() public {
@@ -105,7 +105,7 @@ contract AuthTest is DSTestPlus {
     }
 
     function testSetOwnerAsOwner(address newOwner) public {
-        mockAuthChild.setOwner(newOwner);
+        mockAuthChild.transferOwnership(newOwner);
         assertEq(mockAuthChild.owner(), newOwner);
     }
 
@@ -118,15 +118,15 @@ contract AuthTest is DSTestPlus {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(true));
-        mockAuthChild.setOwner(deadOwner);
-        mockAuthChild.setOwner(newOwner);
+        mockAuthChild.transferOwnership(deadOwner);
+        mockAuthChild.transferOwnership(newOwner);
     }
 
     function testSetAuthorityWithPermissiveAuthority(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(true));
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
         mockAuthChild.setAuthority(newAuthority);
     }
 
@@ -134,28 +134,28 @@ contract AuthTest is DSTestPlus {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(true));
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
         mockAuthChild.updateFlag();
     }
 
     function testFailSetOwnerAsNonOwner(address deadOwner, address newOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setOwner(deadOwner);
-        mockAuthChild.setOwner(newOwner);
+        mockAuthChild.transferOwnership(deadOwner);
+        mockAuthChild.transferOwnership(newOwner);
     }
 
     function testFailSetAuthorityAsNonOwner(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
         mockAuthChild.setAuthority(newAuthority);
     }
 
     function testFailCallFunctionAsNonOwner(address deadOwner) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
         mockAuthChild.updateFlag();
     }
 
@@ -163,15 +163,15 @@ contract AuthTest is DSTestPlus {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(false));
-        mockAuthChild.setOwner(deadOwner);
-        mockAuthChild.setOwner(newOwner);
+        mockAuthChild.transferOwnership(deadOwner);
+        mockAuthChild.transferOwnership(newOwner);
     }
 
     function testFailSetAuthorityWithRestrictiveAuthority(address deadOwner, Authority newAuthority) public {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(false));
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
         mockAuthChild.setAuthority(newAuthority);
     }
 
@@ -179,7 +179,7 @@ contract AuthTest is DSTestPlus {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new MockAuthority(false));
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
         mockAuthChild.updateFlag();
     }
 
@@ -187,6 +187,6 @@ contract AuthTest is DSTestPlus {
         if (deadOwner == address(this)) deadOwner = address(0);
 
         mockAuthChild.setAuthority(new OutOfOrderAuthority());
-        mockAuthChild.setOwner(deadOwner);
+        mockAuthChild.transferOwnership(deadOwner);
     }
 }
