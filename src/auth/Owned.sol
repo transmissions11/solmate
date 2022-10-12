@@ -8,7 +8,7 @@ abstract contract Owned {
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event OwnerUpdated(address indexed user, address indexed newOwner);
+    event OwnershipTransferred(address indexed user, address indexed newOwner);
 
     /*//////////////////////////////////////////////////////////////
                             OWNERSHIP STORAGE
@@ -29,16 +29,16 @@ abstract contract Owned {
     constructor(address _owner) {
         owner = _owner;
 
-        emit OwnerUpdated(address(0), _owner);
+        emit OwnershipTransferred(address(0), _owner);
     }
 
     /*//////////////////////////////////////////////////////////////
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    function setOwner(address newOwner) public virtual onlyOwner {
+    function transferOwnership(address newOwner) public virtual onlyOwner {
         owner = newOwner;
 
-        emit OwnerUpdated(msg.sender, newOwner);
+        emit OwnershipTransferred(msg.sender, newOwner);
     }
 }
