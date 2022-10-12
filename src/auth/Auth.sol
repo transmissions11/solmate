@@ -5,7 +5,7 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/auth/Auth.sol)
 /// @author Modified from Dappsys (https://github.com/dapphub/ds-auth/blob/master/src/auth.sol)
 abstract contract Auth {
-    event OwnerUpdated(address indexed user, address indexed newOwner);
+    event OwnershipTransferred(address indexed user, address indexed newOwner);
 
     event AuthorityUpdated(address indexed user, Authority indexed newAuthority);
 
@@ -17,7 +17,7 @@ abstract contract Auth {
         owner = _owner;
         authority = _authority;
 
-        emit OwnerUpdated(msg.sender, _owner);
+        emit OwnershipTransferred(msg.sender, _owner);
         emit AuthorityUpdated(msg.sender, _authority);
     }
 
@@ -45,10 +45,10 @@ abstract contract Auth {
         emit AuthorityUpdated(msg.sender, newAuthority);
     }
 
-    function setOwner(address newOwner) public virtual requiresAuth {
+    function transferOwnership(address newOwner) public virtual requiresAuth {
         owner = newOwner;
 
-        emit OwnerUpdated(msg.sender, newOwner);
+        emit OwnershipTransferred(msg.sender, newOwner);
     }
 }
 
