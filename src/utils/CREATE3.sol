@@ -42,7 +42,7 @@ library CREATE3 {
         bytes memory proxyChildBytecode = PROXY_BYTECODE;
 
         address proxy;
-        assembly {
+        assembly ("memory-safe") {
             // Deploy a new contract with our pre-made bytecode via CREATE2.
             // We start 32 bytes into the code to avoid copying the byte length.
             proxy := create2(0, add(proxyChildBytecode, 32), mload(proxyChildBytecode), salt)
