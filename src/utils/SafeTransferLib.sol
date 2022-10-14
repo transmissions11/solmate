@@ -15,7 +15,7 @@ library SafeTransferLib {
     function safeTransferETH(address to, uint256 amount) internal {
         bool success;
 
-        assembly {
+        assembly ("memory-safe") {
             // Transfer the ETH and store if it succeeded or not.
             success := call(gas(), to, amount, 0, 0, 0, 0)
         }
@@ -35,7 +35,7 @@ library SafeTransferLib {
     ) internal {
         bool success;
 
-        assembly {
+        assembly ("memory-safe") {
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
@@ -67,7 +67,7 @@ library SafeTransferLib {
     ) internal {
         bool success;
 
-        assembly {
+        assembly ("memory-safe") {
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
@@ -98,7 +98,7 @@ library SafeTransferLib {
     ) internal {
         bool success;
 
-        assembly {
+        assembly ("memory-safe") {
             // Get a pointer to some free memory.
             let freeMemoryPointer := mload(0x40)
 
