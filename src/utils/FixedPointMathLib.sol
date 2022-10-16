@@ -43,6 +43,7 @@ library FixedPointMathLib {
                 revert(0, 0)
             }
 
+            // Divide x * y by the denominator.
             z := div(mul(x, y), denominator)
         }
     }
@@ -58,6 +59,8 @@ library FixedPointMathLib {
                 revert(0, 0)
             }
 
+            // If x * y modulo the denominator is strictly greater than 0,
+            // 1 is added to round up the division of x * y by the denominator.
             z := add(gt(mod(mul(x, y), denominator), 0), div(mul(x, y), denominator))
         }
     }
