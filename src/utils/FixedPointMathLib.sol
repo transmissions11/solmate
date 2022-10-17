@@ -10,6 +10,7 @@ library FixedPointMathLib {
     //////////////////////////////////////////////////////////////*/
 
     uint256 internal constant MAX_UINT256 = 2**256 - 1;
+
     uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
     function mulWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
