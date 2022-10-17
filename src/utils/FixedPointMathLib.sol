@@ -9,6 +9,8 @@ library FixedPointMathLib {
                     SIMPLIFIED FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
+    uint256 internal constant MAX_UINT256 = 2**256 - 1;
+
     uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
     function mulWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
@@ -37,16 +39,13 @@ library FixedPointMathLib {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Store x * y in z for now.
-            z := mul(x, y)
-
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+            // Equivalent to require(denominator != 0 && (y == 0 || x <= type(uint256).max / y))
+            if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
                 revert(0, 0)
             }
 
-            // Divide z by the denominator.
-            z := div(z, denominator)
+            // Divide x * y by the denominator.
+            z := div(mul(x, y), denominator)
         }
     }
 
@@ -56,18 +55,14 @@ library FixedPointMathLib {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Store x * y in z for now.
-            z := mul(x, y)
-
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+            // Equivalent to require(denominator != 0 && (y == 0 || x <= type(uint256).max / y))
+            if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
                 revert(0, 0)
             }
 
-            // First, divide z - 1 by the denominator and add 1.
-            // We allow z - 1 to underflow if z is 0, because we multiply the
-            // end result by 0 if z is zero, ensuring we return 0 if z is zero.
-            z := mul(iszero(iszero(z)), add(div(sub(z, 1), denominator), 1))
+            // If x * y modulo the denominator is strictly greater than 0,
+            // 1 is added to round up the division of x * y by the denominator.
+            z := add(gt(mod(mul(x, y), denominator), 0), div(mul(x, y), denominator))
         }
     }
 
