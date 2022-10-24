@@ -10,7 +10,8 @@ library MerkleProofLib {
         bytes32 root,
         bytes32 leaf
     ) internal pure returns (bool isValid) {
-        assembly ("memory-safe") {
+        /// @solidity memory-safe-assembly
+        assembly {
             if proof.length {
                 // Left shifting by 5 is like multiplying by 32.
                 let end := add(proof.offset, shl(5, proof.length))
