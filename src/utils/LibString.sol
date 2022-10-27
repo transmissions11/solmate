@@ -6,6 +6,7 @@ pragma solidity >=0.8.0;
 /// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/LibString.sol)
 library LibString {
     function toString(uint256 value) internal pure returns (string memory str) {
+        /// @solidity memory-safe-assembly
         assembly {
             // The maximum value of a uint256 contains 78 digits (1 byte per digit), but we allocate 160 bytes
             // to keep the free memory pointer word aligned. We'll need 1 word for the length, 1 word for the

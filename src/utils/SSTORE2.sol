@@ -34,6 +34,7 @@ library SSTORE2 {
             runtimeCode // The bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
         );
 
+        /// @solidity memory-safe-assembly
         assembly {
             // Deploy a new contract with the generated creation code.
             // We start 32 bytes into the code to avoid copying the byte length.
@@ -79,6 +80,7 @@ library SSTORE2 {
         uint256 start,
         uint256 size
     ) private view returns (bytes memory data) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Get a pointer to some free memory.
             data := mload(0x40)

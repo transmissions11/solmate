@@ -42,6 +42,7 @@ library CREATE3 {
         bytes memory proxyChildBytecode = PROXY_BYTECODE;
 
         address proxy;
+        /// @solidity memory-safe-assembly
         assembly {
             // Deploy a new contract with our pre-made bytecode via CREATE2.
             // We start 32 bytes into the code to avoid copying the byte length.

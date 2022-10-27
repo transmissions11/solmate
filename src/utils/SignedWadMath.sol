@@ -7,6 +7,7 @@ pragma solidity >=0.8.0;
 
 /// @dev Will not revert on overflow, only use where overflow is not possible.
 function toWadUnsafe(uint256 x) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Multiply x by 1e18.
         r := mul(x, 1000000000000000000)
@@ -17,6 +18,7 @@ function toWadUnsafe(uint256 x) pure returns (int256 r) {
 /// @dev Will not revert on overflow, only use where overflow is not possible.
 /// @dev Not meant for negative second amounts, it assumes x is positive.
 function toDaysWadUnsafe(uint256 x) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Multiply x by 1e18 and then divide it by 86400.
         r := div(mul(x, 1000000000000000000), 86400)
@@ -27,6 +29,7 @@ function toDaysWadUnsafe(uint256 x) pure returns (int256 r) {
 /// @dev Will not revert on overflow, only use where overflow is not possible.
 /// @dev Not meant for negative day amounts, it assumes x is positive.
 function fromDaysWadUnsafe(int256 x) pure returns (uint256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Multiply x by 86400 and then divide it by 1e18.
         r := div(mul(x, 86400), 1000000000000000000)
@@ -35,6 +38,7 @@ function fromDaysWadUnsafe(int256 x) pure returns (uint256 r) {
 
 /// @dev Will not revert on overflow, only use where overflow is not possible.
 function unsafeWadMul(int256 x, int256 y) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Multiply x by y and divide by 1e18.
         r := sdiv(mul(x, y), 1000000000000000000)
@@ -44,6 +48,7 @@ function unsafeWadMul(int256 x, int256 y) pure returns (int256 r) {
 /// @dev Will return 0 instead of reverting if y is zero and will
 /// not revert on overflow, only use where overflow is not possible.
 function unsafeWadDiv(int256 x, int256 y) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Multiply x by 1e18 and divide it by y.
         r := sdiv(mul(x, 1000000000000000000), y)
@@ -51,6 +56,7 @@ function unsafeWadDiv(int256 x, int256 y) pure returns (int256 r) {
 }
 
 function wadMul(int256 x, int256 y) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Store x * y in r for now.
         r := mul(x, y)
@@ -66,6 +72,7 @@ function wadMul(int256 x, int256 y) pure returns (int256 r) {
 }
 
 function wadDiv(int256 x, int256 y) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Store x * 1e18 in r for now.
         r := mul(x, 1000000000000000000)
@@ -119,6 +126,7 @@ function wadExp(int256 x) pure returns (int256 r) {
         q = ((q * x) >> 96) - 14423608567350463180887372962807573;
         q = ((q * x) >> 96) + 26449188498355588339934803723976023;
 
+        /// @solidity memory-safe-assembly
         assembly {
             // Div in assembly because solidity adds a zero check despite the unchecked.
             // The q polynomial won't have zeros in the domain as all its roots are complex.
@@ -147,6 +155,7 @@ function wadLn(int256 x) pure returns (int256 r) {
         // ln(x * C) = ln(x) + ln(C), we can simply do nothing here
         // and add ln(2**96 / 10**18) at the end.
 
+        /// @solidity memory-safe-assembly
         assembly {
             r := shl(7, lt(0xffffffffffffffffffffffffffffffff, x))
             r := or(r, shl(6, lt(0xffffffffffffffff, shr(r, x))))
@@ -183,6 +192,7 @@ function wadLn(int256 x) pure returns (int256 r) {
         q = ((q * x) >> 96) + 204048457590392012362485061816622;
         q = ((q * x) >> 96) + 31853899698501571402653359427138;
         q = ((q * x) >> 96) + 909429971244387300277376558375;
+        /// @solidity memory-safe-assembly
         assembly {
             // Div in assembly because solidity adds a zero check despite the unchecked.
             // The q polynomial is known not to have zeros in the domain.
@@ -211,6 +221,7 @@ function wadLn(int256 x) pure returns (int256 r) {
 
 /// @dev Will return 0 instead of reverting if y is zero.
 function unsafeDiv(int256 x, int256 y) pure returns (int256 r) {
+    /// @solidity memory-safe-assembly
     assembly {
         // Divide x by y.
         r := sdiv(x, y)

@@ -38,6 +38,7 @@ library FixedPointMathLib {
         uint256 y,
         uint256 denominator
     ) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Equivalent to require(denominator != 0 && (y == 0 || x <= type(uint256).max / y))
             if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
@@ -54,6 +55,7 @@ library FixedPointMathLib {
         uint256 y,
         uint256 denominator
     ) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Equivalent to require(denominator != 0 && (y == 0 || x <= type(uint256).max / y))
             if iszero(mul(denominator, iszero(mul(y, gt(x, div(MAX_UINT256, y)))))) {
@@ -71,6 +73,7 @@ library FixedPointMathLib {
         uint256 n,
         uint256 scalar
     ) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             switch x
             case 0 {
@@ -159,6 +162,7 @@ library FixedPointMathLib {
     //////////////////////////////////////////////////////////////*/
 
     function sqrt(uint256 x) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             let y := x // We start y at x, which will help us make our initial estimate.
 
@@ -223,6 +227,7 @@ library FixedPointMathLib {
     }
 
     function unsafeMod(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Mod x by y. Note this will return
             // 0 instead of reverting if y is zero.
@@ -231,6 +236,7 @@ library FixedPointMathLib {
     }
 
     function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 r) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Divide x by y. Note this will return
             // 0 instead of reverting if y is zero.
@@ -239,6 +245,7 @@ library FixedPointMathLib {
     }
 
     function unsafeDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+        /// @solidity memory-safe-assembly
         assembly {
             // Add 1 to x * y if x % y > 0. Note this will
             // return 0 instead of reverting if y is zero.
