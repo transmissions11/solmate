@@ -8,6 +8,7 @@ library SSTORE2 {
     uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's a STOP opcode to ensure the contract can't be called.
     error DeploymentFail();
     error OutOfBounds();
+
     /*//////////////////////////////////////////////////////////////
                                WRITE LOGIC
     //////////////////////////////////////////////////////////////*/
@@ -42,7 +43,7 @@ library SSTORE2 {
             pointer := create(0, add(creationCode, 32), mload(creationCode))
         }
 
-        if(pointer == address(0)) revert DeploymentFail();
+        if (pointer == address(0)) revert DeploymentFail();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -67,7 +68,7 @@ library SSTORE2 {
         start += DATA_OFFSET;
         end += DATA_OFFSET;
 
-        if(pointer.code.length < end) revert OutOfBounds();
+        if (pointer.code.length < end) revert OutOfBounds();
 
         return readBytecode(pointer, start, end - start);
     }
