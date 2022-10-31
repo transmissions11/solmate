@@ -145,7 +145,11 @@ contract DSTestPlus is DSTest {
         }
     }
 
-    function _bound(uint256 x, uint256 min, uint256 max) private pure returns (uint256 result) {
+    function _bound(
+        uint256 x,
+        uint256 min,
+        uint256 max
+    ) private pure returns (uint256 result) {
         require(max >= min, "MAX_LESS_THAN_MIN");
 
         // If x is between min and max, return x directly. This is to ensure that dictionary values
@@ -173,7 +177,11 @@ contract DSTestPlus is DSTest {
         }
     }
 
-    function bound(uint256 x, uint256 min, uint256 max) internal virtual returns (uint256 result) {
+    function bound(
+        uint256 x,
+        uint256 min,
+        uint256 max
+    ) internal virtual returns (uint256 result) {
         result = _bound(x, min, max);
         emit log_named_uint("Bound Result", result);
     }
