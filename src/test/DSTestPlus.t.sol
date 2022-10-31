@@ -8,9 +8,9 @@ contract DSTestPlusTest is DSTestPlus {
         assertEq(bound(0, 69, 69), 69);
         assertEq(bound(0, 68, 69), 68);
         assertEq(bound(5, 0, 4), 0);
-        assertEq(bound(9999, 1337, 6666), 6006);
+        assertEq(bound(9999, 1337, 6666), 4669);
         assertEq(bound(0, type(uint256).max - 6, type(uint256).max), type(uint256).max - 6);
-        assertEq(bound(6, type(uint256).max - 6, type(uint256).max), type(uint256).max);
+        assertEq(bound(6, type(uint256).max - 6, type(uint256).max), type(uint256).max - 2);
     }
 
     function testFailBoundMinBiggerThanMax() public {
