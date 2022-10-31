@@ -145,23 +145,36 @@ contract DSTestPlus is DSTest {
         }
     }
 
-    function bound(
-        uint256 x,
-        uint256 min,
-        uint256 max
-    ) internal virtual returns (uint256 result) {
+    function _bound(uint256 x, uint256 min, uint256 max) private pure returns (uint256 result) {
         require(max >= min, "MAX_LESS_THAN_MIN");
 
-        uint256 size = max - min;
+        // If x is between min and max, return x directly. This is to ensure that dictionary values
+        // do not get shifted if the min is nonzero.
+        if (x >= min && x <= max) return x;
 
-        if (size == 0) result = min;
-        else if (size == type(uint256).max) result = x;
-        else {
-            ++size; // Make max inclusive.
-            uint256 mod = x % size;
-            result = min + mod;
+        uint256 size = max - min + 1;
+
+        // If the value is 0, 1, 2, 3, warp that to min, min+1, min+2, min+3. Similarly for the max side.
+        // This helps ensure coverage of the min/max values.
+        if (x <= 3 && size > x) return min + x;
+        if (x >= type(uint256).max - 3 && size > type(uint256).max - x) return max - (type(uint256).max - x);
+
+        // Otherwise, wrap x into the range [min, max], i.e. the range is inclusive.
+        if (x > max) {
+            uint256 diff = x - max;
+            uint256 rem = diff % size;
+            if (rem == 0) return max;
+            result = min + rem - 1;
+        } else if (x < max) {
+            uint256 diff = min - x;
+            uint256 rem = diff % size;
+            if (rem == 0) return min;
+            result = max - rem + 1;
         }
+    }
 
+    function bound(uint256 x, uint256 min, uint256 max) internal virtual returns (uint256 result) {
+        result = _bound(x, min, max);
         emit log_named_uint("Bound Result", result);
     }
 
