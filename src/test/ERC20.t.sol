@@ -172,6 +172,7 @@ contract ERC20Test is DSTestPlus {
     }
 
     function testFailPermitPastDeadline() public {
+        uint256 oldTimestamp = block.timestamp;
         uint256 privateKey = 0xBEEF;
         address owner = hevm.addr(privateKey);
 
@@ -181,12 +182,13 @@ contract ERC20Test is DSTestPlus {
                 abi.encodePacked(
                     "\x19\x01",
                     token.DOMAIN_SEPARATOR(),
-                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, block.timestamp - 1))
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, address(0xCAFE), 1e18, 0, oldTimestamp))
                 )
             )
         );
 
-        token.permit(owner, address(0xCAFE), 1e18, block.timestamp - 1, v, r, s);
+        hevm.warp(block.timestamp + 1);
+        token.permit(owner, address(0xCAFE), 1e18, oldTimestamp, v, r, s);
     }
 
     function testFailPermitReplay() public {
