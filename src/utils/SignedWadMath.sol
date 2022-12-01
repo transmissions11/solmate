@@ -87,6 +87,12 @@ function wadDiv(int256 x, int256 y) pure returns (int256 r) {
     }
 }
 
+/// @dev Will not work with negative bases, only use when x is positive.
+function wadPow(int256 x, int256 y) pure returns (int256) {
+    // Equivalent to x to the power of y because x ** y = (e ** ln(x)) ** y = e ** (ln(x) * y)
+    return wadExp((wadLn(x) * y) / 1e18); // Using ln(x) means x must be greater than 0.
+}
+
 function wadExp(int256 x) pure returns (int256 r) {
     unchecked {
         // When the result is < 0.5 we return zero. This happens when
