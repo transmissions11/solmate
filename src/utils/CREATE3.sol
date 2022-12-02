@@ -7,6 +7,9 @@ import {Bytes32AddressLib} from "./Bytes32AddressLib.sol";
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/CREATE3.sol)
 /// @author Modified from 0xSequence (https://github.com/0xSequence/create3/blob/master/contracts/Create3.sol)
 library CREATE3 {
+    error DeploymentFailed();
+    error InitializationFailed();
+
     using Bytes32AddressLib for bytes32;
 
     //--------------------------------------------------------------------------------//
@@ -48,11 +51,11 @@ library CREATE3 {
             // We start 32 bytes into the code to avoid copying the byte length.
             proxy := create2(0, add(proxyChildBytecode, 32), mload(proxyChildBytecode), salt)
         }
-        require(proxy != address(0), "DEPLOYMENT_FAILED");
+        if (proxy == address(0)) revert DeploymentFailed();
 
         deployed = getDeployed(salt);
         (bool success, ) = proxy.call{value: value}(creationCode);
-        require(success && deployed.code.length != 0, "INITIALIZATION_FAILED");
+        if (success && deployed.code.length == 0) revert InitializationFailed();
     }
 
     function getDeployed(bytes32 salt) internal view returns (address) {

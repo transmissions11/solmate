@@ -6,6 +6,8 @@ pragma solidity >=0.8.0;
 /// @author Modified from 0xSequence (https://github.com/0xSequence/sstore2/blob/master/contracts/SSTORE2.sol)
 library SSTORE2 {
     uint256 internal constant DATA_OFFSET = 1; // We skip the first byte as it's a STOP opcode to ensure the contract can't be called.
+    error DeploymentFail();
+    error OutOfBounds();
 
     /*//////////////////////////////////////////////////////////////
                                WRITE LOGIC
@@ -41,7 +43,7 @@ library SSTORE2 {
             pointer := create(0, add(creationCode, 32), mload(creationCode))
         }
 
-        require(pointer != address(0), "DEPLOYMENT_FAILED");
+        if (pointer == address(0)) revert DeploymentFail();
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -66,7 +68,7 @@ library SSTORE2 {
         start += DATA_OFFSET;
         end += DATA_OFFSET;
 
-        require(pointer.code.length >= end, "OUT_OF_BOUNDS");
+        if (pointer.code.length < end) revert OutOfBounds();
 
         return readBytecode(pointer, start, end - start);
     }
