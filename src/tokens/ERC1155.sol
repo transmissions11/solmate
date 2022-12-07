@@ -265,11 +265,6 @@ abstract contract ERC1155TokenReceiver {
 
     /**
      * @dev Function to receive a batch of ERC1155 tokens.
-     * @param _operator The address which called the function.
-     * @param _from The address of the sender.
-     * @param _ids An array of the ids of the tokens being sent.
-     * @param _values An array of the values of the tokens being sent.
-     * @param _data Any extra data with the transaction.
      * @return The function selector of the ERC1155TokenReceiver.onERC1155BatchReceived function.
      */
     function onERC1155BatchReceived(
