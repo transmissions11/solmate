@@ -15,12 +15,20 @@ contract WETH is ERC20("Wrapped Ether", "WETH", 18) {
 
     event Withdrawal(address indexed to, uint256 amount);
 
+    /**
+     * @notice This function allows users to deposit funds into the contract.
+     * @dev The function will mint the amount of tokens equal to the amount of funds deposited and emit a Deposit event.
+     */
     function deposit() public payable virtual {
         _mint(msg.sender, msg.value);
 
         emit Deposit(msg.sender, msg.value);
     }
 
+    /**
+     * @notice This function allows a user to withdraw a specified amount of ETH from the contract.
+     * @dev The function first burns the amount of ETH from the user's balance, then emits a Withdrawal event, and finally sends the amount of ETH to the user's address.
+     */
     function withdraw(uint256 amount) public virtual {
         _burn(msg.sender, amount);
 

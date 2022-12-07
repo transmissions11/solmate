@@ -26,6 +26,10 @@ abstract contract Owned {
                                CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function sets the owner of the contract to the address passed in as an argument.
+     * @dev The OwnershipTransferred event is emitted with the address 0 as the previous owner and the address passed in as the new owner.
+     */
     constructor(address _owner) {
         owner = _owner;
 
@@ -36,6 +40,11 @@ abstract contract Owned {
                              OWNERSHIP LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Transfers ownership of the contract to a new owner.
+     * @dev Only the current owner can call this function.
+     * @param newOwner The address of the new owner.
+     */
     function transferOwnership(address newOwner) public virtual onlyOwner {
         owner = newOwner;
 

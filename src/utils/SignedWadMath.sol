@@ -55,6 +55,10 @@ function unsafeWadDiv(int256 x, int256 y) pure returns (int256 r) {
     }
 }
 
+/**
+ * @notice This function performs a multiplication of two integers and returns the result.
+ * @dev The function is memory-safe and uses assembly to ensure that the result is accurate. The result is scaled down by 1e18.
+ */
 function wadMul(int256 x, int256 y) pure returns (int256 r) {
     /// @solidity memory-safe-assembly
     assembly {
@@ -71,6 +75,10 @@ function wadMul(int256 x, int256 y) pure returns (int256 r) {
     }
 }
 
+/**
+ * @notice This function divides two integers, x and y, and returns the result as an integer.
+ * @dev The function uses memory-safe assembly to ensure that the result is accurate and that no overflow occurs. The function checks that y is not 0 and that the result of the division is equal to x. If either of these conditions is not met, the function will revert.
+ */
 function wadDiv(int256 x, int256 y) pure returns (int256 r) {
     /// @solidity memory-safe-assembly
     assembly {
@@ -152,6 +160,10 @@ function wadExp(int256 x) pure returns (int256 r) {
     }
 }
 
+/**
+ * @notice This function takes an int256 x and returns an int256 r.
+ * @dev This function converts x from 10**18 fixed point to 2**96 fixed point. It does this by multiplying by 2**96 / 10**18. It then reduces the range of x to (1, 2) * 2**96 and evaluates using a (8, 8)-term rational approximation. Finally, it multiplies by a scale factor, adds ln(2**96 / 10**18), adds k * ln(2), and multiplies by 10**18 / 2**96 = 5**18 >> 78. 
+ */
 function wadLn(int256 x) pure returns (int256 r) {
     unchecked {
         require(x > 0, "UNDEFINED");

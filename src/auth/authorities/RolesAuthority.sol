@@ -33,6 +33,10 @@ contract RolesAuthority is Auth, Authority {
 
     mapping(address => mapping(bytes4 => bytes32)) public getRolesWithCapability;
 
+    /**
+     * @notice This function checks if a user has a certain role.
+     * @dev This function takes an address of a user and a uint8 role as parameters and returns a boolean value. It uses the getUserRoles mapping to check if the user has the role. It shifts the uint256 value of the mapping to the right by the role parameter and checks if the result is not equal to 0. 
+     */
     function doesUserHaveRole(address user, uint8 role) public view virtual returns (bool) {
         return (uint256(getUserRoles[user]) >> role) & 1 != 0;
     }

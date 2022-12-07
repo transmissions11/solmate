@@ -12,6 +12,10 @@ library SafeTransferLib {
                              ETH OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function is used to safely transfer ETH from one address to another.
+     * @dev This function uses memory-safe assembly to call the transfer function and store the success or failure of the transfer. If the transfer fails, an error is thrown.
+     */
     function safeTransferETH(address to, uint256 amount) internal {
         bool success;
 

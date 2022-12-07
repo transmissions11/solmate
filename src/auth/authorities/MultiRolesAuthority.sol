@@ -69,6 +69,10 @@ contract MultiRolesAuthority is Auth, Authority {
                CUSTOM TARGET AUTHORITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Sets the custom authority for a given target address.
+     * @dev This function sets the custom authority for a given target address. It requires authentication and emits an event when the target custom authority is updated.
+     */
     function setTargetCustomAuthority(address target, Authority customAuthority) public virtual requiresAuth {
         getTargetCustomAuthority[target] = customAuthority;
 
@@ -107,6 +111,10 @@ contract MultiRolesAuthority is Auth, Authority {
                    ROLE CAPABILITY CONFIGURATION LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice setRoleCapability() sets the capability of a role to execute a function.
+     * @dev This function requires authentication and sets the capability of a role to execute a function. It takes three parameters: role, functionSig, and enabled. If enabled is true, the role is given the capability to execute the function. Otherwise, the role is not given the capability to execute the function.
+     */
     function setRoleCapability(
         uint8 role,
         bytes4 functionSig,

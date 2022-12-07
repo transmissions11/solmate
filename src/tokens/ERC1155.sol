@@ -40,6 +40,9 @@ abstract contract ERC1155 {
                              METADATA LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function returns a string representation of the given id.
+     * @dev This function is used to convert a uint256 id into a string representation. It is used to create a unique identifier for a given id.*/
     function uri(uint256 id) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
@@ -52,6 +55,13 @@ abstract contract ERC1155 {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
+    /**
+     * @notice This function allows a user to transfer a specific token from one address to another.
+     * @dev The function requires that the sender is either the from address or is approved for all of the from address.
+     * The balance of the from address is decreased by the amount and the balance of the to address is increased by the amount.
+     * The TransferSingle event is emitted.
+     * The function requires that the to address is either a valid address or an ERC1155TokenReceiver contract that implements the onERC1155Received function.
+     */
     function safeTransferFrom(
         address from,
         address to,
@@ -149,6 +159,10 @@ abstract contract ERC1155 {
                         INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function mints a new token to the specified address.
+     * @dev This function mints a new token to the specified address. It also emits a TransferSingle event and checks that the recipient is a valid ERC1155TokenReceiver.
+     */
     function _mint(
         address to,
         uint256 id,
@@ -235,6 +249,10 @@ abstract contract ERC1155 {
 /// @notice A generic interface for a contract which properly accepts ERC1155 tokens.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC1155.sol)
 abstract contract ERC1155TokenReceiver {
+    /**
+     * @notice This function is triggered when an ERC1155 token is received.
+     * @dev This function is used to receive ERC1155 tokens. It takes in two addresses, two uint256 values, and a bytes calldata. It returns a bytes4 value. 
+     */
     function onERC1155Received(
         address,
         address,
@@ -245,6 +263,15 @@ abstract contract ERC1155TokenReceiver {
         return ERC1155TokenReceiver.onERC1155Received.selector;
     }
 
+    /**
+     * @dev Function to receive a batch of ERC1155 tokens.
+     * @param _operator The address which called the function.
+     * @param _from The address of the sender.
+     * @param _ids An array of the ids of the tokens being sent.
+     * @param _values An array of the values of the tokens being sent.
+     * @param _data Any extra data with the transaction.
+     * @return The function selector of the ERC1155TokenReceiver.onERC1155BatchReceived function.
+     */
     function onERC1155BatchReceived(
         address,
         address,

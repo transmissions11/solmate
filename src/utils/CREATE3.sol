@@ -34,6 +34,10 @@ library CREATE3 {
 
     bytes32 internal constant PROXY_BYTECODE_HASH = keccak256(PROXY_BYTECODE);
 
+    /**
+     * @notice Deploys a new contract with pre-made bytecode via CREATE2.
+     * @dev Starts 32 bytes into the code to avoid copying the byte length.
+     */
     function deploy(
         bytes32 salt,
         bytes memory creationCode,

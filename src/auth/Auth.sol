@@ -27,6 +27,10 @@ abstract contract Auth {
         _;
     }
 
+    /**
+     * @notice Checks if the caller is authorized to call the given function.
+     * @dev This function checks if the caller is the owner or if the authority has granted the caller permission to call the given function.
+     */
     function isAuthorized(address user, bytes4 functionSig) internal view virtual returns (bool) {
         Authority auth = authority; // Memoizing authority saves us a warm SLOAD, around 100 gas.
 
@@ -45,6 +49,10 @@ abstract contract Auth {
         emit AuthorityUpdated(msg.sender, newAuthority);
     }
 
+    /**
+     * @notice This function allows the current owner to transfer ownership of the contract to a new owner.
+     * @dev The new owner must be provided as an address parameter. The function emits an OwnershipTransferred event.
+     */
     function transferOwnership(address newOwner) public virtual requiresAuth {
         owner = newOwner;
 

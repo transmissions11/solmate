@@ -48,16 +48,32 @@ library SSTORE2 {
                                READ LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice Reads the bytecode of a given address
+     * @dev This function reads the bytecode of a given address and returns it as a bytes memory.
+     */
     function read(address pointer) internal view returns (bytes memory) {
         return readBytecode(pointer, DATA_OFFSET, pointer.code.length - DATA_OFFSET);
     }
 
+    /**
+     * @notice Reads the bytecode of a given address starting from a given offset.
+     * @dev This function reads the bytecode of a given address starting from a given offset and returns the bytes memory.
+     */
     function read(address pointer, uint256 start) internal view returns (bytes memory) {
         start += DATA_OFFSET;
 
         return readBytecode(pointer, start, pointer.code.length - start);
     }
 
+    /**
+     * @notice Reads a range of bytes from the code of a given address.
+     * @dev This function reads a range of bytes from the code of a given address. It requires that the length of the code is greater than the end of the range. It returns the bytes read as a memory array.
+     * @param pointer The address from which to read the bytes.
+     * @param start The start of the range of bytes to read.
+     * @param end The end of the range of bytes to read.
+     * @return The bytes read as a memory array.
+     */
     function read(
         address pointer,
         uint256 start,

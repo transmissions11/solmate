@@ -13,18 +13,33 @@ library FixedPointMathLib {
 
     uint256 internal constant WAD = 1e18; // The scalar of ETH and most ERC20s.
 
+    /**
+     * @notice mulWadDown() multiplies two uint256 values and divides the result by WAD, rounding down.
+     * @dev mulWadDown() is an internal function that multiplies two uint256 values and divides the result by WAD, rounding down.
+     */
     function mulWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDivDown(x, y, WAD); // Equivalent to (x * y) / WAD rounded down.
     }
 
+    /**
+     * @notice mulWadUp() multiplies two uint256 values and divides the result by WAD, rounding up.
+     * @dev mulWadUp() is an internal function that multiplies two uint256 values and divides the result by WAD, rounding up. It is equivalent to (x * y) / WAD rounded up.
+     */
     function mulWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDivUp(x, y, WAD); // Equivalent to (x * y) / WAD rounded up.
     }
 
+    /**
+     * @notice divWadDown() is a function that takes two uint256 parameters, x and y, and returns a uint256. It is equivalent to (x * WAD) / y rounded down.
+     * @dev divWadDown() is an internal, pure function that is used to calculate the result of (x * WAD) / y rounded down. It is used to ensure that calculations are accurate and consistent.*/
     function divWadDown(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDivDown(x, WAD, y); // Equivalent to (x * WAD) / y rounded down.
     }
 
+    /**
+     * @notice divWadUp() is a function that takes two uint256 parameters, x and y, and returns a uint256. It is equivalent to (x * WAD) / y rounded up.
+     * @dev divWadUp() is an internal, pure function. It uses mulDivUp() to calculate the result.
+     */
     function divWadUp(uint256 x, uint256 y) internal pure returns (uint256) {
         return mulDivUp(x, WAD, y); // Equivalent to (x * WAD) / y rounded up.
     }
@@ -33,6 +48,10 @@ library FixedPointMathLib {
                     LOW LEVEL FIXED POINT OPERATIONS
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function performs a multiplication and division operation on two uint256 values and a denominator.
+     * @dev This function requires that the denominator is not equal to 0 and that either y is equal to 0 or x is less than or equal to the maximum uint256 value divided by y. If either of these conditions are not met, the function will revert. The function then divides x * y by the denominator and returns the result.
+     */
     function mulDivDown(
         uint256 x,
         uint256 y,
@@ -161,6 +180,10 @@ library FixedPointMathLib {
                         GENERAL NUMBER UTILITIES
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function implements the Babylonian method to calculate the square root of a given number.
+     * @dev This function is memory-safe and uses assembly to calculate the square root of a given number. It starts by setting the initial estimate to 181 and then checks if the number is greater than 256. If it is, it shifts the number right by the appropriate amount and shifts the initial estimate left by the same amount. It then checks if the number is in the range [256, 256*2^16) and if it is, it calculates the square root using the estimate 181 * (y + 65536)/2^18. Finally, it checks if the number is a perfect square and if it is, it returns the floor of the square root. 
+     */
     function sqrt(uint256 x) internal pure returns (uint256 z) {
         /// @solidity memory-safe-assembly
         assembly {
@@ -226,6 +249,10 @@ library FixedPointMathLib {
         }
     }
 
+    /**
+     * @notice This function performs a modulo operation on two uint256 values.
+     * @dev This function is not memory-safe and should be used with caution. If the second argument is zero, the function will return zero instead of reverting. 
+     */
     function unsafeMod(uint256 x, uint256 y) internal pure returns (uint256 z) {
         /// @solidity memory-safe-assembly
         assembly {
@@ -235,6 +262,10 @@ library FixedPointMathLib {
         }
     }
 
+    /**
+     * @notice This function performs an unsafe division of two uint256 values.
+     * @dev This function should not be used in production code, as it will return 0 instead of reverting if y is zero.
+     */
     function unsafeDiv(uint256 x, uint256 y) internal pure returns (uint256 r) {
         /// @solidity memory-safe-assembly
         assembly {
@@ -244,6 +275,10 @@ library FixedPointMathLib {
         }
     }
 
+    /**
+     * @notice This function performs a division operation on two uint256 values, x and y.
+     * @dev The function uses memory-safe assembly to ensure that the division is performed safely. It adds 1 to x * y if x % y > 0. Note that this will return 0 instead of reverting if y is zero.
+     */
     function unsafeDivUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
         /// @solidity memory-safe-assembly
         assembly {

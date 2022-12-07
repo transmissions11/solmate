@@ -22,6 +22,10 @@ abstract contract ERC721 {
 
     string public symbol;
 
+    /**
+     * @notice This function returns a string memory associated with a given uint256 id.
+     * @dev This function is a public view virtual function that returns a string memory associated with a given uint256 id. 
+     */
     function tokenURI(uint256 id) public view virtual returns (string memory);
 
     /*//////////////////////////////////////////////////////////////
@@ -32,6 +36,11 @@ abstract contract ERC721 {
 
     mapping(address => uint256) internal _balanceOf;
 
+    /**
+     * @notice ownerOf() function allows to retrieve the owner of a given token ID.
+     * @dev The function requires that the given token ID is minted and returns the address of the owner. 
+     * If the token ID is not minted, an error message "NOT_MINTED" is thrown.
+     */
     function ownerOf(uint256 id) public view virtual returns (address owner) {
         require((owner = _ownerOf[id]) != address(0), "NOT_MINTED");
     }
@@ -63,6 +72,11 @@ abstract contract ERC721 {
                               ERC721 LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function allows the owner of an id to approve a spender to transfer the id.
+     * @dev The function requires that the msg.sender is either the owner of the id or is approved for all by the owner. 
+     * If the requirements are met, the spender is set as the approved address for the id and an Approval event is emitted.
+     */
     function approve(address spender, uint256 id) public virtual {
         address owner = _ownerOf[id];
 
@@ -79,6 +93,13 @@ abstract contract ERC721 {
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
+    /**
+     * @notice Transfers an NFT from one address to another.
+     * @dev The function requires that the sender is the owner of the NFT, or is approved by the owner.
+     * @param from The address of the current owner of the NFT.
+     * @param to The address of the new owner of the NFT.
+     * @param id The ID of the NFT to be transferred.
+     */
     function transferFrom(
         address from,
         address to,
@@ -108,6 +129,10 @@ abstract contract ERC721 {
         emit Transfer(from, to, id);
     }
 
+    /**
+     * @notice This function transfers an ERC721 token from one address to another.
+     * @dev This function requires that the recipient of the token is a valid ERC721 receiver. If the recipient is not a valid ERC721 receiver, the transfer will not be completed and an error will be thrown. 
+     */
     function safeTransferFrom(
         address from,
         address to,
@@ -123,6 +148,14 @@ abstract contract ERC721 {
         );
     }
 
+    /**
+     * @notice This function transfers an ERC721 token from one address to another.
+     * @dev The function requires that the recipient of the token is a valid ERC721 receiver.
+     * @param from The address of the sender.
+     * @param to The address of the recipient.
+     * @param id The ID of the ERC721 token.
+     * @param data Optional data to be passed to the recipient.
+     */
     function safeTransferFrom(
         address from,
         address to,
@@ -154,6 +187,10 @@ abstract contract ERC721 {
                         INTERNAL MINT/BURN LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function is used to mint a new token with a given id.
+     * @dev The function requires that the recipient address is not 0, and that the token has not already been minted. The balance of the recipient is incremented, and the owner of the token is set to the recipient. A Transfer event is emitted.
+     */
     function _mint(address to, uint256 id) internal virtual {
         require(to != address(0), "INVALID_RECIPIENT");
 
@@ -169,6 +206,10 @@ abstract contract ERC721 {
         emit Transfer(address(0), to, id);
     }
 
+    /**
+     * @notice This function is used to burn a token with the given id.
+     * @dev This function requires that the owner of the token is not address(0). The balance of the owner is decreased by 1 and the owner of the token is set to address(0). The Transfer event is emitted.
+     */
     function _burn(uint256 id) internal virtual {
         address owner = _ownerOf[id];
 
@@ -190,6 +231,10 @@ abstract contract ERC721 {
                         INTERNAL SAFE MINT LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function mints a token to a specified address.
+     * @dev This function requires that the recipient of the token is a valid ERC721 token receiver.
+     */
     function _safeMint(address to, uint256 id) internal virtual {
         _mint(to, id);
 

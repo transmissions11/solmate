@@ -119,8 +119,16 @@ abstract contract ERC4626 is ERC20 {
                             ACCOUNTING LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function returns the total assets of the contract.
+     * @dev This function is a public view virtual function that returns the total assets of the contract.
+     */
     function totalAssets() public view virtual returns (uint256);
 
+    /**
+     * @notice This function converts a given amount of assets to the corresponding amount of shares.
+     * @dev The function takes in a uint256 representing the amount of assets and returns a uint256 representing the amount of shares. The conversion is done by dividing the total assets by the total supply.
+     */
     function convertToShares(uint256 assets) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
@@ -133,10 +141,20 @@ abstract contract ERC4626 is ERC20 {
         return supply == 0 ? shares : shares.mulDivDown(totalAssets(), supply);
     }
 
+    /**
+     * @notice This function allows users to preview the amount of shares they will receive when depositing a certain amount of assets.
+     * @dev This function takes in an amount of assets and returns the amount of shares that will be received when depositing that amount of assets.
+     */
     function previewDeposit(uint256 assets) public view virtual returns (uint256) {
         return convertToShares(assets);
     }
 
+    /**
+     * @notice Calculates the amount of tokens that will be minted when the given number of shares is minted.
+     * @dev This function is view and virtual, meaning that it does not modify the state of the contract and can be used to simulate the minting of tokens.
+     * @param shares The number of shares to be minted.
+     * @return The amount of tokens that will be minted when the given number of shares is minted.
+     */
     function previewMint(uint256 shares) public view virtual returns (uint256) {
         uint256 supply = totalSupply; // Saves an extra SLOAD if totalSupply is non-zero.
 
@@ -149,6 +167,10 @@ abstract contract ERC4626 is ERC20 {
         return supply == 0 ? assets : assets.mulDivUp(supply, totalAssets());
     }
 
+    /**
+     * @notice This function allows users to preview the amount of assets they will receive when redeeming their shares.
+     * @dev This function takes in the number of shares as an argument and returns the amount of assets that will be received when redeeming the shares.
+     */
     function previewRedeem(uint256 shares) public view virtual returns (uint256) {
         return convertToAssets(shares);
     }
@@ -161,14 +183,25 @@ abstract contract ERC4626 is ERC20 {
         return type(uint256).max;
     }
 
+    /**
+     * @notice This function returns the maximum value of a uint256 type.
+     * @dev This function is used to return the maximum value of a uint256 type. It takes an address as an argument and returns the maximum value of a uint256 type.*/
     function maxMint(address) public view virtual returns (uint256) {
         return type(uint256).max;
     }
 
+    /**
+     * @notice This function allows the owner to withdraw the maximum amount of assets from their account.
+     * @dev This function takes in the address of the owner and returns the maximum amount of assets that can be withdrawn. 
+     */
     function maxWithdraw(address owner) public view virtual returns (uint256) {
         return convertToAssets(balanceOf[owner]);
     }
 
+    /**
+     * @notice This function allows the owner to redeem the maximum amount of tokens from their balance.
+     * @dev The function takes in the address of the owner and returns the amount of tokens in their balance.
+     */
     function maxRedeem(address owner) public view virtual returns (uint256) {
         return balanceOf[owner];
     }

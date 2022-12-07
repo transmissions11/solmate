@@ -73,6 +73,10 @@ abstract contract ERC20 {
         return true;
     }
 
+    /**
+     * @notice This function transfers an amount of tokens from the sender to the recipient.
+     * @dev The sender's balance is decreased and the recipient's balance is increased.
+     */
     function transfer(address to, uint256 amount) public virtual returns (bool) {
         balanceOf[msg.sender] -= amount;
 
@@ -113,6 +117,10 @@ abstract contract ERC20 {
                              EIP-2612 LOGIC
     //////////////////////////////////////////////////////////////*/
 
+    /**
+     * @notice This function permits a spender to withdraw from the owner's account, up to the given amount.
+     * @dev The function requires the owner to sign the transaction with their private key, and the signature is verified using the ecrecover function. The allowance is then set to the given value.
+     */
     function permit(
         address owner,
         address spender,
@@ -159,10 +167,21 @@ abstract contract ERC20 {
         emit Approval(owner, spender, value);
     }
 
+    /**
+     * DOMAIN_SEPARATOR
+     * 
+     * @dev Returns the domain separator for the current chain. If the chainid is equal to the initial chain id, the initial domain separator is returned. Otherwise, the computeDomainSeparator() function is called.
+     * 
+     * @return bytes32 The domain separator for the current chain.
+     */
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
         return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
     }
 
+    /**
+     * @notice Computes the domain separator for the EIP712 domain
+     * @dev This function computes the domain separator for the EIP712 domain. It takes in the name, version, chainId, and verifyingContract and returns the domain separator as a bytes32.
+     */
     function computeDomainSeparator() internal view virtual returns (bytes32) {
         return
             keccak256(
@@ -192,6 +211,10 @@ abstract contract ERC20 {
         emit Transfer(address(0), to, amount);
     }
 
+    /**
+     * @notice This function burns a given amount of tokens from a given address.
+     * @dev The function subtracts the given amount from the balance of the given address and from the total supply.
+     */
     function _burn(address from, uint256 amount) internal virtual {
         balanceOf[from] -= amount;
 
