@@ -5,6 +5,12 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/LibString.sol)
 /// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/LibString.sol)
 library LibString {
+    function toString(int256 value) internal pure returns (string memory) {
+        unchecked {
+            return value >= 0 ? toString(uint256(value)) : string(abi.encodePacked("-", toString(uint256(-value))));
+        }
+    }
+
     function toString(uint256 value) internal pure returns (string memory str) {
         /// @solidity memory-safe-assembly
         assembly {

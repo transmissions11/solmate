@@ -7,13 +7,32 @@ import {LibString} from "../utils/LibString.sol";
 
 contract LibStringTest is DSTestPlus {
     function testToString() public {
-        assertEq(LibString.toString(0), "0");
-        assertEq(LibString.toString(1), "1");
-        assertEq(LibString.toString(17), "17");
-        assertEq(LibString.toString(99999999), "99999999");
-        assertEq(LibString.toString(99999999999), "99999999999");
-        assertEq(LibString.toString(2342343923423), "2342343923423");
-        assertEq(LibString.toString(98765685434567), "98765685434567");
+        assertEq(LibString.toString(uint256(0)), "0");
+        assertEq(LibString.toString(uint256(1)), "1");
+        assertEq(LibString.toString(uint256(17)), "17");
+        assertEq(LibString.toString(uint256(99999999)), "99999999");
+        assertEq(LibString.toString(uint256(99999999999)), "99999999999");
+        assertEq(LibString.toString(uint256(2342343923423)), "2342343923423");
+        assertEq(LibString.toString(uint256(98765685434567)), "98765685434567");
+    }
+
+    function testToStringIntPositive() public {
+        assertEq(LibString.toString(int256(0)), "0");
+        assertEq(LibString.toString(int256(1)), "1");
+        assertEq(LibString.toString(int256(17)), "17");
+        assertEq(LibString.toString(int256(99999999)), "99999999");
+        assertEq(LibString.toString(int256(99999999999)), "99999999999");
+        assertEq(LibString.toString(int256(2342343923423)), "2342343923423");
+        assertEq(LibString.toString(int256(98765685434567)), "98765685434567");
+    }
+
+    function testToStringIntNegative() public {
+        assertEq(LibString.toString(int256(-0)), "0");
+        assertEq(LibString.toString(int256(-17)), "-17");
+        assertEq(LibString.toString(int256(-99999999)), "-99999999");
+        assertEq(LibString.toString(int256(-99999999999)), "-99999999999");
+        assertEq(LibString.toString(int256(-2342343923423)), "-2342343923423");
+        assertEq(LibString.toString(int256(-98765685434567)), "-98765685434567");
     }
 
     function testDifferentiallyFuzzToString(uint256 value, bytes calldata brutalizeWith)
@@ -27,8 +46,19 @@ contract LibStringTest is DSTestPlus {
         assertEq(libString, oz);
     }
 
+    function testDifferentiallyFuzzToStringInt(int256 value, bytes calldata brutalizeWith)
+        public
+        brutalizeMemory(brutalizeWith)
+    {
+        string memory libString = LibString.toString(value);
+        string memory oz = toStringOZ(value);
+
+        assertEq(bytes(libString).length, bytes(oz).length);
+        assertEq(libString, oz);
+    }
+
     function testToStringOverwrite() public {
-        string memory str = LibString.toString(1);
+        string memory str = LibString.toString(uint256(1));
 
         bytes32 data;
         bytes32 expected;
@@ -62,7 +92,7 @@ contract LibStringTest is DSTestPlus {
             mstore(add(freememptr, 96), dirty)
             mstore(add(freememptr, 128), dirty)
         }
-        string memory str = LibString.toString(1);
+        string memory str = LibString.toString(uint256(1));
         uint256 len;
         bytes32 data;
         bytes32 expected;
@@ -87,6 +117,10 @@ contract LibStringTest is DSTestPlus {
     }
 }
 
+function toStringOZ(int256 value) pure returns (string memory) {
+    return string(abi.encodePacked(value < 0 ? "-" : "", toStringOZ(absOZ(value))));
+}
+
 function toStringOZ(uint256 value) pure returns (string memory) {
     if (value == 0) {
         return "0";
@@ -104,4 +138,11 @@ function toStringOZ(uint256 value) pure returns (string memory) {
         value /= 10;
     }
     return string(buffer);
+}
+
+function absOZ(int256 n) pure returns (uint256) {
+    unchecked {
+        // must be unchecked in order to support `n = type(int256).min`
+        return uint256(n >= 0 ? n : -n);
+    }
 }
