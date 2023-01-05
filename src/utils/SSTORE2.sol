@@ -27,26 +27,26 @@ library SSTORE2 {
         // 0xf3    |  0xf3               | RETURN       |                                                                //
         //---------------------------------------------------------------------------------------------------------------//
 
-        unchecked{
-        // allocate
-        bytes memory creationCode = new bytes(12+data.length); // 11+1+data.length
-        assembly {
-            mstore(creationCode, 0) // set length to 0
-        }
-        // hex"60_0B_59_81_38_03_80_92_59_39_F3", // Returns all code in the contract except for the first 11 (0B in hex) bytes.
-        // Prefix the bytecode with a STOP (00) opcode to ensure it cannot be called.
-        _append(creationCode, hex"60_0B_59_81_38_03_80_92_59_39_F3_00"); 
-        // runtimeCode = hex"00"||data is the bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
-        _append(creationCode, data);
+        unchecked {
+            // allocate
+            bytes memory creationCode = new bytes(12 + data.length); // 11+1+data.length
+            assembly {
+                mstore(creationCode, 0) // set length to 0
+            }
+            // hex"60_0B_59_81_38_03_80_92_59_39_F3", // Returns all code in the contract except for the first 11 (0B in hex) bytes.
+            // Prefix the bytecode with a STOP (00) opcode to ensure it cannot be called.
+            _append(creationCode, hex"60_0B_59_81_38_03_80_92_59_39_F3_00");
+            // runtimeCode = hex"00"||data is the bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
+            _append(creationCode, data);
 
-        /// @solidity memory-safe-assembly
-        assembly {
-            // Deploy a new contract with the generated creation code.
-            // We start 32 bytes into the code to avoid copying the byte length.
-            pointer := create(0, add(creationCode, 32), mload(creationCode))
-        }
+            /// @solidity memory-safe-assembly
+            assembly {
+                // Deploy a new contract with the generated creation code.
+                // We start 32 bytes into the code to avoid copying the byte length.
+                pointer := create(0, add(creationCode, 32), mload(creationCode))
+            }
 
-        require(pointer != address(0), "DEPLOYMENT_FAILED");
+            require(pointer != address(0), "DEPLOYMENT_FAILED");
         }
     }
 
@@ -104,27 +104,27 @@ library SSTORE2 {
             extcodecopy(pointer, add(data, 32), start, size)
         }
     }
-    
+
     // cheaper than bytes concat :)
     function _append(bytes memory dst, bytes memory src) private view {
-      
         assembly {
             // resize
 
             let priorLength := mload(dst)
-            
+
             mstore(dst, add(priorLength, mload(src)))
-        
-            // copy    
+
+            // copy
 
             pop(
                 staticcall(
-                  gas(), 4, 
-                  add(src, 32), // src data start
-                  mload(src), // src length 
-                  add(dst, add(32, priorLength)), // dst write ptr
-                  mload(dst)
-                ) 
+                    gas(),
+                    4,
+                    add(src, 32), // src data start
+                    mload(src), // src length
+                    add(dst, add(32, priorLength)), // dst write ptr
+                    mload(dst)
+                )
             )
         }
     }
