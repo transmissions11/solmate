@@ -1,2 +1,1 @@
-*.sol linguist-language=Solidity
 .gas-snapshot linguist-language=Julia
