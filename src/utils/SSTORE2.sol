@@ -12,36 +12,42 @@ library SSTORE2 {
     //////////////////////////////////////////////////////////////*/
 
     function write(bytes memory data) internal returns (address pointer) {
-        // Prefix the bytecode with a STOP opcode to ensure it cannot be called.
-        bytes memory runtimeCode = abi.encodePacked(hex"00", data);
+        //---------------------------------------------------------------------------------------------------------------//
+        // Opcode  | Opcode + Arguments  | Description  | Stack View                                                     //
+        //---------------------------------------------------------------------------------------------------------------//
+        // 0x60    |  0x600B             | PUSH1 11     | codeOffset                                                     //
+        // 0x59    |  0x59               | MSIZE        | 0 codeOffset                                                   //
+        // 0x81    |  0x81               | DUP2         | codeOffset 0 codeOffset                                        //
+        // 0x38    |  0x38               | CODESIZE     | codeSize codeOffset 0 codeOffset                               //
+        // 0x03    |  0x03               | SUB          | (codeSize - codeOffset) 0 codeOffset                           //
+        // 0x80    |  0x80               | DUP          | (codeSize - codeOffset) (codeSize - codeOffset) 0 codeOffset   //
+        // 0x92    |  0x92               | SWAP3        | codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset)   //
+        // 0x59    |  0x59               | MSIZE        | 0 codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset) //
+        // 0x39    |  0x39               | CODECOPY     | 0 (codeSize - codeOffset)                                      //
+        // 0xf3    |  0xf3               | RETURN       |                                                                //
+        //---------------------------------------------------------------------------------------------------------------//
 
-        bytes memory creationCode = abi.encodePacked(
-            //---------------------------------------------------------------------------------------------------------------//
-            // Opcode  | Opcode + Arguments  | Description  | Stack View                                                     //
-            //---------------------------------------------------------------------------------------------------------------//
-            // 0x60    |  0x600B             | PUSH1 11     | codeOffset                                                     //
-            // 0x59    |  0x59               | MSIZE        | 0 codeOffset                                                   //
-            // 0x81    |  0x81               | DUP2         | codeOffset 0 codeOffset                                        //
-            // 0x38    |  0x38               | CODESIZE     | codeSize codeOffset 0 codeOffset                               //
-            // 0x03    |  0x03               | SUB          | (codeSize - codeOffset) 0 codeOffset                           //
-            // 0x80    |  0x80               | DUP          | (codeSize - codeOffset) (codeSize - codeOffset) 0 codeOffset   //
-            // 0x92    |  0x92               | SWAP3        | codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset)   //
-            // 0x59    |  0x59               | MSIZE        | 0 codeOffset (codeSize - codeOffset) 0 (codeSize - codeOffset) //
-            // 0x39    |  0x39               | CODECOPY     | 0 (codeSize - codeOffset)                                      //
-            // 0xf3    |  0xf3               | RETURN       |                                                                //
-            //---------------------------------------------------------------------------------------------------------------//
-            hex"60_0B_59_81_38_03_80_92_59_39_F3", // Returns all code in the contract except for the first 11 (0B in hex) bytes.
-            runtimeCode // The bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
-        );
+        unchecked {
+            // allocate
+            bytes memory creationCode = new bytes(12 + data.length); // 11+1+data.length
+            assembly {
+                mstore(creationCode, 0) // set length to 0
+            }
+            // hex"60_0B_59_81_38_03_80_92_59_39_F3", // Returns all code in the contract except for the first 11 (0B in hex) bytes.
+            // Prefix the bytecode with a STOP (00) opcode to ensure it cannot be called.
+            _append(creationCode, hex"60_0B_59_81_38_03_80_92_59_39_F3_00");
+            // runtimeCode = hex"00"||data is the bytecode we want the contract to have after deployment. Capped at 1 byte less than the code size limit.
+            _append(creationCode, data);
 
-        /// @solidity memory-safe-assembly
-        assembly {
-            // Deploy a new contract with the generated creation code.
-            // We start 32 bytes into the code to avoid copying the byte length.
-            pointer := create(0, add(creationCode, 32), mload(creationCode))
+            /// @solidity memory-safe-assembly
+            assembly {
+                // Deploy a new contract with the generated creation code.
+                // We start 32 bytes into the code to avoid copying the byte length.
+                pointer := create(0, add(creationCode, 32), mload(creationCode))
+            }
+
+            require(pointer != address(0), "DEPLOYMENT_FAILED");
         }
-
-        require(pointer != address(0), "DEPLOYMENT_FAILED");
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -96,6 +102,30 @@ library SSTORE2 {
 
             // Copy the code into memory right after the 32 bytes we used to store the size.
             extcodecopy(pointer, add(data, 32), start, size)
+        }
+    }
+
+    // cheaper than bytes concat :)
+    function _append(bytes memory dst, bytes memory src) private view {
+        assembly {
+            // resize
+
+            let priorLength := mload(dst)
+
+            mstore(dst, add(priorLength, mload(src)))
+
+            // copy
+
+            pop(
+                staticcall(
+                    gas(),
+                    4,
+                    add(src, 32), // src data start
+                    mload(src), // src length
+                    add(dst, add(32, priorLength)), // dst write ptr
+                    mload(dst)
+                )
+            )
         }
     }
 }
