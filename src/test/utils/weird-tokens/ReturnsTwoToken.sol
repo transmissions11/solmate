@@ -14,7 +14,7 @@ contract ReturnsTwoToken {
                              METADATA STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    string public constant name = "ReturnsFalseToken";
+    string public constant name = "ReturnsTwoToken";
 
     string public constant symbol = "RTT";
 
