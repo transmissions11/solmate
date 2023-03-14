@@ -34,8 +34,8 @@ contract MockERC1155 is ERC1155 {
 
     function batchBurn(
         address from,
-        uint256[] memory ids,
-        uint256[] memory amounts
+        uint256[] calldata ids,
+        uint256[] calldata amounts
     ) public virtual {
         _batchBurn(from, ids, amounts);
     }
