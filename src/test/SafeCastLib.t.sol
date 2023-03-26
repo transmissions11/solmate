@@ -41,6 +41,11 @@ contract SafeCastLibTest is DSTestPlus {
         assertEq(SafeCastLib.safeCastTo64(2.5e17), 2.5e17);
     }
 
+    function testSafeCastTo48() public {
+        assertEq(SafeCastLib.safeCastTo32(2.5e8), 2.5e8);
+        assertEq(SafeCastLib.safeCastTo32(2.5e7), 2.5e7);
+    }
+
     function testSafeCastTo32() public {
         assertEq(SafeCastLib.safeCastTo32(2.5e8), 2.5e8);
         assertEq(SafeCastLib.safeCastTo32(2.5e7), 2.5e7);
@@ -87,6 +92,10 @@ contract SafeCastLibTest is DSTestPlus {
 
     function testFailSafeCastTo64() public pure {
         SafeCastLib.safeCastTo64(type(uint64).max + 1);
+    }
+
+    function testFailSafeCastTo48() public pure {
+        SafeCastLib.safeCastTo48(type(uint48).max + 1);
     }
 
     function testFailSafeCastTo32() public pure {
@@ -141,6 +150,12 @@ contract SafeCastLibTest is DSTestPlus {
         x = bound(x, 0, type(uint64).max);
 
         assertEq(SafeCastLib.safeCastTo64(x), x);
+    }
+
+    function testSafeCastTo48(uint256 x) public {
+        x = bound(x, 0, type(uint48).max);
+
+        assertEq(SafeCastLib.safeCastTo48(x), x);
     }
 
     function testSafeCastTo32(uint256 x) public {
@@ -201,6 +216,12 @@ contract SafeCastLibTest is DSTestPlus {
         x = bound(x, type(uint64).max + 1, type(uint256).max);
 
         SafeCastLib.safeCastTo64(x);
+    }
+
+    function testFailSafeCastTo48(uint256 x) public {
+        x = bound(x, type(uint48).max + 1, type(uint256).max);
+
+        SafeCastLib.safeCastTo48(x);
     }
 
     function testFailSafeCastTo32(uint256 x) public {
