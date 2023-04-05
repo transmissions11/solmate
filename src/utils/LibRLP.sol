@@ -21,7 +21,7 @@ library LibRLP {
         // A one-byte integer in the [0x00, 0x7f] range uses its own value as a length prefix, there is no additional "0x80 + length" prefix that precedes it.
         if (nonce <= 0x7f)             return keccak256(abi.encodePacked(bytes1(0xd6), bytes1(0x94), deployer, uint8(nonce))).fromLast20Bytes();
 
-        // In the case of `nonce > 0x7f` and `nonce <= type(uint8).max`, we have the following
+        // In the case of nonce > 0x7f and nonce <= type(uint8).max, we have the following
         // encoding scheme (the same calculation can be carried over for higher nonce bytes):
         // 0xda = 0xc0 (short RLP prefix) + 0x1a (= the bytes length of: 0x94 + address + 0x84 + nonce, in hex),
         // 0x94 = 0x80 + 0x14 (= the bytes length of an address, 20 bytes, in hex),
