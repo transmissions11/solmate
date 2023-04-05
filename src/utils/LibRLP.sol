@@ -30,7 +30,7 @@ library LibRLP {
         if (nonce <= type(uint16).max) return keccak256(abi.encodePacked(bytes1(0xd8), bytes1(0x94), deployer, bytes1(0x82), uint16(nonce))).fromLast20Bytes();
         if (nonce <= type(uint24).max) return keccak256(abi.encodePacked(bytes1(0xd9), bytes1(0x94), deployer, bytes1(0x83), uint24(nonce))).fromLast20Bytes();
 
-        // Case for `nonce > uint24` and `nonce <= type(uint32).max`.
+        // Case for nonce > uint24 and nonce <= type(uint32).max.
         return keccak256(abi.encodePacked(bytes1(0xda), bytes1(0x94), deployer, bytes1(0x84), uint32(nonce))).fromLast20Bytes();
     }
 }
