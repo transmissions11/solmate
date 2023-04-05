@@ -10,7 +10,6 @@ library LibRLP {
 
     // prettier-ignore
     function computeAddress(address deployer, uint256 nonce) internal pure returns (address) {
-    
         // The theoretical allowed limit, based on EIP-2681, for an account nonce is 2**64-2: https://eips.ethereum.org/EIPS/eip-2681.
         // However, we assume nobody can have a nonce large enough to require more than 4 bytes.
         // Thus, no specific check is built-in to save deployment costs.
