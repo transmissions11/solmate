@@ -82,7 +82,8 @@ abstract contract ERC1155 {
         uint256[] calldata amounts,
         bytes calldata data
     ) public virtual {
-        require(ids.length == amounts.length, "LENGTH_MISMATCH");
+        uint256 len = ids.length;
+        require(len == amounts.length, "LENGTH_MISMATCH");
 
         require(msg.sender == from || isApprovedForAll[from][msg.sender], "NOT_AUTHORIZED");
 
@@ -90,7 +91,7 @@ abstract contract ERC1155 {
         uint256 id;
         uint256 amount;
 
-        for (uint256 i = 0; i < ids.length; ) {
+        for (uint256 i = 0; i < len; ) {
             id = ids[i];
             amount = amounts[i];
 
@@ -121,14 +122,15 @@ abstract contract ERC1155 {
         virtual
         returns (uint256[] memory balances)
     {
-        require(owners.length == ids.length, "LENGTH_MISMATCH");
+        uint256 len = owners.length;
+        require(len == ids.length, "LENGTH_MISMATCH");
 
-        balances = new uint256[](owners.length);
+        balances = new uint256[](len);
 
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            for (uint256 i = 0; i < owners.length; ++i) {
+            for (uint256 i = 0; i < len; ++i) {
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
