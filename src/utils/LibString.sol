@@ -5,6 +5,27 @@ pragma solidity >=0.8.0;
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/LibString.sol)
 /// @author Modified from Solady (https://github.com/Vectorized/solady/blob/main/src/utils/LibString.sol)
 library LibString {
+    function toString(int256 value) internal pure returns (string memory str) {
+        if (value >= 0) return toString(uint256(value));
+
+        unchecked {
+            str = toString(uint256(-value));
+
+            /// @solidity memory-safe-assembly
+            assembly {
+                // Note: This is only safe because we over-allocate memory
+                // and write the string from right to left in toString(uint256),
+                // and thus can be sure that sub(str, 1) is an unused memory location.
+
+                let length := mload(str) // Load the string length.
+                // Put the - character at the start of the string contents.
+                mstore(str, 45) // 45 is the ASCII code for the - character.
+                str := sub(str, 1) // Move back the string pointer by a byte.
+                mstore(str, add(length, 1)) // Update the string length.
+            }
+        }
+    }
+
     function toString(uint256 value) internal pure returns (string memory str) {
         /// @solidity memory-safe-assembly
         assembly {
