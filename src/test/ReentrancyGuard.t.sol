@@ -35,7 +35,7 @@ contract ReentrancyGuardTest is DSTestPlus {
     }
 
     function invariantReentrancyStatusAlways1() public {
-        assertEq(uint256(hevm.load(address(riskyContract), 0)), 1);
+        assertEq(uint256(hevm.load(address(riskyContract), 0)), 0);
     }
 
     function testFailUnprotectedCall() public {
