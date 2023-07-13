@@ -12,7 +12,7 @@ contract ERC20Test is DSTestPlus {
     bytes32 constant PERMIT_TYPEHASH =
         keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
-    function setUp() public {
+    function setUp() public virtual {
         token = new MockERC20("Token", "TKN", 18);
     }
 
