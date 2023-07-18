@@ -483,7 +483,7 @@ contract ERC20Invariants is DSTestPlus, DSInvariantTest {
     BalanceSum balanceSum;
     MockERC20 token;
 
-    function setUp() public {
+    function setUp() public virtual {
         token = new MockERC20("Token", "TKN", 18);
         balanceSum = new BalanceSum(token);
 

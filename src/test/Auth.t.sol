@@ -20,7 +20,7 @@ contract OutOfOrderAuthority is Authority {
 contract AuthTest is DSTestPlus {
     MockAuthChild mockAuthChild;
 
-    function setUp() public {
+    function setUp() public virtual {
         mockAuthChild = new MockAuthChild();
     }
 

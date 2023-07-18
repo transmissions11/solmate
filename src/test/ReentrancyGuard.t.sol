@@ -30,7 +30,7 @@ contract RiskyContract is ReentrancyGuard {
 contract ReentrancyGuardTest is DSTestPlus {
     RiskyContract riskyContract;
 
-    function setUp() public {
+    function setUp() public virtual {
         riskyContract = new RiskyContract();
     }
 

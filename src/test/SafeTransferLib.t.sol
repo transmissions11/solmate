@@ -26,7 +26,7 @@ contract SafeTransferLibTest is DSTestPlus {
 
     MockERC20 erc20;
 
-    function setUp() public {
+    function setUp() public virtual {
         reverting = new RevertingToken();
         returnsTwo = new ReturnsTwoToken();
         returnsFalse = new ReturnsFalseToken();

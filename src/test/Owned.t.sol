@@ -7,7 +7,7 @@ import {MockOwned} from "./utils/mocks/MockOwned.sol";
 contract OwnedTest is DSTestPlus {
     MockOwned mockOwned;
 
-    function setUp() public {
+    function setUp() public virtual {
         mockOwned = new MockOwned();
     }
 

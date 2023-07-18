@@ -11,7 +11,7 @@ import {WETH} from "../tokens/WETH.sol";
 contract WETHTest is DSTestPlus {
     WETH weth;
 
-    function setUp() public {
+    function setUp() public virtual {
         weth = new WETH();
     }
 
@@ -111,7 +111,7 @@ contract WETHInvariants is DSTestPlus, DSInvariantTest {
     WETHTester wethTester;
     WETH weth;
 
-    function setUp() public {
+    function setUp() public virtual {
         weth = new WETH();
         wethTester = new WETHTester{value: address(this).balance}(weth);
 

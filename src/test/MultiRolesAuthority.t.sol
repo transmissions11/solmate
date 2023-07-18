@@ -11,7 +11,7 @@ import {MultiRolesAuthority} from "../auth/authorities/MultiRolesAuthority.sol";
 contract MultiRolesAuthorityTest is DSTestPlus {
     MultiRolesAuthority multiRolesAuthority;
 
-    function setUp() public {
+    function setUp() public virtual {
         multiRolesAuthority = new MultiRolesAuthority(address(this), Authority(address(0)));
     }
 
