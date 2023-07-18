@@ -10,7 +10,7 @@ contract ERC4626Test is DSTestPlus {
     MockERC20 underlying;
     MockERC4626 vault;
 
-    function setUp() public {
+    function setUp() public virtual {
         underlying = new MockERC20("Mock Token", "TKN", 18);
         vault = new MockERC4626(underlying, "Mock Token Vault", "vwTKN");
     }

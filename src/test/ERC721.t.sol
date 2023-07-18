@@ -56,7 +56,7 @@ contract NonERC721Recipient {}
 contract ERC721Test is DSTestPlus {
     MockERC721 token;
 
-    function setUp() public {
+    function setUp() public virtual {
         token = new MockERC721("Token", "TKN");
     }
 

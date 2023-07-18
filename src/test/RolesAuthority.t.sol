@@ -11,7 +11,7 @@ import {RolesAuthority} from "../auth/authorities/RolesAuthority.sol";
 contract RolesAuthorityTest is DSTestPlus {
     RolesAuthority rolesAuthority;
 
-    function setUp() public {
+    function setUp() public virtual {
         rolesAuthority = new RolesAuthority(address(this), Authority(address(0)));
     }
 
