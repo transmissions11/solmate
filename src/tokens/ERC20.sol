@@ -38,9 +38,9 @@ abstract contract ERC20 {
                             EIP-2612 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    uint256 internal immutable INITIAL_CHAIN_ID;
+    uint256 internal immutable INITIAL_CHAIN_ID = block.chainid;
 
-    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
+    bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
 
     mapping(address => uint256) public nonces;
 
@@ -56,9 +56,6 @@ abstract contract ERC20 {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-
-        INITIAL_CHAIN_ID = block.chainid;
-        INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
     }
 
     /*//////////////////////////////////////////////////////////////
