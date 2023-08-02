@@ -52,7 +52,7 @@ library SafeCastLib {
 
         y = uint192(x);
     }
-    
+
     function safeCastTo184(uint256 x) internal pure returns (uint184 y) {
         require(x < 1 << 184);
 
