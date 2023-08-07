@@ -61,6 +61,12 @@ function wadMul(int256 x, int256 y) pure returns (int256 r) {
         // Store x * y in r for now.
         r := mul(x, y)
 
+        // Check for the specific edge case where x == -1 and y == type(int256).min
+        // See: https://secure-contracts.com/learn_evm/arithmetic-checks.html#arithmetic-checks-for-int256-multiplication
+        if and(eq(x, not(0)), eq(y, 0x8000000000000000000000000000000000000000000000000000000000000000)) {
+            revert(0, 0)
+        }
+
         // Equivalent to require(x == 0 || (x * y) / x == y)
         if iszero(or(iszero(x), eq(sdiv(r, x), y))) {
             revert(0, 0)
