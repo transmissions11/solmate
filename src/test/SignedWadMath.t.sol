@@ -23,8 +23,11 @@ contract SignedWadMathTest is DSTestPlus {
         wadMul(x, y);
     }
 
-    function testWadMulZeroEdgeCase() public {
-        assertEq(wadMul(type(int256).min, 0), 0);
+    function testFailWadMulEdgeCase2() public pure {
+        int256 x = type(int256).min;
+        int256 y = -1;
+
+        wadMul(x, y);
     }
 
     function testFailWadMulOverflow(int256 x, int256 y) public pure {
