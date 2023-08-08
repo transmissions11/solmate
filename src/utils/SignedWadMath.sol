@@ -58,18 +58,21 @@ function unsafeWadDiv(int256 x, int256 y) pure returns (int256 r) {
 function wadMul(int256 x, int256 y) pure returns (int256 r) {
     /// @solidity memory-safe-assembly
     assembly {
-        // Check for the specific edge case where x == -1 and y == type(int256).min
-        // For y == -1 and x == min int256, the second overflow check will catch this.
-        // See: https://secure-contracts.com/learn_evm/arithmetic-checks.html#arithmetic-checks-for-int256-multiplication
-        if and(eq(x, not(0)), eq(y, 0x8000000000000000000000000000000000000000000000000000000000000000)) {
-            revert(0, 0)
-        }
-
         // Store x * y in r for now.
         r := mul(x, y)
 
-        // Equivalent to require(x == 0 || (x * y) / x == y)
-        if iszero(or(iszero(x), eq(sdiv(r, x), y))) {
+        // Combined overflow check (`x == 0 || (x * y) / x == y`) and edge case check
+        // where x == -1 and y == type(int256).min, for y == -1 and x == min int256,
+        // the second overflow check will catch this.
+        // See: https://secure-contracts.com/learn_evm/arithmetic-checks.html#arithmetic-checks-for-int256-multiplication
+        // Combining into 1 expression saves gas as resulting bytecode will only have 1 `JUMPI`
+        // rather than 2.
+        if iszero(
+            and(
+                or(iszero(x), eq(sdiv(r, x), y)),
+                or(lt(x, not(0)), sgt(y, 0x8000000000000000000000000000000000000000000000000000000000000000))
+            )
+        ) {
             revert(0, 0)
         }
 
