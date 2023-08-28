@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-import {Ownable} from "./Ownable.sol";
+import {Owned} from "./Owned.sol";
 
 /// @notice 2 Step Ownable
 /// @author Solmate
-abstract contract Ownable2Step is Ownable {
+abstract contract Ownable2Step is Owned {
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
     //////////////////////////////////////////////////////////////*/
@@ -41,7 +41,7 @@ abstract contract Ownable2Step is Ownable {
      * @dev Transfers ownership of the contract to a new account (`newOwner`) and deletes any pending owner.
      * Internal function without access restriction.
      */
-    function _transferOwnership(address newOwner) internal virtual override {
+    function _transferOwnership(address newOwner) internal virtual {
         delete pendingOwner;
         owner = newOwner;
         emit OwnershipTransferred(msg.sender, newOwner);
