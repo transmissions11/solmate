@@ -110,6 +110,7 @@ abstract contract ERC6909 {
     ) internal virtual {
         balanceOf[sender][id] -= amount;
         totalSupply[id] -= amount;
+
         emit Transfer(msg.sender, sender, address(0), id, amount);
     }
 }
