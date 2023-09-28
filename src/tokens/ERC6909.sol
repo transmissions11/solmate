@@ -53,8 +53,10 @@ abstract contract ERC6909 {
             uint256 allowed = allowance[sender][msg.sender][id];
             if (allowed != type(uint256).max) allowance[sender][msg.sender][id] = allowed - amount;
         }
+        
         balanceOf[sender][id] -= amount;
         balanceOf[receiver][id] += amount;
+        
         emit Transfer(msg.sender, sender, receiver, id, amount);
         return true;
     }
