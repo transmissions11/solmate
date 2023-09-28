@@ -20,11 +20,11 @@ abstract contract ERC6909 {
 
     mapping(uint256 => uint256) public totalSupply;
 
+    mapping(address => mapping(address => bool)) public isOperator;
+
     mapping(address => mapping(uint256 => uint256)) public balanceOf;
 
     mapping(address => mapping(address => mapping(uint256 => uint256))) public allowance;
-
-    mapping(address => mapping(address => bool)) public isOperator;
 
     /*//////////////////////////////////////////////////////////////
                               ERC6909 LOGIC
