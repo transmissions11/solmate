@@ -36,7 +36,12 @@ abstract contract ERC6909 {
         uint256 amount
     ) public virtual returns (bool) {
         balanceOf[msg.sender][id] -= amount;
-        balanceOf[receiver][id] += amount;
+
+        // Cannot overflow because the sum of all user
+        // balances can't exceed the max uint256 value.
+        unchecked {
+            balanceOf[receiver][id] += amount;
+        }
 
         emit Transfer(msg.sender, msg.sender, receiver, id, amount);
 
@@ -55,9 +60,15 @@ abstract contract ERC6909 {
         }
 
         balanceOf[sender][id] -= amount;
-        balanceOf[receiver][id] += amount;
+
+        // Cannot overflow because the sum of all user
+        // balances can't exceed the max uint256 value.
+        unchecked {
+            balanceOf[receiver][id] += amount;
+        }
 
         emit Transfer(msg.sender, sender, receiver, id, amount);
+
         return true;
     }
 
