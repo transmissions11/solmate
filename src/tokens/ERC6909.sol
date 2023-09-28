@@ -37,7 +37,9 @@ abstract contract ERC6909 {
     ) public virtual returns (bool) {
         balanceOf[msg.sender][id] -= amount;
         balanceOf[receiver][id] += amount;
+
         emit Transfer(msg.sender, msg.sender, receiver, id, amount);
+
         return true;
     }
 
