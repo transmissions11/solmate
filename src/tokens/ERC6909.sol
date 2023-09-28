@@ -67,7 +67,9 @@ abstract contract ERC6909 {
         uint256 amount
     ) public virtual returns (bool) {
         allowance[msg.sender][spender][id] = amount;
+
         emit Approval(msg.sender, spender, id, amount);
+
         return true;
     }
 
