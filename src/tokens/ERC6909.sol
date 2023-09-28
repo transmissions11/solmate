@@ -75,6 +75,7 @@ abstract contract ERC6909 {
 
     function setOperator(address operator, bool approved) public virtual {
         isOperator[msg.sender][operator] = approved;
+
         emit OperatorSet(msg.sender, operator, approved);
     }
 
