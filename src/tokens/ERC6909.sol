@@ -53,10 +53,10 @@ abstract contract ERC6909 {
             uint256 allowed = allowance[sender][msg.sender][id];
             if (allowed != type(uint256).max) allowance[sender][msg.sender][id] = allowed - amount;
         }
-        
+
         balanceOf[sender][id] -= amount;
         balanceOf[receiver][id] += amount;
-        
+
         emit Transfer(msg.sender, sender, receiver, id, amount);
         return true;
     }
@@ -99,7 +99,13 @@ abstract contract ERC6909 {
         uint256 amount
     ) internal virtual {
         balanceOf[receiver][id] += amount;
-        totalSupply[id] += amount;
+
+        // Cannot overflow because the sum of all user
+        // balances can't exceed the max uint256 value.
+        unchecked {
+            totalSupply[id] += amount;
+        }
+
         emit Transfer(msg.sender, address(0), receiver, id, amount);
     }
 
@@ -109,7 +115,12 @@ abstract contract ERC6909 {
         uint256 amount
     ) internal virtual {
         balanceOf[sender][id] -= amount;
-        totalSupply[id] -= amount;
+
+        // Cannot underflow because a user's balance
+        // will never be larger than the total supply.
+        unchecked {
+            totalSupply[id] -= amount;
+        }
 
         emit Transfer(msg.sender, sender, address(0), id, amount);
     }
