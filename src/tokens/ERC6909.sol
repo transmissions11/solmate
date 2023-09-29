@@ -84,10 +84,12 @@ abstract contract ERC6909 {
         return true;
     }
 
-    function setOperator(address operator, bool approved) public virtual {
+    function setOperator(address operator, bool approved) public virtual returns (bool) {
         isOperator[msg.sender][operator] = approved;
 
         emit OperatorSet(msg.sender, operator, approved);
+
+        return true;
     }
 
     /*//////////////////////////////////////////////////////////////
