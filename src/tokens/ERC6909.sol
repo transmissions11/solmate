@@ -11,7 +11,7 @@ abstract contract ERC6909 {
     event OperatorSet(address indexed owner, address indexed operator, bool approved);
 
     event Approval(address indexed owner, address indexed spender, uint256 indexed id, uint256 amount);
-    
+
     event Transfer(address caller, address indexed from, address indexed to, uint256 indexed id, uint256 amount);
 
     /*//////////////////////////////////////////////////////////////
