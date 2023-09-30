@@ -102,6 +102,11 @@ contract ERC6909Test is DSTestPlus {
         assertEq(token.balanceOf(receiver, 1337), 70);
     }
 
+    function testFailMint() public {
+        token.mint(address(0xDEAD), 1337, type(uint256).max);
+        token.mint(address(0xBEEF), 1337, 1);
+    }
+
     function testFailTransfer() public {
         address sender = address(0xABCD);
         address receiver = address(0xBEEF);
