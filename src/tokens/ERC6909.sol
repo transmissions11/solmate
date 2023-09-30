@@ -111,12 +111,12 @@ abstract contract ERC6909 {
         uint256 id,
         uint256 amount
     ) internal virtual {
-        balanceOf[receiver][id] += amount;
+        totalSupply[id] += amount;
 
         // Cannot overflow because the sum of all user
         // balances can't exceed the max uint256 value.
         unchecked {
-            totalSupply[id] += amount;
+            balanceOf[receiver][id] += amount;
         }
 
         emit Transfer(msg.sender, address(0), receiver, id, amount);
