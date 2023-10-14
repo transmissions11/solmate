@@ -11,7 +11,9 @@ library Bytes32AddressLib {
         }
     }
 
-    function fillLast12Bytes(address addressValue) internal pure returns (bytes32) {
-        return bytes32(bytes20(addressValue));
+    function fillLast12Bytes(address addressValue) internal pure returns (bytes32 _bytes) {
+        assembly{
+          _bytes := shl(96, addressValue)
+        }
     }
 }
