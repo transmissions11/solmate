@@ -18,5 +18,5 @@ contract Bytes32AddressLibTest is DSTestPlus {
             Bytes32AddressLib.fromLast20Bytes(0xfeedfacecafebeeffeedfacecafebeeffeedfacecafebeeffeedfacecafebeef),
             0xCAfeBeefFeedfAceCAFeBEEffEEDfaCecafEBeeF
         );
-    }
+    }   
 }
