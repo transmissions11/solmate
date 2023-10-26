@@ -8,10 +8,19 @@ import {MockAuthChild} from "./utils/mocks/MockAuthChild.sol";
 
 import {CREATE3} from "../utils/CREATE3.sol";
 
+contract Factory {
+    function deploy(bytes32 salt) public returns (address deployed) {
+        deployed = CREATE3.deploy(
+            salt,
+            abi.encodePacked(type(MockERC20).creationCode, abi.encode("Mock Token", "MOCK", 18)),
+            0
+        );
+    }
+}
+
 contract CREATE3Test is DSTestPlus {
     function testDeployERC20() public {
         bytes32 salt = keccak256(bytes("A salt!"));
-
         MockERC20 deployed = MockERC20(
             CREATE3.deploy(
                 salt,
@@ -21,6 +30,22 @@ contract CREATE3Test is DSTestPlus {
         );
 
         assertEq(address(deployed), CREATE3.getDeployed(salt));
+
+        assertEq(deployed.name(), "Mock Token");
+        assertEq(deployed.symbol(), "MOCK");
+        assertEq(deployed.decimals(), 18);
+    }
+
+    function testPredictDeployERC20() public {
+        bytes32 salt = keccak256(bytes("A salt!"));
+        Factory factory = new Factory();
+
+        MockERC20 deployed = MockERC20(
+            factory.deploy(salt)
+        );
+    
+        assertEq(address(deployed), CREATE3.getDeployed(salt, address(factory)));
+        assertTrue(address(deployed) != CREATE3.getDeployed(salt));
 
         assertEq(deployed.name(), "Mock Token");
         assertEq(deployed.symbol(), "MOCK");
