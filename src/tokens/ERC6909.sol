@@ -18,8 +18,6 @@ abstract contract ERC6909 {
                              ERC6909 STORAGE
     //////////////////////////////////////////////////////////////*/
 
-    mapping(uint256 => uint256) public totalSupply;
-
     mapping(address => mapping(address => bool)) public isOperator;
 
     mapping(address => mapping(uint256 => uint256)) public balanceOf;
@@ -37,11 +35,7 @@ abstract contract ERC6909 {
     ) public virtual returns (bool) {
         balanceOf[msg.sender][id] -= amount;
 
-        // Cannot overflow because the sum of all user
-        // balances can't exceed the max uint256 value.
-        unchecked {
-            balanceOf[receiver][id] += amount;
-        }
+        balanceOf[receiver][id] += amount;
 
         emit Transfer(msg.sender, msg.sender, receiver, id, amount);
 
@@ -61,11 +55,7 @@ abstract contract ERC6909 {
 
         balanceOf[sender][id] -= amount;
 
-        // Cannot overflow because the sum of all user
-        // balances can't exceed the max uint256 value.
-        unchecked {
-            balanceOf[receiver][id] += amount;
-        }
+        balanceOf[receiver][id] += amount;
 
         emit Transfer(msg.sender, sender, receiver, id, amount);
 
@@ -99,7 +89,7 @@ abstract contract ERC6909 {
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
             interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0xb2e69f8a; // ERC165 Interface ID for ERC6909
+            interfaceId == 0x0f632fb3; // ERC165 Interface ID for ERC6909
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -111,13 +101,7 @@ abstract contract ERC6909 {
         uint256 id,
         uint256 amount
     ) internal virtual {
-        totalSupply[id] += amount;
-
-        // Cannot overflow because the sum of all user
-        // balances can't exceed the max uint256 value.
-        unchecked {
-            balanceOf[receiver][id] += amount;
-        }
+        balanceOf[receiver][id] += amount;
 
         emit Transfer(msg.sender, address(0), receiver, id, amount);
     }
@@ -128,12 +112,6 @@ abstract contract ERC6909 {
         uint256 amount
     ) internal virtual {
         balanceOf[sender][id] -= amount;
-
-        // Cannot underflow because a user's balance
-        // will never be larger than the total supply.
-        unchecked {
-            totalSupply[id] -= amount;
-        }
 
         emit Transfer(msg.sender, sender, address(0), id, amount);
     }

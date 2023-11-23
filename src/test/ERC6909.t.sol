@@ -20,7 +20,6 @@ contract ERC6909Test is DSTestPlus {
         token.mint(address(0xBEEF), 1337, 100);
 
         assertEq(token.balanceOf(address(0xBEEF), 1337), 100);
-        assertEq(token.totalSupply(1337), 100);
     }
 
     function testBurn() public {
@@ -28,7 +27,6 @@ contract ERC6909Test is DSTestPlus {
         token.burn(address(0xBEEF), 1337, 70);
 
         assertEq(token.balanceOf(address(0xBEEF), 1337), 30);
-        assertEq(token.totalSupply(1337), 30);
     }
 
     function testSetOperator() public {
@@ -102,12 +100,12 @@ contract ERC6909Test is DSTestPlus {
         assertEq(token.balanceOf(receiver, 1337), 70);
     }
 
-    function testFailMint() public {
+    function testFailMintBalanceOverflow() public {
         token.mint(address(0xDEAD), 1337, type(uint256).max);
-        token.mint(address(0xBEEF), 1337, 1);
+        token.mint(address(0xDEAD), 1337, 1);
     }
 
-    function testFailTransfer() public {
+    function testFailTransferBalanceUnderflow() public {
         address sender = address(0xABCD);
         address receiver = address(0xBEEF);
 
@@ -115,9 +113,39 @@ contract ERC6909Test is DSTestPlus {
         token.transferFrom(sender, receiver, 1337, 1);
     }
 
-    function testFailTransferFrom() public {
+    function testFailTransferBalanceOverflow() public {
         address sender = address(0xABCD);
         address receiver = address(0xBEEF);
+
+        token.mint(sender, 1337, type(uint256).max);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, 1337, type(uint256).max);
+
+        token.mint(sender, 1337, 1);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, 1337, 1);
+    }
+
+    function testFailTransferFromBalanceUnderflow() public {
+        address sender = address(0xABCD);
+        address receiver = address(0xBEEF);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, 1337, 1);
+    }
+
+    function testFailTransferFromBalanceOverflow() public {
+        address sender = address(0xABCD);
+        address receiver = address(0xBEEF);
+
+        token.mint(sender, 1337, type(uint256).max);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, 1337, type(uint256).max);
+
+        token.mint(sender, 1337, 1);
 
         hevm.prank(sender);
         token.transferFrom(sender, receiver, 1337, 1);
@@ -140,7 +168,6 @@ contract ERC6909Test is DSTestPlus {
         token.mint(receiver, id, amount);
 
         assertEq(token.balanceOf(receiver, id), amount);
-        assertEq(token.totalSupply(id), amount);
     }
 
     function testBurn(
@@ -152,7 +179,6 @@ contract ERC6909Test is DSTestPlus {
         token.burn(sender, id, amount);
 
         assertEq(token.balanceOf(sender, id), 0);
-        assertEq(token.totalSupply(id), 0);
     }
 
     function testSetOperator(address operator, bool approved) public {
@@ -273,7 +299,7 @@ contract ERC6909Test is DSTestPlus {
         }
     }
 
-    function testFailTransfer(
+    function testFailTransferBalanceUnderflow(
         address sender,
         address receiver,
         uint256 id,
@@ -285,7 +311,27 @@ contract ERC6909Test is DSTestPlus {
         token.transfer(receiver, id, amount);
     }
 
-    function testFailTransferFrom(
+    function testFailTransferBalanceOverflow(
+        address sender,
+        address receiver,
+        uint256 id,
+        uint256 amount
+    ) public {
+        amount = bound(amount, 1, type(uint256).max);
+        uint256 overflowAmount = type(uint256).max - amount + 1;
+
+        token.mint(sender, id, amount);
+
+        hevm.prank(sender);
+        token.transfer(receiver, id, amount);
+
+        token.mint(sender, id, overflowAmount);
+
+        hevm.prank(sender);
+        token.transfer(receiver, id, overflowAmount);
+    }
+
+    function testFailTransferFromBalanceUnderflow(
         address sender,
         address receiver,
         uint256 id,
@@ -295,6 +341,26 @@ contract ERC6909Test is DSTestPlus {
 
         hevm.prank(sender);
         token.transferFrom(sender, receiver, id, amount);
+    }
+
+    function testFailTransferFromBalanceOverflow(
+        address sender,
+        address receiver,
+        uint256 id,
+        uint256 amount
+    ) public {
+        amount = bound(amount, 1, type(uint256).max);
+        uint256 overflowAmount = type(uint256).max - amount + 1;
+
+        token.mint(sender, id, amount);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, id, amount);
+
+        token.mint(sender, id, overflowAmount);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, id, overflowAmount);
     }
 
     function testFailTransferFromNotAuthorized(
