@@ -89,7 +89,7 @@ abstract contract ERC6909 {
     function supportsInterface(bytes4 interfaceId) public view virtual returns (bool) {
         return
             interfaceId == 0x01ffc9a7 || // ERC165 Interface ID for ERC165
-            interfaceId == 0xb2e69f8a; // ERC165 Interface ID for ERC6909
+            interfaceId == 0x0f632fb3; // ERC165 Interface ID for ERC6909
     }
 
     /*//////////////////////////////////////////////////////////////
