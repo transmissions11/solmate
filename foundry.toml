@@ -2,6 +2,7 @@
 solc = "0.8.15"
 bytecode_hash = "none"
 optimizer_runs = 1000000
+evm_version = "shanghai"
 
 [profile.intense.fuzz]
 runs = 10000
