@@ -1,5 +1,6 @@
 [default]
-solc = "0.8.10"
+solc = "0.8.24"
+evm_version = "cancun"
 bytecode_hash = "none"
 optimizer_runs = 1000000
 
