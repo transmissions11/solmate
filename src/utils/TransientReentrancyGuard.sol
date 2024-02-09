@@ -16,6 +16,8 @@ abstract contract TransientReentrancyGuard {
         assembly {
             noReentrancy := iszero(tload(REENTRANCY_GUARD_SLOT))
 
+            // Any non-zero value would work, but
+            // ADDRESS is cheap and certainly not 0.
             tstore(REENTRANCY_GUARD_SLOT, address())
         }
 
@@ -25,6 +27,9 @@ abstract contract TransientReentrancyGuard {
 
         /// @solidity memory-safe-assembly
         assembly {
+            // Need to set back to zero, as transient
+            // storage is only cleared at the end of the
+            // tx, not the end of the outermost call frame.
             tstore(REENTRANCY_GUARD_SLOT, 0)
         }
     }
