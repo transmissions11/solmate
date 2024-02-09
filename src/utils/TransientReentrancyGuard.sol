@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity >=0.8.0;
 
-/// @notice Gas optimized reentrancy protection for smart contracts. Leverages Cancuntransient storage.
+/// @notice Gas optimized reentrancy protection for smart contracts. Leverages Cancun transient storage.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/TransientReentrancyGuard.sol)
 /// @author Modified from Soledge (https://github.com/Vectorized/soledge/blob/main/src/utils/ReentrancyGuard.sol)
 abstract contract TransientReentrancyGuard {
