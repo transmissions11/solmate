@@ -18,6 +18,9 @@ abstract contract TransientReentrancyGuard {
 
             // Any non-zero value would work, but
             // ADDRESS is cheap and certainly not 0.
+            // Wastes a bit of gas doing this before
+            // require in the revert path, but we're
+            // only optimizing for the happy path here.
             tstore(REENTRANCY_GUARD_SLOT, address())
         }
 
