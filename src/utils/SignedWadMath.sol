@@ -107,7 +107,7 @@ function wadExp(int256 x) pure returns (int256 r) {
     unchecked {
         // When the result is < 0.5 we return zero. This happens when
         // x <= floor(log(0.5e18) * 1e18) ~ -42e18
-        if (x <= -42139678854452767551) return 0;
+        if (x <= -41446531673892822313) return 0;
 
         // When the result is > (2**255 - 1) / 1e18 we can not represent it as an
         // int. This happens when x >= floor(log((2**255 - 1) / 1e18) * 1e18) ~ 135.

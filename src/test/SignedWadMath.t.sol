@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {wadMul, wadDiv} from "../utils/SignedWadMath.sol";
+import {wadMul, wadDiv, wadExp} from "../utils/SignedWadMath.sol";
 
 contract SignedWadMathTest is DSTestPlus {
     function testWadMul(
@@ -19,6 +19,11 @@ contract SignedWadMathTest is DSTestPlus {
         int256 yPrime = negY ? -int256(y) : int256(y);
 
         assertEq(wadMul(xPrime, yPrime), (xPrime * yPrime) / 1e18);
+    }
+
+    function testWadExpZeroPoint() public {
+        assertEq(wadExp(-41446531673892822312), 1);
+        assertEq(wadExp(-41446531673892822313), 0);
     }
 
     function testFailWadMulEdgeCase() public pure {
