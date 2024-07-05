@@ -72,9 +72,7 @@ contract SignedWadMathTest is DSTestPlus {
         wadDiv(x, 0);
     }
 
-    function testWadLnExp(
-        uint256 x
-    ) public {
+    function testWadLnExp(uint256 x) public {
         x = bound(x, 0, 135305999368893231588 + 10e18);
 
         int256 xPrime = int256(x) - 10e18;
