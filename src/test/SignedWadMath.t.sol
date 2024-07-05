@@ -3,7 +3,7 @@ pragma solidity >=0.8.0;
 
 import {DSTestPlus} from "./utils/DSTestPlus.sol";
 
-import {wadMul, wadDiv} from "../utils/SignedWadMath.sol";
+import {wadMul, wadDiv, wadExp, wadLn} from "../utils/SignedWadMath.sol";
 
 contract SignedWadMathTest is DSTestPlus {
     function testWadMul(
@@ -70,5 +70,16 @@ contract SignedWadMathTest is DSTestPlus {
 
     function testFailWadDivZeroDenominator(int256 x) public pure {
         wadDiv(x, 0);
+    }
+
+    function testWadLnExp(
+        uint256 x
+    ) public {
+        x = bound(x, 0, 135305999368893231588 + 10e18);
+
+        int256 xPrime = int256(x) - 10e18;
+        int256 diff = wadLn(wadExp(xPrime)) - xPrime;
+
+        assertLe(diff < 0 ? -diff : diff, 100000);
     }
 }
