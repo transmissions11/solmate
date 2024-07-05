@@ -90,7 +90,7 @@ abstract contract ERC1155 {
         uint256 id;
         uint256 amount;
 
-        for (uint256 i = 0; i < ids.length; ) {
+        for (uint256 i = 0; i != ids.length; ) {
             id = ids[i];
             amount = amounts[i];
 
@@ -128,7 +128,7 @@ abstract contract ERC1155 {
         // Unchecked because the only math done is incrementing
         // the array index counter which cannot possibly overflow.
         unchecked {
-            for (uint256 i = 0; i < owners.length; ++i) {
+            for (uint256 i = 0; i != owners.length; ++i) {
                 balances[i] = balanceOf[owners[i]][ids[i]];
             }
         }
@@ -178,7 +178,7 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i = 0; i != idsLength; ) {
             balanceOf[to][ids[i]] += amounts[i];
 
             // An array can't have a total length
@@ -208,7 +208,7 @@ abstract contract ERC1155 {
 
         require(idsLength == amounts.length, "LENGTH_MISMATCH");
 
-        for (uint256 i = 0; i < idsLength; ) {
+        for (uint256 i = 0; i != idsLength; ) {
             balanceOf[from][ids[i]] -= amounts[i];
 
             // An array can't have a total length
