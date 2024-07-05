@@ -179,8 +179,7 @@ function wadLn(int256 x) pure returns (int256 r) {
             r := or(r, shl(4, lt(0xffff, shr(r, x))))
             r := or(r, shl(3, lt(0xff, shr(r, x))))
             r := or(r, shl(2, lt(0xf, shr(r, x))))
-            r := or(r, shl(1, lt(0x3, shr(r, x))))
-            r := or(r, lt(0x1, shr(r, x)))
+            r := or(r, byte(shr(r, x), 0x0000010102020202030303030303030303000000000000000000000000000000))
         }
 
         // Reduce range of x to (1, 2) * 2**96
