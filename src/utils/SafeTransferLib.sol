@@ -40,9 +40,9 @@ library SafeTransferLib {
 
             // Write the abi-encoded calldata into memory, beginning with the function selector.
             mstore(0, 0x23b872dd00000000000000000000000000000000000000000000000000000000)
-            mstore(4, from) // Append the "from" argument.
-            mstore(36, to) // Append the "to" argument.
-            mstore(68, amount) // Append the "amount" argument.
+            mstore(4, and(from, 0xffffffffffffffffffffffffffffffffffffffff)) // Append and mask the "from" argument.
+            mstore(36, and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Append and mask the "to" argument.
+            mstore(68, amount) // Append the "amount" argument. Masking not required as it's a full 32 byte type.
 
             success := and(
                 // Set success to whether the call reverted, if not we check it either
@@ -74,8 +74,8 @@ library SafeTransferLib {
 
             // Write the abi-encoded calldata into memory, beginning with the function selector.
             mstore(0, 0xa9059cbb00000000000000000000000000000000000000000000000000000000)
-            mstore(4, to) // Append the "to" argument.
-            mstore(36, amount) // Append the "amount" argument.
+            mstore(4, and(to, 0xffffffffffffffffffffffffffffffffffffffff)) // Append and mask the "to" argument.
+            mstore(36, amount) // Append the "amount" argument. Masking not required as it's a full 32 byte type.
 
             success := and(
                 // Set success to whether the call reverted, if not we check it either
