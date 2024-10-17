@@ -49,8 +49,11 @@ library SafeTransferLib {
 
             success := and(
                 // Set success to whether the call reverted, if not we check it either
-                // returned exactly 1 (can't just be non-zero data), or had no return data.
-                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                // returned exactly 1 (can't just be non-zero data), or had no return data and token has code.
+                or(
+                    and(eq(mload(0), 1), gt(returndatasize(), 31)),
+                    iszero(or(iszero(extcodesize(token)), returndatasize()))
+                ),
                 // We use 100 because the length of our calldata totals up like so: 4 + 32 * 3.
                 // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
                 // Counterintuitively, this call must be positioned second to the or() call in the
@@ -81,8 +84,11 @@ library SafeTransferLib {
 
             success := and(
                 // Set success to whether the call reverted, if not we check it either
-                // returned exactly 1 (can't just be non-zero data), or had no return data.
-                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                // returned exactly 1 (can't just be non-zero data), or had no return data and token has code.
+                or(
+                    and(eq(mload(0), 1), gt(returndatasize(), 31)),
+                    iszero(or(iszero(extcodesize(token)), returndatasize()))
+                ),
                 // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.
                 // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
                 // Counterintuitively, this call must be positioned second to the or() call in the
@@ -113,8 +119,11 @@ library SafeTransferLib {
 
             success := and(
                 // Set success to whether the call reverted, if not we check it either
-                // returned exactly 1 (can't just be non-zero data), or had no return data.
-                or(and(eq(mload(0), 1), gt(returndatasize(), 31)), iszero(returndatasize())),
+                // returned exactly 1 (can't just be non-zero data), or had no return data and token has code.
+                or(
+                    and(eq(mload(0), 1), gt(returndatasize(), 31)),
+                    iszero(or(iszero(extcodesize(token)), returndatasize()))
+                ),
                 // We use 68 because the length of our calldata totals up like so: 4 + 32 * 2.
                 // We use 0 and 32 to copy up to 32 bytes of return data into the scratch space.
                 // Counterintuitively, this call must be positioned second to the or() call in the
