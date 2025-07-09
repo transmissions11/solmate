@@ -31,6 +31,10 @@ utils
 ├─ SafeTransferLib — "Safe ERC20/ETH transfer lib that handles missing return values"
 ```
 
+## ⚠️ Soft Deprecation Notice
+
+Solmate is no longer actively maintained. [Solady](https://github.com/Vectorized/solady) has effectively succeeded the project.
+
 ## Safety
 
 This is **experimental software** and is provided on an "as is" and "as available" basis.
