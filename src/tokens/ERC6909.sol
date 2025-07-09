@@ -48,7 +48,7 @@ abstract contract ERC6909 {
         uint256 id,
         uint256 amount
     ) public virtual returns (bool) {
-        if (msg.sender != sender && !isOperator[sender][msg.sender]) {
+        if (!isOperator[sender][msg.sender]) {
             uint256 allowed = allowance[sender][msg.sender][id];
             if (allowed != type(uint256).max) allowance[sender][msg.sender][id] = allowed - amount;
         }
