@@ -160,6 +160,16 @@ contract ERC6909Test is DSTestPlus {
         token.transferFrom(sender, receiver, 1337, 100);
     }
 
+    function testFailTransferFromNotAuthorizedMsgSender() public {
+        address sender = address(0xABCD);
+        address receiver = address(0xBEEF);
+
+        token.mint(sender, 1337, 100);
+
+        hevm.prank(sender);
+        token.transferFrom(sender, receiver, 1337, 100);
+    }
+
     function testMint(
         address receiver,
         uint256 id,
