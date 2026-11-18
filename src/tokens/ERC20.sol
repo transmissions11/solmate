@@ -42,6 +42,8 @@ abstract contract ERC20 {
 
     bytes32 internal immutable INITIAL_DOMAIN_SEPARATOR;
 
+    address internal immutable INITIAL_VERIFYING_CONTRACT;
+
     mapping(address => uint256) public nonces;
 
     /*//////////////////////////////////////////////////////////////
@@ -59,6 +61,7 @@ abstract contract ERC20 {
 
         INITIAL_CHAIN_ID = block.chainid;
         INITIAL_DOMAIN_SEPARATOR = computeDomainSeparator();
+        INITIAL_VERIFYING_CONTRACT = address(this);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -160,7 +163,7 @@ abstract contract ERC20 {
     }
 
     function DOMAIN_SEPARATOR() public view virtual returns (bytes32) {
-        return block.chainid == INITIAL_CHAIN_ID ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
+        return block.chainid == INITIAL_CHAIN_ID && address(this) == INITIAL_VERIFYING_CONTRACT ? INITIAL_DOMAIN_SEPARATOR : computeDomainSeparator();
     }
 
     function computeDomainSeparator() internal view virtual returns (bytes32) {
