@@ -49,6 +49,23 @@ contract ERC20DelegatecallTest is DSTestPlus {
         proxy = new ERC20DelegatecallProxy(address(token));
     }
 
+    // The EIP-712 domain separator as the token computes it under
+    // delegatecall: name is read from the proxy storage (empty here),
+    // and address(this) is the proxy. This is the separator the patched
+    // DOMAIN_SEPARATOR() recomputes.
+    function proxyDomainSeparator() internal view returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
+                    keccak256(bytes(MockERC20(address(proxy)).name())),
+                    keccak256("1"),
+                    block.chainid,
+                    address(proxy)
+                )
+            );
+    }
+
     function testPermitViaDelegatecall() public {
         uint256 privateKey = 1;
         address owner = hevm.addr(privateKey);
@@ -56,18 +73,7 @@ contract ERC20DelegatecallTest is DSTestPlus {
         uint256 value = 1e18;
         uint256 deadline = block.timestamp;
 
-        // Under delegatecall the token reads name from the proxy storage,
-        // which is empty, and address(this) is the proxy. This is the
-        // separator the patched DOMAIN_SEPARATOR() recomputes.
-        bytes32 domainSeparator = keccak256(
-            abi.encode(
-                keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"),
-                keccak256(bytes(MockERC20(address(proxy)).name())),
-                keccak256("1"),
-                block.chainid,
-                address(proxy)
-            )
-        );
+        bytes32 domainSeparator = proxyDomainSeparator();
 
         (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
             privateKey,
@@ -84,5 +90,33 @@ contract ERC20DelegatecallTest is DSTestPlus {
 
         assertEq(MockERC20(address(proxy)).allowance(owner, spender), value);
         assertEq(MockERC20(address(proxy)).nonces(owner), 1);
+    }
+
+    function testDomainSeparatorViaDelegatecall() public {
+        assertEq(MockERC20(address(proxy)).DOMAIN_SEPARATOR(), proxyDomainSeparator());
+    }
+
+    function testPermitViaDelegatecallWithTokenSeparatorReverts() public {
+        uint256 privateKey = 1;
+        address owner = hevm.addr(privateKey);
+        address spender = address(0xCAFE);
+        uint256 value = 1e18;
+        uint256 deadline = block.timestamp;
+
+        // Sign over the TOKEN's own (cached) separator: the signature the
+        // buggy code would accept through the proxy.
+        (uint8 v, bytes32 r, bytes32 s) = hevm.sign(
+            privateKey,
+            keccak256(
+                abi.encodePacked(
+                    "\x19\x01",
+                    token.DOMAIN_SEPARATOR(),
+                    keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, 0, deadline))
+                )
+            )
+        );
+
+        hevm.expectRevert(abi.encodeWithSignature("Error(string)", "INVALID_SIGNER"));
+        MockERC20(address(proxy)).permit(owner, spender, value, deadline, v, r, s);
     }
 }
